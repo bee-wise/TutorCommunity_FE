@@ -1,26 +1,130 @@
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffdf7;
+  --foreground: #0c0c0b;
+
+  --primary: #280f91;
+  --primary-foreground: #ffffff;
+
+  --secondary: #cfe1fa;
+  --secondary-foreground: #ffffff;
+
+  --accent: #ffc500;
+  --accent-foreground: #0c0c0b;
+
+  --highlight: #fadc76;
+  --warning: #905b0f;
+  --error: #e1aba7;
+
+  --glass: color-mix(in srgb, #fff3cb 15%, transparent);
+
+  --radius: 0.75rem;
+
+  --card: #ffffff;
+  --card-foreground: #0c0c0b;
+  --popover: #ffffff;
+  --popover-foreground: #0c0c0b;
+  --muted: #e2e8f0;
+  --muted-foreground: #64748b;
+  --border: #cbd5e1;
+  --input: #cbd5e1;
+  --ring: #280f91;
+}
+
+.dark {
+  --background: #0c0c0b;
+  --foreground: #f8fafc;
+
+  --primary: #280f91;
+  --primary-foreground: #ffffff;
+
+  --secondary: #447353;
+  --secondary-foreground: #ffffff;
+
+  --accent: #ffc500;
+  --accent-foreground: #0c0c0b;
+
+  --highlight: #fadc76;
+  --warning: #f59e0b;
+  --error: #f87171;
+
+  --glass: color-mix(in srgb, #fff3cb 10%, transparent);
+
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
+  --border: #334155;
+  --input: #334155;
+  --ring: #4f46e5;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-highlight: var(--highlight);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-glass: var(--glass);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --font-montserrat:
+    var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-google-sans:
+    var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --font-sans: var(--font-google-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    @apply antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-montserrat);
+    font-weight: 800;
+  }
 }
