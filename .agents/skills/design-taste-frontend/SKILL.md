@@ -32,6 +32,7 @@ Example reads:
 - _"Reading this as: B2B SaaS landing for technical buyers, with a Linear-style minimalist language, leaning toward Tailwind utilities + Geist + restrained motion."_
 - _"Reading this as: solo designer portfolio for hiring managers, with an editorial / kinetic-type language, leaning toward native CSS + scroll-driven animation + custom typography."_
 - _"Reading this as: redesign of a public-sector service site, with a trust-first language, leaning toward GOV.UK Frontend or USWDS."_
+- _"Reading this as: **BeeWise** - Vietnamese tutor-learner marketplace for learners, tutors, staff, and admin; 70% Flat UI + 30% scoped Glassmorphism, mobile-first, Montserrat ExtraBold headlines + Google Sans body, deep-indigo primary (#280F91) + forest-green secondary (#447353) + amber accent (#FFC500), VND currency, Vietnamese UX conventions."_
 
 ### 0.C If the brief is ambiguous, ask one question, do not guess
 
@@ -69,17 +70,18 @@ After the design read, set three dials. Every layout, motion, and density decisi
 
 ### 1.B Use-Case Presets
 
-| Use case                      | VARIANCE | MOTION  | DENSITY |
-| ----------------------------- | -------- | ------- | ------- |
-| Landing (SaaS, mainstream)    | 7        | 6       | 4       |
-| Landing (Agency / creative)   | 9        | 8       | 3       |
-| Landing (Premium consumer)    | 7        | 6       | 3       |
-| Portfolio (Designer / studio) | 8        | 7       | 3       |
-| Portfolio (Developer)         | 6        | 5       | 4       |
-| Editorial / Blog              | 6        | 4       | 3       |
-| Public-sector service         | 3        | 2       | 5       |
-| Redesign - preserve           | match    | match+1 | match   |
-| Redesign - overhaul           | +2       | +2      | match   |
+| Use case                             | VARIANCE | MOTION  | DENSITY |
+| ------------------------------------ | -------- | ------- | ------- |
+| Landing (SaaS, mainstream)           | 7        | 6       | 4       |
+| Landing (Agency / creative)          | 9        | 8       | 3       |
+| Landing (Premium consumer)           | 7        | 6       | 3       |
+| Portfolio (Designer / studio)        | 8        | 7       | 3       |
+| Portfolio (Developer)                | 6        | 5       | 4       |
+| Editorial / Blog                     | 6        | 4       | 3       |
+| Public-sector service                | 3        | 2       | 5       |
+| Redesign - preserve                  | match    | match+1 | match   |
+| Redesign - overhaul                  | +2       | +2      | match   |
+| **BeeWise (Vietnamese marketplace)** | **7**    | **5**   | **5**   |
 
 ### 1.C How the Dials Drive Output
 
@@ -187,6 +189,8 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
   - **Override:** Inter is acceptable when the user explicitly asks for a neutral / standard / Linear-style feel, or when the brief is a public-sector / accessibility-first site.
 - **Pairings to know:** `Geist` + `Geist Mono`, `Satoshi` + `JetBrains Mono`, `Cabinet Grotesk` + `Inter Tight`, `GT America` + `IBM Plex Mono`.
 
+> **BeeWise override:** Use **Montserrat ExtraBold** for all headings and **Montserrat SemiBold** for subheadings. Use **Google Sans** (or `Inter` as fallback if Google Sans is unavailable via next/font) for body text. Hero headline is 60px. Do NOT use Geist or Satoshi for BeeWise screens - Montserrat is the locked brand typeface.
+
 - **SERIF DISCIPLINE (VERY DISCOURAGED AS DEFAULT):**
   - Serif is **very discouraged as the default font for any project.** "It feels creative / premium / editorial" is NOT a reason to reach for serif. The agent's default mental model that "creative brief = serif" is the single most-tested AI tell in production rounds.
   - **Serif is only acceptable when ONE of these is explicitly true:**
@@ -206,6 +210,21 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 - **Override:** if the brand or brief explicitly asks for purple / violet / lila, embrace it. But execute with intent: consistent palette, harmonised neutrals, restrained gradients. Not generic AI gradient slop.
 - **One palette per project.** Do not fluctuate between warm and cool grays within the same project.
 - **COLOR CONSISTENCY LOCK (mandatory):** Once an accent color is chosen for a page, it is used on the WHOLE page. A warm-grey site does not suddenly get a blue CTA in section 7. A rose-accented site does not get a teal status badge in the footer. Pick one accent, lock it, audit every component before shipping.
+
+> **BeeWise locked palette (THE LILA RULE override applies - this brand IS intentionally deep indigo):**
+> | Token | Value | Usage |
+> | ---------------- | ---------- | ----- |
+> | Primary | `#280F91` | CTA buttons, active nav, links, primary actions |
+> | Secondary | `#447353` | Success states, tutor badges, "verified" labels |
+> | Accent | `#FFC500` | Highlight, star ratings, promo callouts |
+> | Background | `#CFE1FA` | Page background (light airy blue) |
+> | Glass surface | `#FFF3CB` at 15% opacity | Glassmorphism panels ONLY |
+> | Highlight | `#FADC76` | Inline text highlights, selected state |
+> | Warning | `#905B0F` | Warning toasts, deadline labels |
+> | Error | `#E1ABA7` | Error states, form validation |
+> | Text | `#0C0C0B` | All body text (near-black, not pure black) |
+>
+> These 9 tokens are the ONLY colors allowed on any BeeWise screen. Do not introduce additional colors. The `#280F91` primary is not an "AI purple" default - it is a deliberate brand decision and the Lila Rule does NOT block it.
 
 - **PREMIUM-CONSUMER PALETTE BAN (mandatory, second-most-recurring AI-tell):**
   - For premium-consumer briefs (cookware, wellness, artisan, luxury, heritage craft, DTC home goods, etc.) the LLM default is **warm beige/cream + brass/clay/oxblood/ochre + espresso/ink dark text**. Concretely banned hex families as default backgrounds and accents:
@@ -235,6 +254,17 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 - When a shadow is used, tint it to the background hue. No pure-black drop shadows on light backgrounds.
 - For `VISUAL_DENSITY > 7`: generic card containers are banned. Data metrics breathe in plain layout.
 - **SHAPE CONSISTENCY LOCK (mandatory):** Pick ONE corner-radius scale for the page and stick to it. Options: all-sharp (radius 0), all-soft (radius 12-16px), all-pill (full radius for interactive). Mixed systems are allowed only when there is a documented rule (e.g. "buttons are full-pill, cards are 16px, inputs are 8px") and that rule is followed everywhere. Round buttons in a square layout, or square cards on a pill-button page, is broken design.
+
+> **BeeWise Glassmorphism scope (mandatory restriction):** Glassmorphism (`backdrop-filter`, `#FFF3CB` at 15% opacity surface) is ONLY permitted on these four surface types:
+>
+> 1. Hero section background panel
+> 2. AI Search input box
+> 3. KPI / stat cards on dashboards
+> 4. Modals and drawers
+>
+> All other surfaces (tutor cards, nav, footers, feature sections, tables) use **flat UI only** - solid fills from the BeeWise palette, no blur, no glass. Applying glassmorphism outside these 4 zones is a Pre-Flight Fail.
+>
+> **BeeWise Tutor Card rules:** Equal-height cards. Avatar aspect ratio 1:1. Max 2-line title. Aligned CTAs at card bottom. Subtle hover elevation (`translateY(-4px)` + tinted shadow in `#280F91` at 10% opacity). Transition 250ms ease.
 
 ### 4.5 Interactive UI States
 
