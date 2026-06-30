@@ -51,7 +51,7 @@ export function HowItWorksSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2
           id="how-headline"
-          className="text-3xl sm:text-4xl tracking-tight text-foreground mb-16 text-center"
+          className="text-3xl sm:text-4xl tracking-tight text-accent mb-16 text-center"
           style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
         >
           Chỉ 3 Bước Để Bắt Đầu

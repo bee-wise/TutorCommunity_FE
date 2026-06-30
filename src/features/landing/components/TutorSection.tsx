@@ -50,14 +50,14 @@ export function TutorSection() {
             <div className="flex flex-col gap-4">
               <h2
                 id="tutor-headline"
-                className="flex flex-col text-xl sm:text-3xl tracking-tight text-foreground mb-3"
+                className="flex flex-col text-3xl sm:text-3xl tracking-tight mb-3 text-primary"
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 800,
                 }}
               >
                 Bạn Là Gia Sư?{" "}
-                <span className="text-secondary text-xl sm:text-2xl">
+                <span className="text-secondary text-[1.15rem] sm:text-2xl">
                   BeeWise Kết Nối Bạn Với Đúng Học Viên
                 </span>
               </h2>

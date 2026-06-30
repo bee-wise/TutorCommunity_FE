@@ -39,7 +39,7 @@ export function SolutionSection() {
                 >
                   <div className="flex flex-col gap-3">
                     <h3
-                      className="leading-tight text-[1.05rem]"
+                      className="leading-tight text-[1.5rem]"
                       style={{
                         fontFamily: "var(--font-montserrat)",
                         fontWeight: 700,
