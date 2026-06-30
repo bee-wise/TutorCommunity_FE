@@ -13,7 +13,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="md:hidden relative">
+    <div className="md:hidden relative z-70">
       <button
         onClick={() => setOpen((prev) => !prev)}
         aria-label={open ? "Đóng menu" : "Mở menu"}
@@ -28,7 +28,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
       </button>
 
       {open && (
-        <div className="absolute top-10 right-0 w-56 bg-[#1c0a64] border border-white/10 rounded-2xl px-4 py-4 flex flex-col gap-3 shadow-2xl shadow-[#280F91]/40">
+        <div className="absolute top-10 right-0 z-80 w-56 bg-[#1c0a64] border border-white/10 rounded-2xl px-4 py-4 flex flex-col gap-3 shadow-2xl shadow-[#280F91]/40">
           {links.map((link) => (
             <Link
               key={link.href}

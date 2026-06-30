@@ -46,7 +46,7 @@ export const SOLUTION_FEATURES: SolutionFeature[] = [
   },
   {
     id: "advisor-chat",
-    title: "Phòng Chat Có Cố Vấn",
+    title: "Phòng Chat Hỗ Trợ",
     description:
       "Sau khi kết nối, BeeWise tạo phòng chat gồm bạn, gia sư và cố vấn BeeWise để hỗ trợ xuyên suốt quá trình trao đổi.",
     variant: "neutral",
@@ -112,7 +112,7 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "multiple-tutors",
     question: "Tôi có thể kết nối với nhiều gia sư cùng lúc không?",
     answer:
-      "Để đảm bảo việc trao đổi được tập trung và hiệu quả, mỗi tài khoản người học chỉ có thể mở một phòng chat với một gia sư tại một thời điểm. Bạn có thể chuyển sang gia sư khác bất cứ khi nào kết thúc hoặc đóng cuộc trò chuyện hiện tại.",
+      "Để đảm bảo việc trao đổi được hiệu quả, mỗi tài khoản người học chỉ có thể mở một phòng chat với một gia sư tại một thời điểm. Bạn có thể chuyển sang gia sư khác bất cứ khi nào kết thúc hoặc đóng cuộc trò chuyện hiện tại.",
   },
   {
     id: "verification",

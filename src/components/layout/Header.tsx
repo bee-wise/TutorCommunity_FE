@@ -22,14 +22,14 @@ export function Header() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-0">
+    <div className="fixed top-0 left-0 right-0 z-[60] flex justify-center pt-0">
       <motion.header
         layout
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className={
           scrolled
-            ? "mt-3 rounded-full shadow-xl shadow-[#280F91]/20 border border-white/10 overflow-hidden"
-            : "w-full"
+            ? "mt-3 rounded-full shadow-xl shadow-[#280F91]/20 border border-white/10 overflow-visible"
+            : "w-full overflow-visible"
         }
         style={
           scrolled
