@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Footer } from "@/src/components/layout/Footer";
 import { HeroMotion } from "@/src/features/landing/components/HeroMotion";
 import { Compass } from "@phosphor-icons/react/dist/ssr";
 
