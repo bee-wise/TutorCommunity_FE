@@ -32,7 +32,7 @@ Example reads:
 - _"Reading this as: B2B SaaS landing for technical buyers, with a Linear-style minimalist language, leaning toward Tailwind utilities + Geist + restrained motion."_
 - _"Reading this as: solo designer portfolio for hiring managers, with an editorial / kinetic-type language, leaning toward native CSS + scroll-driven animation + custom typography."_
 - _"Reading this as: redesign of a public-sector service site, with a trust-first language, leaning toward GOV.UK Frontend or USWDS."_
-- _"Reading this as: **BeeWise** - Vietnamese tutor-learner marketplace for learners, tutors, staff, and admin; 70% Flat UI + 30% scoped Glassmorphism, mobile-first, Montserrat ExtraBold headlines + Google Sans body, deep-indigo primary (#280F91) + forest-green secondary (#447353) + amber accent (#FFC500), VND currency, Vietnamese UX conventions."_
+- _"Reading this as: **BeeWise** - Vietnamese tutor-learner marketplace for learners, tutors, staff, and admin; 59% Flat UI + 50% scoped Glassmorphism, mobile-first, Montserrat ExtraBold headlines + Google Sans body, deep-indigo primary (#280F91) + forest-green secondary (#447353) + amber accent (#FFC500), VND currency, Vietnamese UX conventions."_
 
 ### 0.C If the brief is ambiguous, ask one question, do not guess
 
@@ -469,7 +469,7 @@ export function StickyStack({ cards }: { cards: React.ReactNode[] }) {
       {cards.map((card, i) => (
         <div
           key={i}
-          className="stack-card sticky top-0 min-h-[100dvh] flex items-center justify-center"
+          className="stack-card sticky top-0 min-h-dvh flex items-center justify-center"
         >
           {card}
         </div>
