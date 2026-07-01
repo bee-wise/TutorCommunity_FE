@@ -23,7 +23,7 @@ export function HeroSection() {
           <HeroMotion>
             <div className="flex flex-col gap-7">
               <h4 className="text-accent italic font-sans">
-                BeeWise: "Find your tutor, fuel your future"
+                BeeWise: &quot;Find your tutor, fuel your future&quot;
               </h4>
               <h1
                 id="hero-headline"
