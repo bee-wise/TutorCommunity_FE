@@ -89,8 +89,6 @@ export function TutorCarouselSection() {
   const startX = useRef(0);
   const startScrollLeft = useRef(0);
 
-  const CARD_GAP = 24;
-
   const scrollToIndex = useCallback((idx: number) => {
     const track = trackRef.current;
     if (!track) return;
