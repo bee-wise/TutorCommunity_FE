@@ -1,19 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { List, X } from "@phosphor-icons/react";
+import { ListIcon, X } from "@phosphor-icons/react";
 
 type NavLink = {
   label: string;
   href: string;
 };
 
-export function MobileNav({ links }: { links: NavLink[] }) {
+interface Props {
+  links: NavLink[];
+}
+
+export function MobileNav({ links }: Props) {
   const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    const handleScroll = () => setOpen(false);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [open]);
 
   return (
-    <div className="md:hidden relative z-70">
+    <div ref={containerRef} className="md:hidden relative z-70">
       <button
         onClick={() => setOpen((prev) => !prev)}
         aria-label={open ? "Đóng menu" : "Mở menu"}
@@ -23,7 +51,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
         {open ? (
           <X size={18} weight="bold" />
         ) : (
-          <List size={18} weight="bold" />
+          <ListIcon size={18} weight="bold" />
         )}
       </button>
 

@@ -6,6 +6,7 @@ import { PainPointSection } from "@/src/features/landing/components/PainPointSec
 import { SolutionSection } from "@/src/features/landing/components/SolutionSection";
 import { HowItWorksSection } from "@/src/features/landing/components/HowItWorksSection";
 import { TutorSection } from "@/src/features/landing/components/TutorSection";
+import { TutorCarouselSection } from "@/src/features/landing/components/TutorCarouselSection";
 import { FaqSection } from "@/src/features/landing/components/FaqSection";
 
 export const metadata: Metadata = {
@@ -49,6 +50,7 @@ export default function LandingPage() {
         <SolutionSection />
         <HowItWorksSection />
         <TutorSection />
+        <TutorCarouselSection />
         <FaqSection />
       </main>
       <Footer />
