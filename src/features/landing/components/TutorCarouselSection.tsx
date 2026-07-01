@@ -149,7 +149,7 @@ export function TutorCarouselSection() {
           <div className="flex flex-col gap-2">
             <h2
               id="tutor-carousel-headline"
-              className="text-3xl sm:text-4xl text-primary leading-tight"
+              className="text-2xl sm:text-4xl text-primary leading-tight"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
               Kết nối với Gia Sư <span className="text-[#FFC500]">Nổi Bật</span>

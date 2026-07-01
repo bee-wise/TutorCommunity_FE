@@ -26,7 +26,7 @@ export function PainPointSection() {
         <div className="max-w-3xl mb-14">
           <h2
             id="pain-headline"
-            className="text-3xl sm:text-4xl tracking-tight text-foreground mb-4"
+            className="text-3xl sm:text-4xl tracking-tight mb-4 text-primary"
             style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
           >
             Tìm Gia Sư Đôi Khi Khó Hơn Bạn Nghĩ
@@ -63,4 +63,3 @@ export function PainPointSection() {
     </section>
   );
 }
-
