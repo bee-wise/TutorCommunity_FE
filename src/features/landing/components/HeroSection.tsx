@@ -27,7 +27,7 @@ export function HeroSection() {
               </h4>
               <h1
                 id="hero-headline"
-                className="font-montserrat text-[2.5rem] sm:text-5xl lg:text-[3.5rem] leading-[1.08] tracking-normal text-[#280F91]"
+                className="font-montserrat text-[2rem] sm:text-5xl lg:text-[3.5rem] leading-[1.08] tracking-normal text-[#280F91]"
                 style={{ fontWeight: 800 }}
               >
                 Tìm Gia Sư Phù Hợp{" "}
