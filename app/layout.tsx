@@ -2,6 +2,11 @@ import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import { Providers } from "@/src/components/providers";
 import "./globals.css";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cộng đồng gia sư",
+};
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
