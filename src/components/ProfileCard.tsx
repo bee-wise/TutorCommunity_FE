@@ -416,7 +416,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
     maskImage: "var(--icon)",
     maskMode: "luminance",
     maskRepeat: "repeat",
-    maskSize: "150%",
+    maskSize: "70%",
     maskPosition:
       "top calc(200% - (var(--background-y) * 5)) left calc(100% - var(--background-x))",
     filter: "brightness(0.66) contrast(1.33) saturate(0.33) opacity(0.5)",
@@ -429,33 +429,6 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
     background: "transparent",
     backgroundSize: "cover",
     backgroundPosition: "center",
-    backgroundImage: `
-      repeating-linear-gradient(
-        0deg,
-        var(--sunpillar-clr-1) 5%,
-        var(--sunpillar-clr-2) 10%,
-        var(--sunpillar-clr-3) 15%,
-        var(--sunpillar-clr-4) 20%,
-        var(--sunpillar-clr-5) 25%,
-        var(--sunpillar-clr-6) 30%,
-        var(--sunpillar-clr-1) 35%
-      ),
-      repeating-linear-gradient(
-        -45deg,
-        #0e152e 0%,
-        hsl(180, 10%, 60%) 3.8%,
-        hsl(180, 29%, 66%) 4.5%,
-        hsl(180, 10%, 60%) 5.2%,
-        #0e152e 10%,
-        #0e152e 12%
-      ),
-      radial-gradient(
-        farthest-corner circle at var(--pointer-x) var(--pointer-y),
-        hsla(0, 0%, 0%, 0.1) 12%,
-        hsla(0, 0%, 0%, 0.15) 20%,
-        hsla(0, 0%, 0%, 0.25) 120%
-      )
-    `.replace(/\s+/g, " "),
     gridArea: "1 / -1",
     borderRadius: cardRadius,
     pointerEvents: "none" as const,
@@ -470,7 +443,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
       hsla(207, 40%, 30%, 0.8) 90%
     )`,
     mixBlendMode: "overlay",
-    filter: "brightness(0.8) contrast(1.2)",
+    filter: "brightness(0.9) contrast(1.5)",
     zIndex: 4,
     gridArea: "1 / -1",
     borderRadius: cardRadius,
@@ -499,12 +472,12 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
           }}
         />
       )}
-      <div ref={shellRef} className="relative z-[1] group">
+      <div ref={shellRef} className="relative z-1 group">
         <section
           className="grid relative overflow-hidden"
           style={{
-            height: "80svh",
-            maxHeight: "540px",
+            width: "100%",
+            height: "auto",
             aspectRatio: "0.718",
             borderRadius: cardRadius,
             backgroundBlendMode: "color-dodge, normal, normal, normal",
@@ -592,39 +565,17 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
                   }
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className="rounded-full overflow-hidden border border-white/10 flex-shrink-0"
-                      style={{ width: "48px", height: "48px" }}
-                    >
-                      <img
-                        className="w-full h-full object-cover rounded-full"
-                        src={miniAvatarUrl || avatarUrl}
-                        alt={`${name || "User"} mini avatar`}
-                        loading="lazy"
-                        style={{
-                          display: "block",
-                          gridArea: "auto",
-                          borderRadius: "50%",
-                          pointerEvents: "auto",
-                        }}
-                        onError={(e) => {
-                          const t = e.target as HTMLImageElement;
-                          t.style.opacity = "0.5";
-                          t.src = avatarUrl;
-                        }}
-                      />
-                    </div>
                     <div className="flex flex-col items-start gap-1.5">
-                      <div className="text-sm font-medium text-white/90 leading-none">
+                      <div className="text-xs font-medium text-white/90 leading-none">
                         @{handle}
                       </div>
-                      <div className="text-sm text-white/70 leading-none">
+                      <div className="text-xs text-white/70 leading-none">
                         {status}
                       </div>
                     </div>
                   </div>
                   <button
-                    className="border border-white/10 rounded-lg px-4 py-3 text-xs font-semibold text-white/90 cursor-pointer backdrop-blur-[10px] transition-all duration-200 ease-out hover:border-white/40 hover:-translate-y-px"
+                    className="border border-white/10 rounded-lg px-4 py-3 text-[10px] font-semibold text-white/90 cursor-pointer backdrop-blur-[10px] transition-all duration-200 ease-out hover:border-white/40 hover:-translate-y-px"
                     onClick={handleContactClick}
                     style={{
                       pointerEvents: "auto",
@@ -641,7 +592,6 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
               )}
             </div>
 
-            {/* Details content */}
             <div
               className="max-h-full overflow-hidden text-center relative z-[5]"
               style={{
@@ -658,9 +608,8 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
                 style={{ top: "3em", display: "flex", gridArea: "auto" }}
               >
                 <h3
-                  className="font-semibold m-0"
+                  className="font-semibold m-0 text-2xl mb-2 "
                   style={{
-                    fontSize: "min(5svh, 3em)",
                     backgroundImage:
                       "linear-gradient(to bottom, #fff, #6f6fbe)",
                     backgroundSize: "1em 1.5em",
@@ -676,7 +625,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
                   {name}
                 </h3>
                 <p
-                  className="font-semibold whitespace-nowrap mx-auto w-min"
+                  className="font-semibold whitespace-nowrap mx-auto w-min text-sm"
                   style={{
                     position: "relative",
                     top: "-12px",
