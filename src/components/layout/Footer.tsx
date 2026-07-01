@@ -28,7 +28,7 @@ export function Footer() {
                   fontWeight: 800,
                 }}
               >
-                BeeWise
+                Cộng Đồng Gia Sư
               </span>
             </div>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs">

@@ -193,6 +193,7 @@ export function TutorCarouselSection() {
           loop={true}
           pauseOnHover={true}
           onIndexChange={(index) => setActiveIndex(index)}
+          onClick={setActiveIndex}
         />
       </div>
 

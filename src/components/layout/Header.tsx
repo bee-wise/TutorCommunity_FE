@@ -6,13 +6,11 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { MobileNav } from "./MobileNav";
 
-const NAV_LINKS = [
-  { label: "Gia Sư", href: "/tutors" },
-  { label: "Cách Hoạt Động", href: "#how-it-works" },
-  { label: "Trở thành gia sư", href: "#for-tutors" },
-];
+interface HeaderProps {
+  NAV_LINKS: { label: string; href: string }[];
+}
 
-export function Header() {
+export function Header({ NAV_LINKS }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
