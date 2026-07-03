@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { TUTOR_BENEFITS } from "../data/landing.data";
 
 export function TutorSection() {
@@ -13,13 +13,14 @@ export function TutorSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="order-2 lg:order-1 relative hidden lg:block">
-            <div className="relative w-full aspect-[3/4] max-w-sm mx-auto rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative w-full aspect-3/4 max-w-sm mx-auto rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/brand/beewise-logo-nobackground.PNG"
+                src="/images/BeeWiseTeam.JPG"
                 alt="Gia sư BeeWise tự tin với máy tính xách tay, sẵn sàng kết nối với học viên"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 0px, 33vw"
+                objectFit="cover"
               />
               <div
                 className="absolute inset-0"
@@ -71,7 +72,7 @@ export function TutorSection() {
             <ul className="flex flex-col gap-4" role="list">
               {TUTOR_BENEFITS.map((benefit) => (
                 <li key={benefit.id} className="flex items-start gap-3">
-                  <CheckCircle
+                  <CheckCircleIcon
                     size={22}
                     weight="fill"
                     className="text-secondary shrink-0 mt-0.5"

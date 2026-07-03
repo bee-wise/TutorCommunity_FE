@@ -9,23 +9,35 @@ import { MobileNav } from "./MobileNav";
 const NAV_LINKS = [
   { label: "Gia Sư", href: "/tutors" },
   { label: "Cách Hoạt Động", href: "#how-it-works" },
-  { label: "Dành Cho Gia Sư", href: "#for-tutors" },
+  { label: "Trở thành gia sư", href: "#for-tutors" },
 ];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
+
+    onScroll();
+
+    // Cho phép animation sau khi render lần đầu
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 50);
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] flex justify-center pt-0">
+    <div className="fixed top-0 left-0 right-0 z-60 flex justify-center pt-0">
       <motion.header
         layout
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: isReady ? 0.4 : 0, ease: [0.22, 1, 0.36, 1] }}
         className={
           scrolled
             ? "mt-3 rounded-full shadow-xl shadow-[#280F91]/20 border border-white/10 overflow-visible"
@@ -46,7 +58,9 @@ export function Header() {
         }
       >
         <div
-          className={`h-16 flex items-center justify-between transition-all duration-300 ${
+          className={`h-16 flex items-center justify-between gap-3 transition-all ${
+            isReady ? "duration-300" : "duration-0"
+          } ${
             scrolled ? "px-5" : "px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full"
           }`}
         >
@@ -65,7 +79,7 @@ export function Header() {
               />
             </div>
             <span
-              className="text-white text-base leading-none"
+              className="text-white text-xs md:text-base leading-none"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
               Cộng Đồng Gia Sư
