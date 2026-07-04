@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { MobileNav } from "./MobileNav";
@@ -15,6 +16,7 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [href, setHref] = useState<string>("");
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -104,15 +106,24 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
             className="hidden md:flex items-center gap-6"
             aria-label="Điều hướng chính"
           >
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-bold text-white/70 hover:text-accent transition-colors duration-200"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname === link.href || pathname?.startsWith(link.href + "/");
+              
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-bold transition-colors duration-200 ${
+                    isActive ? "text-accent" : "text-white/70 hover:text-accent"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-3">
