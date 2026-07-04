@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ListIcon, X } from "@phosphor-icons/react";
 
 type NavLink = {
@@ -16,6 +17,7 @@ interface Props {
 export function MobileNav({ links }: Props) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!open) return;
@@ -57,16 +59,25 @@ export function MobileNav({ links }: Props) {
 
       {open && (
         <div className="absolute top-10 right-0 z-80 w-56 bg-[#1c0a64] border border-white/10 rounded-2xl px-4 py-4 flex flex-col gap-3 shadow-2xl shadow-[#280F91]/40">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="text-sm font-medium text-white/80 hover:text-white transition-colors py-1"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {links.map((link) => {
+            const isActive =
+              link.href === "/"
+                ? pathname === "/"
+                : pathname === link.href || pathname?.startsWith(link.href + "/");
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className={`text-sm font-medium transition-colors py-1 ${
+                  isActive ? "text-accent" : "text-white/80 hover:text-white"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <Link
             href="/login"
             onClick={() => setOpen(false)}

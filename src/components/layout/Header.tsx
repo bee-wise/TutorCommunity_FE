@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { MobileNav } from "./MobileNav";
 
-const NAV_LINKS = [
-  { label: "Gia Sư", href: "/tutors" },
-  { label: "Cách Hoạt Động", href: "#how-it-works" },
-  { label: "Trở thành gia sư", href: "#for-tutors" },
-];
+interface HeaderProps {
+  NAV_LINKS: { label: string; href: string }[];
+  isTutorPage?: boolean;
+}
 
-export function Header() {
+export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [href, setHref] = useState<string>("");
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -32,6 +34,14 @@ export function Header() {
       clearTimeout(timer);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isTutorPage) {
+      setHref("/");
+    } else {
+      setHref("/tutor-guide");
+    }
+  }, [isTutorPage]);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-60 flex justify-center pt-0">
@@ -65,9 +75,15 @@ export function Header() {
           }`}
         >
           <Link
-            href="/"
+            href={href}
             className="flex items-center gap-2 shrink-0"
             aria-label="BeeWise - Trang chủ"
+            onClick={() => {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }}
           >
             <div className="relative w-10 h-10 rounded-full bg-white overflow-hidden shrink-0 flex items-center justify-center">
               <Image
@@ -90,15 +106,24 @@ export function Header() {
             className="hidden md:flex items-center gap-6"
             aria-label="Điều hướng chính"
           >
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-bold text-white/70 hover:text-accent transition-colors duration-200"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname === link.href || pathname?.startsWith(link.href + "/");
+              
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-bold transition-colors duration-200 ${
+                    isActive ? "text-accent" : "text-white/70 hover:text-accent"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -108,13 +133,15 @@ export function Header() {
             >
               Đăng Nhập
             </Link>
-            <Link
-              href="/tutors"
-              id="nav-cta"
-              className="inline-flex h-8 items-center justify-center rounded-full bg-[#FFC500] px-4 text-xs font-bold text-[#0C0C0B] transition-all duration-200 hover:bg-[#FADC76] active:scale-[0.98] whitespace-nowrap"
-            >
-              Tìm Gia Sư
-            </Link>
+            {!isTutorPage && (
+              <Link
+                href="/tutors"
+                id="nav-cta"
+                className="inline-flex h-8 items-center justify-center rounded-full bg-[#FFC500] px-4 text-xs font-bold text-[#0C0C0B] transition-all duration-200 hover:bg-[#FADC76] active:scale-[0.98] whitespace-nowrap"
+              >
+                Tìm Gia Sư
+              </Link>
+            )}
             <MobileNav links={NAV_LINKS} />
           </div>
         </div>

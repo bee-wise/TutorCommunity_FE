@@ -10,7 +10,7 @@ import { TutorCarouselSection } from "@/src/features/landing/components/TutorCar
 import { FaqSection } from "@/src/features/landing/components/FaqSection";
 
 export const metadata: Metadata = {
-  title: "BeeWise - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
+  title: "Cộng Đồng Gia Sư - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
   description:
     "Chỉ mất khoảng 30 giây để tìm gia sư phù hợp cùng BeeWise. Hồ sơ được xác thực, kết nối trực tiếp với gia sư và cố vấn hỗ trợ xuyên suốt. Trải nghiệm miễn phí, không cần đăng nhập.",
   keywords: [
@@ -40,10 +40,16 @@ export const metadata: Metadata = {
   },
 };
 
+const NAV_LINKS = [
+  { label: "Gia Sư", href: "/tutors" },
+  { label: "Cách Hoạt Động", href: "#how-it-works" },
+  { label: "Trở thành gia sư", href: "#for-tutors" },
+];
+
 export default function LandingPage() {
   return (
     <>
-      <Header />
+      <Header NAV_LINKS={NAV_LINKS} />
       <main id="main-content">
         <HeroSection />
         <PainPointSection />
