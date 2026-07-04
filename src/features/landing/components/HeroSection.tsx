@@ -1,11 +1,24 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { HeroMotion } from "./HeroMotion";
 import { HeroVisual } from "./HeroVisual";
 import { LightningIcon } from "@phosphor-icons/react";
 
 export function HeroSection() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      router.push(`/tutors?mode=ai&q=${encodeURIComponent(query.trim())}`);
+    } else {
+      router.push("/tutors?mode=ai");
+    }
+  };
+
   return (
     <section
       className="relative min-h-dvh flex items-center overflow-hidden bg-white"
@@ -62,15 +75,25 @@ export function HeroSection() {
                     placeholder='Ví dụ: "Gia sư Toán lớp 12, học online, 200.000đ/buổi"'
                     className="flex-1 bg-transparent text-sm text-[#0C0C0B] placeholder-[#0C0C0B]/35 outline-none min-w-0"
                     aria-label="Nhập nhu cầu tìm gia sư"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSearch();
+                    }}
                   />
-                  <Link
-                    href="/tutors"
+                  <button
+                    type="button"
+                    onClick={handleSearch}
                     id="hero-cta-primary"
                     className="shrink-0 inline-flex h-9 items-center justify-center rounded-full bg-[#280F91] px-5 text-sm font-bold text-white transition-all duration-200 hover:bg-[#1a0a6b] active:scale-[0.98] whitespace-nowrap shadow-[0_0_15px_rgba(40,15,145,0.3)]"
                   >
-                    <LightningIcon size={16} className="mr-2" />
+                    <LightningIcon
+                      size={16}
+                      className="mr-2"
+                      aria-hidden="true"
+                    />
                     Tìm Ngay
-                  </Link>
+                  </button>
                 </div>
               </div>
 
