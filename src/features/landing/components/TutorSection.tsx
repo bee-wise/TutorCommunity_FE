@@ -86,11 +86,11 @@ export function TutorSection() {
             </ul>
 
             <Link
-              href="/register/tutor"
+              href="/tutor-guide"
               id="tutor-cta"
               className="self-start inline-flex h-12 items-center justify-center rounded-full bg-secondary px-8 text-sm font-semibold text-white transition-all duration-200 hover:bg-secondary/90 active:scale-[0.98] shadow-lg shadow-secondary/25"
             >
-              Đăng Ký Trở Thành Gia Sư
+              Tìm hiểu ngay
             </Link>
           </div>
         </div>

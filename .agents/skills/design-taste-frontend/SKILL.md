@@ -212,19 +212,21 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 - **COLOR CONSISTENCY LOCK (mandatory):** Once an accent color is chosen for a page, it is used on the WHOLE page. A warm-grey site does not suddenly get a blue CTA in section 7. A rose-accented site does not get a teal status badge in the footer. Pick one accent, lock it, audit every component before shipping.
 
 > **BeeWise locked palette (THE LILA RULE override applies - this brand IS intentionally deep indigo):**
-> | Token | Value | Usage |
-> | ---------------- | ---------- | ----- |
-> | Primary | `#280F91` | CTA buttons, active nav, links, primary actions |
-> | Secondary | `#447353` | Success states, tutor badges, "verified" labels |
-> | Accent | `#FFC500` | Highlight, star ratings, promo callouts |
-> | Background | `#CFE1FA` | Page background (light airy blue) |
-> | Glass surface | `#FFF3CB` at 15% opacity | Glassmorphism panels ONLY |
-> | Highlight | `#FADC76` | Inline text highlights, selected state |
-> | Warning | `#905B0F` | Warning toasts, deadline labels |
-> | Error | `#E1ABA7` | Error states, form validation |
-> | Text | `#0C0C0B` | All body text (near-black, not pure black) |
+> | Token | Light Mode | Dark Mode | Usage |
+> | ---------------- | ---------- | --------- | ----- |
+> | Primary | `#280f91` | `#cfe1fa` | CTA buttons, active nav, links, primary actions |
+> | Secondary | `#447353` | `#447353` | Success states, tutor badges, "verified" labels |
+> | Accent | `#ffc500` | `#ffc500` | Highlight, star ratings, promo callouts |
+> | Background | `#ffffff` | `#0c0c0b` | Main page background |
+> | Foreground | `#0c0c0b` | `#f8fafc` | Primary text and body |
+> | Highlight | `#fadc76` | `#fadc76` | Inline text highlights, selected state |
+> | Warning | `#905b0f` | `#f59e0b` | Warning toasts, deadline labels |
+> | Error | `#e1aba7` | `#f87171` | Error states, form validation |
+> | Glass surface | `#fff3cb` (20%) | `#fff3cb` (10%) | Glassmorphism panels ONLY |
 >
-> These 9 tokens are the ONLY colors allowed on any BeeWise screen. Do not introduce additional colors. The `#280F91` primary is not an "AI purple" default - it is a deliberate brand decision and the Lila Rule does NOT block it.
+> **System & Structural Colors**: Allowed to use standard Tailwind slate/neutral mappings for components (e.g., `--card`, `--popover`, `--muted`, `--border`, `--input`, `--ring` as defined in `globals.css`).
+>
+> These brand tokens and their system structural counterparts are the ONLY colors allowed on any BeeWise screen. Do not introduce additional brand colors. The `#280f91` primary is not an "AI purple" default - it is a deliberate brand decision and the Lila Rule does NOT block it.
 
 - **PREMIUM-CONSUMER PALETTE BAN (mandatory, second-most-recurring AI-tell):**
   - For premium-consumer briefs (cookware, wellness, artisan, luxury, heritage craft, DTC home goods, etc.) the LLM default is **warm beige/cream + brass/clay/oxblood/ochre + espresso/ink dark text**. Concretely banned hex families as default backgrounds and accents:
@@ -255,7 +257,7 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 - For `VISUAL_DENSITY > 7`: generic card containers are banned. Data metrics breathe in plain layout.
 - **SHAPE CONSISTENCY LOCK (mandatory):** Pick ONE corner-radius scale for the page and stick to it. Options: all-sharp (radius 0), all-soft (radius 12-16px), all-pill (full radius for interactive). Mixed systems are allowed only when there is a documented rule (e.g. "buttons are full-pill, cards are 16px, inputs are 8px") and that rule is followed everywhere. Round buttons in a square layout, or square cards on a pill-button page, is broken design.
 
-> **BeeWise Glassmorphism scope (mandatory restriction):** Glassmorphism (`backdrop-filter`, `#FFF3CB` at 15% opacity surface) is ONLY permitted on these four surface types:
+> **BeeWise Glassmorphism scope (mandatory restriction):** Glassmorphism (`backdrop-filter`, `#fff3cb` at 20% opacity surface in light mode, 10% in dark mode) is ONLY permitted on these four surface types:
 >
 > 1. Hero section background panel
 > 2. AI Search input box
