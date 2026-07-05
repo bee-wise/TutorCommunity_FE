@@ -110,8 +110,9 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
               const isActive =
                 link.href === "/"
                   ? pathname === "/"
-                  : pathname === link.href || pathname?.startsWith(link.href + "/");
-              
+                  : pathname === link.href ||
+                    pathname?.startsWith(link.href + "/");
+
               return (
                 <Link
                   key={link.href}
