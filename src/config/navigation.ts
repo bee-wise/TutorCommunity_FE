@@ -1,3 +1,4 @@
+import { UserPlusIcon } from "@phosphor-icons/react";
 import {
   Calendar,
   CalendarDays,
@@ -30,7 +31,10 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-export type RoleNavigation = Record<"LEARNER" | "TUTOR" | "CONSULTANT" | "ADMIN", NavGroup[]>;
+export type RoleNavigation = Record<
+  "LEARNER" | "TUTOR" | "CONSULTANT" | "ADMIN",
+  NavGroup[]
+>;
 
 export const navigationConfig: RoleNavigation = {
   LEARNER: [
@@ -51,6 +55,16 @@ export const navigationConfig: RoleNavigation = {
           title: "Phòng Chat Hiện Tại",
           url: "/lms/learner/chat",
           icon: MessageCircle,
+        },
+      ],
+    },
+    {
+      groupName: "Gia sư",
+      items: [
+        {
+          title: "Tìm gia sư mới",
+          url: "/lms/learner/tutors",
+          icon: UserPlusIcon,
         },
       ],
     },

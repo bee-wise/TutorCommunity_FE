@@ -44,7 +44,7 @@ export function HowItWorksSection() {
   return (
     <section
       ref={sectionRef}
-      className="bg-background py-20 sm:py-24 h-screen"
+      className="bg-background py-20 sm:py-24"
       id="how-it-works"
       aria-labelledby="how-headline"
     >

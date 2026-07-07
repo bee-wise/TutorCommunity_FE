@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 const IMAGES = [
-  { id: 1, src: "/images/Banner/Hero-1.svg", alt: "BeeWise Hero 1" },
-  { id: 2, src: "/images/Banner/Hero-2.svg", alt: "BeeWise Hero 2" },
+  { id: 1, src: "/images/Banner/Hero-1.png", alt: "BeeWise Hero 1" },
+  { id: 2, src: "/images/Banner/Hero-2.png", alt: "BeeWise Hero 2" },
 ];
 
 export function HeroCarousel() {
@@ -35,6 +35,7 @@ export function HeroCarousel() {
               src={IMAGES[activeIndex].src}
               alt={IMAGES[activeIndex].alt}
               fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
               priority
             />

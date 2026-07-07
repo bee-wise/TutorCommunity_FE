@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Hexagon } from "lucide-react";
+import { LogOut, Hexagon, Lock } from "lucide-react";
 
 import { useAuthStore } from "@/src/store/useAuthStore";
 import { navigationConfig } from "@/src/config/navigation";
@@ -97,24 +97,49 @@ export function AppSidebar() {
                   const isActive =
                     pathname === item.url ||
                     pathname.startsWith(`${item.url}/`);
+
+                  const isTutor = user?.role === "TUTOR";
+                  const isUnverified = isTutor && user?.isVerified === false;
+                  const isDashboard = item.url === "/lms/tutor";
+                  const isLocked = isUnverified && !isDashboard;
+
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
-                        asChild
-                        tooltip={item.title}
-                        isActive={isActive}
-                        className={`transition-colors font-medium ${
-                          isActive
-                            ? "bg-[#280F91]/10 text-accent hover:bg-[#280F91]/15 hover:text-[#280F91]"
-                            : "text-muted-foreground hover:bg-[#280F91]/5 hover:text-[#280F91]"
+                        asChild={!isLocked}
+                        tooltip={
+                          isLocked
+                            ? "Bạn hãy hoàn thành xác thực tài khoản"
+                            : item.title
+                        }
+                        isActive={isActive && !isLocked}
+                        disabled={isLocked}
+                        className={`transition-colors font-medium select-none ${
+                          isLocked
+                            ? "opacity-40 cursor-not-allowed text-muted-foreground/70"
+                            : isActive
+                              ? "bg-[#280F91]/10 text-accent hover:bg-[#280F91]/15 hover:text-[#280F91]"
+                              : "text-muted-foreground hover:bg-[#280F91]/5 hover:text-[#280F91]"
                         }`}
                       >
-                        <Link href={item.url}>
-                          <item.icon
-                            className={`size-4 ${isActive ? "text-accent" : ""}`}
-                          />
-                          <span>{item.title}</span>
-                        </Link>
+                        {isLocked ? (
+                          <div className="flex items-center gap-2 w-full cursor-not-allowed">
+                            <item.icon className="size-4 text-muted-foreground/60 shrink-0" />
+                            <span className="truncate">{item.title}</span>
+                            <Lock className="ml-auto size-3 text-muted-foreground/60 shrink-0" />
+                          </div>
+                        ) : (
+                          <Link href={item.url}>
+                            <item.icon
+                              className={`size-4 ${isActive ? "text-accent" : ""}`}
+                            />
+                            <span
+                              className={` ${isActive ? "text-accent" : ""}`}
+                            >
+                              {item.title}
+                            </span>
+                          </Link>
+                        )}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );

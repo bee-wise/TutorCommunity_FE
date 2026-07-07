@@ -89,6 +89,7 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
                 src="/brand/beewise-logo-nobackground.PNG"
                 alt="BeeWise Logo"
                 fill
+                sizes="40px"
                 className="object-contain p-1"
                 priority
               />

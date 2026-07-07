@@ -21,7 +21,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative min-h-dvh flex items-center overflow-hidden bg-background"
+      className="relative lg:min-h-dvh flex items-center overflow-hidden bg-background"
       aria-labelledby="hero-headline"
       id="#"
     >
@@ -34,7 +34,7 @@ export function HeroSection() {
         }}
       />
 
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-8 lg:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <HeroMotion>
             <div className="flex flex-col gap-7">
