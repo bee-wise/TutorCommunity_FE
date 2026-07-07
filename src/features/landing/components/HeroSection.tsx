@@ -6,6 +6,8 @@ import Link from "next/link";
 import { HeroMotion } from "./HeroMotion";
 import { HeroCarousel } from "./HeroCarousel";
 import { LightningIcon } from "@phosphor-icons/react";
+import { Button } from "@/src/components/ui/button";
+import { toast } from "@/src/components/ui/bee-toast";
 
 export function HeroSection() {
   const router = useRouter();
@@ -106,6 +108,17 @@ export function HeroSection() {
                   Tìm kiếm thủ công
                 </Link>
               </div>
+              <Button
+                onClick={() => {
+                  toast.success("Hehehe", {
+                    description: "HAHAHAH",
+                    duration: 5000,
+                    position: "top-right",
+                  });
+                }}
+              >
+                Toast
+              </Button>
             </div>
           </HeroMotion>
 

@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { getQueryClient } from "@/src/configs/tanstack-client";
 import { type ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
+import { BeeToaster } from "@/src/components/ui/bee-toast";
 
 export function Providers({ children }: { children: ReactNode }) {
   const queryClient = getQueryClient();
@@ -18,8 +19,10 @@ export function Providers({ children }: { children: ReactNode }) {
     >
       <QueryClientProvider client={queryClient}>
         {children}
+        <BeeToaster />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ThemeProvider>
   );
 }
+
