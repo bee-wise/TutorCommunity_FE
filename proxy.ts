@@ -8,8 +8,11 @@ const roleRoutes = {
 } as const;
 
 export function proxy(request: NextRequest) {
-  const token = request.cookies.get("accessToken")?.value;
-  const role = request.cookies.get("role")?.value;
+  // const token = request.cookies.get("accessToken")?.value;
+  // const role = request.cookies.get("role")?.value;
+
+  const token = true;
+  const role = "TUTOR";
 
   const pathname = request.nextUrl.pathname;
 

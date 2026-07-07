@@ -25,7 +25,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/src/components/ui/avatar";
 
 export function Topbar() {
   const pathname = usePathname();
@@ -34,14 +38,14 @@ export function Topbar() {
 
   // Simple breadcrumb generator based on pathname
   const paths = pathname.split("/").filter(Boolean);
-  
+
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 transition-all">
       <div className="flex items-center gap-2 md:hidden">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="h-4 mr-2" />
       </div>
-      
+
       {/* Dynamic Breadcrumbs */}
       <Breadcrumb className="hidden md:flex">
         <BreadcrumbList>
@@ -49,8 +53,9 @@ export function Topbar() {
             const isLast = index === paths.length - 1;
             const href = `/${paths.slice(0, index + 1).join("/")}`;
             // Capitalize and format text
-            const title = path.charAt(0).toUpperCase() + path.slice(1).replace("-", " ");
-            
+            const title =
+              path.charAt(0).toUpperCase() + path.slice(1).replace("-", " ");
+
             return (
               <React.Fragment key={path}>
                 <BreadcrumbItem>
@@ -59,7 +64,10 @@ export function Topbar() {
                       {title}
                     </BreadcrumbPage>
                   ) : (
-                    <BreadcrumbLink href={href} className="text-muted-foreground hover:text-foreground">
+                    <BreadcrumbLink
+                      href={href}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
                       {title}
                     </BreadcrumbLink>
                   )}
@@ -97,51 +105,52 @@ export function Topbar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem className="flex flex-col items-start gap-1">
               <span className="font-medium">{user?.name}</span>
-              <span className="text-xs text-muted-foreground">{user?.email}</span>
-            </DropdownMenuItem>
-            
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-xs text-muted-foreground font-normal uppercase">
-              Giao diện (Theme)
-            </DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sun className="size-4" />
-                <span>Sáng</span>
-              </div>
-              {theme === "light" && <span className="size-2 rounded-full bg-green-500" />}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Moon className="size-4" />
-                <span>Tối</span>
-              </div>
-              {theme === "dark" && <span className="size-2 rounded-full bg-green-500" />}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Monitor className="size-4" />
-                <span>Hệ thống</span>
-              </div>
-              {theme === "system" && <span className="size-2 rounded-full bg-green-500" />}
+              <span className="text-xs text-muted-foreground">
+                {user?.email}
+              </span>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-muted-foreground font-normal uppercase">
-              Chuyển đổi Role (Dev Test)
+              Giao diện (Theme)
             </DropdownMenuLabel>
-            {(["LEARNER", "TUTOR", "CONSULTANT"] as UserRole[]).map((role) => (
-              <DropdownMenuItem
-                key={role}
-                onClick={() => switchRole(role)}
-                className="cursor-pointer flex items-center justify-between"
-              >
-                {role}
-                {user?.role === role && (
-                  <span className="size-2 rounded-full bg-green-500" />
-                )}
-              </DropdownMenuItem>
-            ))}
+            <DropdownMenuItem
+              onClick={() => setTheme("light")}
+              className="cursor-pointer flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Sun className="size-4" />
+                <span>Sáng</span>
+              </div>
+              {theme === "light" && (
+                <span className="size-2 rounded-full bg-green-500" />
+              )}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setTheme("dark")}
+              className="cursor-pointer flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Moon className="size-4" />
+                <span>Tối</span>
+              </div>
+              {theme === "dark" && (
+                <span className="size-2 rounded-full bg-green-500" />
+              )}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setTheme("system")}
+              className="cursor-pointer flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Monitor className="size-4" />
+                <span>Hệ thống</span>
+              </div>
+              {theme === "system" && (
+                <span className="size-2 rounded-full bg-green-500" />
+              )}
+            </DropdownMenuItem>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer">
               Đăng xuất

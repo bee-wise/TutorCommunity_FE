@@ -7,7 +7,7 @@ const roleRoutes = {
   LEARNER: ["/lms/learner"],
 } as const;
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   //   const token = request.cookies.get("accessToken")?.value;
   //   const role = request.cookies.get("role")?.value;
   const token = true;
