@@ -116,7 +116,7 @@ export function TutorGuideHero() {
               className="flex flex-col sm:flex-row gap-3"
             >
               <Link
-                href="/register/tutor"
+                href="/register"
                 id="hero-cta-register"
                 className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-accent px-8 text-sm font-bold text-accent-foreground transition-all duration-200 hover:bg-highlight active:scale-[0.98] shadow-lg shadow-accent/25 whitespace-nowrap"
                 style={{ fontFamily: "var(--font-montserrat)" }}

@@ -56,7 +56,7 @@ export function TutorGuideCta() {
           </p>
 
           <Link
-            href="/register/tutor"
+            href="/register"
             id="cta-final-register"
             className="mt-2 inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-accent px-10 text-sm font-bold text-accent-foreground transition-all duration-200 hover:bg-highlight active:scale-[0.98] shadow-xl shadow-accent/30 whitespace-nowrap"
             style={{ fontFamily: "var(--font-montserrat)" }}
