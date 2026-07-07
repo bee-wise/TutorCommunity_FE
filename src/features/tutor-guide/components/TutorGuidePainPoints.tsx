@@ -32,7 +32,7 @@ const PAIN_POINTS = [
 export function TutorGuidePainPoints() {
   return (
     <section
-      className="py-20 sm:py-24 bg-white h-screen flex items-center"
+      className="py-20 sm:py-24 bg-background h-screen flex items-center"
       aria-labelledby="pain-points-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

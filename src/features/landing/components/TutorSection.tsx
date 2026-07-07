@@ -12,38 +12,15 @@ export function TutorSection() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="order-2 lg:order-1 relative hidden lg:block">
-            <div className="relative w-full aspect-3/4 max-w-sm mx-auto rounded-2xl overflow-hidden shadow-2xl">
+          <div className="order-2 lg:order-1 relative hidden lg:flex justify-center items-center w-full">
+            <div className="relative w-full max-w-[540px] aspect-square mx-auto">
               <Image
-                src="/images/BeeWiseTeam.JPG"
-                alt="Gia sư BeeWise tự tin với máy tính xách tay, sẵn sàng kết nối với học viên"
+                src="/images/Banner/Poster-2.svg"
+                alt="Quyền lợi dành cho gia sư BeeWise"
                 fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 0px, 33vw"
-                objectFit="cover"
+                className="object-contain drop-shadow-2xl rounded-4xl hover:scale-[1.02] transition-transform duration-500"
+                sizes="(max-width: 1024px) 0px, 50vw"
               />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to top, rgba(40,15,145,0.25) 0%, transparent 50%)",
-                }}
-              />
-            </div>
-
-            <div className="absolute -top-4 left-50 bg-secondary text-white rounded-2xl px-5 py-3 shadow-xl">
-              <p
-                className="text-sm leading-none"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 700,
-                }}
-              >
-                Hồ sơ xác thực
-              </p>
-              <p className="text-white/70 text-xs mt-1">
-                Tăng uy tín với học viên
-              </p>
             </div>
           </div>
 
@@ -88,7 +65,7 @@ export function TutorSection() {
             <Link
               href="/tutor-guide"
               id="tutor-cta"
-              className="self-start inline-flex h-12 items-center justify-center rounded-full bg-secondary px-8 text-sm font-semibold text-white transition-all duration-200 hover:bg-secondary/90 active:scale-[0.98] shadow-lg shadow-secondary/25"
+              className="self-start inline-flex h-12 items-center justify-center rounded-full bg-secondary px-8 text-sm font-semibold text-secondary-foreground transition-all duration-200 hover:bg-secondary/90 active:scale-[0.98] shadow-lg shadow-secondary/25"
             >
               Tìm hiểu ngay
             </Link>

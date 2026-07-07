@@ -25,7 +25,7 @@ export function TutorGuideSteps() {
   return (
     <section
       id="how-to-register"
-      className="py-20 sm:py-24 bg-white"
+      className="py-20 sm:py-24 bg-background"
       aria-labelledby="steps-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -83,11 +83,10 @@ export function TutorGuideSteps() {
                 >
                   {/* Number badge */}
                   <div
-                    className="relative z-10 shrink-0 w-12 h-12 rounded-full flex items-center justify-center border-2"
+                    className="relative z-10 shrink-0 w-12 h-12 rounded-full flex items-center justify-center border-2 bg-background"
                     style={{
-                      background: "#ffffff",
                       borderColor:
-                        i === 0 ? "#280f91" : i === 1 ? "#447353" : "#ffc500",
+                        i === 0 ? "var(--primary)" : i === 1 ? "var(--secondary)" : "var(--accent)",
                     }}
                   >
                     <span
@@ -96,7 +95,7 @@ export function TutorGuideSteps() {
                         fontFamily: "var(--font-montserrat)",
                         fontWeight: 800,
                         color:
-                          i === 0 ? "#280f91" : i === 1 ? "#447353" : "#905b0f",
+                          i === 0 ? "var(--primary)" : i === 1 ? "var(--secondary)" : "var(--accent)",
                       }}
                     >
                       {step.number}

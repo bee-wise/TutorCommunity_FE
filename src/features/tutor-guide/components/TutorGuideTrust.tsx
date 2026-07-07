@@ -18,8 +18,7 @@ const TRUST_ITEMS = [
 export function TutorGuideTrust() {
   return (
     <section
-      className="py-20 sm:py-24"
-      style={{ background: "linear-gradient(180deg, #f0f4ff 0%, #e8f0fe 100%)" }}
+      className="py-20 sm:py-24 bg-gradient-to-b from-muted/50 to-background"
       aria-labelledby="trust-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +51,7 @@ export function TutorGuideTrust() {
                 return (
                   <div
                     key={item.id}
-                    className="flex items-center gap-3 rounded-2xl border border-border bg-white p-4 shadow-sm hover:border-secondary/25 hover:shadow-md transition-all duration-200"
+                    className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm hover:border-secondary/25 hover:shadow-md transition-all duration-200"
                   >
                     <div
                       className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"

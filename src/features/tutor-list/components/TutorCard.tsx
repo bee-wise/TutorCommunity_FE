@@ -78,7 +78,7 @@ export function TutorCard({
 
   return (
     <article
-      className={`group relative flex flex-col h-full rounded-2xl border bg-white overflow-hidden transition-all duration-250 hover:-translate-y-1 hover:shadow-xl ${
+      className={`group relative flex flex-col h-full rounded-2xl border bg-card overflow-hidden transition-all duration-250 hover:-translate-y-1 hover:shadow-xl ${
         isBestMatch
           ? "border-primary/40 shadow-lg shadow-primary/5 hover:border-primary/60 hover:shadow-primary/15"
           : "border-border hover:shadow-primary/10 hover:border-primary/20"
@@ -87,7 +87,7 @@ export function TutorCard({
     >
       {isBestMatch && (
         <div
-          className="absolute top-0 left-0 bg-linear-to-r from-[#280f91] to-[#3b82f6] text-white text-[10px] font-bold px-3 py-1 rounded-br-xl z-20 flex items-center gap-1 shadow-sm"
+          className="absolute top-0 left-0 bg-linear-to-r from-primary to-blue-500 text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-br-xl z-20 flex items-center gap-1 shadow-sm"
           style={{ fontFamily: "var(--font-montserrat)" }}
         >
           <SparkleIcon size={12} weight="fill" /> Phù hợp nhất
@@ -125,7 +125,7 @@ export function TutorCard({
                 <CheckCircleIcon
                   size={16}
                   weight="fill"
-                  className="text-secondary shrink-0 mt-0.5"
+                  className="text-secondary dark:text-accent shrink-0 mt-0.5"
                   aria-label="Đã xác thực"
                 />
               )}
@@ -205,7 +205,7 @@ export function TutorCard({
           <Link
             href={`/tutors/${tutor.id}`}
             id={`tutor-card-cta-${tutor.id}`}
-            className="shrink-0 inline-flex h-8 items-center justify-center rounded-full bg-primary px-4 text-xs font-bold text-white transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] whitespace-nowrap"
+            className="shrink-0 inline-flex h-8 items-center justify-center rounded-full bg-primary px-4 text-xs font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] whitespace-nowrap"
             style={{ fontFamily: "var(--font-montserrat)" }}
           >
             Xem hồ sơ
@@ -214,7 +214,7 @@ export function TutorCard({
           <Link
             href={`/tutors/${tutor.id}`}
             id={`tutor-card-view-${tutor.id}`}
-            className="shrink-0 inline-flex h-8 items-center justify-center rounded-full border border-primary px-4 text-xs font-bold text-primary transition-all duration-200 hover:bg-primary hover:text-white active:scale-[0.98] whitespace-nowrap"
+            className="shrink-0 inline-flex h-8 items-center justify-center rounded-full border border-primary px-4 text-xs font-bold text-primary transition-all duration-200 hover:bg-primary hover:text-primary-foreground active:scale-[0.98] whitespace-nowrap"
             style={{ fontFamily: "var(--font-montserrat)" }}
           >
             Xem hồ sơ

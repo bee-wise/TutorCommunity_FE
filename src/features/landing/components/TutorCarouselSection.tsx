@@ -132,7 +132,7 @@ export function TutorCarouselSection() {
     // @ts-expect-error – motion.section / div union
     <Wrapper
       {...wrapperProps}
-      className="relative py-20 sm:py-24 overflow-hidden bg-white"
+      className="relative py-20 sm:py-24 overflow-hidden bg-background"
       aria-labelledby="tutor-carousel-headline"
     >
       <div
@@ -152,7 +152,7 @@ export function TutorCarouselSection() {
               className="text-2xl sm:text-4xl text-primary leading-tight"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
-              Kết nối với Gia Sư <span className="text-[#FFC500]">Nổi Bật</span>
+              Kết nối với Gia Sư <span className="text-accent">Nổi Bật</span>
             </h2>
             <p className="text-foreground/55 text-sm sm:text-base max-w-[48ch]">
               Hơn 500 gia sư đã xác thực đang chờ kết nối với bạn.
@@ -163,18 +163,18 @@ export function TutorCarouselSection() {
             <button
               onClick={() => carouselRef.current?.prev()}
               aria-label="Gia sư trước"
-              className="w-10 h-10 rounded-full border border-[#dce8fb] flex items-center justify-center
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center
                 text-primary transition-all duration-200
-                hover:bg-primary hover:text-white hover:border-primary"
+                hover:bg-primary hover:text-primary-foreground hover:border-primary"
             >
               <CaretLeftIcon size={18} weight="bold" aria-hidden="true" />
             </button>
             <button
               onClick={() => carouselRef.current?.next()}
               aria-label="Gia sư tiếp theo"
-              className="w-10 h-10 rounded-full border border-[#dce8fb] flex items-center justify-center
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center
                 text-primary transition-all duration-200
-                hover:bg-primary hover:text-white hover:border-primary"
+                hover:bg-primary hover:text-primary-foreground hover:border-primary"
             >
               <CaretRightIcon size={18} weight="bold" aria-hidden="true" />
             </button>
@@ -209,12 +209,8 @@ export function TutorCarouselSection() {
             aria-selected={i === activeIndex}
             aria-label={`Xem gia sư ${tutor.name}`}
             onClick={() => carouselRef.current?.goTo(i)}
-            className="rounded-full transition-all duration-300"
-            style={{
-              width: i === activeIndex ? 24 : 8,
-              height: 8,
-              background: i === activeIndex ? "#280F91" : "rgba(40,15,145,0.2)",
-            }}
+            className={`rounded-full transition-all duration-300 ${i === activeIndex ? "w-6 bg-primary" : "w-2 bg-primary/20"}`}
+            style={{ height: 8 }}
           />
         ))}
       </div>

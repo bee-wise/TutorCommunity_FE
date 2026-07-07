@@ -1,10 +1,22 @@
+"use client";
+
+import Image from "next/image";
+import { useRef } from "react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import {
   Clock,
   ShieldWarning,
   ChatCircleDots,
   MagnifyingGlass,
-} from "@phosphor-icons/react/dist/ssr";
+} from "@phosphor-icons/react";
 import { PAIN_POINTS } from "../data/landing.data";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const ICON_MAP = {
   Clock,
@@ -16,48 +28,95 @@ const ICON_MAP = {
 type IconKey = keyof typeof ICON_MAP;
 
 export function PainPointSection() {
+  const containerRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const bubbles = gsap.utils.toArray(".painpoint-bubble");
+
+      gsap.set(bubbles, { scale: 0, autoAlpha: 0, transformOrigin: "50% 50%" });
+
+      ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top 75%",
+        onEnter: () => {
+          bubbles.forEach((bubble, i) => {
+            const delay = i * 0.15 + gsap.utils.random(-0.05, 0.05);
+
+            gsap.to(bubble as Element, {
+              scale: 1,
+              autoAlpha: 1,
+              duration: 0.6,
+              ease: "back.out(1.5)",
+              delay: delay,
+            });
+          });
+        },
+        once: true,
+      });
+    },
+    { scope: containerRef },
+  );
+
   return (
     <section
-      className="bg-white py-20 sm:py-24"
+      ref={containerRef}
+      className="relative bg-background py-20 sm:py-28 overflow-hidden min-h-[800px] flex items-center"
       id="pain-points"
       aria-labelledby="pain-headline"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mb-14">
-          <h2
-            id="pain-headline"
-            className="text-3xl sm:text-4xl tracking-tight mb-4 text-primary"
-            style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
-          >
-            Tìm Gia Sư Đôi Khi Khó Hơn Bạn Nghĩ
-          </h2>
-          <p className="text-foreground/60 leading-relaxed">
-            Có lẽ bạn đã từng gặp một trong những tình huống này.
-          </p>
-        </div>
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/Banner/Painpoint-1.svg"
+          alt="Painpoints Background"
+          fill
+          className="object-contain lg:object-right opacity-30 lg:opacity-100"
+          priority
+        />
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {PAIN_POINTS.map((point) => {
-            const Icon = ICON_MAP[point.icon as IconKey];
-            return (
-              <div
-                key={point.id}
-                className="flex gap-4 p-6 rounded-2xl bg-muted border border-border hover:border-primary/30 transition-colors"
-              >
-                <div className="shrink-0 w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center">
-                  <Icon
-                    size={20}
-                    weight="duotone"
-                    className="text-primary"
-                    aria-hidden="true"
-                  />
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="hidden lg:block"></div>
+
+          {/* Cột phải (Bubbles) - Dàn 2 cột 2 dòng căn đều */}
+          <div className="hidden sm:grid grid-cols-2 gap-8 w-full h-[600px] place-content-center">
+            {PAIN_POINTS.map((point) => {
+              const Icon = ICON_MAP[point.icon as IconKey];
+              return (
+                <div
+                  key={point.id}
+                  className="painpoint-bubble p-5 rounded-3xl bg-card/85 backdrop-blur-xl border border-border shadow-2xl flex gap-4 max-w-[320px] place-self-center"
+                >
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Icon size={24} weight="duotone" className="text-primary" />
+                  </div>
+                  <p className="text-sm text-foreground/85 leading-relaxed font-medium">
+                    {point.text}
+                  </p>
                 </div>
-                <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-                  {point.text}
-                </p>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:hidden relative z-10 mt-8">
+            {PAIN_POINTS.map((point) => {
+              const Icon = ICON_MAP[point.icon as IconKey];
+              return (
+                <div
+                  key={point.id}
+                  className="painpoint-bubble p-5 rounded-3xl bg-card/90 backdrop-blur-xl border border-border shadow-xl flex gap-4"
+                >
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Icon size={24} weight="duotone" className="text-primary" />
+                  </div>
+                  <p className="text-sm text-foreground/90 leading-relaxed font-medium">
+                    {point.text}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

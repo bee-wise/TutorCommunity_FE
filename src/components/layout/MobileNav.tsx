@@ -48,7 +48,7 @@ export function MobileNav({ links }: Props) {
         onClick={() => setOpen((prev) => !prev)}
         aria-label={open ? "Đóng menu" : "Mở menu"}
         aria-expanded={open}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-primary-foreground hover:bg-white/10 transition-colors"
       >
         {open ? (
           <X size={18} weight="bold" />
@@ -58,7 +58,7 @@ export function MobileNav({ links }: Props) {
       </button>
 
       {open && (
-        <div className="absolute top-10 right-0 z-80 w-56 bg-[#1c0a64] border border-white/10 rounded-2xl px-4 py-4 flex flex-col gap-3 shadow-2xl shadow-[#280F91]/40">
+        <div className="absolute top-10 right-0 z-80 w-56 bg-primary border border-white/10 rounded-2xl px-4 py-4 flex flex-col gap-3 shadow-2xl shadow-primary/40">
           {links.map((link) => {
             const isActive =
               link.href === "/"
@@ -71,7 +71,7 @@ export function MobileNav({ links }: Props) {
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className={`text-sm font-medium transition-colors py-1 ${
-                  isActive ? "text-accent" : "text-white/80 hover:text-white"
+                  isActive ? "text-accent" : "text-primary-foreground opacity-80 hover:opacity-100"
                 }`}
               >
                 {link.label}
@@ -81,7 +81,7 @@ export function MobileNav({ links }: Props) {
           <Link
             href="/login"
             onClick={() => setOpen(false)}
-            className="text-sm font-medium text-white/70 hover:text-white transition-colors py-1 border-t border-white/10 pt-3"
+            className="text-sm font-medium text-primary-foreground opacity-70 hover:opacity-100 transition-colors py-1 border-t border-white/10 pt-3"
           >
             Đăng Nhập
           </Link>
