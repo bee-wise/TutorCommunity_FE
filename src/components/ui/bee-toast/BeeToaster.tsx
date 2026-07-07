@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { CheckCircle, XCircle, Warning, Info, X } from "@phosphor-icons/react";
@@ -159,8 +159,13 @@ export function BeeToaster({
   defaultPosition?: ToastPosition;
 }) {
   const toasts = useToastStore((s) => s.toasts);
+  const [mounted, setMounted] = useState(false);
 
-  if (typeof window === "undefined") return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <>

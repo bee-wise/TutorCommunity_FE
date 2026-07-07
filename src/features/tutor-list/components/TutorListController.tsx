@@ -220,7 +220,9 @@ export function TutorListController({
       setAiReason(undefined);
 
       if (!query.trim()) {
-        setTutors(mode === "manual" ? simulateManualSearch("", filters) : MOCK_TUTORS);
+        setTutors(
+          mode === "manual" ? simulateManualSearch("", filters) : MOCK_TUTORS,
+        );
         return;
       }
 
@@ -266,6 +268,10 @@ export function TutorListController({
       initialSearchDone.current = true;
       if (initMode === "ai" && initQuery) {
         handleSearch(initQuery, "ai");
+      }
+      // Xóa param trên URL để khi người dùng f5 không bị chạy lại AI mode loading
+      if (window.location.search) {
+        window.history.replaceState({}, "", window.location.pathname);
       }
     }
   }, [initMode, initQuery, handleSearch]);

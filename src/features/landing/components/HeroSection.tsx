@@ -108,17 +108,6 @@ export function HeroSection() {
                   Tìm kiếm thủ công
                 </Link>
               </div>
-              <Button
-                onClick={() => {
-                  toast.success("Hehehe", {
-                    description: "HAHAHAH",
-                    duration: 5000,
-                    position: "top-right",
-                  });
-                }}
-              >
-                Toast
-              </Button>
             </div>
           </HeroMotion>
 
