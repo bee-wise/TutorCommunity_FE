@@ -57,8 +57,7 @@ const FEATURES = [
 export function TutorGuideFeatures() {
   return (
     <section
-      className="py-20 sm:py-24"
-      style={{ background: "#f0f4ff" }}
+      className="py-20 sm:py-24 bg-muted"
       aria-labelledby="features-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,7 +73,7 @@ export function TutorGuideFeatures() {
             }}
           >
             BeeWise giúp gia sư{" "}
-            <span className="text-primary">tập trung vào việc giảng dạy</span>
+            <span className="text-accent">tập trung vào việc giảng dạy</span>
           </h2>
           <p className="text-foreground/60 leading-relaxed max-w-[52ch]">
             Chúng tôi lo phần còn lại — từ kết nối học viên đến quản lý lớp học
@@ -85,12 +84,7 @@ export function TutorGuideFeatures() {
         {/* Bento grid: 2-col on desktop, varied heights */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Card 0: No fee — tall with accent bar */}
-          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-white overflow-hidden group hover:shadow-lg hover:shadow-primary/8 transition-all duration-300">
-            <div
-              className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl"
-              style={{ background: "#280f91" }}
-              aria-hidden="true"
-            />
+          <div className="relative rounded-3xl p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-primary/40 transition-all duration-300">
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
               style={{ background: "rgba(40,15,145,0.1)" }}
@@ -130,7 +124,7 @@ export function TutorGuideFeatures() {
           </div>
 
           {/* Card 1: AI — dark primary with sticker visual */}
-          <div className="relative rounded-3xl p-8 flex flex-col gap-5 bg-primary overflow-hidden group hover:shadow-xl hover:shadow-primary/40 transition-all duration-300">
+          <div className="relative rounded-3xl p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-primary/40 transition-all duration-300">
             {/* Sticker floated to corner */}
             <div
               className="absolute -right-8 -bottom-6 w-44 h-44 pointer-events-none select-none"
@@ -153,7 +147,7 @@ export function TutorGuideFeatures() {
             </div>
             <div className="flex flex-col gap-3 relative z-10">
               <h3
-                className="text-xl text-white leading-snug"
+                className="text-xl text-foreground leading-snug"
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 800,
@@ -161,7 +155,7 @@ export function TutorGuideFeatures() {
               >
                 {FEATURES[1].title}
               </h3>
-              <p className="text-white/65 leading-relaxed text-sm sm:text-base max-w-[36ch]">
+              <p className="text-foreground/60 leading-relaxed text-sm sm:text-base max-w-[36ch]">
                 {FEATURES[1].body}
               </p>
             </div>
@@ -179,11 +173,7 @@ export function TutorGuideFeatures() {
           </div>
 
           {/* Card 2: Support — with secondary color accent */}
-          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-white overflow-hidden group hover:shadow-lg hover:shadow-secondary/10 transition-all duration-300">
-            <div
-              className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-secondary"
-              aria-hidden="true"
-            />
+          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-primary/40 transition-all duration-300">
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
               style={{ background: "rgba(68,115,83,0.1)" }}
@@ -222,12 +212,7 @@ export function TutorGuideFeatures() {
           </div>
 
           {/* Card 3: Dashboard — with list of tracking items */}
-          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-white overflow-hidden group hover:shadow-lg hover:shadow-primary/8 transition-all duration-300">
-            <div
-              className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl"
-              style={{ background: "#ffc500" }}
-              aria-hidden="true"
-            />
+          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-primary/40 transition-all duration-300">
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
               style={{ background: "rgba(40,15,145,0.08)" }}

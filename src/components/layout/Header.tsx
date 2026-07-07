@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { MobileNav } from "./MobileNav";
+import { ThemeToggle } from "@/src/components/ThemeToggle";
 
 interface HeaderProps {
   NAV_LINKS: { label: string; href: string }[];
@@ -50,19 +51,17 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
         transition={{ duration: isReady ? 0.4 : 0, ease: [0.22, 1, 0.36, 1] }}
         className={
           scrolled
-            ? "mt-3 rounded-full shadow-xl shadow-[#280F91]/20 border border-white/10 overflow-visible"
-            : "w-full overflow-visible"
+            ? "mt-3 rounded-full shadow-xl shadow-primary/20 border border-white/10 overflow-visible bg-primary dark:bg-glass supports-backdrop-filter:bg-primary/80"
+            : "w-full overflow-visible bg-primary dark:bg-glass"
         }
         style={
           scrolled
             ? {
-                background: "rgba(28, 10, 100, 0.95)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                width: "min(780px, calc(100vw - 2rem))",
+                width: "min(1300px, calc(100vw - 2rem))",
               }
             : {
-                background: "#280F91",
                 width: "100%",
               }
         }
@@ -110,14 +109,17 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
               const isActive =
                 link.href === "/"
                   ? pathname === "/"
-                  : pathname === link.href || pathname?.startsWith(link.href + "/");
-              
+                  : pathname === link.href ||
+                    pathname?.startsWith(link.href + "/");
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm font-bold transition-colors duration-200 ${
-                    isActive ? "text-accent" : "text-white/70 hover:text-accent"
+                  className={`text-sm md:text-[16px] font-bold font-google-sans transition-colors duration-200 ${
+                    isActive
+                      ? "text-accent"
+                      : "text-primary-foreground dark:text-primary hover:text-accent"
                   }`}
                 >
                   {link.label}
@@ -127,6 +129,11 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
           </nav>
 
           <div className="flex items-center gap-3">
+            {!scrolled && (
+              <div className="hidden md:block">
+                <ThemeToggle />
+              </div>
+            )}
             <Link
               href="/login"
               className="hidden md:inline-flex text-sm font-bold text-white/70 hover:text-accent transition-colors"
@@ -137,7 +144,7 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
               <Link
                 href="/tutors"
                 id="nav-cta"
-                className="inline-flex h-8 items-center justify-center rounded-full bg-[#FFC500] px-4 text-xs font-bold text-[#0C0C0B] transition-all duration-200 hover:bg-[#FADC76] active:scale-[0.98] whitespace-nowrap"
+                className="inline-flex h-8 items-center justify-center rounded-full bg-accent px-4 text-xs font-bold text-accent-foreground transition-all duration-200 hover:bg-highlight active:scale-[0.98] whitespace-nowrap"
               >
                 Tìm Gia Sư
               </Link>

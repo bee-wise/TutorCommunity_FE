@@ -1,36 +1,34 @@
 import { SOLUTION_FEATURES } from "../data/landing.data";
 import { SolutionMotion } from "./SolutionMotion";
+import { HeroVisual } from "./HeroVisual";
 
 const CELL_STYLES: Record<string, string> = {
-  primary: "bg-[#280F91] text-white col-span-1 sm:col-span-2",
-  secondary: "bg-[#447353] text-white",
-  neutral: "bg-[#f0f4ff] text-[#0C0C0B] border border-[#dce8fb]",
-  accent: "bg-[#FFC500] text-[#0C0C0B]",
+  primary: "bg-primary text-primary-foreground col-span-1 sm:col-span-2",
+  secondary: "bg-secondary text-secondary-foreground",
+  neutral: "bg-muted text-foreground border border-border",
+  accent: "bg-accent text-accent-foreground",
 };
 
 export function SolutionSection() {
   return (
     <section
-      className="bg-white py-20 sm:py-24"
+      className="bg-background py-20 sm:py-24"
       id="solutions"
       aria-labelledby="solution-headline"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          <div className="max-w-xl lg:sticky lg:top-32">
-            <h2
-              id="solution-headline"
-              className="text-3xl sm:text-4xl tracking-tight text-primary mb-4"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Cột trái (Sticky) - Chỉ hiển thị trên Desktop */}
+          <div className="hidden lg:flex flex-col max-w-xl sticky top-32 justify-center w-full">
+            <div
+              className="w-full max-w-[420px] mx-auto origin-top"
+              style={{ transform: "scale(0.95)" }}
             >
-              BeeWise Giúp Việc Tìm Gia Sư Trở Nên Đơn Giản Hơn
-            </h2>
-            <p className="text-[#0C0C0B]/60 leading-relaxed">
-              Bốn tính năng cốt lõi được thiết kế để giải quyết đúng vấn đề bạn
-              đang gặp phải.
-            </p>
+              <HeroVisual />
+            </div>
           </div>
 
+          {/* Cột phải (Danh sách tính năng) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-[minmax(200px,auto)]">
             {SOLUTION_FEATURES.map((feature, index) => (
               <SolutionMotion key={feature.id} index={index}>
@@ -47,21 +45,23 @@ export function SolutionSection() {
                     >
                       {feature.title}
                     </h3>
-                    <p
-                      className={`text-sm leading-relaxed ${
-                        feature.variant === "neutral"
-                          ? "text-[#0C0C0B]/65"
-                          : feature.variant === "accent"
-                            ? "text-[#0C0C0B]/70"
-                            : "text-white/75"
-                      }`}
-                    >
+                    <p className="text-sm leading-relaxed opacity-80">
                       {feature.description}
                     </p>
                   </div>
                 </div>
               </SolutionMotion>
             ))}
+
+            {/* HeroVisual hiển thị trên Mobile/Tablet ở cuối danh sách tính năng */}
+            <div className="lg:hidden sm:col-span-2 mt-8 flex justify-center w-full">
+              <div
+                className="w-full max-w-[400px] mx-auto origin-top"
+                style={{ transform: "scale(0.9)" }}
+              >
+                <HeroVisual />
+              </div>
+            </div>
           </div>
         </div>
       </div>

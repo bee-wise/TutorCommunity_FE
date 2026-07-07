@@ -192,7 +192,7 @@ function StatBadge({
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
       className={`absolute z-30 flex items-center gap-2.5 rounded-2xl px-4 py-2.5
-        border border-white/15 shadow-lg shadow-[#280F91]/20 ${className}`}
+        border border-white/15 shadow-lg shadow-primary/20 ${className}`}
       style={{
         background: "rgba(28, 10, 100, 0.55)",
         backdropFilter: "blur(14px)",

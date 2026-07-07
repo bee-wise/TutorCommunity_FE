@@ -44,7 +44,7 @@ export function HowItWorksSection() {
   return (
     <section
       ref={sectionRef}
-      className="bg-background py-20 sm:py-24"
+      className="bg-background py-20 sm:py-24 h-screen"
       id="how-it-works"
       aria-labelledby="how-headline"
     >
@@ -97,7 +97,7 @@ export function HowItWorksSection() {
                 transition={{ duration: 0.4, delay: index * 0.15 + 0.1 }}
               >
                 <span
-                  className="text-2xl text-white leading-none"
+                  className="text-2xl text-primary-foreground leading-none"
                   style={{
                     fontFamily: "var(--font-montserrat)",
                     fontWeight: 800,

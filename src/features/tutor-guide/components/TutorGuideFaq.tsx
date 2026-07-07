@@ -88,7 +88,7 @@ export function TutorGuideFaq() {
 
   return (
     <section
-      className="py-20 sm:py-24 bg-white"
+      className="py-20 sm:py-24 bg-background"
       aria-labelledby="faq-heading"
     >
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">

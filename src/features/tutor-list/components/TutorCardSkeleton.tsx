@@ -2,7 +2,7 @@
 export function TutorCardSkeleton() {
   return (
     <div
-      className="relative flex flex-col h-full rounded-2xl border border-border bg-white overflow-hidden animate-pulse"
+      className="relative flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden animate-pulse"
       aria-hidden="true"
     >
       {/* Top accent bar */}

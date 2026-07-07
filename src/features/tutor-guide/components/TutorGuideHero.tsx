@@ -67,11 +67,10 @@ export function TutorGuideHero() {
                 delay: 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="text-white tracking-tight leading-[1.05]"
+              className="text-white text-[2rem] sm:text-5xl lg:text-[2.3rem] leading-[1.5] tracking-tight "
               style={{
                 fontFamily: "var(--font-montserrat)",
                 fontWeight: 800,
-                fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
               }}
             >
               Đăng Ký Làm Gia Sư BeeWise
@@ -85,6 +84,7 @@ export function TutorGuideHero() {
               >
                 Không Phí Nhận Lớp,
               </span>{" "}
+              <br />
               <span className="text-white/80">Tăng Thu Nhập Bền Vững</span>
             </motion.h1>
 
@@ -118,7 +118,7 @@ export function TutorGuideHero() {
               <Link
                 href="/register/tutor"
                 id="hero-cta-register"
-                className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-accent px-8 text-sm font-bold text-[#0c0c0b] transition-all duration-200 hover:bg-[#fadc76] active:scale-[0.98] shadow-lg shadow-accent/25 whitespace-nowrap"
+                className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-accent px-8 text-sm font-bold text-accent-foreground transition-all duration-200 hover:bg-highlight active:scale-[0.98] shadow-lg shadow-accent/25 whitespace-nowrap"
                 style={{ fontFamily: "var(--font-montserrat)" }}
               >
                 Đăng Ký Trở Thành Gia Sư
