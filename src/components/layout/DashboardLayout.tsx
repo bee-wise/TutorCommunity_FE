@@ -16,10 +16,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <AppSidebar />
         <div className="flex flex-col flex-1 w-full relative">
           <Topbar />
-          <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
-            <div className="mx-auto max-w-7xl w-full">
-              {children}
-            </div>
+          <main className="flex-1">
+            <div className="mx-auto max-w-7xl w-full">{children}</div>
           </main>
         </div>
       </div>

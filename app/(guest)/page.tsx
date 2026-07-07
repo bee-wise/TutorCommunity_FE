@@ -3,6 +3,7 @@ import { Header } from "@/src/components/layout/Header";
 import { Footer } from "@/src/components/layout/Footer";
 import { HeroSection } from "@/src/features/landing/components/HeroSection";
 import { PainPointSection } from "@/src/features/landing/components/PainPointSection";
+import { PosterSection } from "@/src/features/landing/components/PosterSection";
 import { SolutionSection } from "@/src/features/landing/components/SolutionSection";
 import { HowItWorksSection } from "@/src/features/landing/components/HowItWorksSection";
 import { TutorSection } from "@/src/features/landing/components/TutorSection";
@@ -53,6 +54,7 @@ export default function LandingPage() {
       <main id="main-content">
         <HeroSection />
         <PainPointSection />
+        <PosterSection />
         <SolutionSection />
         <HowItWorksSection />
         <TutorSection />

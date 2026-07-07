@@ -1,8 +1,19 @@
-﻿export default function LMSDashboard() {
+"use client";
+
+import { TutorVerificationDashboard } from "@/src/features/tutor-dashboard/components/TutorVerificationDashboard";
+import { useAuthStore } from "@/src/store/useAuthStore";
+
+export default function TutorDashboardPage() {
+  const user = useAuthStore((s) => s.user);
+  const isVerified = user?.isVerified !== false;
+
+  if (!isVerified) {
+    return <TutorVerificationDashboard />;
+  }
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Learning Management System</h1>
-      <p>Trang chủ dành cho Học viên và Gia sư.</p>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Dashboard Gia sư</h1>
     </div>
   );
 }

@@ -12,7 +12,7 @@ const CELL_STYLES: Record<string, string> = {
 export function SolutionSection() {
   return (
     <section
-      className="bg-background py-20 sm:py-24"
+      className="bg-background sm:py-24"
       id="solutions"
       aria-labelledby="solution-headline"
     >

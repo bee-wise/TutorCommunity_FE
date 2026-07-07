@@ -61,7 +61,7 @@ export function PainPointSection() {
   return (
     <section
       ref={containerRef}
-      className="relative bg-background py-20 sm:py-28 overflow-hidden min-h-[800px] flex items-center"
+      className="relative bg-background py-4 sm:py-28 overflow-hidden h-fit md:min-h-[500px] flex items-center"
       id="pain-points"
       aria-labelledby="pain-headline"
     >
@@ -70,12 +70,13 @@ export function PainPointSection() {
           src="/images/Banner/Painpoint-1.svg"
           alt="Painpoints Background"
           fill
-          className="object-contain lg:object-right opacity-30 lg:opacity-100"
+          sizes="100vw"
+          className="hidden sm:block object-contain lg:object-right opacity-30 lg:opacity-100"
           priority
         />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto w-full sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="hidden lg:block"></div>
 
@@ -99,23 +100,16 @@ export function PainPointSection() {
             })}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:hidden relative z-10 mt-8">
-            {PAIN_POINTS.map((point) => {
-              const Icon = ICON_MAP[point.icon as IconKey];
-              return (
-                <div
-                  key={point.id}
-                  className="painpoint-bubble p-5 rounded-3xl bg-card/90 backdrop-blur-xl border border-border shadow-xl flex gap-4"
-                >
-                  <div className="shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Icon size={24} weight="duotone" className="text-primary" />
-                  </div>
-                  <p className="text-sm text-foreground/90 leading-relaxed font-medium">
-                    {point.text}
-                  </p>
-                </div>
-              );
-            })}
+          {/* Mobile version - Only Image */}
+          <div className="block sm:hidden relative z-10 w-full mt-0">
+            <Image
+              src="/images/Banner/Paintpoint-2.png"
+              alt="Painpoints Mobile"
+              width={800}
+              height={1200}
+              className="w-full h-auto object-contain"
+              priority
+            />
           </div>
         </div>
       </div>

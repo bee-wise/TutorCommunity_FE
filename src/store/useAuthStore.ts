@@ -8,6 +8,7 @@ export interface UserProfile {
   email: string;
   avatarUrl?: string;
   role: UserRole;
+  isVerified?: boolean;
 }
 
 interface AuthState {
@@ -26,6 +27,7 @@ const MOCK_USERS: Record<UserRole, UserProfile> = {
     email: "learner@beewise.vn",
     role: "LEARNER",
     avatarUrl: "https://i.pravatar.cc/150?u=learner",
+    isVerified: true,
   },
   TUTOR: {
     id: "user-tutor-1",
@@ -33,6 +35,7 @@ const MOCK_USERS: Record<UserRole, UserProfile> = {
     email: "tutor@beewise.vn",
     role: "TUTOR",
     avatarUrl: "https://i.pravatar.cc/150?u=tutor",
+    isVerified: false,
   },
   CONSULTANT: {
     id: "user-consultant-1",
