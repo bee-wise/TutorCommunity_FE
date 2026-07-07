@@ -21,7 +21,7 @@ export function PosterSection() {
         />
       </div>
       {/* Mobile version */}
-      <div className="block sm:hidden relative w-full leading-[0]">
+      <div className="block sm:hidden relative w-full leading-0">
         <Image
           src="/images/Banner/Banner-2.png"
           alt="BeeWise Highlights Mobile"
