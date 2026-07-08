@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
   // const role = request.cookies.get("role")?.value;
 
   const token = true;
-  const role = "TUTOR";
+  const role = "LEARNER";
 
   const pathname = request.nextUrl.pathname;
 

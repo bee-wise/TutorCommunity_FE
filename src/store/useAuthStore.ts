@@ -55,7 +55,7 @@ const MOCK_USERS: Record<UserRole, UserProfile> = {
 
 export const useAuthStore = create<AuthState>((set) => ({
   // Default logged in as LEARNER for development
-  user: MOCK_USERS.TUTOR,
+  user: MOCK_USERS.LEARNER,
   isAuthenticated: true,
 
   login: (user) => set({ user, isAuthenticated: true }),

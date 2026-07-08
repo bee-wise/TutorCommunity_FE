@@ -33,8 +33,7 @@ import {
 
 export function Topbar() {
   const pathname = usePathname();
-  const { user, switchRole } = useAuthStore();
-  const { setTheme, theme } = useTheme();
+  const { user } = useAuthStore();
 
   // Simple breadcrumb generator based on pathname
   const paths = pathname.split("/").filter(Boolean);
@@ -108,47 +107,6 @@ export function Topbar() {
               <span className="text-xs text-muted-foreground">
                 {user?.email}
               </span>
-            </DropdownMenuItem>
-
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-xs text-muted-foreground font-normal uppercase">
-              Giao diện (Theme)
-            </DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => setTheme("light")}
-              className="cursor-pointer flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <Sun className="size-4" />
-                <span>Sáng</span>
-              </div>
-              {theme === "light" && (
-                <span className="size-2 rounded-full bg-green-500" />
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setTheme("dark")}
-              className="cursor-pointer flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <Moon className="size-4" />
-                <span>Tối</span>
-              </div>
-              {theme === "dark" && (
-                <span className="size-2 rounded-full bg-green-500" />
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setTheme("system")}
-              className="cursor-pointer flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <Monitor className="size-4" />
-                <span>Hệ thống</span>
-              </div>
-              {theme === "system" && (
-                <span className="size-2 rounded-full bg-green-500" />
-              )}
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />

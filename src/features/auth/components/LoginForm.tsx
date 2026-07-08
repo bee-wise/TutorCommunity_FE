@@ -8,10 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeSlash, ArrowRight } from "@phosphor-icons/react";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const {
     register,
@@ -27,6 +31,7 @@ export function LoginForm() {
     console.log("Login data:", data);
     await new Promise((r) => setTimeout(r, 1200));
     setIsLoading(false);
+    router.push(callbackUrl || "/");
   };
 
   return (
@@ -144,7 +149,7 @@ export function LoginForm() {
         <p className="text-center text-sm text-foreground/60 mt-2">
           Chưa có tài khoản?{" "}
           <Link
-            href="/register"
+            href={callbackUrl ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/register"}
             className="font-bold text-primary hover:text-primary/80 transition-colors"
           >
             Đăng ký ngay
