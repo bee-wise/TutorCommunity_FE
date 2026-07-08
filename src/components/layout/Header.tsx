@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { MobileNav } from "./MobileNav";
-import { ThemeToggle } from "@/src/components/ThemeToggle";
 
 interface HeaderProps {
   NAV_LINKS: { label: string; href: string }[];
@@ -130,11 +129,6 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
           </nav>
 
           <div className="flex items-center gap-3">
-            {!scrolled && (
-              <div className="hidden md:block">
-                <ThemeToggle />
-              </div>
-            )}
             <Link
               href="/login"
               className="hidden md:inline-flex text-sm font-bold text-white/70 hover:text-accent transition-colors"
