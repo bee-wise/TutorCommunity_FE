@@ -57,12 +57,12 @@ export function TutorPainpointSection() {
   return (
     <section
       ref={containerRef}
-      className="relative bg-[#f8f9fc] py-4 sm:py-28 overflow-hidden h-fit md:min-h-[500px] flex items-center"
+      className="relative bg-[#f8f9fc] pb-4 pt-4 sm:py-28 overflow-hidden h-fit md:min-h-[500px] flex items-center"
       id="tutor-pain-points"
       aria-labelledby="tutor-pain-headline"
     >
       {/* Desktop Background */}
-      <div className="absolute inset-0 z-0">
+      <div className="">
         <Image
           src="/images/Banner/Paintpoint-2.svg"
           alt="Tutor Painpoints Background"
@@ -84,12 +84,8 @@ export function TutorPainpointSection() {
                   key={point.id}
                   className="tutor-painpoint-bubble p-5 rounded-3xl bg-card/90 backdrop-blur-xl border border-border shadow-xl flex gap-4 max-w-[320px] place-self-center hover:border-secondary/20 hover:shadow-2xl transition-all duration-300"
                 >
-                  <div className="shrink-0 w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-                    <Icon
-                      size={24}
-                      weight="duotone"
-                      className="text-secondary"
-                    />
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <Icon size={24} weight="duotone" className="text-accent" />
                   </div>
                   <p className="text-sm text-foreground/85 leading-relaxed font-medium">
                     {point.text}
@@ -104,7 +100,7 @@ export function TutorPainpointSection() {
           {/* Mobile version - Only Image */}
           <div className="block sm:hidden relative z-10 w-full mt-0">
             <Image
-              src="/images/Banner/Paintpoint-2.png"
+              src="/images/Banner/Painpoint-3.png"
               alt="Tutor Painpoints Mobile"
               width={800}
               height={1200}

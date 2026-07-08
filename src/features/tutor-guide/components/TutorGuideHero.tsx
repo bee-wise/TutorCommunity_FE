@@ -59,7 +59,7 @@ export function TutorGuideHero() {
                 delay: 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="text-foreground dark:text-white text-[2rem] sm:text-5xl lg:text-[2.3rem] leading-[1.5] tracking-tight "
+              className="text-foreground dark:text-white text-[1.5rem] sm:text-5xl lg:text-[2.3rem] leading-normal tracking-tight "
               style={{
                 fontFamily: "var(--font-montserrat)",
                 fontWeight: 800,
@@ -161,8 +161,8 @@ export function TutorGuideHero() {
             }}
             className="hidden lg:flex justify-center items-center relative"
           >
-            <div className="relative w-[380px] h-[440px] rounded-3xl flex items-center justify-center bg-[rgba(255,255,255,0.6)] dark:bg-[rgba(255,243,203,0.20)] border border-[rgba(255,197,0,0.3)] dark:border-[rgba(255,255,255,0.12)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_32px_64px_rgba(255,197,0,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_32px_64px_rgba(0,0,0,0.3)] backdrop-blur-[24px]">
-              <div className="absolute -top-5 -left-6 rounded-2xl px-4 py-2.5 shadow-xl bg-white dark:bg-[#447353] border border-black/5 dark:border-white/15">
+            <div className="relative w-[500px] h-[440px] rounded-3xl flex items-center justify-center bg-[rgba(255,255,255,0.6)] dark:bg-[rgba(255,243,203,0.20)] border border-[rgba(255,197,0,0.3)] dark:border-[rgba(255,255,255,0.12)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_32px_64px_rgba(255,197,0,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_32px_64px_rgba(0,0,0,0.3)] backdrop-blur-[24px]">
+              <div className="absolute z-999 -top-5 -left-6 rounded-2xl px-4 py-2.5 shadow-xl bg-white dark:bg-[#447353] border border-black/5 dark:border-white/15">
                 <p
                   className="text-xs text-foreground/60 dark:text-white/80 leading-none mb-1"
                   style={{ fontFamily: "var(--font-montserrat)" }}
@@ -180,7 +180,7 @@ export function TutorGuideHero() {
                 </p>
               </div>
 
-              <div className="absolute -bottom-5 -right-6 rounded-2xl px-4 py-2.5 shadow-xl bg-white dark:bg-[#1a0a60] border border-black/5 dark:border-white/12">
+              <div className="absolute z-999 -bottom-5 -right-6 rounded-2xl px-4 py-2.5 shadow-xl bg-white dark:bg-[#1a0a60] border border-black/5 dark:border-white/12">
                 <p
                   className="text-xs text-foreground/60 dark:text-white/80 leading-none mb-1"
                   style={{ fontFamily: "var(--font-montserrat)" }}
@@ -198,15 +198,16 @@ export function TutorGuideHero() {
                 </p>
               </div>
 
-              <Image
-                src="/images/Sticker/E1-1.PNG"
-                alt="Bee với cây đũa phép - Đăng ký dễ dàng cùng BeeWise"
-                width={320}
-                height={320}
-                className="object-contain drop-shadow-2xl w-auto h-auto max-w-[320px]"
-                priority
-                sizes="320px"
-              />
+              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+                <Image
+                  src="/images/BeeWiseTeam-2.JPG"
+                  alt="Đội ngũ BeeWise"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 340px"
+                />
+              </div>
             </div>
           </motion.div>
         </div>
