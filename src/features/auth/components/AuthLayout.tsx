@@ -2,7 +2,7 @@
 import { Button } from "@/src/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -14,6 +14,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
     variant === "register"
       ? "/images/BeeWiseTeam-2.JPG"
       : "/images/BeeWiseTeam.JPG";
+  const router = useRouter();
 
   return (
     <div className="h-[100dvh] flex overflow-hidden">
@@ -66,9 +67,13 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
       </div>
 
       <div className="flex-1 relative flex items-center justify-center bg-background px-4 py-6 overflow-y-auto no-scrollbar">
-        <Link href={"/"} className="absolute top-40 left-5 md:top-2 md:left-2">
-          <Button variant={"outline"}>Trở về trang chủ</Button>
-        </Link>
+        <Button
+          className="absolute top-6 left-4 md:top-8 md:left-8 z-10"
+          variant={"outline"}
+          onClick={() => router.back()}
+        >
+          Quay lại
+        </Button>
 
         <div
           className="w-full max-w-[500px] rounded-2xl border border-border bg-card/60 backdrop-blur-xl

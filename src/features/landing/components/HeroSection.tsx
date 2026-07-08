@@ -6,8 +6,6 @@ import Link from "next/link";
 import { HeroMotion } from "./HeroMotion";
 import { HeroCarousel } from "./HeroCarousel";
 import { LightningIcon } from "@phosphor-icons/react";
-import { Button } from "@/src/components/ui/button";
-import { toast } from "@/src/components/ui/bee-toast";
 
 export function HeroSection() {
   const router = useRouter();
@@ -53,8 +51,9 @@ export function HeroSection() {
               </h1>
 
               <p className="text-base sm:text-lg text-foreground/60 leading-relaxed max-w-[50ch]">
-                Chỉ cần cho BeeWise biết bạn cần học gì. AI gợi ý gia sư phù hợp
-                nhất dựa trên nhu cầu, ngân sách và mục tiêu của bạn.
+                Tìm gia sư phù hợp hoặc bắt đầu hành trình trở thành gia sư tại
+                BeeWise - nền tảng cộng đồng gia sư giúp việc học và giảng dạy
+                trở nên dễ dàng, minh bạch và hiệu quả hơn.
               </p>
 
               <div

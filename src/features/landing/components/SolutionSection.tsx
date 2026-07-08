@@ -4,9 +4,7 @@ import { HeroVisual } from "./HeroVisual";
 
 const CELL_STYLES: Record<string, string> = {
   primary: "bg-primary text-primary-foreground col-span-1 sm:col-span-2",
-  secondary: "bg-secondary text-secondary-foreground",
-  neutral: "bg-muted text-foreground border border-border",
-  accent: "bg-accent text-accent-foreground",
+  accent: "bg-accent text-primary",
 };
 
 export function SolutionSection() {
@@ -37,9 +35,9 @@ export function SolutionSection() {
                 >
                   <div className="flex flex-col gap-3">
                     <h3
-                      className="leading-tight text-[1.5rem]"
+                      className="leading-tight uppercase text-[1.05rem]"
                       style={{
-                        fontFamily: "var(--font-montserrat)",
+                        fontFamily: "var(--font-google-sans)",
                         fontWeight: 700,
                       }}
                     >

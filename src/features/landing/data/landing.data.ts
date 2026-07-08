@@ -10,24 +10,48 @@ export const PAIN_POINTS: PainPoint[] = [
   {
     id: "time",
     icon: "Clock",
-    text: "Mất nhiều thời gian nhắn tin cho nhiều nơi nhưng vẫn chưa tìm được người phù hợp.",
+    text: "Tìm nhiều nơi chưa gặp gia sư phù hợp.",
   },
   {
     id: "trust",
     icon: "ShieldWarning",
-    text: "Không biết hồ sơ gia sư có đáng tin hay không, bằng cấp và kinh nghiệm khó kiểm chứng.",
+    text: "Khó kiểm chứng độ tin cậy của gia sư.",
   },
   {
     id: "support",
     icon: "ChatCircleDots",
-    text: "Sau khi kết nối thì gia sư phản hồi chậm hoặc ngừng liên lạc, không biết liên hệ ai để được hỗ trợ.",
+    text: "Gia sư phản hồi chậm, hỗ trợ không rõ ràng.",
   },
   {
     id: "choice",
     icon: "MagnifyingGlass",
-    text: "Có quá nhiều lựa chọn nhưng lại không biết ai mới thật sự phù hợp với nhu cầu của mình.",
+    text: "Nhiều lựa chọn nhưng khó chọn đúng người.",
   },
 ];
+
+export const TUTOR_PAIN_POINTS: PainPoint[] = [
+  {
+    id: "tutor-search",
+    icon: "MagnifyingGlass",
+    text: "Tìm kiếm học viên thụ động, kém hiệu quả.",
+  },
+  {
+    id: "tutor-price",
+    icon: "ShieldWarning",
+    text: "Bị chèn ép giá và mất tính chủ động.",
+  },
+  {
+    id: "tutor-credibility",
+    icon: "Star",
+    text: "Thiếu công cụ xây dựng uy tín cá nhân.",
+  },
+  {
+    id: "tutor-quality",
+    icon: "Certificate",
+    text: "Khó chứng minh năng lực và chất lượng.",
+  },
+];
+
 
 export const SOLUTION_FEATURES: SolutionFeature[] = [
   {
@@ -39,17 +63,17 @@ export const SOLUTION_FEATURES: SolutionFeature[] = [
   },
   {
     id: "verified",
-    title: "Hồ Sơ Được Xác Thực",
+    title: "Gia Sư Được Xác Thực",
     description:
       "Thông tin cá nhân, bằng cấp và chứng chỉ đều được hệ thống kiểm tra trước khi hiển thị trên nền tảng.",
-    variant: "secondary",
+    variant: "primary",
   },
   {
     id: "advisor-chat",
     title: "Phòng Chat Hỗ Trợ",
     description:
       "Sau khi kết nối, BeeWise tạo phòng chat gồm bạn, gia sư và cố vấn BeeWise để hỗ trợ xuyên suốt quá trình trao đổi.",
-    variant: "neutral",
+    variant: "accent",
   },
   {
     id: "no-wait",
