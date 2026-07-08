@@ -3,6 +3,7 @@ import { Button } from "@/src/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "@phosphor-icons/react";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -66,19 +67,24 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
         </div>
       </div>
 
-      <div className="flex-1 gap-2 relative flex items-center justify-center bg-background px-4 py-6 overflow-y-auto no-scrollbar">
-        <Button
-          className="absolute top-4 left-4 md:top-4 md:left-4 z-10"
-          variant={"outline"}
-          onClick={() => router.back()}
-        >
-          Quay lại
-        </Button>
-        <div
-          className="w-full max-w-[500px] rounded-2xl border border-border bg-card/60 backdrop-blur-xl
-            shadow-xl shadow-primary/5 p-6 sm:p-8 my-auto"
-        >
-          {children}
+      <div className="flex-1 relative flex flex-col items-center bg-background px-4 py-6 md:py-10 overflow-y-auto no-scrollbar">
+        <div className="w-full max-w-[500px] flex flex-col justify-center min-h-full">
+          <div className="mb-4 self-start">
+            <Button
+              className="flex items-center gap-2 text-foreground/60 hover:text-foreground hover:bg-foreground/5 rounded-full px-4 h-10 transition-colors -ml-4"
+              variant="ghost"
+              onClick={() => router.back()}
+            >
+              <ArrowLeft weight="bold" className="w-4 h-4" />
+              <span className="font-semibold text-sm">Quay lại</span>
+            </Button>
+          </div>
+          <div
+            className="w-full rounded-2xl border border-border bg-card/60 backdrop-blur-xl
+              shadow-xl shadow-primary/5 p-6 sm:p-8"
+          >
+            {children}
+          </div>
         </div>
       </div>
     </div>

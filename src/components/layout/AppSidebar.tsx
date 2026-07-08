@@ -3,10 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Hexagon, Lock } from "lucide-react";
-
+import { LogOut, Lock } from "lucide-react";
 import { useAuthStore } from "@/src/store/useAuthStore";
-import { navigationConfig } from "@/src/config/navigation";
 
 import Image from "next/image";
 import {
@@ -29,6 +27,7 @@ import {
   AvatarImage,
 } from "@/src/components/ui/avatar";
 import { useTheme } from "next-themes";
+import { navigationConfig } from "@/src/configs/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
