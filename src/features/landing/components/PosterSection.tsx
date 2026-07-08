@@ -6,7 +6,7 @@ export function PosterSection() {
   const router = useRouter();
   return (
     <section
-      className="relative w-full pb-5 md:pb-0 lg:h-[110vh] lg:min-h-[500px] overflow-hidden cursor-pointer flex flex-col"
+      className="relative w-full lg:h-[110vh] lg:min-h-[500px] overflow-hidden cursor-pointer flex flex-col"
       onClick={() => router.push("/login")}
     >
       {/* Desktop version */}

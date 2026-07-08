@@ -61,11 +61,11 @@ export function PainPointSection() {
   return (
     <section
       ref={containerRef}
-      className="relative bg-background py-4 sm:py-28 overflow-hidden h-fit md:min-h-[500px] flex items-center"
+      className="relative bg-background sm:py-28 overflow-hidden h-fit md:min-h-[500px] flex items-center"
       id="pain-points"
       aria-labelledby="pain-headline"
     >
-      <div className="absolute inset-0 z-0">
+      <div className="">
         <Image
           src="/images/Banner/Painpoint-1.svg"
           alt="Painpoints Background"
