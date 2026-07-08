@@ -95,10 +95,10 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
               />
             </div>
             <span
-              className="text-white text-xs md:text-base leading-none"
+              className="text-white text-xs md:text-base leading-none uppercase"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
-              Cộng Đồng Gia Sư
+              Cộng Đồng Gia Sư Beewise
             </span>
           </Link>
 

@@ -117,7 +117,7 @@ export function HowItWorksSection() {
                 >
                   {step.title}
                 </h3>
-                <p className="text-sm text-foreground/60 leading-relaxed max-w-[26ch] mx-auto">
+                <p className="text-sm text-justify text-foreground/60 leading-relaxed max-w-[26ch] mx-auto">
                   {step.description}
                 </p>
               </div>

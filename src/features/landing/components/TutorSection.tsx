@@ -15,7 +15,7 @@ export function TutorSection() {
           <div className="order-2 lg:order-1 relative hidden lg:flex justify-center items-center w-full">
             <div className="relative w-full max-w-[540px] aspect-square mx-auto">
               <Image
-                src="/images/Banner/Poster-2.svg"
+                src="/images/Banner/Poster-1.png"
                 alt="Quyền lợi dành cho gia sư BeeWise"
                 fill
                 className="object-contain drop-shadow-2xl rounded-4xl hover:scale-[1.02] transition-transform duration-500"
@@ -35,7 +35,7 @@ export function TutorSection() {
                 }}
               >
                 Bạn Là Gia Sư?{" "}
-                <span className="text-secondary text-[1.15rem] sm:text-2xl">
+                <span className="text-accent text-[1.15rem] sm:text-2xl">
                   BeeWise Kết Nối Bạn Với Đúng Học Viên
                 </span>
               </h2>
@@ -52,7 +52,7 @@ export function TutorSection() {
                   <CheckCircleIcon
                     size={22}
                     weight="fill"
-                    className="text-secondary shrink-0 mt-0.5"
+                    className="text-accent shrink-0 mt-0.5"
                     aria-hidden="true"
                   />
                   <span className="text-sm sm:text-base text-foreground/75 leading-relaxed">
@@ -65,7 +65,7 @@ export function TutorSection() {
             <Link
               href="/tutor-guide"
               id="tutor-cta"
-              className="self-start inline-flex h-12 items-center justify-center rounded-full bg-secondary px-8 text-sm font-semibold text-secondary-foreground transition-all duration-200 hover:bg-secondary/90 active:scale-[0.98] shadow-lg shadow-secondary/25"
+              className="self-start inline-flex h-12 items-center justify-center rounded-full bg-accent px-8 text-sm font-semibold text-accent-foreground transition-all duration-200 hover:bg-accent/90 active:scale-[0.98] shadow-lg shadow-accent/25"
             >
               Tìm hiểu ngay
             </Link>

@@ -8,7 +8,7 @@ const FAQS = [
     id: "fee",
     question: "BeeWise có thu phí nhận lớp không?",
     answer:
-      "Không. Bạn không phải đóng phí nhận lớp trước. BeeWise áp dụng cơ chế hoa hồng minh bạch trên từng buổi học.",
+      "Không. Bạn không phải đóng phí nhận lớp trước. BeeWise áp dụng cơ chế hoa hồng rõ ràng trên từng buổi học.",
   },
   {
     id: "student",
@@ -105,8 +105,7 @@ export function TutorGuideFaq() {
             Câu hỏi thường gặp
           </h2>
           <p className="text-foreground/55 text-sm sm:text-base mx-auto max-w-[42ch]">
-            Những thắc mắc phổ biến nhất từ gia sư khi đăng ký tham gia
-            BeeWise.
+            Những thắc mắc phổ biến nhất từ gia sư khi đăng ký tham gia BeeWise.
           </p>
         </div>
 

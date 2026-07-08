@@ -52,10 +52,10 @@ export function TutorGuideSteps() {
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 800,
-                  fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
+                  fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)",
                 }}
               >
-                Chỉ cần <span className="text-primary">3 bước</span> để bắt đầu
+                Chỉ cần <span className="text-accent">3 bước</span> để bắt đầu
               </h2>
               <p className="text-foreground/60 leading-relaxed max-w-[44ch]">
                 Quy trình đơn giản, rõ ràng. Chỉ cần phí xác minh hồ sơ, bạn có
@@ -86,7 +86,11 @@ export function TutorGuideSteps() {
                     className="relative z-10 shrink-0 w-12 h-12 rounded-full flex items-center justify-center border-2 bg-background"
                     style={{
                       borderColor:
-                        i === 0 ? "var(--primary)" : i === 1 ? "var(--secondary)" : "var(--accent)",
+                        i === 0
+                          ? "var(--primary)"
+                          : i === 1
+                            ? "var(--secondary)"
+                            : "var(--accent)",
                     }}
                   >
                     <span
@@ -95,7 +99,11 @@ export function TutorGuideSteps() {
                         fontFamily: "var(--font-montserrat)",
                         fontWeight: 800,
                         color:
-                          i === 0 ? "var(--primary)" : i === 1 ? "var(--secondary)" : "var(--accent)",
+                          i === 0
+                            ? "var(--primary)"
+                            : i === 1
+                              ? "var(--secondary)"
+                              : "var(--accent)",
                       }}
                     >
                       {step.number}

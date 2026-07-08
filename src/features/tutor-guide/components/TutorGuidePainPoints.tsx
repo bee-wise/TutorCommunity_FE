@@ -52,9 +52,8 @@ export function TutorGuidePainPoints() {
               <span className="text-primary">gặp khó khăn</span> khi tìm lớp?
             </h2>
             <p className="text-foreground/60 leading-relaxed max-w-[45ch]">
-              Tìm được lớp dạy phù hợp không phải lúc nào cũng dễ. BeeWise được
-              xây dựng để giải quyết những khó khăn này bằng một nền tảng quản
-              lý tập trung và minh bạch hơn.
+              BeeWise được xây dựng để giải quyết những khó khăn này bằng một
+              nền tảng quản lý tập trung và minh bạch hơn.
             </p>
 
             {/* Accent underline bar */}
