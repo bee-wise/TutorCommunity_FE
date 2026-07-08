@@ -100,7 +100,8 @@ export function AppSidebar() {
                   const isTutor = user?.role === "TUTOR";
                   const isUnverified = isTutor && user?.isVerified === false;
                   const isDashboard = item.url === "/lms/tutor";
-                  const isLocked = isUnverified && !isDashboard;
+                  // const isLocked = isUnverified && !isDashboard;
+                  const isLocked = false;
 
                   return (
                     <SidebarMenuItem key={item.title}>
