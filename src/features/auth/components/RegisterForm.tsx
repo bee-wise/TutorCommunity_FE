@@ -18,6 +18,7 @@ import {
   type RegisterFormValues,
 } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const ROLES = [
   {
@@ -36,6 +37,9 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const {
     register,
@@ -57,6 +61,7 @@ export function RegisterForm() {
     console.log("Register data:", data);
     await new Promise((r) => setTimeout(r, 1200));
     setIsLoading(false);
+    router.push(callbackUrl || "/");
   };
 
   return (
@@ -328,7 +333,7 @@ export function RegisterForm() {
         <p className="text-center text-sm text-foreground/60 mt-1">
           Đã có tài khoản?{" "}
           <Link
-            href="/login"
+            href={callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login"}
             className="font-bold text-primary hover:text-primary/80 transition-colors"
           >
             Đăng nhập

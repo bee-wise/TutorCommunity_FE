@@ -1,22 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { MobileNav } from "./MobileNav";
+import { useAuthUrl } from "@/src/hooks/useAuthUrl";
 
 interface HeaderProps {
   NAV_LINKS: { label: string; href: string }[];
   isTutorPage?: boolean;
 }
 
-export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
+export function HeaderContent({ NAV_LINKS, isTutorPage }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [href, setHref] = useState<string>("");
-  const pathname = usePathname();
+  const { loginUrl: loginHref, currentUrl } = useAuthUrl();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -108,9 +108,9 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
             {NAV_LINKS.map((link) => {
               const isActive =
                 link.href === "/"
-                  ? pathname === "/"
-                  : pathname === link.href ||
-                    pathname?.startsWith(link.href + "/");
+                  ? currentUrl === "/"
+                  : currentUrl === link.href ||
+                    currentUrl.startsWith(link.href + "/");
 
               return (
                 <Link
@@ -130,7 +130,7 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
 
           <div className="flex items-center gap-3">
             <Link
-              href="/login"
+              href={loginHref}
               className="hidden md:inline-flex text-sm font-bold text-white/70 hover:text-accent transition-colors"
             >
               Đăng Nhập
@@ -149,5 +149,17 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
         </div>
       </motion.header>
     </div>
+  );
+}
+
+export function Header(props: HeaderProps) {
+  return (
+    <Suspense
+      fallback={
+        <header className="fixed top-0 left-0 right-0 z-[100] h-16 sm:h-20" />
+      }
+    >
+      <HeaderContent {...props} />
+    </Suspense>
   );
 }

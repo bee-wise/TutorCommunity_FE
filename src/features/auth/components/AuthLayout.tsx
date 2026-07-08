@@ -2,19 +2,22 @@
 import { Button } from "@/src/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
   variant?: "login" | "register";
 }
 
-export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
+function AuthLayoutContent({ children, variant = "login" }: AuthLayoutProps) {
   const url =
     variant === "register"
       ? "/images/BeeWiseTeam-2.JPG"
       : "/images/BeeWiseTeam.JPG";
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   return (
     <div className="h-[100dvh] flex overflow-hidden">
@@ -70,7 +73,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
         <Button
           className="absolute top-4 left-4 md:top-4 md:left-4 z-10"
           variant={"outline"}
-          onClick={() => router.back()}
+          onClick={() => router.push(callbackUrl)}
         >
           Quay lại
         </Button>
@@ -82,5 +85,17 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export function AuthLayout(props: AuthLayoutProps) {
+  return (
+    <Suspense fallback={
+      <div className="h-[100dvh] flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <AuthLayoutContent {...props} />
+    </Suspense>
   );
 }

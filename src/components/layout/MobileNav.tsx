@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ListIcon, X } from "@phosphor-icons/react";
+import { useAuthUrl } from "@/src/hooks/useAuthUrl";
 
 type NavLink = {
   label: string;
@@ -14,10 +15,11 @@ interface Props {
   links: NavLink[];
 }
 
-export function MobileNav({ links }: Props) {
+export function MobileNavContent({ links }: Props) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const { loginUrl: loginHref } = useAuthUrl();
 
   useEffect(() => {
     if (!open) return;
@@ -79,7 +81,7 @@ export function MobileNav({ links }: Props) {
             );
           })}
           <Link
-            href="/login"
+            href={loginHref}
             onClick={() => setOpen(false)}
             className="text-sm font-medium text-primary-foreground opacity-70 hover:opacity-100 transition-colors py-1 border-t border-white/10 pt-3"
           >
@@ -88,5 +90,13 @@ export function MobileNav({ links }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+export function MobileNav(props: Props) {
+  return (
+    <Suspense fallback={<div className="lg:hidden w-10 h-10" />}>
+      <MobileNavContent {...props} />
+    </Suspense>
   );
 }
