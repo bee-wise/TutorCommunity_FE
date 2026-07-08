@@ -3,11 +3,14 @@ import { Header } from "@/src/components/layout/Header";
 import { Footer } from "@/src/components/layout/Footer";
 import { HeroSection } from "@/src/features/landing/components/HeroSection";
 import { PainPointSection } from "@/src/features/landing/components/PainPointSection";
+import { PosterSection } from "@/src/features/landing/components/PosterSection";
 import { SolutionSection } from "@/src/features/landing/components/SolutionSection";
 import { HowItWorksSection } from "@/src/features/landing/components/HowItWorksSection";
 import { TutorSection } from "@/src/features/landing/components/TutorSection";
 import { TutorCarouselSection } from "@/src/features/landing/components/TutorCarouselSection";
 import { FaqSection } from "@/src/features/landing/components/FaqSection";
+import { TutorPainpointSection } from "@/src/features/landing/components/TutorPainpointSection";
+import { TutorGuideTrust } from "@/src/features/tutor-guide/components/TutorGuideTrust";
 
 export const metadata: Metadata = {
   title: "Cộng Đồng Gia Sư - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
@@ -43,7 +46,7 @@ export const metadata: Metadata = {
 const NAV_LINKS = [
   { label: "Gia Sư", href: "/tutors" },
   { label: "Cách Hoạt Động", href: "#how-it-works" },
-  { label: "Trở thành gia sư", href: "#for-tutors" },
+  { label: "Trở thành gia sư", href: "/tutor-guide" },
 ];
 
 export default function LandingPage() {
@@ -52,11 +55,14 @@ export default function LandingPage() {
       <Header NAV_LINKS={NAV_LINKS} />
       <main id="main-content">
         <HeroSection />
+        <PosterSection />
         <PainPointSection />
+        <TutorPainpointSection />
         <SolutionSection />
+        <TutorGuideTrust />
         <HowItWorksSection />
-        <TutorSection />
         <TutorCarouselSection />
+        <TutorSection />
         <FaqSection />
       </main>
       <Footer />

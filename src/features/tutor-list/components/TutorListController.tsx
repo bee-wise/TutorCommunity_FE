@@ -136,7 +136,7 @@ function MobileFilterDrawer({
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
-            className="fixed top-0 left-0 z-50 h-full w-[88vw] max-w-sm bg-white shadow-2xl flex flex-col"
+            className="fixed top-0 left-0 z-50 h-full w-[88vw] max-w-sm bg-background shadow-2xl flex flex-col"
             role="dialog"
             aria-label="Bộ lọc gia sư"
             aria-modal="true"
@@ -220,7 +220,9 @@ export function TutorListController({
       setAiReason(undefined);
 
       if (!query.trim()) {
-        setTutors(mode === "manual" ? simulateManualSearch("", filters) : MOCK_TUTORS);
+        setTutors(
+          mode === "manual" ? simulateManualSearch("", filters) : MOCK_TUTORS,
+        );
         return;
       }
 
@@ -267,6 +269,10 @@ export function TutorListController({
       if (initMode === "ai" && initQuery) {
         handleSearch(initQuery, "ai");
       }
+      // Xóa param trên URL để khi người dùng f5 không bị chạy lại AI mode loading
+      if (window.location.search) {
+        window.history.replaceState({}, "", window.location.pathname);
+      }
     }
   }, [initMode, initQuery, handleSearch]);
 
@@ -284,10 +290,10 @@ export function TutorListController({
         resultCount={tutors.length}
       />
 
-      <div className="min-h-[calc(100dvh-64px)] bg-[#f8f9fc]">
+      <div className="min-h-[calc(100dvh-64px)] bg-muted/30">
         {/* Page header */}
         <div
-          className="border-b border-border bg-white"
+          className="border-b border-border bg-background"
           style={{ boxShadow: "0 1px 0 rgba(40,15,145,0.04)" }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -319,7 +325,7 @@ export function TutorListController({
           <div className="flex gap-8">
             {/* Sidebar filter — hidden on mobile */}
             <aside className="hidden lg:block w-64 shrink-0">
-              <div className="sticky top-24 bg-white rounded-2xl border border-border p-5 shadow-sm">
+              <div className="sticky top-24 bg-card rounded-2xl border border-border p-5 shadow-sm">
                 <FilterPanel
                   filters={filters}
                   onFiltersChange={handleFiltersChange}
@@ -335,7 +341,7 @@ export function TutorListController({
                 <button
                   type="button"
                   onClick={() => setIsFilterDrawerOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2 text-sm font-semibold text-foreground/70 shadow-sm hover:border-primary/30 transition-all"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold text-foreground/70 shadow-sm hover:border-primary/30 transition-all"
                   id="mobile-filter-trigger"
                 >
                   <span>Bộ lọc</span>

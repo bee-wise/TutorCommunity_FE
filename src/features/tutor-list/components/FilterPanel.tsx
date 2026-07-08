@@ -137,7 +137,7 @@ export function FilterPanel({
           id="filter-sort"
           value={filters.sortBy}
           onChange={(e) => update("sortBy", e.target.value as TutorFilters["sortBy"])}
-          className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
           aria-label="Sắp xếp kết quả"
         >
           {SORT_OPTIONS.map((opt) => (
@@ -167,7 +167,7 @@ export function FilterPanel({
                 aria-pressed={isSelected}
                 className={`rounded-full px-3 py-1 text-xs font-semibold transition-all duration-150 ${
                   isSelected
-                    ? "bg-primary text-white shadow-sm"
+                    ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-muted/70 text-foreground/60 hover:bg-muted border border-border"
                 }`}
                 style={{ fontFamily: "var(--font-montserrat)" }}
@@ -206,7 +206,7 @@ export function FilterPanel({
               aria-pressed={filters.teachingMode === opt.value}
               className={`rounded-xl py-2 text-xs font-semibold transition-all duration-150 ${
                 filters.teachingMode === opt.value
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-primary-foreground"
                   : "bg-muted/70 text-foreground/60 hover:bg-muted border border-border"
               }`}
               style={{ fontFamily: "var(--font-montserrat)" }}
@@ -245,7 +245,7 @@ export function FilterPanel({
               aria-pressed={filters.level === opt.value}
               className={`rounded-xl px-3 py-2 text-xs font-semibold text-left transition-all duration-150 ${
                 filters.level === opt.value
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-primary-foreground"
                   : "bg-muted/60 text-foreground/60 hover:bg-muted border border-border"
               }`}
               style={{ fontFamily: "var(--font-montserrat)" }}
@@ -271,7 +271,7 @@ export function FilterPanel({
             aria-pressed={filters.maxPricePerSession === null}
             className={`rounded-xl px-3 py-2 text-xs font-semibold text-left transition-all duration-150 ${
               filters.maxPricePerSession === null
-                ? "bg-primary text-white"
+                ? "bg-primary text-primary-foreground"
                 : "bg-muted/60 text-foreground/60 hover:bg-muted border border-border"
             }`}
             style={{ fontFamily: "var(--font-montserrat)" }}
@@ -286,7 +286,7 @@ export function FilterPanel({
               aria-pressed={filters.maxPricePerSession === opt.value}
               className={`rounded-xl px-3 py-2 text-xs font-semibold text-left transition-all duration-150 ${
                 filters.maxPricePerSession === opt.value
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-primary-foreground"
                   : "bg-muted/60 text-foreground/60 hover:bg-muted border border-border"
               }`}
               style={{ fontFamily: "var(--font-montserrat)" }}
@@ -312,7 +312,7 @@ export function FilterPanel({
             aria-pressed={filters.minRating === null}
             className={`rounded-xl px-3 py-2 text-xs font-semibold text-left transition-all duration-150 ${
               filters.minRating === null
-                ? "bg-primary text-white"
+                ? "bg-primary text-primary-foreground"
                 : "bg-muted/60 text-foreground/60 hover:bg-muted border border-border"
             }`}
             style={{ fontFamily: "var(--font-montserrat)" }}
@@ -327,7 +327,7 @@ export function FilterPanel({
               aria-pressed={filters.minRating === opt.value}
               className={`rounded-xl px-3 py-2 text-xs font-semibold text-left transition-all duration-150 ${
                 filters.minRating === opt.value
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-primary-foreground"
                   : "bg-muted/60 text-foreground/60 hover:bg-muted border border-border"
               }`}
               style={{ fontFamily: "var(--font-montserrat)" }}
@@ -358,7 +358,7 @@ export function FilterPanel({
             }`}
           >
             <div
-              className={`absolute top-0.5 w-4.5 h-4.5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+              className={`absolute top-0.5 w-4.5 h-4.5 rounded-full bg-background shadow-sm transition-transform duration-200 ${
                 filters.availableOnly ? "translate-x-5 left-0.5" : "left-0.5"
               }`}
             />

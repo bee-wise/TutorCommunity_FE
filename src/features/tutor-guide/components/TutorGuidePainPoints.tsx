@@ -32,7 +32,7 @@ const PAIN_POINTS = [
 export function TutorGuidePainPoints() {
   return (
     <section
-      className="py-20 sm:py-24 bg-white h-screen flex items-center"
+      className="py-20 sm:py-24 bg-background h-screen flex items-center"
       aria-labelledby="pain-points-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,12 +49,11 @@ export function TutorGuidePainPoints() {
               }}
             >
               Vì sao nhiều gia sư{" "}
-              <span className="text-primary">gặp khó khăn</span> khi tìm lớp?
+              <span className="text-accent">gặp khó khăn</span> khi tìm lớp?
             </h2>
             <p className="text-foreground/60 leading-relaxed max-w-[45ch]">
-              Tìm được lớp dạy phù hợp không phải lúc nào cũng dễ. BeeWise được
-              xây dựng để giải quyết những khó khăn này bằng một nền tảng quản
-              lý tập trung và minh bạch hơn.
+              BeeWise được xây dựng để giải quyết những khó khăn này bằng một
+              nền tảng quản lý tập trung và minh bạch hơn.
             </p>
 
             {/* Accent underline bar */}
@@ -72,20 +71,20 @@ export function TutorGuidePainPoints() {
               return (
                 <li
                   key={point.id}
-                  className="flex items-start gap-4 p-5 rounded-2xl border border-border bg-muted/40 hover:border-primary/20 hover:bg-muted/70 transition-all duration-200"
+                  className="flex items-start gap-4 p-5 rounded-2xl border border-accent bg-muted/40 hover:border-primary/20 hover:bg-muted/70 transition-all duration-200"
                   style={{ transitionDelay: `${i * 40}ms` }}
                 >
                   <div
                     className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-                    style={{ background: "rgba(40,15,145,0.08)" }}
+                    style={{ background: "rgba(255,197,0,0.15)" }}
                   >
                     <Icon
                       size={20}
-                      className="text-primary"
+                      className="text-accent"
                       aria-hidden="true"
                     />
                   </div>
-                  <span className="text-sm sm:text-base text-foreground/75 leading-relaxed pt-1">
+                  <span className="text-sm sm:text-base font-bold text-primary/75 leading-relaxed pt-1">
                     {point.text}
                   </span>
                 </li>

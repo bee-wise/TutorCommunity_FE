@@ -46,7 +46,7 @@ const FEATURES = [
     icon: MonitorIcon,
     sticker: null,
     stickerAlt: "",
-    title: "Quản lý toàn bộ lớp học trên một nền tảng",
+    title: "Tính năng theo dõi lớp học và thu nhập cá nhân",
     body: "Theo dõi lịch dạy, danh sách học viên, tin nhắn, thu nhập và trạng thái từng lớp — tất cả trên Dashboard cá nhân, giúp bạn dễ dàng dạy nhiều học viên cùng lúc.",
     accent: "#280f91",
     bg: "bg-muted",
@@ -57,12 +57,10 @@ const FEATURES = [
 export function TutorGuideFeatures() {
   return (
     <section
-      className="py-20 sm:py-24"
-      style={{ background: "#f0f4ff" }}
+      className="py-20 sm:py-24 bg-muted"
       aria-labelledby="features-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header — no eyebrow, headline alone carries the section */}
         <div className="max-w-2xl mb-14">
           <h2
             id="features-heading"
@@ -73,31 +71,24 @@ export function TutorGuideFeatures() {
               fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
             }}
           >
-            BeeWise giúp gia sư{" "}
-            <span className="text-primary">tập trung vào việc giảng dạy</span>
+            BeeWise giúp gia sư <br />
+            <span className="text-accent">an tâm giảng dạy</span>
           </h2>
           <p className="text-foreground/60 leading-relaxed max-w-[52ch]">
-            Chúng tôi lo phần còn lại — từ kết nối học viên đến quản lý lớp học
-            — để bạn chỉ cần tập trung vào điều quan trọng nhất.
+            Chúng tôi hỗ trợ gia sư tương lai từ kết nối học viên đến quản lý
+            lớp học và cung cấp các quyền lợi bạn sẽ nhận được
           </p>
         </div>
 
-        {/* Bento grid: 2-col on desktop, varied heights */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Card 0: No fee — tall with accent bar */}
-          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-white overflow-hidden group hover:shadow-lg hover:shadow-primary/8 transition-all duration-300">
-            <div
-              className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl"
-              style={{ background: "#280f91" }}
-              aria-hidden="true"
-            />
+          <div className="relative rounded-3xl p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-accent/20 transition-all duration-300">
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ background: "rgba(40,15,145,0.1)" }}
+              style={{ background: "rgba(255,197,0,0.15)" }}
             >
               <CurrencyCircleDollarIcon
                 size={24}
-                className="text-primary"
+                className="text-accent"
                 aria-hidden="true"
               />
             </div>
@@ -115,10 +106,9 @@ export function TutorGuideFeatures() {
                 {FEATURES[0].body}
               </p>
             </div>
-            {/* Decorative pill */}
-            <div className="mt-auto inline-flex self-start items-center gap-2 rounded-full bg-primary/8 px-4 py-2">
+            <div className="mt-auto inline-flex self-start items-center gap-2 rounded-full bg-accent/8 px-4 py-2">
               <span
-                className="text-xs text-primary"
+                className="text-xs text-accent"
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 700,
@@ -129,9 +119,7 @@ export function TutorGuideFeatures() {
             </div>
           </div>
 
-          {/* Card 1: AI — dark primary with sticker visual */}
-          <div className="relative rounded-3xl p-8 flex flex-col gap-5 bg-primary overflow-hidden group hover:shadow-xl hover:shadow-primary/40 transition-all duration-300">
-            {/* Sticker floated to corner */}
+          <div className="relative rounded-3xl p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-accent/20 transition-all duration-300">
             <div
               className="absolute -right-8 -bottom-6 w-44 h-44 pointer-events-none select-none"
               aria-hidden="true"
@@ -153,7 +141,7 @@ export function TutorGuideFeatures() {
             </div>
             <div className="flex flex-col gap-3 relative z-10">
               <h3
-                className="text-xl text-white leading-snug"
+                className="text-xl text-foreground leading-snug"
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 800,
@@ -161,7 +149,7 @@ export function TutorGuideFeatures() {
               >
                 {FEATURES[1].title}
               </h3>
-              <p className="text-white/65 leading-relaxed text-sm sm:text-base max-w-[36ch]">
+              <p className="text-foreground/60 leading-relaxed text-sm sm:text-base max-w-[36ch]">
                 {FEATURES[1].body}
               </p>
             </div>
@@ -179,18 +167,14 @@ export function TutorGuideFeatures() {
           </div>
 
           {/* Card 2: Support — with secondary color accent */}
-          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-white overflow-hidden group hover:shadow-lg hover:shadow-secondary/10 transition-all duration-300">
-            <div
-              className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-secondary"
-              aria-hidden="true"
-            />
+          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-accent/20 transition-all duration-300">
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ background: "rgba(68,115,83,0.1)" }}
+              style={{ background: "rgba(255,197,0,0.15)" }}
             >
               <HeadsetIcon
                 size={24}
-                className="text-secondary"
+                className="text-accent"
                 aria-hidden="true"
               />
             </div>
@@ -208,9 +192,9 @@ export function TutorGuideFeatures() {
                 {FEATURES[2].body}
               </p>
             </div>
-            <div className="mt-auto inline-flex self-start items-center gap-2 rounded-full bg-secondary/8 px-4 py-2">
+            <div className="mt-auto inline-flex self-start items-center gap-2 rounded-full bg-accent/15 px-4 py-2 relative z-10">
               <span
-                className="text-xs text-secondary"
+                className="text-xs text-accent"
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 700,
@@ -222,19 +206,14 @@ export function TutorGuideFeatures() {
           </div>
 
           {/* Card 3: Dashboard — with list of tracking items */}
-          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-white overflow-hidden group hover:shadow-lg hover:shadow-primary/8 transition-all duration-300">
-            <div
-              className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl"
-              style={{ background: "#ffc500" }}
-              aria-hidden="true"
-            />
+          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-accent/20 transition-all duration-300">
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ background: "rgba(40,15,145,0.08)" }}
+              style={{ background: "rgba(255,197,0,0.15)" }}
             >
               <MonitorIcon
                 size={24}
-                className="text-primary"
+                className="text-accent"
                 aria-hidden="true"
               />
             </div>

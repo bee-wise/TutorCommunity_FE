@@ -36,6 +36,17 @@ export function TutorGuideCta() {
         </div>
 
         <div className="flex flex-col gap-6 items-center">
+          <h5
+            id="cta-final-heading"
+            className="text-white tracking-tight leading-tight"
+            style={{
+              fontFamily: "var(--font-montserrat)",
+              fontWeight: 800,
+              fontSize: "clamp(1rem, 2vw, 1rem)",
+            }}
+          >
+            LỰA CHỌN HÀNH TRÌNH KẾT NỐI DỄ DÀNG - AN TOÀN TẠI SAO KHÔNG?
+          </h5>
           <h2
             id="cta-final-heading"
             className="text-white tracking-tight leading-tight"
@@ -56,17 +67,17 @@ export function TutorGuideCta() {
           </p>
 
           <Link
-            href="/register/tutor"
+            href="/register"
             id="cta-final-register"
-            className="mt-2 inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-accent px-10 text-sm font-bold text-[#0c0c0b] transition-all duration-200 hover:bg-[#fadc76] active:scale-[0.98] shadow-xl shadow-accent/30 whitespace-nowrap"
+            className="mt-2 inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-accent px-10 text-sm font-bold text-accent-foreground transition-all duration-200 hover:bg-highlight active:scale-[0.98] shadow-xl shadow-accent/30 whitespace-nowrap"
             style={{ fontFamily: "var(--font-montserrat)" }}
           >
-            Đăng Ký Làm Gia Sư BeeWise Ngay
+            ĐĂNG KÝ TRỞ THÀNH GIA SƯ BEEWISE NGAY
             <ArrowRightIcon size={16} weight="bold" aria-hidden="true" />
           </Link>
 
           <p className="text-white/35 text-xs">
-            Miễn phí đăng ký · Không phí nhận lớp · Hỗ trợ trong suốt quá trình
+            Miễn phí đăng ký · Hỗ trợ trong suốt quá trình
           </p>
         </div>
       </div>

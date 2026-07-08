@@ -45,8 +45,6 @@ export default function TutorGuidePage() {
 
         <TutorGuideSteps />
 
-        <TutorGuideTrust />
-
         <TutorGuideFaq />
         <TutorGuideCta />
       </main>

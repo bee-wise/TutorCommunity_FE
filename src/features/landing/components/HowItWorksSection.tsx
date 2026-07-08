@@ -97,7 +97,7 @@ export function HowItWorksSection() {
                 transition={{ duration: 0.4, delay: index * 0.15 + 0.1 }}
               >
                 <span
-                  className="text-2xl text-white leading-none"
+                  className="text-2xl text-primary-foreground leading-none"
                   style={{
                     fontFamily: "var(--font-montserrat)",
                     fontWeight: 800,
@@ -117,7 +117,7 @@ export function HowItWorksSection() {
                 >
                   {step.title}
                 </h3>
-                <p className="text-sm text-foreground/60 leading-relaxed max-w-[26ch] mx-auto">
+                <p className="text-sm text-justify text-foreground/60 leading-relaxed max-w-[26ch] mx-auto">
                   {step.description}
                 </p>
               </div>

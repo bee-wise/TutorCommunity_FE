@@ -12,29 +12,21 @@ export function TutorGuideHero() {
       aria-labelledby="tutor-guide-h1"
     >
       <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(145deg, #280f91 0%, #1a0a60 55%, #0f0638 100%)",
-        }}
+        className="absolute inset-0 bg-[linear-gradient(145deg,#fff9e6_0%,#ffffff_55%,#fff3cb_100%)] dark:bg-[linear-gradient(145deg,#280f91_0%,#1a0a60_55%,#0f0638_100%)]"
         aria-hidden="true"
       />
 
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_70%_50%,rgba(255,197,0,0.15)_0%,transparent_70%)] dark:bg-[radial-gradient(ellipse_80%_60%_at_70%_50%,rgba(255,243,203,0.07)_0%,transparent_70%)]"
         aria-hidden="true"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 70% 50%, rgba(255,243,203,0.07) 0%, transparent 70%)",
-        }}
       />
 
       <div
-        className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-white/5 hidden lg:block"
+        className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-accent/20 dark:border-white/5 hidden lg:block"
         aria-hidden="true"
       />
       <div
-        className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-[480px] h-[480px] rounded-full border border-accent/10 hidden lg:block"
+        className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-[480px] h-[480px] rounded-full border border-accent/40 dark:border-accent/10 hidden lg:block"
         aria-hidden="true"
       />
 
@@ -45,10 +37,10 @@ export function TutorGuideHero() {
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="inline-flex self-start items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5"
+              className="inline-flex self-start items-center gap-2 rounded-full border border-accent bg-accent/20 dark:border-accent/30 dark:bg-accent/10 px-4 py-1.5"
             >
               <span
-                className="text-xs text-accent"
+                className="text-xs text-foreground/80 dark:text-accent"
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 700,
@@ -67,15 +59,17 @@ export function TutorGuideHero() {
                 delay: 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="text-white tracking-tight leading-[1.05]"
+              className="text-foreground dark:text-white text-[1.5rem] sm:text-5xl lg:text-[2.3rem] leading-normal tracking-tight "
               style={{
                 fontFamily: "var(--font-montserrat)",
                 fontWeight: 800,
-                fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
               }}
             >
-              Đăng Ký Làm Gia Sư BeeWise
+              Nâng tầm hồ sơ giảng dạy,
               <br />
+              Nhận lớp chủ động
+              <br />
+              Với{" "}
               <span
                 className="text-accent"
                 style={{
@@ -83,9 +77,8 @@ export function TutorGuideHero() {
                   fontWeight: 800,
                 }}
               >
-                Không Phí Nhận Lớp,
+                Beewise
               </span>{" "}
-              <span className="text-white/80">Tăng Thu Nhập Bền Vững</span>
             </motion.h1>
 
             <motion.p
@@ -96,7 +89,7 @@ export function TutorGuideHero() {
                 delay: 0.2,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="text-white/65 leading-relaxed max-w-[52ch]"
+              className="text-foreground/75 dark:text-white/65 leading-relaxed max-w-[52ch]"
               style={{ fontSize: "clamp(0.9375rem, 1.5vw, 1.0625rem)" }}
             >
               BeeWise giúp bạn kết nối với học viên phù hợp thông qua công nghệ
@@ -116,9 +109,9 @@ export function TutorGuideHero() {
               className="flex flex-col sm:flex-row gap-3"
             >
               <Link
-                href="/register/tutor"
+                href="/register"
                 id="hero-cta-register"
-                className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-accent px-8 text-sm font-bold text-[#0c0c0b] transition-all duration-200 hover:bg-[#fadc76] active:scale-[0.98] shadow-lg shadow-accent/25 whitespace-nowrap"
+                className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-primary dark:bg-accent px-8 text-sm font-bold text-primary-foreground dark:text-accent-foreground transition-all duration-200 hover:bg-primary/90 dark:hover:bg-highlight active:scale-[0.98] shadow-lg shadow-primary/25 dark:shadow-accent/25 whitespace-nowrap"
                 style={{ fontFamily: "var(--font-montserrat)" }}
               >
                 Đăng Ký Trở Thành Gia Sư
@@ -141,7 +134,7 @@ export function TutorGuideHero() {
                 ].map((a, i) => (
                   <div
                     key={i}
-                    className="w-8 h-8 rounded-full border-2 border-white/20 flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                    className="w-8 h-8 rounded-full border-2 border-background dark:border-white/20 flex items-center justify-center text-white text-[10px] font-bold shrink-0"
                     style={{
                       background: a.bg,
                       fontFamily: "var(--font-montserrat)",
@@ -152,7 +145,7 @@ export function TutorGuideHero() {
                   </div>
                 ))}
               </div>
-              <p className="text-white/55 text-xs leading-snug">
+              <p className="text-foreground/60 dark:text-white/55 text-xs leading-snug font-medium dark:font-normal">
                 Hàng nghìn gia sư đang đồng hành cùng BeeWise
               </p>
             </motion.div>
@@ -168,32 +161,16 @@ export function TutorGuideHero() {
             }}
             className="hidden lg:flex justify-center items-center relative"
           >
-            <div
-              className="relative w-[380px] h-[440px] rounded-3xl flex items-center justify-center"
-              style={{
-                background: "rgba(255, 243, 203, 0.20)",
-                backdropFilter: "blur(24px)",
-                WebkitBackdropFilter: "blur(24px)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                boxShadow:
-                  "inset 0 1px 0 rgba(255,255,255,0.1), 0 32px 64px rgba(0,0,0,0.3)",
-              }}
-            >
-              <div
-                className="absolute -top-5 -left-6 rounded-2xl px-4 py-2.5 shadow-xl"
-                style={{
-                  background: "#447353",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                }}
-              >
+            <div className="relative w-[500px] h-[440px] rounded-3xl flex items-center justify-center bg-[rgba(255,255,255,0.6)] dark:bg-[rgba(255,243,203,0.20)] border border-[rgba(255,197,0,0.3)] dark:border-[rgba(255,255,255,0.12)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_32px_64px_rgba(255,197,0,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_32px_64px_rgba(0,0,0,0.3)] backdrop-blur-[24px]">
+              <div className="absolute z-999 -top-5 -left-6 rounded-2xl px-4 py-2.5 shadow-xl bg-white dark:bg-[#447353] border border-black/5 dark:border-white/15">
                 <p
-                  className="text-xs text-white/80 leading-none mb-1"
+                  className="text-xs text-foreground/60 dark:text-white/80 leading-none mb-1"
                   style={{ fontFamily: "var(--font-montserrat)" }}
                 >
                   Hồ sơ xác thực
                 </p>
                 <p
-                  className="text-white text-sm leading-none"
+                  className="text-primary dark:text-white text-sm leading-none"
                   style={{
                     fontFamily: "var(--font-montserrat)",
                     fontWeight: 700,
@@ -203,21 +180,15 @@ export function TutorGuideHero() {
                 </p>
               </div>
 
-              <div
-                className="absolute -bottom-5 -right-6 rounded-2xl px-4 py-2.5 shadow-xl"
-                style={{
-                  background: "#1a0a60",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                }}
-              >
+              <div className="absolute z-999 -bottom-5 -right-6 rounded-2xl px-4 py-2.5 shadow-xl bg-white dark:bg-[#1a0a60] border border-black/5 dark:border-white/12">
                 <p
-                  className="text-xs text-white/80 leading-none mb-1"
+                  className="text-xs text-foreground/60 dark:text-white/80 leading-none mb-1"
                   style={{ fontFamily: "var(--font-montserrat)" }}
                 >
                   Kết nối bằng AI
                 </p>
                 <p
-                  className="text-accent text-sm leading-none"
+                  className="text-primary dark:text-accent text-sm leading-none"
                   style={{
                     fontFamily: "var(--font-montserrat)",
                     fontWeight: 700,
@@ -227,15 +198,16 @@ export function TutorGuideHero() {
                 </p>
               </div>
 
-              <Image
-                src="/images/Sticker/E1-1.PNG"
-                alt="Bee với cây đũa phép - Đăng ký dễ dàng cùng BeeWise"
-                width={320}
-                height={320}
-                className="object-contain drop-shadow-2xl w-auto h-auto max-w-[320px]"
-                priority
-                sizes="320px"
-              />
+              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+                <Image
+                  src="/images/BeeWiseTeam-2.JPG"
+                  alt="Đội ngũ BeeWise"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 340px"
+                />
+              </div>
             </div>
           </motion.div>
         </div>
@@ -249,7 +221,7 @@ export function TutorGuideHero() {
         aria-hidden="true"
       >
         <span
-          className="text-white/30 text-xs tracking-widest uppercase"
+          className="text-foreground/30 dark:text-white/30 text-xs tracking-widest uppercase font-bold dark:font-normal"
           style={{ fontFamily: "var(--font-montserrat)" }}
         >
           Cuộn để khám phá
@@ -257,7 +229,7 @@ export function TutorGuideHero() {
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="w-0.5 h-8 rounded-full bg-gradient-to-b from-white/30 to-transparent"
+          className="w-0.5 h-8 rounded-full bg-gradient-to-b from-primary/40 dark:from-white/30 to-transparent"
         />
       </motion.div>
     </section>
