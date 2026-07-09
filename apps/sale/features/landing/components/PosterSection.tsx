@@ -12,7 +12,7 @@ export function PosterSection() {
       {/* Desktop version */}
       <div className="hidden sm:block absolute inset-0">
         <Image
-          src="/images/Banner/banner-1.png"
+          src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783571337/Banner-1_uob9l0.png"
           alt="BeeWise Highlights"
           fill
           sizes="100vw"

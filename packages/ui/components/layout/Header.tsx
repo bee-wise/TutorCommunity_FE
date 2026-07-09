@@ -85,7 +85,7 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
           >
             <div className="relative w-10 h-10 rounded-full bg-white overflow-hidden shrink-0 flex items-center justify-center">
               <Image
-                src="/brand/beewise-logo-nobackground.PNG"
+                src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
                 alt="BeeWise Logo"
                 fill
                 sizes="40px"
