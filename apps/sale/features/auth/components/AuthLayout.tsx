@@ -21,7 +21,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
     <div className="h-[100dvh] flex overflow-hidden">
       <div className="hidden lg:flex relative w-[55%] shrink-0 overflow-hidden">
         <Image
-          src={url}
+          src={"/brand/beewise-logo-nobackground.PNG"}
           alt="Đội ngũ BeeWise"
           fill
           sizes="45vw"
