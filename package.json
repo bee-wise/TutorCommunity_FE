@@ -8,10 +8,12 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "sale": "turbo run dev --filter=sale",
+    "lms": "turbo run dev --filter=lms",
+    "staff": "turbo run dev --filter=staff"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -3,12 +3,11 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import { Bell, ChevronDown, Moon, Sun, Monitor } from "lucide-react";
-import { useTheme } from "next-themes";
 
-import { useAuthStore, UserRole } from '@workspace/core/store/useAuthStore';
+import { useAuthStore, UserRole } from "@workspace/core/store/useAuthStore";
 
-import { SidebarTrigger } from '@workspace/ui/components/ui/sidebar';
-import { Separator } from '@workspace/ui/components/ui/separator';
+import { SidebarTrigger } from "@workspace/ui/components/ui/sidebar";
+import { Separator } from "@workspace/ui/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,7 +15,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@workspace/ui/components/ui/breadcrumb';
+} from "@workspace/ui/components/ui/breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,16 +23,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/ui/dropdown-menu';
+} from "@workspace/ui/components/ui/dropdown-menu";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@workspace/ui/components/ui/avatar';
+} from "@workspace/ui/components/ui/avatar";
+import { useLogout } from "@workspace/core/hooks/useLogout";
 
 export function Topbar() {
   const pathname = usePathname();
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const { mutate: logout } = useLogout();
 
   // Simple breadcrumb generator based on pathname
   const paths = pathname.split("/").filter(Boolean);
@@ -89,13 +90,13 @@ export function Topbar() {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 focus-visible:outline-none rounded-full pr-2 hover:bg-accent transition-colors">
             <Avatar className="h-8 w-8 rounded-full border border-border/50">
-              <AvatarImage src={user?.avatarUrl} alt={user?.name || ""} />
+              <AvatarImage src={""} alt={user?.fullName || ""} />
               <AvatarFallback className="bg-[#FFC500]/20 text-[#280F91] text-xs font-semibold">
-                {user?.name?.substring(0, 2).toUpperCase()}
+                {user?.fullName?.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <span className="text-sm font-medium hidden md:block">
-              {user?.name}
+              {user?.fullName}
             </span>
             <ChevronDown className="size-4 text-muted-foreground hidden md:block" />
           </DropdownMenuTrigger>
@@ -103,14 +104,17 @@ export function Topbar() {
             <DropdownMenuLabel>Tài khoản hiện tại</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="flex flex-col items-start gap-1">
-              <span className="font-medium">{user?.name}</span>
+              <span className="font-medium">{user?.fullName}</span>
               <span className="text-xs text-muted-foreground">
                 {user?.email}
               </span>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer">
+            <DropdownMenuItem
+              onClick={() => logout()}
+              className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer"
+            >
               Đăng xuất
             </DropdownMenuItem>
           </DropdownMenuContent>
