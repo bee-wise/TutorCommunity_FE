@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@workspace/ui', '@workspace/core'],
+  transpilePackages: ["@workspace/ui", "@workspace/core"],
   images: {
     remotePatterns: [
       {
@@ -18,13 +18,10 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`, // Proxy to Backend
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
       },
     ];
   },
 };
 
 export default nextConfig;
-
-
-

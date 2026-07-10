@@ -1,5 +1,5 @@
 import { Montserrat } from "next/font/google";
-import localFont from "next/font/local";
+import { googleSans } from "@workspace/core/configs/fonts";
 import { Providers } from '@workspace/ui/components/providers';
 import "@workspace/ui/globals.css";
 import { Metadata } from "next";
@@ -13,31 +13,6 @@ const montserrat = Montserrat({
   subsets: ["latin"],
 });
 
-const googleSans = localFont({
-  src: [
-    {
-      path: "../public/fonts/GoogleSans-Regular.ttf",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/GoogleSans-Medium.ttf",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/GoogleSans-SemiBold.ttf",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/GoogleSans-Bold.ttf",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-google-sans",
-});
 
 export default function RootLayout({
   children,

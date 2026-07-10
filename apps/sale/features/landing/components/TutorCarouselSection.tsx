@@ -3,13 +3,14 @@
 import { useRef, useState, useMemo, useEffect } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
-import ProfileCard from '@workspace/ui/components/ProfileCard';
-import Carousel, { CarouselRef } from '@workspace/ui/components/Carousel';
+import ProfileCard from "@workspace/ui/components/ProfileCard";
+import Carousel, { CarouselRef } from "@workspace/ui/components/Carousel";
 
 const TUTORS = [
   {
     id: 1,
-    avatarUrl: "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561335/beewise/1.png",
+    avatarUrl:
+      "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561335/beewise/1.png",
     name: "Jessica Hương",
     title: "Gia sư Toán – Lý",
     handle: "tuyethuong.gv",
@@ -21,7 +22,8 @@ const TUTORS = [
   },
   {
     id: 2,
-    avatarUrl: "/images/tutors/2.png",
+    avatarUrl:
+      "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783683638/2_ne5udw.png",
     name: "Huy Đỗ",
     title: "Gia sư Tiếng Anh",
     handle: "huy.do",
@@ -33,7 +35,8 @@ const TUTORS = [
   },
   {
     id: 3,
-    avatarUrl: "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561336/beewise/3.png",
+    avatarUrl:
+      "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561336/beewise/3.png",
     name: "Yến Trần",
     title: "Gia sư Hóa – Sinh",
     handle: "yentran.sci",
@@ -45,7 +48,8 @@ const TUTORS = [
   },
   {
     id: 4,
-    avatarUrl: "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561338/beewise/4.png",
+    avatarUrl:
+      "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561338/beewise/4.png",
     name: "Vỹ Ngô",
     title: "Gia sư IELTS",
     handle: "vy.ngo",
@@ -57,7 +61,8 @@ const TUTORS = [
   },
   {
     id: 5,
-    avatarUrl: "/images/tutors/5.png",
+    avatarUrl:
+      "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783683628/5_lsa9dx.png",
     name: "Huân Nguyễn",
     title: "Gia sư Lập trình",
     handle: "huannguyen.dev",
@@ -69,7 +74,8 @@ const TUTORS = [
   },
   {
     id: 6,
-    avatarUrl: "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561339/beewise/6.png",
+    avatarUrl:
+      "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561339/beewise/6.png",
     name: "Nhân Huỳnh",
     title: "Gia sư Piano",
     handle: "nhanhuynh.music",
