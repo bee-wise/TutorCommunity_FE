@@ -1,5 +1,5 @@
 "use client";
-import { Button } from '@workspace/ui/components/ui/button';
+import { Button } from "@workspace/ui/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,15 +13,15 @@ interface AuthLayoutProps {
 export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
   const url =
     variant === "register"
-      ? "/images/BeeWiseTeam-2.JPG"
-      : "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561331/beewise/BeeWiseTeam.jpg";
+      ? "/brand/BeeWiseTeam-2.JPG"
+      : "/brand/BeeWiseTeam.JPG";
   const router = useRouter();
 
   return (
     <div className="h-[100dvh] flex overflow-hidden">
       <div className="hidden lg:flex relative w-[55%] shrink-0 overflow-hidden">
         <Image
-          src={url}
+          src={"/brand/beewise-logo-nobackground.PNG"}
           alt="Đội ngũ BeeWise"
           fill
           sizes="45vw"
@@ -37,7 +37,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
           >
             <div className="relative w-10 h-10 rounded-full bg-white overflow-hidden shrink-0">
               <Image
-                src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
+                src={url}
                 alt="BeeWise Logo"
                 fill
                 sizes="40px"

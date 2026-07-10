@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Footer } from '@workspace/ui/components/layout/Footer';
 import { Header } from '@workspace/ui/components/layout/Header';
-import { TutorProfilePage } from '@workspace/core/features/tutor-profile/components/TutorProfilePage';
+import { TutorProfilePage } from '@/features/tutor-profile/components/TutorProfilePage';
 
 export const metadata: Metadata = {
   title: "Hồ sơ gia sư | BeeWise",

@@ -15,7 +15,7 @@ export function TutorSection() {
           <div className="order-2 lg:order-1 relative hidden lg:flex justify-center items-center w-full">
             <div className="relative w-full max-w-[540px] aspect-square mx-auto">
               <Image
-                src="/images/Banner/Poster-1.png"
+                src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783683804/Poster-1_t5rrzx.png"
                 alt="Quyền lợi dành cho gia sư BeeWise"
                 fill
                 className="object-contain drop-shadow-2xl rounded-4xl hover:scale-[1.02] transition-transform duration-500"

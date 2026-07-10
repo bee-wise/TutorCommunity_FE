@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Header } from '@workspace/ui/components/layout/Header';
 import { Footer } from '@workspace/ui/components/layout/Footer';
-import { TutorListController } from '@workspace/core/features/tutor-list/components/TutorListController';
+import { TutorListController } from '@/features/tutor-list/components/TutorListController';
 
 export const metadata: Metadata = {
   title: "Tìm Gia Sư | BeeWise – Kết Nối Gia Sư Qua Công Nghệ AI",

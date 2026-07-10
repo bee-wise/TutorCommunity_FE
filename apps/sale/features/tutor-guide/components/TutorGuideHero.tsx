@@ -200,7 +200,7 @@ export function TutorGuideHero() {
 
               <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-white/20">
                 <Image
-                  src="/images/BeeWiseTeam-2.JPG"
+                  src="/brand/BeeWiseTeam-2.JPG"
                   alt="Đội ngũ BeeWise"
                   fill
                   className="object-cover"

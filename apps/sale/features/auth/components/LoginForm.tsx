@@ -30,8 +30,8 @@ export function LoginForm() {
     console.log("Login data:", data);
     await new Promise((r) => setTimeout(r, 1200));
     setIsLoading(false);
-    
-    // Đăng nhập thành công ở Sale thì ở lại Sale (về trang chủ) 
+
+    // Đăng nhập thành công ở Sale thì ở lại Sale (về trang chủ)
     // để thực hiện kết nối gia sư, chat, ...
     router.push("/");
   };
@@ -135,14 +135,26 @@ export function LoginForm() {
             type="button"
             className="flex items-center justify-center gap-2 h-10 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
           >
-            <Image src="/images/Logos/google.png" alt="Google" width={20} height={20} className="object-contain" />
+            <Image
+              src="/images/Logos/google.png"
+              alt="Google"
+              width={20}
+              height={20}
+              className="object-contain"
+            />
             Google
           </button>
           <button
             type="button"
             className="flex items-center justify-center gap-2 h-10 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
           >
-            <Image src="/images/Logos/facebook.png" alt="Facebook" width={20} height={20} className="object-contain" />
+            <Image
+              src="/images/Logos/facebook.png"
+              alt="Facebook"
+              width={20}
+              height={20}
+              className="object-contain"
+            />
             Facebook
           </button>
         </div>
