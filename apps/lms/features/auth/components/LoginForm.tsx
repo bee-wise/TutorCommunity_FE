@@ -8,10 +8,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeSlash, ArrowRight } from "@phosphor-icons/react";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
+import { useLogin } from "@workspace/core/hooks/useLogin";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutate: login, isPending } = useLogin({
+    redirectUrl: "/lms",
+  });
 
   const {
     register,
@@ -22,11 +25,7 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    setIsLoading(true);
-    // TODO: gọi API đăng nhập
-    console.log("Login data:", data);
-    await new Promise((r) => setTimeout(r, 1200));
-    setIsLoading(false);
+    login(data);
   };
 
   return (
@@ -108,19 +107,17 @@ export function LoginForm() {
         <button
           id="login-submit"
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
           className="relative w-full h-12 mt-2 rounded-xl bg-[#280f91] text-white font-bold text-sm
             flex items-center justify-center gap-2
             hover:bg-[#1f0c73] active:scale-[0.98] transition-all duration-200
             disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-[#280f91]/30"
           style={{ fontFamily: "var(--font-montserrat)" }}
         >
-          {isLoading ? (
+          {isPending ? (
             <span className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
           ) : (
-            <>
-              Đăng nhập <ArrowRight size={16} weight="bold" />
-            </>
+            <>Đăng nhập</>
           )}
         </button>
 
@@ -139,14 +136,26 @@ export function LoginForm() {
             type="button"
             className="flex items-center justify-center gap-2 h-11 rounded-xl border border-[#0c0c0b]/10 bg-white text-[#0c0c0b] font-semibold text-sm hover:bg-[#f8f9fc] transition-colors"
           >
-            <Image src="/images/Logos/google.png" alt="Google" width={20} height={20} className="object-contain" />
+            <Image
+              src="/images/Logos/google.png"
+              alt="Google"
+              width={20}
+              height={20}
+              className="object-contain"
+            />
             Google
           </button>
           <button
             type="button"
             className="flex items-center justify-center gap-2 h-11 rounded-xl border border-[#0c0c0b]/10 bg-white text-[#0c0c0b] font-semibold text-sm hover:bg-[#f8f9fc] transition-colors"
           >
-            <Image src="/images/Logos/facebook.png" alt="Facebook" width={20} height={20} className="object-contain" />
+            <Image
+              src="/images/Logos/facebook.png"
+              alt="Facebook"
+              width={20}
+              height={20}
+              className="object-contain"
+            />
             Facebook
           </button>
         </div>

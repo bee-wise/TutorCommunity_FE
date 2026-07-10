@@ -75,7 +75,7 @@ export function TutorVerificationDashboard() {
             className="text-2xl md:text-3xl text-foreground"
             style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
           >
-            {user?.name ?? "Gia sư"}
+            {user?.fullName ?? "Gia sư"}
           </h1>
           <div className="inline-flex items-center gap-1.5 mt-1 justify-center md:justify-start w-full md:w-fit">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />

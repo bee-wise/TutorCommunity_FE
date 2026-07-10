@@ -1,11 +1,11 @@
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
-import { Providers } from '@workspace/ui/components/providers';
+import { Providers } from "@workspace/ui/components/providers";
 import "@workspace/ui/globals.css";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Cộng đồng gia sư",
+  title: "BeeWise LMS — Hệ Thống Quản Lý Học Tập Thông Minh",
 };
 
 const montserrat = Montserrat({
@@ -56,4 +56,3 @@ export default function RootLayout({
     </html>
   );
 }
-
