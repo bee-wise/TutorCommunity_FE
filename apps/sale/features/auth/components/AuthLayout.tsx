@@ -37,7 +37,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
           >
             <div className="relative w-10 h-10 rounded-full bg-white overflow-hidden shrink-0">
               <Image
-                src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
+                src={url}
                 alt="BeeWise Logo"
                 fill
                 sizes="40px"
