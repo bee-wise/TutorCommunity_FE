@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import { LmsHeader } from "@/features/portal/components/LmsHeader";
 import { LmsHeroSection } from "@/features/portal/components/LmsHeroSection";
-import { LmsIntroSection } from "@/features/portal/components/LmsIntroSection";
-import { LmsFeaturesSection } from "@/features/portal/components/LmsFeaturesSection";
-import { LmsBenefitsSection } from "@/features/portal/components/LmsBenefitsSection";
-import { LmsHowItWorksSection } from "@/features/portal/components/LmsHowItWorksSection";
-import { LmsFooter } from "@/features/portal/components/LmsFooter";
+import { DualRoleFeatureGrid } from "@/features/portal/components/DualRoleFeatureGrid";
+import { ClassActivationShowcase } from "@/features/portal/components/ConsultantShowcase";
+import { FaqAndCtaSection } from "@/features/portal/components/FaqAndCtaSection";
 
 export const metadata: Metadata = {
-  title: "BeeWise LMS - Nền tảng học tập thông minh",
+  title: "BeeWise LMS — Hệ Thống Quản Lý Học Tập Thông Minh",
   description:
-    "BeeWise LMS kết nối gia sư và học viên thông minh. Học 1-1 với gia sư chất lượng, theo dõi tiến độ và đạt mục tiêu học tập hiệu quả.",
+    "Không gian làm việc và học tập của Gia sư và Học viên. Số hóa lịch trình, lưu trữ tài liệu và tối ưu hóa hiệu quả dạy & học trên BeeWise LMS.",
 };
 
 export default function LmsHomePage() {
@@ -18,11 +16,9 @@ export default function LmsHomePage() {
     <main className="overflow-x-hidden">
       <LmsHeader />
       <LmsHeroSection />
-      <LmsIntroSection />
-      <LmsFeaturesSection />
-      <LmsBenefitsSection />
-      <LmsHowItWorksSection />
-      <LmsFooter />
+      <DualRoleFeatureGrid />
+      <ClassActivationShowcase />
+      <FaqAndCtaSection />
     </main>
   );
 }

@@ -1,7 +1,14 @@
 import { AxiosError } from "axios";
 
 export interface ApiErrorPayload {
-  message: string;
+  success?: boolean;
+  error?: {
+    message: string;
+    code?: string;
+    details?: Record<string, string[]>;
+  };
+  // Fallback for older flat structures
+  message?: string;
   code?: string;
   errors?: Record<string, string[]>;
 }
@@ -31,7 +38,7 @@ export function handleApiError(error: unknown): ApiError {
       const data = error.response.data as ApiErrorPayload;
       const status = error.response.status;
 
-      let message = data?.message;
+      let message = data?.error?.message || data?.message;
       if (!message) {
         switch (status) {
           case 400:
@@ -55,7 +62,12 @@ export function handleApiError(error: unknown): ApiError {
         }
       }
 
-      return new ApiError(message, status, data?.code, data?.errors);
+      return new ApiError(
+        message,
+        status,
+        data?.error?.code || data?.code,
+        data?.error?.details || data?.errors,
+      );
     } else if (error.request) {
       return new ApiError(
         "Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.",

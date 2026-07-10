@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, Lock } from "lucide-react";
-import { useAuthStore } from '@workspace/core/store/useAuthStore';
+import { useAuthStore } from "@workspace/core/store/useAuthStore";
 
 import Image from "next/image";
 import {
@@ -20,14 +20,14 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarTrigger,
-} from '@workspace/ui/components/ui/sidebar';
+} from "@workspace/ui/components/ui/sidebar";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@workspace/ui/components/ui/avatar';
+} from "@workspace/ui/components/ui/avatar";
 import { useTheme } from "next-themes";
-import { navigationConfig } from '@workspace/core/configs/navigation';
+import { navigationConfig } from "@workspace/core/configs/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -38,7 +38,7 @@ export function AppSidebar() {
 
   // Fallback to LEARNER navigation if no user is found
   const navGroups = user
-    ? navigationConfig[user.role]
+    ? navigationConfig[user.role.toUpperCase()]
     : navigationConfig.LEARNER;
 
   const { theme } = useTheme();
@@ -98,7 +98,7 @@ export function AppSidebar() {
                     pathname.startsWith(`${item.url}/`);
 
                   const isTutor = user?.role === "TUTOR";
-                  const isUnverified = isTutor && user?.isVerified === false;
+                  const isUnverified = isTutor && user?.status === "UNVERIFIED";
                   const isDashboard = item.url === "/lms/tutor";
                   // const isLocked = isUnverified && !isDashboard;
                   const isLocked = false;
@@ -157,14 +157,14 @@ export function AppSidebar() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user?.avatarUrl} alt={user?.name || ""} />
+                <AvatarImage src={""} alt={user?.fullName || ""} />
                 <AvatarFallback className="rounded-lg bg-[#FFC500]/20 text-[#280F91] font-semibold">
-                  {user?.name?.substring(0, 2).toUpperCase() || "BW"}
+                  {user?.fullName?.substring(0, 2).toUpperCase() || "BW"}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                 <span className="truncate font-semibold text-foreground">
-                  {user?.name}
+                  {user?.fullName}
                 </span>
                 <span className="truncate text-xs text-muted-foreground">
                   {user?.email}

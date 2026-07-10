@@ -31,10 +31,7 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-export type RoleNavigation = Record<
-  "LEARNER" | "TUTOR" | "CONSULTANT" | "ADMIN",
-  NavGroup[]
->;
+export type RoleNavigation = Record<string, NavGroup[]>;
 
 export const navigationConfig: RoleNavigation = {
   LEARNER: [

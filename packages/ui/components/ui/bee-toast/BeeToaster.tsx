@@ -91,7 +91,7 @@ function ToastItem({
       role="status"
       aria-live="polite"
       className={`
-        relative flex items-start gap-3 w-[340px] max-w-[90vw]
+        relative flex items-center gap-3 w-[340px] max-w-[90vw]
         rounded-2xl px-4 py-3.5 shadow-xl shadow-black/10 overflow-hidden
         ${bg}
       `}

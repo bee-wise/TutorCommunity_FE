@@ -3,7 +3,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { handleApiError } from '@workspace/core/sys-libs/error-handler';
+import { handleApiError } from "@workspace/core/sys-libs/error-handler";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
@@ -14,17 +14,12 @@ export const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 // --- REQUEST INTERCEPTOR ---
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("accessToken");
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
     return config;
   },
   (error: AxiosError) => {
@@ -44,7 +39,6 @@ apiClient.interceptors.response.use(
       console.error(
         "Unauthorized access - Redirecting or Token Refresh needed",
       );
-      // TODO: Thêm logic Refresh Token
     }
 
     return Promise.reject(apiError);
