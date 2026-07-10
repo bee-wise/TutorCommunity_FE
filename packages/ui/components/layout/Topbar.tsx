@@ -3,7 +3,6 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import { Bell, ChevronDown, Moon, Sun, Monitor } from "lucide-react";
-import { useTheme } from "next-themes";
 
 import { useAuthStore, UserRole } from "@workspace/core/store/useAuthStore";
 
@@ -30,10 +29,12 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/ui/avatar";
+import { useLogout } from "@workspace/core/hooks/useLogout";
 
 export function Topbar() {
   const pathname = usePathname();
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const { mutate: logout } = useLogout();
 
   // Simple breadcrumb generator based on pathname
   const paths = pathname.split("/").filter(Boolean);
@@ -110,7 +111,10 @@ export function Topbar() {
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer">
+            <DropdownMenuItem
+              onClick={() => logout()}
+              className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer"
+            >
               Đăng xuất
             </DropdownMenuItem>
           </DropdownMenuContent>

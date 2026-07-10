@@ -37,9 +37,21 @@ function StudentScheduleCard() {
         Lịch tuần này
       </p>
       {[
-        { subject: "Toán Cao Cấp", time: "14:00 - 15:30", status: "upcoming" as const },
-        { subject: "Vật Lý 11", time: "09:00 - 10:30", status: "completed" as const },
-        { subject: "Tiếng Anh B2", time: "16:00 - 17:00", status: "upcoming" as const },
+        {
+          subject: "Toán Cao Cấp",
+          time: "14:00 - 15:30",
+          status: "upcoming" as const,
+        },
+        {
+          subject: "Vật Lý 11",
+          time: "09:00 - 10:30",
+          status: "completed" as const,
+        },
+        {
+          subject: "Tiếng Anh B2",
+          time: "16:00 - 17:00",
+          status: "upcoming" as const,
+        },
       ].map((s) => (
         <div
           key={s.subject}
@@ -80,8 +92,16 @@ function StudentDocumentsCard() {
         Tài liệu mới nhất
       </p>
       {[
-        { name: "Chương 5 - Đạo hàm.pdf", icon: FilePdf, by: "GS. Nguyễn Văn A" },
-        { name: "Slide Lý Thuyết T12.docx", icon: FileDoc, by: "GS. Trần Thị B" },
+        {
+          name: "Chương 5 - Đạo hàm.pdf",
+          icon: FilePdf,
+          by: "GS. Nguyễn Văn A",
+        },
+        {
+          name: "Slide Lý Thuyết T12.docx",
+          icon: FileDoc,
+          by: "GS. Trần Thị B",
+        },
         { name: "AI Tóm Tắt Zoom #28", icon: Robot, by: "Hệ thống BeeWise" },
       ].map((doc) => {
         const Icon = doc.icon;
@@ -130,9 +150,7 @@ function StudentBillingCard() {
             key={row.subject}
             className="grid grid-cols-3 gap-0 text-[10px] px-3 py-2 border-b border-[#0c0c0b]/4 last:border-b-0"
           >
-            <span className="font-semibold text-[#0c0c0b]">
-              {row.subject}
-            </span>
+            <span className="font-semibold text-[#0c0c0b]">{row.subject}</span>
             <span className="text-center text-[#0c0c0b]/60">
               {row.sessions}
             </span>
@@ -166,9 +184,24 @@ function TutorMultiRoomCard() {
         Lớp học đang hoạt động
       </p>
       {[
-        { name: "Nguyễn Văn Minh", subject: "Toán 12", status: "live" as const, unread: 3 },
-        { name: "Trần Thị Hoa", subject: "Vật Lý 11", status: "live" as const, unread: 1 },
-        { name: "Lê Hoàng Nam", subject: "Hóa 10", status: "idle" as const, unread: 0 },
+        {
+          name: "Nguyễn Văn Minh",
+          subject: "Toán 12",
+          status: "live" as const,
+          unread: 3,
+        },
+        {
+          name: "Trần Thị Hoa",
+          subject: "Vật Lý 11",
+          status: "live" as const,
+          unread: 1,
+        },
+        {
+          name: "Lê Hoàng Nam",
+          subject: "Hóa 10",
+          status: "idle" as const,
+          unread: 0,
+        },
       ].map((room) => (
         <div
           key={room.name}
@@ -236,12 +269,20 @@ function TutorDocumentsCard() {
           <div className="flex items-center gap-1">
             {doc.action === "upload" && (
               <div className="w-6 h-6 rounded-md bg-[#280f91]/10 flex items-center justify-center hover:bg-[#280f91]/20 transition-colors cursor-pointer">
-                <UploadSimple size={11} weight="bold" className="text-[#280f91]" />
+                <UploadSimple
+                  size={11}
+                  weight="bold"
+                  className="text-[#280f91]"
+                />
               </div>
             )}
             {doc.action === "edit" && (
               <div className="w-6 h-6 rounded-md bg-[#ffc500]/15 flex items-center justify-center hover:bg-[#ffc500]/30 transition-colors cursor-pointer">
-                <PencilSimple size={11} weight="bold" className="text-[#0c0c0b]" />
+                <PencilSimple
+                  size={11}
+                  weight="bold"
+                  className="text-[#0c0c0b]"
+                />
               </div>
             )}
             {doc.action === "delete" && (
@@ -391,12 +432,14 @@ export function DualRoleFeatureGrid() {
             className="text-3xl md:text-4xl lg:text-[44px] leading-tight tracking-tight text-[#0c0c0b] mb-4"
             style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
           >
-            Hệ thống{" "}
-            <span className="text-[#280f91]">tùy biến theo vai trò</span>
+            Hệ thống dành cho <br />
+            <span className="text-[#280f91]">
+              Gia Sư & Học Viên
+            </span> <br /> tại <span className="text-accent">Beewise</span>
           </h2>
           <p className="text-[#0c0c0b]/60 text-base leading-relaxed">
-            Mỗi người dùng có trải nghiệm riêng biệt, được tối ưu cho công
-            việc của mình.
+            Mỗi người dùng có trải nghiệm riêng biệt, được tối ưu cho công việc
+            của mình.
           </p>
         </motion.div>
 
@@ -410,8 +453,16 @@ export function DualRoleFeatureGrid() {
           <div className="relative inline-flex items-center bg-[#F8FAFC] rounded-xl p-1 border border-[#0c0c0b]/6">
             {(
               [
-                { key: "student" as TabKey, label: "Góc Nhìn Học Viên", icon: GraduationCap },
-                { key: "tutor" as TabKey, label: "Không Gian Gia Sư", icon: ChalkboardTeacher },
+                {
+                  key: "student" as TabKey,
+                  label: "Góc Nhìn Học Viên",
+                  icon: GraduationCap,
+                },
+                {
+                  key: "tutor" as TabKey,
+                  label: "Không Gian Gia Sư",
+                  icon: ChalkboardTeacher,
+                },
               ] as const
             ).map((tab) => {
               const Icon = tab.icon;

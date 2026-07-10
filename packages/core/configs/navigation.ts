@@ -87,7 +87,7 @@ export const navigationConfig: RoleNavigation = {
       items: [
         {
           title: "Dashboard",
-          url: "/lms/tutor",
+          url: "/lms/tutor/dashboard",
           icon: LayoutDashboard,
         },
       ],

@@ -10,4 +10,8 @@ export const authService = {
   getMe: async (): Promise<GetMeReponseType> => {
     return await apiClient.get("/auth/me");
   },
+
+  logout: async (): Promise<ApiResponse<undefined>> => {
+    return await apiClient.post("/auth/logout");
+  },
 };

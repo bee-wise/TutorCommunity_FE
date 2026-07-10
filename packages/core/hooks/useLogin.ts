@@ -7,8 +7,13 @@ import { toast } from "@workspace/ui/components/ui/bee-toast/index";
 import { AUTH_MESSAGE } from "../constants/auth.message";
 import { handleApiError } from "../sys-libs/error-handler";
 
-export const useLogin = ({ redirectUrl }: { redirectUrl?: string }) => {
-  const queryClient = useQueryClient();
+export const useLogin = ({
+  redirectUrl,
+  onSuccess,
+}: {
+  redirectUrl?: string;
+  onSuccess?: () => void;
+}) => {
   const router = useRouter();
 
   return useMutation({
@@ -16,12 +21,13 @@ export const useLogin = ({ redirectUrl }: { redirectUrl?: string }) => {
     mutationFn: async (req: LoginRequest) => {
       await authService.login(req);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKeys.authKey.getMe] });
+    onSuccess: async () => {
       toast.success(AUTH_MESSAGE.SUCCESS);
+
       if (redirectUrl) {
         router.push(redirectUrl);
       }
+      onSuccess?.();
     },
     onError: (error) => {
       const err = handleApiError(error);

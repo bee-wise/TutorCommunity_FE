@@ -87,7 +87,7 @@ export function LmsHeader() {
           {/* Right: dual-action CTA hub */}
           <div className="flex items-center gap-2.5">
             <Link
-              href="/tutor-onboarding"
+              href="http://localhost:3000/register"
               className="hidden md:inline-flex h-9 items-center justify-center rounded-xl border-2 border-[#280f91]/20 px-4 text-sm font-semibold text-[#280f91] hover:border-[#280f91] hover:bg-[#280f91]/5 active:scale-[0.97] transition-all duration-200"
             >
               Đăng ký làm Gia sư

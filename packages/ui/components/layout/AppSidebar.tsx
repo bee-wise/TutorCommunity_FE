@@ -26,6 +26,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/ui/avatar";
+import { Skeleton } from "@workspace/ui/components/ui/skeleton";
 import { useTheme } from "next-themes";
 import { navigationConfig } from "@workspace/core/configs/navigation";
 
@@ -36,10 +37,7 @@ export function AppSidebar() {
     "/brand/beewise-logo-nobackground.PNG",
   );
 
-  // Fallback to LEARNER navigation if no user is found
-  const navGroups = user
-    ? navigationConfig[user.role.toUpperCase()]
-    : navigationConfig.LEARNER;
+  const navGroups = user ? navigationConfig[user?.role.toUpperCase()] : [];
 
   const { theme } = useTheme();
 
@@ -82,72 +80,90 @@ export function AppSidebar() {
         <SidebarTrigger />{" "}
       </SidebarHeader>
       <SidebarContent className="gap-0 py-4">
-        {navGroups.map((group) => (
-          <SidebarGroup
-            key={group.groupName}
-            className="group-data-[collapsible=icon]:p-2"
-          >
-            <SidebarGroupLabel className="text-xs font-semibold uppercase text-muted-foreground group-data-[collapsible=icon]:hidden">
-              {group.groupName}
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => {
-                  const isActive =
-                    pathname === item.url ||
-                    pathname.startsWith(`${item.url}/`);
+        {navGroups.length === 0 ? (
+          <div className="px-4 py-2 space-y-6 group-data-[collapsible=icon]:px-2">
+            {[1, 2].map((groupIndex) => (
+              <div key={groupIndex} className="space-y-3">
+                <Skeleton className="h-3 w-16 bg-primary/10 group-data-[collapsible=icon]:hidden" />
+                <div className="space-y-1">
+                  {[1, 2, 3].map((itemIndex) => (
+                    <Skeleton
+                      key={itemIndex}
+                      className="h-8 w-full bg-primary/5 rounded-md"
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          navGroups.map((group) => (
+            <SidebarGroup
+              key={group.groupName}
+              className="group-data-[collapsible=icon]:p-2"
+            >
+              <SidebarGroupLabel className="text-xs font-semibold uppercase text-muted-foreground group-data-[collapsible=icon]:hidden">
+                {group.groupName}
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map((item) => {
+                    const isActive =
+                      pathname === item.url ||
+                      pathname.startsWith(`${item.url}/`);
 
-                  const isTutor = user?.role === "TUTOR";
-                  const isUnverified = isTutor && user?.status === "UNVERIFIED";
-                  const isDashboard = item.url === "/lms/tutor";
-                  // const isLocked = isUnverified && !isDashboard;
-                  const isLocked = false;
+                    const isTutor = user?.role === "TUTOR";
+                    const isUnverified =
+                      isTutor && user?.status === "UNVERIFIED";
+                    const isDashboard = item.url === "/lms/tutor";
+                    const isLocked = isUnverified && !isDashboard;
 
-                  return (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild={!isLocked}
-                        tooltip={
-                          isLocked
-                            ? "Bạn hãy hoàn thành xác thực tài khoản"
-                            : item.title
-                        }
-                        isActive={isActive && !isLocked}
-                        disabled={isLocked}
-                        className={`transition-colors font-medium select-none ${
-                          isLocked
-                            ? "opacity-40 cursor-not-allowed text-muted-foreground/70"
-                            : isActive
-                              ? "bg-[#280F91]/10 text-accent hover:bg-[#280F91]/15 hover:text-[#280F91]"
-                              : "text-muted-foreground hover:bg-[#280F91]/5 hover:text-[#280F91]"
-                        }`}
-                      >
-                        {isLocked ? (
-                          <div className="flex items-center gap-2 w-full cursor-not-allowed">
-                            <item.icon className="size-4 text-muted-foreground/60 shrink-0" />
-                            <span className="truncate">{item.title}</span>
-                            <Lock className="ml-auto size-3 text-muted-foreground/60 shrink-0" />
-                          </div>
-                        ) : (
-                          <Link href={item.url}>
-                            <item.icon
-                              className={`size-4 ${isActive ? "text-accent" : ""}`}
-                            />
-                            <span
-                              className={` ${isActive ? "text-accent" : ""}`}
-                            >
-                              {item.title}
-                            </span>
-                          </Link>
-                        )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild={!isLocked}
+                          tooltip={
+                            isLocked
+                              ? "Bạn hãy hoàn thành xác thực tài khoản"
+                              : item.title
+                          }
+                          isActive={isActive && !isLocked}
+                          disabled={isLocked}
+                          className={`transition-colors font-medium select-none ${
+                            isLocked
+                              ? "opacity-40 cursor-not-allowed text-muted-foreground/70"
+                              : isActive
+                                ? "bg-[#280F91]/10 text-accent hover:bg-[#280F91]/15 hover:text-[#280F91]"
+                                : "text-muted-foreground hover:bg-[#280F91]/5 hover:text-[#280F91]"
+                          }`}
+                        >
+                          {isLocked ? (
+                            <div className="flex items-center gap-2 w-full cursor-not-allowed">
+                              <item.icon className="size-4 text-muted-foreground/60 shrink-0" />
+                              <span className="truncate">{item.title}</span>
+                              <Lock className="ml-auto size-3 text-muted-foreground/60 shrink-0" />
+                            </div>
+                          ) : (
+                            <Link href={item.url}>
+                              <item.icon
+                                className={`size-4 ${isActive ? "text-accent" : ""}`}
+                              />
+                              <span
+                                className={` ${isActive ? "text-accent" : ""}`}
+                              >
+                                {item.title}
+                              </span>
+                            </Link>
+                          )}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))
+        )}
       </SidebarContent>
       <SidebarFooter className="border-t border-border/40 p-4">
         <SidebarMenu>

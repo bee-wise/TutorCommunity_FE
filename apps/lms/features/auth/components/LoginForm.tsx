@@ -12,7 +12,9 @@ import { useLogin } from "@workspace/core/hooks/useLogin";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { mutate: login, isPending } = useLogin({});
+  const { mutate: login, isPending } = useLogin({
+    redirectUrl: "/lms",
+  });
 
   const {
     register,
