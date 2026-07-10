@@ -15,7 +15,7 @@ export function Footer() {
             <div className="flex items-center gap-2 mb-4">
               <div className="relative w-12 h-12 rounded-full bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-sm border border-white/20">
                 <Image
-                  src="/brand/beewise-logo-nobackground.PNG"
+                  src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
                   alt="BeeWise Logo"
                   fill
                   className="object-contain p-1"

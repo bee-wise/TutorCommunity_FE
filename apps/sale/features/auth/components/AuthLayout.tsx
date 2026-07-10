@@ -1,5 +1,5 @@
 "use client";
-import { Button } from '@workspace/ui/components/ui/button';
+import { Button } from "@workspace/ui/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,8 +13,8 @@ interface AuthLayoutProps {
 export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
   const url =
     variant === "register"
-      ? "/images/BeeWiseTeam-2.JPG"
-      : "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561331/beewise/BeeWiseTeam.jpg";
+      ? "/brand/BeeWiseTeam-2.JPG"
+      : "/brand/BeeWiseTeam.JPG";
   const router = useRouter();
 
   return (
