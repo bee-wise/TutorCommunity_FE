@@ -58,7 +58,7 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
             ? {
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                width: "min(1300px, calc(100vw - 2rem))",
+                width: "min(1400px, calc(100vw - 2rem))",
               }
             : {
                 width: "100%",
@@ -94,7 +94,7 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
               />
             </div>
             <span
-              className="text-white text-xs md:text-base leading-none uppercase"
+              className="hidden md:block text-white text-xs md:text-base leading-none uppercase"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
               Cộng Đồng Gia Sư Beewise
