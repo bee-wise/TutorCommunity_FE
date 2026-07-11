@@ -8,7 +8,7 @@ const FOOTER_LINKS = [
 
 export function Footer() {
   return (
-    <footer className="bg-primary dark:bg-glass text-primary-foreground">
+    <footer className="bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <div>
@@ -22,7 +22,7 @@ export function Footer() {
                 />
               </div>
               <span
-                className="text-primary-foreground dark:text-primary text-lg leading-none"
+                className="text-primary-foreground text-lg leading-none"
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 800,
@@ -31,14 +31,14 @@ export function Footer() {
                 Cộng Đồng Gia Sư Beewise
               </span>
             </div>
-            <p className="text-primary-foreground dark:text-primary opacity-70 text-sm leading-relaxed max-w-xs">
+            <p className="text-primary-foreground opacity-70 text-sm leading-relaxed max-w-xs">
               Nền tảng kết nối gia sư và học viên thông qua công nghệ AI. Nhanh
               hơn, minh bạch hơn, đáng tin cậy hơn.
             </p>
           </div>
 
           <div className="md:text-right">
-            <p className="text-sm text-primary-foreground dark:text-primary opacity-70 mb-1">
+            <p className="text-sm text-primary-foreground opacity-70 mb-1">
               Hỗ trợ
             </p>
             <a
@@ -51,7 +51,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <p className="text-primary-foreground dark:text-primary opacity-50 text-xs">
+          <p className="text-primary-foreground opacity-50 text-xs">
             &copy; {new Date().getFullYear()} BeeWise. Tất cả quyền được bảo
             lưu.
           </p>
@@ -60,7 +60,7 @@ export function Footer() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-primary-foreground dark:text-primary opacity-50 text-xs hover:opacity-80 transition-opacity"
+                className="text-primary-foreground opacity-50 text-xs hover:opacity-80 transition-opacity"
               >
                 {link.label}
               </Link>

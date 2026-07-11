@@ -7,10 +7,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { List, X } from "@phosphor-icons/react";
 
 const NAV_LINKS = [
-  { label: "Hệ Thống Lớp Học", href: "#features" },
-  { label: "Kho Tài Liệu", href: "#features" },
-  { label: "Minh Bạch Học Phí", href: "#features" },
-  { label: "Kích Hoạt Lớp Học", href: "#activation" },
+  { label: "Giới thiệu", href: "#features" },
+  { label: "Tính năng lớp học", href: "#activation" },
 ];
 
 export function LmsHeader() {

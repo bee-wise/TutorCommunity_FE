@@ -125,7 +125,7 @@ export function TutorCard({
                 <CheckCircleIcon
                   size={16}
                   weight="fill"
-                  className="text-secondary dark:text-accent shrink-0 mt-0.5"
+                  className="text-secondary shrink-0 mt-0.5"
                   aria-label="Đã xác thực"
                 />
               )}
