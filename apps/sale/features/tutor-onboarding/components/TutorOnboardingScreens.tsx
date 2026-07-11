@@ -15,6 +15,10 @@ import {
 } from "lucide-react";
 import { Button } from "@workspace/ui/components/ui/button";
 import { Input } from "@workspace/ui/components/ui/input";
+import {
+  TUTOR_LMS_URL,
+  getTutorPublicProfilePath,
+} from "@workspace/core/constants/tutor-links";
 import { onboardingSteps } from "../tutor-onboarding.fixtures";
 import { useTutorOnboardingViewModel } from "../tutor-onboarding.provider";
 import type { AvailabilitySlot } from "../tutor-onboarding.types";
@@ -280,6 +284,7 @@ function InterviewScreen() {
 }
 
 function PendingReviewScreen() {
+  const { dispatchAction } = useTutorOnboardingViewModel();
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
       <StatusCard title="Đang chờ Consultant xác thực">
@@ -294,7 +299,12 @@ function PendingReviewScreen() {
           Hồ sơ đang trong quá trình xác thực. Bạn chưa cần chỉnh sửa, gửi lại
         hoặc thực hiện thêm thao tác nào.
         <div className="mt-4">
-          <Button variant="outline">Liên hệ hỗ trợ</Button>
+          <div className="grid gap-3">
+            <Button onClick={() => dispatchAction("approve-mock-profile")}>
+              Tiếp tục đến trạng thái đã duyệt
+            </Button>
+            <Button variant="outline">Liên hệ hỗ trợ</Button>
+          </div>
         </div>
       </StatusCard>
     </section>
@@ -432,7 +442,7 @@ function PostApprovalScreen() {
 }
 
 function CompletedScreen() {
-  const { dispatchAction } = useTutorOnboardingViewModel();
+  const { session } = useTutorOnboardingViewModel();
 
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -447,10 +457,21 @@ function CompletedScreen() {
       </StatusCard>
       <StatusCard title="Bắt đầu nhận lớp">
         <div className="grid gap-3">
-          <Button onClick={() => dispatchAction("open-lms-preview")}>
+          <Button
+            type="button"
+            onClick={() => window.location.assign(TUTOR_LMS_URL)}
+          >
             Vào LMS
           </Button>
-          <Button variant="outline">Xem hồ sơ công khai</Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() =>
+              window.location.assign(getTutorPublicProfilePath(session.user))
+            }
+          >
+            Xem hồ sơ công khai
+          </Button>
         </div>
         <p className="mt-4 text-xs text-muted-foreground">
           Tài khoản đã sẵn sàng sử dụng Tutor LMS và bắt đầu nhận lớp.

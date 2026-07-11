@@ -57,6 +57,7 @@ export type TutorOnboardingActionId =
   | "join-mock-interview"
   | "request-mock-reschedule"
   | "complete-mock-interview"
+  | "approve-mock-profile"
   | "edit-rejected-profile"
   | "resubmit-profile"
   | "open-post-approval-form"

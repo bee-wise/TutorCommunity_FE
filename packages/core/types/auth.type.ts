@@ -47,6 +47,13 @@ export type MeType = {
   lmsAccessEnabled?: boolean | null;
   unreadNotificationCount?: number | null;
   unreadChatCount?: number | null;
+  bankInformationCompleted?: boolean | null;
+  availabilityCompleted?: boolean | null;
+  postApprovalCompleted?: boolean | null;
+  listingStatus?: "WAIVED_ACTIVE" | "ACTIVE" | "EXPIRING_SOON" | "EXPIRED" | string | null;
+  listingExpiresAt?: string | null;
+  isProfilePublic?: boolean | null;
+  canReceiveNewConnections?: boolean | null;
 };
 
 export type GetMeReponseType = ApiResponse<MeType>;
