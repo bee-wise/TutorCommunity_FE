@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { TutorOnboardingProvider } from "./tutor-onboarding.provider";
 import {
   parseTutorOnboardingScenario,
@@ -31,6 +33,53 @@ export function TutorOnboardingPreview({
         scenario={parsedScenario === "unknown" ? "journey" : parsedScenario}
         capture={capture}
       />
+    </TutorOnboardingProvider>
+  );
+}
+
+export function TutorOnboardingExperience() {
+  const router = useRouter();
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+
+  useEffect(() => {
+    if (isAuthLoading) return;
+
+    if (!isAuthenticated || !user) {
+      router.replace("/login?returnUrl=%2Ftutor%2Fonboarding");
+      return;
+    }
+
+    if (user.role?.trim().toUpperCase() !== "TUTOR") {
+      router.replace("/");
+      return;
+    }
+
+    if (user.canAccessTutorLms === true) {
+      router.replace("/lms/tutor/dashboard");
+    }
+  }, [isAuthenticated, isAuthLoading, router, user]);
+
+  if (
+    isAuthLoading ||
+    !isAuthenticated ||
+    !user ||
+    user.role?.trim().toUpperCase() !== "TUTOR" ||
+    user.canAccessTutorLms === true
+  ) {
+    return null;
+  }
+
+  return (
+    <TutorOnboardingProvider scenario="journey">
+      <TutorOnboardingShell
+        capture={false}
+        toolbar={null}
+        useAuthenticatedHeader
+      >
+        <TutorOnboardingScreen />
+      </TutorOnboardingShell>
     </TutorOnboardingProvider>
   );
 }

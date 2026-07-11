@@ -34,7 +34,7 @@ export function getRoleRedirectPath(
 
   if (role === "TUTOR") {
     if (user.canAccessTutorLms === true) return "/lms/tutor/dashboard";
-    return "/tutor-guide";
+    return "/tutor/onboarding";
   }
 
   if (role === "ADMIN" || role === "CONSULTANT") {
