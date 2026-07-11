@@ -43,16 +43,10 @@ export const metadata: Metadata = {
   },
 };
 
-const NAV_LINKS = [
-  { label: "Gia Sư", href: "/tutors" },
-  { label: "Cách Hoạt Động", href: "#how-it-works" },
-  { label: "Trở thành gia sư", href: "/tutor-guide" },
-];
-
 export default function LandingPage() {
   return (
     <>
-      <Header NAV_LINKS={NAV_LINKS} />
+      <Header />
       <main id="main-content">
         <HeroSection />
         <PosterSection />

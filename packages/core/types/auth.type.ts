@@ -15,6 +15,14 @@ export type MeType = {
   role: string;
   status: string;
   permissions: string[];
+  displayName?: string;
+  avatarUrl?: string;
+  tutorOnboardingStatus?: string | null;
+  tutorProfileStatus?: string | null;
+  onboardingStatus?: string | null;
+  lmsAccessEnabled?: boolean | null;
+  unreadNotificationCount?: number | null;
+  unreadChatCount?: number | null;
 };
 
 export type GetMeReponseType = ApiResponse<MeType>;
