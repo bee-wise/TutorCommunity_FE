@@ -99,6 +99,10 @@ export function Header({
     tutorOnboardingStatus,
     lmsAccessEnabled,
   });
+  const notificationHref =
+    navbarState === "TUTOR_APPROVED"
+      ? "/tutor/notifications"
+      : "/notifications";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -248,7 +252,7 @@ export function Header({
               navbarConfig.showNotifications &&
               navbarState !== "GUEST" && (
                 <Link
-                  href="/notifications"
+                  href={notificationHref}
                   aria-label="Thông báo"
                   className="relative hidden h-8 w-8 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:inline-flex"
                 >
@@ -304,7 +308,10 @@ export function Header({
                 </button>
 
                 {accountOpen && (
-                  <div className="absolute right-0 top-11 z-80 flex w-56 flex-col gap-1 rounded-2xl border border-white/10 bg-primary p-3 shadow-2xl shadow-primary/40">
+                  <div
+                    className="absolute right-0 top-11 z-80 flex w-56 flex-col gap-1 rounded-2xl border border-[#eadca8] p-3 shadow-2xl shadow-black/15"
+                    style={{ backgroundColor: "#fffdf7", color: "#280f91" }}
+                  >
                     {navbarConfig.accountItems.map((item) =>
                       item.action === "logout" ? (
                         <button
@@ -314,7 +321,7 @@ export function Header({
                             setAccountOpen(false);
                             handleLogout();
                           }}
-                          className="rounded-lg px-3 py-2 text-left text-sm font-medium text-primary-foreground transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                          className="rounded-lg px-3 py-2 text-left text-sm font-semibold text-[#b42318] transition-colors hover:bg-[#fee4e2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b42318]"
                         >
                           {item.label}
                         </button>
@@ -323,7 +330,7 @@ export function Header({
                           key={`${item.label}-${item.href}`}
                           href={item.href}
                           onClick={() => setAccountOpen(false)}
-                          className="rounded-lg px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                          className="rounded-lg px-3 py-2 text-sm font-semibold text-[#280f91] transition-colors hover:bg-[#fff3cb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]"
                         >
                           {item.label}
                         </Link>
@@ -341,6 +348,7 @@ export function Header({
               showNotifications={!isAuthLoading && navbarConfig.showNotifications}
               unreadNotificationCount={unreadNotificationCount}
               unreadChatCount={unreadChatCount}
+              notificationHref={notificationHref}
               onLogout={handleLogout}
             />
           </div>

@@ -30,6 +30,13 @@ export function applyTutorOnboardingAction(
         scenario: "pending-review",
         selectedStepId: "verification",
       };
+    case "approve-mock-profile":
+      return {
+        ...state,
+        scenario: "approved",
+        selectedStepId: "postApproval",
+        lastActionMessage: "Hồ sơ mock đã được duyệt.",
+      };
     case "edit-rejected-profile":
       return {
         ...state,
