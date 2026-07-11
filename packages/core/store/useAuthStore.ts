@@ -17,7 +17,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
-  isAuthLoading: false,
+  isAuthLoading: true,
 
   setAuthLoading: (isAuthLoading) => set({ isAuthLoading }),
   login: (user) => set({ user, isAuthenticated: true, isAuthLoading: false }),

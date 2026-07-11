@@ -16,7 +16,7 @@ export function TutorEducationAchievements({
       icon={GraduationCap}
     >
       <div className="grid gap-5 lg:grid-cols-2">
-        <div className="rounded-2xl border border-[#cfe1fa] bg-[#cfe1fa]/22 p-4">
+        <div className="rounded-2xl border border-[#cfe1fa] bg-white p-4 shadow-sm">
           <div className="flex items-center gap-2 text-sm font-black text-[#0c0c0b]">
             <GraduationCap size={17} className="text-[#280f91]" />
             Học vấn
@@ -37,7 +37,7 @@ export function TutorEducationAchievements({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[#ffc500]/35 bg-[#fff3cb]/60 p-4">
+        <div className="rounded-2xl border border-[#ffc510] bg-[#fadc78]/65 p-4">
           <div className="flex items-center gap-2 text-sm font-black text-[#0c0c0b]">
             <Trophy size={17} className="text-[#905b0f]" />
             Thành tích

@@ -63,8 +63,8 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
               className="text-2xl leading-snug mb-4"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
-              "Gia nhập BeeWise —<br />
-              Kiến tạo tương lai."
+              &quot;Gia nhập BeeWise —<br />
+              Kiến tạo tương lai.&quot;
             </blockquote>
             <p className="text-sm text-white/70">
               Hàng nghìn học viên đã tìm được gia sư phù hợp cùng BeeWise.

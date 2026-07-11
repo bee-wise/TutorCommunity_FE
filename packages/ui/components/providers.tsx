@@ -7,6 +7,7 @@ import { Suspense, type ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 import { BeeToaster } from "@workspace/ui/components/ui/bee-toast";
 import { RouteTracker } from "./route-tracker";
+import { AuthBootstrap } from "./AuthBootstrap";
 
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   const orig = console.error;
@@ -32,6 +33,7 @@ export function Providers({ children }: { children: ReactNode }) {
       disableTransitionOnChange
     >
       <QueryClientProvider client={queryClient}>
+        <AuthBootstrap />
         {children}
         <Suspense fallback={null}>
           <RouteTracker />

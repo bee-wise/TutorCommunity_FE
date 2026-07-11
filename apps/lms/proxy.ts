@@ -35,15 +35,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match tất cả request paths ngoại trừ:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - các file tĩnh public như images, brand, etc.
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|images|brand).*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|images|brand).*)"],
 };

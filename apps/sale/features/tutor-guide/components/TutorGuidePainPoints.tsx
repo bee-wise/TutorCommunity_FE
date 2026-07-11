@@ -2,7 +2,6 @@ import {
   WarningCircleIcon,
   CurrencyCircleDollarIcon,
   UsersFourIcon,
-  CalendarBlankIcon,
   ChatCircleTextIcon,
 } from "@phosphor-icons/react/dist/ssr";
 

@@ -22,7 +22,7 @@ export function TutorProfilePage() {
   };
 
   return (
-    <div className="bg-[linear-gradient(180deg,#fff3cb_0%,#fffaf0_42%,#ffffff_100%)] py-6 sm:py-8 lg:py-10">
+    <div className="bg-[radial-gradient(circle_at_top_left,rgba(250,220,120,0.55),transparent_34%),linear-gradient(180deg,#fff3cb_0%,#fffaf0_38%,#ffffff_100%)] py-6 sm:py-8 lg:py-10">
       <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 sm:gap-6 sm:px-6 lg:px-8">
         <TutorHero tutor={mockTutorProfile} />
 
