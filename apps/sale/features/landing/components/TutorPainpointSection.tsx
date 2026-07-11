@@ -57,7 +57,7 @@ export function TutorPainpointSection() {
   return (
     <section
       ref={containerRef}
-      className="relative bg-[#f8f9fc] pb-4 pt-4 sm:py-28 overflow-hidden h-fit md:min-h-[500px] flex items-center"
+      className="relative bg-[#f8f9fc] pb-4 sm:py-28 overflow-hidden h-fit md:min-h-[500px] flex items-center"
       id="tutor-pain-points"
       aria-labelledby="tutor-pain-headline"
     >

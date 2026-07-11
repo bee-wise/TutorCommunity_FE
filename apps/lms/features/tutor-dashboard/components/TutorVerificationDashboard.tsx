@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useAuthStore } from '@workspace/core/store/useAuthStore';
+import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import {
   CheckCircle,
   ArrowRight,
@@ -80,7 +80,7 @@ export function TutorVerificationDashboard() {
           <div className="inline-flex items-center gap-1.5 mt-1 justify-center md:justify-start w-full md:w-fit">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             <span
-              className="text-xs font-semibold text-amber-600 dark:text-amber-400"
+              className="text-xs font-semibold text-amber-600"
               style={{ fontFamily: "var(--font-montserrat)" }}
             >
               Tài khoản của bạn chưa được xác minh

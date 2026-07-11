@@ -24,7 +24,7 @@ export function FormField({ label, error, children, hint }: FormFieldProps) {
         <p className="text-[10px] text-foreground/50">{hint}</p>
       )}
       {error && (
-        <p className="text-[10px] text-red-500 dark:text-red-400 flex items-center gap-1">
+        <p className="text-[10px] text-red-500 flex items-center gap-1">
           <span aria-hidden="true">✕</span>
           {error.message}
         </p>
@@ -43,9 +43,10 @@ export function Input({ hasError, className, ...props }: InputProps) {
       className={`w-full h-9 px-3 rounded-xl border text-sm bg-background text-foreground placeholder:text-foreground/40
         transition-all duration-200 outline-none
         focus:border-primary focus:ring-2 focus:ring-primary/20
-        ${hasError
-          ? "border-red-400 focus:border-red-500 focus:ring-red-400/20"
-          : "border-border hover:border-primary/40"
+        ${
+          hasError
+            ? "border-red-400 focus:border-red-500 focus:ring-red-400/20"
+            : "border-border hover:border-primary/40"
         }
         ${className ?? ""}
       `}
