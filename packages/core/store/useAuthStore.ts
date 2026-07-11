@@ -6,20 +6,21 @@ export type UserRole = "LEARNER" | "TUTOR" | "CONSULTANT" | "ADMIN";
 interface AuthState {
   user: MeType | null;
   isAuthenticated: boolean;
-  isLogin?: boolean;
 
   // Mock methods for testing
+  isAuthLoading: boolean;
+  setAuthLoading: (isAuthLoading: boolean) => void;
   login: (user: MeType) => void;
   logout: () => void;
-  setIsLogin: (v: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
-  isMe: false,
+  isAuthLoading: false,
 
-  login: (user) => set({ user, isAuthenticated: true }),
-  logout: () => set({ user: null, isAuthenticated: false }),
-  setIsLogin: (v) => set({ isLogin: v }),
+  setAuthLoading: (isAuthLoading) => set({ isAuthLoading }),
+  login: (user) => set({ user, isAuthenticated: true, isAuthLoading: false }),
+  logout: () =>
+    set({ user: null, isAuthenticated: false, isAuthLoading: false }),
 }));
