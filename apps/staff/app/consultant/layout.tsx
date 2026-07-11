@@ -1,6 +1,12 @@
-import { DashboardLayout } from '@workspace/ui/components/layout/DashboardLayout';
+"use client";
+import { useGetMe } from "@workspace/core/hooks/useGetMe";
+import { DashboardLayout } from "@workspace/ui/components/layout/DashboardLayout";
 
-export default function ConsultantLayout({ children }: { children: React.ReactNode }) {
-  // We can add Consultant-specific logic here if needed (e.g., auth guards)
+export default function ConsultantLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  useGetMe();
   return <DashboardLayout>{children}</DashboardLayout>;
 }
