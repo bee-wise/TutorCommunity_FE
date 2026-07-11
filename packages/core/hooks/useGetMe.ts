@@ -1,29 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
 import { authService } from "../services/auth.service";
 import { useAuthStore } from "../store/useAuthStore";
-import { toast } from "@workspace/ui/components/ui/bee-toast";
-import { AUTH_MESSAGE } from "../constants/auth.message";
+import { queryKeys } from "../sys-libs/queryKeys";
 
 export const useGetMe = () => {
   const login = useAuthStore((s) => s.login);
+  const logout = useAuthStore((s) => s.logout);
+  const setAuthLoading = useAuthStore((s) => s.setAuthLoading);
+
   return useQuery({
-    queryKey: ["me"],
+    queryKey: [queryKeys.authKey.getMe],
     queryFn: async () => {
+      setAuthLoading(true);
+
       try {
         const response = await authService.getMe();
 
-        if (response.success) {
-          login(response.data!);
+        if (response.success && response.data) {
+          login(response.data);
+          return response.data;
         }
 
-        return response.data;
-      } catch (error) {
-        useAuthStore.getState().logout();
-        toast.error(AUTH_MESSAGE.ERROR.GET_ME_ERROR, {
-          position: "top-right",
-        });
-
-        throw error;
+        logout();
+        return null;
+      } catch {
+        logout();
+        return null;
+      } finally {
+        setAuthLoading(false);
       }
     },
     retry: false,

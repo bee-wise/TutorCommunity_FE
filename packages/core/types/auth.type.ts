@@ -5,16 +5,40 @@ export type LoginRequest = {
   password: string;
 };
 
-export type MeType = {
-  id: string;
+export type RegisterRequest = {
   email: string;
+  password: string;
+  confirmPassword: string;
   firstName: string;
   lastName: string;
-  fullName: string;
   phoneNumber: string;
+  role: "LEARNER" | "TUTOR";
+  agreeTerms: true;
+};
+
+export type RegisterResponse = {
+  userId: string;
+  email: string;
   role: string;
-  status: string;
-  permissions: string[];
+};
+
+export type MeType = {
+  id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  fullName: string | null;
+  phoneNumber: string | null;
+  role: string | null;
+  status: string | null;
+  permissions: string[] | null;
+  tutorProfileId?: string | null;
+  hasActiveTutorSubscription?: boolean;
+  canAccessTutorLms?: boolean;
+  hasActiveLearnerClass?: boolean;
+  canAccessLearnerLms?: boolean;
+  activeClassId?: string | null;
+  activeChatRoomCount?: number;
   displayName?: string;
   avatarUrl?: string;
   tutorOnboardingStatus?: string | null;

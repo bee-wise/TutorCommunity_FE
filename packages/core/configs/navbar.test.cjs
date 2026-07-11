@@ -95,6 +95,7 @@ test("completed tutor sees LMS CTA when LMS access is enabled", () => {
       isAuthenticated: true,
       role: "TUTOR",
       tutorOnboardingStatus: "COMPLETED",
+      lmsAccessEnabled: true,
     }),
     "TUTOR_APPROVED",
   );
@@ -106,6 +107,18 @@ test("completed tutor sees LMS CTA when LMS access is enabled", () => {
   });
 
   assert.equal(config.rightItems.some((item) => item.label === "Vào LMS"), true);
+});
+
+test("approved tutor remains onboarding when LMS access is disabled", () => {
+  assert.equal(
+    resolveNavbarState({
+      isAuthenticated: true,
+      role: "TUTOR",
+      tutorOnboardingStatus: "APPROVED",
+      lmsAccessEnabled: false,
+    }),
+    "TUTOR_ONBOARDING",
+  );
 });
 
 test("admin and consultant resolve to internal staff", () => {

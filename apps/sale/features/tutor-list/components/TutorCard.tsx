@@ -6,7 +6,6 @@ import {
   StarIcon,
   MapPinIcon,
   CheckCircleIcon,
-  ClockIcon,
   MonitorIcon,
   HouseLineIcon,
   ArrowsHorizontalIcon,

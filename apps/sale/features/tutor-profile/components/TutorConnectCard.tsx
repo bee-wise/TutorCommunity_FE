@@ -15,7 +15,7 @@ export function TutorConnectCard({
   return (
     <aside className="lg:sticky lg:top-24 lg:self-start">
       <div className="overflow-hidden rounded-3xl border border-[#cfe1fa] bg-white shadow-[0_26px_76px_-34px_rgba(40,15,145,0.36)]">
-        <div className="bg-[#280f91] p-5 text-white sm:p-6">
+        <div className="bg-[linear-gradient(135deg,#280f91_0%,#3213aa_62%,#447353_100%)] p-5 text-white sm:p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#fadc76]">
             Học phí
           </p>
@@ -28,7 +28,7 @@ export function TutorConnectCard({
         </div>
 
         <div className="space-y-5 p-5 sm:p-6">
-          <div className="rounded-2xl border border-[#cfe1fa] bg-[#cfe1fa]/20 p-4">
+          <div className="rounded-2xl border border-[#cfe1fa] bg-white p-4 shadow-sm">
             <div className="flex items-start gap-3">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#280f91] shadow-sm">
                 <CalendarClock size={18} aria-hidden="true" />
@@ -75,7 +75,7 @@ export function TutorConnectCard({
             </button>
           </div>
 
-          <div className="flex items-start gap-3 rounded-2xl border border-[#447353]/20 bg-[#447353]/8 p-4">
+          <div className="flex items-start gap-3 rounded-2xl border border-[#447353]/30 bg-[#447353]/10 p-4">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#447353] shadow-sm">
               <ShieldCheck size={18} aria-hidden="true" />
             </span>

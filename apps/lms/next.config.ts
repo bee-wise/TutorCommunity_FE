@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+const apiBaseUrl =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://api.beewise.vn";
+
 const nextConfig: NextConfig = {
   transpilePackages: ["@workspace/ui", "@workspace/core"],
   images: {
@@ -18,7 +23,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
+        destination: `${apiBaseUrl}/:path*`,
       },
     ];
   },

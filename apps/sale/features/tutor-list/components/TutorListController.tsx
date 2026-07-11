@@ -209,6 +209,7 @@ export function TutorListController({
   useEffect(() => {
     if (searchMode === "manual") {
       const results = simulateManualSearch(currentQuery, filters);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTutors(results);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -267,6 +268,7 @@ export function TutorListController({
     if (!initialSearchDone.current) {
       initialSearchDone.current = true;
       if (initMode === "ai" && initQuery) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         handleSearch(initQuery, "ai");
       }
       // Xóa param trên URL để khi người dùng f5 không bị chạy lại AI mode loading

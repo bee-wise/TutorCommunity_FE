@@ -24,11 +24,11 @@ interface RatingStarsProps {
 }
 
 const pillToneClassName = {
-  primary: "border-[#280f91]/15 bg-[#280f91]/8 text-[#280f91]",
-  secondary: "border-[#447353]/20 bg-[#447353]/8 text-[#447353]",
-  accent: "border-[#ffc500]/45 bg-[#fff3cb] text-[#905b0f]",
+  primary: "border-[#280f91]/20 bg-[#280f91]/10 text-[#280f91]",
+  secondary: "border-[#447353]/30 bg-[#447353]/10 text-[#447353]",
+  accent: "border-[#ffc510] bg-[#fadc78] text-[#905b0f]",
   neutral: "border-[#cfe1fa] bg-white text-[#0c0c0b]/70",
-  success: "border-[#447353]/20 bg-[#447353]/8 text-[#447353]",
+  success: "border-[#447353]/30 bg-white text-[#447353]",
 };
 
 export function SectionShell({
@@ -40,12 +40,12 @@ export function SectionShell({
 }: SectionShellProps) {
   return (
     <section
-      className={`rounded-3xl border border-[#cfe1fa] bg-white p-5 shadow-[0_18px_48px_-30px_rgba(40,15,145,0.2)] sm:p-6 ${className}`}
+      className={`rounded-3xl border border-[#cfe1fa] bg-white p-5 shadow-[0_18px_48px_-30px_rgba(40,15,145,0.22)] sm:p-6 ${className}`}
     >
       <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <div className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#cfe1fa] bg-[#cfe1fa]/35 px-3.5 py-2 text-[#280f91] shadow-sm">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white">
+          <div className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#280f91]/15 bg-white px-3.5 py-2 text-[#280f91] shadow-sm">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#fff3cb]">
               <Icon size={15} aria-hidden="true" />
             </span>
             {eyebrow ? (

@@ -14,11 +14,16 @@ import {
 } from "@workspace/core/configs/navbar";
 import { useLogout } from "@workspace/core/hooks/useLogout";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import type { MeType } from "@workspace/core/types/auth.type";
 import { MobileNav } from "./MobileNav";
 
 type HeaderProps = {
   NAV_LINKS?: NavbarItem[];
   isTutorPage?: boolean;
+  previewUser?: MeType | null;
+  previewIsAuthenticated?: boolean;
+  previewIsAuthLoading?: boolean;
+  previewLogout?: () => void;
 };
 
 function getInitials(name?: string | null) {
@@ -33,23 +38,48 @@ function getInitials(name?: string | null) {
   return initials.toUpperCase() || "BW";
 }
 
-function getDisplayName(user: ReturnType<typeof useAuthStore.getState>["user"]) {
-  return user?.displayName || user?.fullName || user?.email || "BeeWise";
+function getDisplayName(user: MeType | null) {
+  const fullName =
+    user?.fullName ||
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim();
+
+  return user?.displayName || fullName || user?.email || "BeeWise";
 }
 
-export function Header({}: HeaderProps = {}) {
+export function Header({
+  previewUser,
+  previewIsAuthenticated,
+  previewIsAuthLoading,
+  previewLogout,
+}: HeaderProps = {}) {
   const [scrolled, setScrolled] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const user = useAuthStore((state) => state.user);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+  const storeUser = useAuthStore((state) => state.user);
+  const storeIsAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const storeIsAuthLoading = useAuthStore((state) => state.isAuthLoading);
   const { mutate: logout } = useLogout();
+  const user = previewUser !== undefined ? previewUser : storeUser;
+  const isAuthenticated =
+    previewIsAuthenticated !== undefined
+      ? previewIsAuthenticated
+      : storeIsAuthenticated;
+  const isAuthLoading =
+    previewIsAuthLoading !== undefined
+      ? previewIsAuthLoading
+      : storeIsAuthLoading;
+  const handleLogout = previewLogout ?? (() => logout());
 
   const tutorOnboardingStatus = getTutorOnboardingStatus(user);
-  const lmsAccessEnabled = user?.lmsAccessEnabled === true;
+  const normalizedRole = user?.role?.trim().toUpperCase();
+  const lmsAccessEnabled =
+    normalizedRole === "TUTOR"
+      ? user?.canAccessTutorLms === true
+      : normalizedRole === "LEARNER"
+        ? user?.canAccessLearnerLms === true
+        : user?.lmsAccessEnabled === true;
   const unreadNotificationCount = Math.max(
     0,
     user?.unreadNotificationCount ?? 0,
@@ -282,7 +312,7 @@ export function Header({}: HeaderProps = {}) {
                           type="button"
                           onClick={() => {
                             setAccountOpen(false);
-                            logout();
+                            handleLogout();
                           }}
                           className="rounded-lg px-3 py-2 text-left text-sm font-medium text-primary-foreground transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                         >
@@ -311,7 +341,7 @@ export function Header({}: HeaderProps = {}) {
               showNotifications={!isAuthLoading && navbarConfig.showNotifications}
               unreadNotificationCount={unreadNotificationCount}
               unreadChatCount={unreadChatCount}
-              onLogout={() => logout()}
+              onLogout={handleLogout}
             />
           </div>
         </div>

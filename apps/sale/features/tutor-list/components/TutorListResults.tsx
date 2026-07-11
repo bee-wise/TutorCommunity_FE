@@ -82,10 +82,8 @@ function ResultLabel({
 
 function EmptyState({
   mode,
-  query,
 }: {
   mode: SearchMode;
-  query: string;
 }) {
   return (
     <div className="flex flex-col items-center gap-5 py-20 text-center">
@@ -146,7 +144,7 @@ export function TutorListResults({
       )}
 
       {tutors.length === 0 ? (
-        <EmptyState mode={searchMode} query={query} />
+        <EmptyState mode={searchMode} />
       ) : (
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
