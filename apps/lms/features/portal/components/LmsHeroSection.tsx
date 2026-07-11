@@ -194,8 +194,10 @@ export function LmsHeroSection() {
               className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] leading-[1.1] tracking-tight text-[#0c0c0b] mb-5"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
-              Quản Lý Lớp Học <br />
-              <span className="text-accent">Sau Kết Nối</span> Cùng BeeWise LMS
+              Quản Lý Lớp Học Sau Kết Nối
+              <br />
+              Cùng
+              <span className="text-accent">Cùng BeeWise LMS</span>
             </h1>
 
             <p className="text-base md:text-lg text-[#0c0c0b]/60 leading-relaxed max-w-[520px] mb-8">
