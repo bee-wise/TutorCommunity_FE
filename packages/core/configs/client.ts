@@ -9,6 +9,21 @@ type RetriableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
 };
 
+const AUTH_ENDPOINTS_WITHOUT_REFRESH = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/logout",
+  "/auth/refresh",
+];
+
+export function shouldAttemptRefresh(url?: string): boolean {
+  if (!url) return false;
+
+  return !AUTH_ENDPOINTS_WITHOUT_REFRESH.some((endpoint) =>
+    url.includes(endpoint),
+  );
+}
+
 const API_BASE_URL =
   typeof window !== "undefined"
     ? "/api"
@@ -65,14 +80,10 @@ apiClient.interceptors.response.use(
     if (
       apiError.statusCode === 401 &&
       originalRequest &&
+      shouldAttemptRefresh(originalRequest.url) &&
       !(originalRequest as RetriableRequestConfig)._retry
     ) {
       if (originalRequest.url?.includes("/auth/me")) {
-        return Promise.reject(apiError);
-      }
-
-      // Tránh lặp vô hạn nếu chính API refresh token cũng trả về 401
-      if (originalRequest.url?.includes("/auth/refresh")) {
         return Promise.reject(apiError);
       }
 
