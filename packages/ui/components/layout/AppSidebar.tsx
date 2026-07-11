@@ -45,7 +45,7 @@ export function AppSidebar() {
         >
           <div className="relative w-8 h-8 border rounded-lg bg-background overflow-hidden shrink-0 flex items-center justify-center">
             <Image
-              src="/brand/beewise-logo-nobackground.png"
+              src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
               alt="BeeWise Logo"
               fill
               sizes="32px"
