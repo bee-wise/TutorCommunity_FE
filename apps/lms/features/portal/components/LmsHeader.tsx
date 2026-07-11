@@ -85,14 +85,8 @@ export function LmsHeader() {
           {/* Right: dual-action CTA hub */}
           <div className="flex items-center gap-2.5">
             <Link
-              href="http://localhost:3000/register"
-              className="hidden md:inline-flex h-9 items-center justify-center rounded-xl border-2 border-[#280f91]/20 px-4 text-sm font-semibold text-[#280f91] hover:border-[#280f91] hover:bg-[#280f91]/5 active:scale-[0.97] transition-all duration-200"
-            >
-              Đăng ký làm Gia sư
-            </Link>
-            <Link
               href="/login"
-              className="hidden md:inline-flex h-9 items-center justify-center rounded-xl bg-[#ffc500] px-5 text-sm font-bold text-[#0c0c0b] hover:bg-[#ffcc1a] active:scale-[0.97] transition-all duration-200 shadow-sm shadow-[#ffc500]/30"
+              className="hidden md:inline-flex h-9 items-center justify-center rounded-xl bg-[#ffc500] px-5 text-sm font-bold text-primary hover:bg-[#ffcc1a] active:scale-[0.97] transition-all duration-200 shadow-sm shadow-[#ffc500]/30"
               style={{ fontFamily: "var(--font-montserrat)" }}
             >
               Đăng Nhập Hệ Thống
@@ -136,12 +130,6 @@ export function LmsHeader() {
                 </a>
               ))}
               <div className="mt-3 pt-3 border-t border-[#0c0c0b]/8 flex flex-col gap-2.5">
-                <Link
-                  href="/tutor-onboarding"
-                  className="inline-flex h-10 items-center justify-center rounded-xl border-2 border-[#280f91]/20 px-5 text-sm font-semibold text-[#280f91]"
-                >
-                  Đăng ký làm Gia sư
-                </Link>
                 <Link
                   href="/login"
                   className="inline-flex h-10 items-center justify-center rounded-xl bg-[#ffc500] px-5 text-sm font-bold text-[#0c0c0b]"

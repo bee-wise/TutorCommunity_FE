@@ -6,6 +6,7 @@ export const AUTH_MESSAGE = {
     UNAUTHORIZED: "Không có quyền truy cập",
     FORBIDDEN: "Không có quyền truy cập",
     INTERNAL_SERVER_ERROR: "Có lỗi xảy ra, vui lòng thử lại sau",
-    GET_ME_ERROR: "Lấy thông tin người dùng thất bại",
+    GET_ME_ERROR:
+      "Lấy thông tin người dùng thất bại, chúng tôi đang điều hướng bạn về Trang Chủ sau 3s...",
   },
 };

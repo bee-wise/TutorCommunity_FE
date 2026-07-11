@@ -53,7 +53,7 @@ function ActivationFlowWidget() {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="font-semibold text-[#0c0c0b]/70">Môn học:</span>
-            <span>Toán Cao Cấp</span>
+            <span>Theo thỏa thuận</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="font-semibold text-[#0c0c0b]/70">Lịch học:</span>
@@ -136,13 +136,13 @@ export function ClassActivationShowcase() {
               className="text-3xl md:text-4xl lg:text-[44px] leading-tight tracking-tight text-white mb-5"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
-              Hệ Thống Kích Hoạt{" "}
-              <span className="text-[#ffc500]">Lớp Học Tự Động</span>
+              Consultant Xác Nhận,{" "}
+              <span className="text-[#ffc500]">Hệ Thống Kích Hoạt</span>
             </h2>
             <p className="text-white/65 text-base leading-relaxed mb-8 max-w-[480px]">
-              Khi Học viên và Gia sư xác nhận thông tin lớp học, hệ thống tự
-              động thiết lập lịch trình, cấp quyền truy cập LMS và kích hoạt
-              toàn bộ công cụ làm việc cho cả hai bên.
+              Khi học viên và gia sư thống nhất trong Chat Room, Consultant
+              xác nhận kết nối thành công. Hệ thống tự động tạo lớp học,
+              thiết lập lịch trình và cấp quyền LMS cho cả hai bên.
             </p>
 
             {/* Activation flow steps */}
@@ -150,18 +150,18 @@ export function ClassActivationShowcase() {
               {[
                 {
                   icon: GraduationCap,
-                  step: "Học viên chọn gia sư & xác nhận lịch",
-                  desc: "Đặt lịch, chọn môn học và xác nhận đơn giá buổi học.",
+                  step: "Trao đổi trong Chat Room",
+                  desc: "Học viên, gia sư và Consultant cùng thảo luận về nhu cầu, lịch học, học phí và hình thức học.",
                 },
                 {
                   icon: ChalkboardTeacher,
-                  step: "Gia sư phê duyệt & nhận lớp",
-                  desc: "Xem yêu cầu, phê duyệt lịch trình và sẵn sàng giảng dạy.",
+                  step: "Consultant xác nhận kết nối",
+                  desc: "Khi hai bên đồng ý, Consultant xác nhận và hệ thống tạo hợp đồng lớp học.",
                 },
                 {
                   icon: Lightning,
-                  step: "LMS tự động kích hoạt",
-                  desc: "Lịch học, phòng chat và kho tài liệu được tạo tự động ngay lập tức.",
+                  step: "LMS tự động mở quyền",
+                  desc: "Lịch học, kho tài liệu và quản lý học phí sẵn sàng cho cả gia sư và học viên.",
                 },
               ].map((item, i) => {
                 const Icon = item.icon;
@@ -208,7 +208,7 @@ export function ClassActivationShowcase() {
               className="inline-flex items-center gap-3 bg-white/8 rounded-xl px-4 py-2.5 border border-white/10"
             >
               <p className="text-[11px] font-semibold text-white/80">
-                Không cần thiết lập thủ công — mọi thứ sẵn sàng trong giây lát
+                Consultant đồng hành toàn bộ quy trình — từ kết nối đến kích hoạt lớp học
               </p>
             </motion.div>
           </motion.div>
