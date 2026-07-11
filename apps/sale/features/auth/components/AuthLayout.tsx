@@ -18,10 +18,10 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
   const router = useRouter();
 
   return (
-    <div className="h-[100dvh] flex overflow-hidden">
+    <div className="h-dvh flex overflow-hidden">
       <div className="hidden lg:flex relative w-[55%] shrink-0 overflow-hidden">
         <Image
-          src={"/brand/beewise-logo-nobackground.PNG"}
+          src={url}
           alt="Đội ngũ BeeWise"
           fill
           sizes="45vw"
@@ -37,7 +37,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
           >
             <div className="relative w-10 h-10 rounded-full bg-white overflow-hidden shrink-0">
               <Image
-                src={url}
+                src="/brand/beewise-logo-nobackground.PNG"
                 alt="BeeWise Logo"
                 fill
                 sizes="40px"
