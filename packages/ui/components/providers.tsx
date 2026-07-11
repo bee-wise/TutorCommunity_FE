@@ -6,6 +6,8 @@ import { getQueryClient } from '@workspace/core/configs/tanstack-client';
 import { type ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 import { BeeToaster } from '@workspace/ui/components/ui/bee-toast';
+import { RouteTracker } from './route-tracker';
+
 
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   const orig = console.error;
@@ -32,6 +34,7 @@ export function Providers({ children }: { children: ReactNode }) {
     >
       <QueryClientProvider client={queryClient}>
         {children}
+        <RouteTracker />
         <BeeToaster />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

@@ -50,8 +50,8 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
         transition={{ duration: isReady ? 0.4 : 0, ease: [0.22, 1, 0.36, 1] }}
         className={
           scrolled
-            ? "mt-3 rounded-full shadow-xl shadow-primary/20 border border-white/10 overflow-visible bg-primary dark:bg-glass supports-backdrop-filter:bg-primary/80"
-            : "w-full overflow-visible bg-primary dark:bg-glass"
+            ? "mt-3 rounded-full shadow-xl shadow-primary/20 border border-white/10 overflow-visible bg-primary supports-backdrop-filter:bg-primary/80"
+            : "w-full overflow-visible bg-primary"
         }
         style={
           scrolled
@@ -119,7 +119,7 @@ export function Header({ NAV_LINKS, isTutorPage }: HeaderProps) {
                   className={`text-sm md:text-[16px] font-bold font-google-sans transition-colors duration-200 ${
                     isActive
                       ? "text-accent"
-                      : "text-primary-foreground dark:text-primary hover:text-accent"
+                      : "text-primary-foreground hover:text-accent"
                   }`}
                 >
                   {link.label}
