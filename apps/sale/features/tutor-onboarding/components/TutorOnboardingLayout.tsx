@@ -84,10 +84,12 @@ export function TutorOnboardingShell({
   children,
   capture,
   toolbar,
+  useAuthenticatedHeader = false,
 }: {
   children: React.ReactNode;
   capture: boolean;
   toolbar: React.ReactNode;
+  useAuthenticatedHeader?: boolean;
 }) {
   const { session, view } = useTutorOnboardingViewModel();
   const previewUser = {
@@ -115,12 +117,16 @@ export function TutorOnboardingShell({
         } as CSSProperties
       }
     >
-      <Header
-        previewUser={previewUser}
-        previewIsAuthenticated
-        previewIsAuthLoading={false}
-        previewLogout={() => undefined}
-      />
+      {useAuthenticatedHeader ? (
+        <Header />
+      ) : (
+        <Header
+          previewUser={previewUser}
+          previewIsAuthenticated
+          previewIsAuthLoading={false}
+          previewLogout={() => undefined}
+        />
+      )}
       {!capture && toolbar}
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-12 pt-24 sm:px-6 lg:px-8">
         <section>

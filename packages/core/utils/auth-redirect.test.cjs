@@ -43,7 +43,10 @@ test("learner prefers safe returnUrl", () => {
 });
 
 test("tutor without LMS access goes to onboarding route", () => {
-  assert.equal(getRoleRedirectPath({ role: "TUTOR", canAccessTutorLms: false }), "/tutor-guide");
+  assert.equal(
+    getRoleRedirectPath({ role: "TUTOR", canAccessTutorLms: false }),
+    "/tutor/onboarding",
+  );
 });
 
 test("tutor with LMS access goes to tutor LMS", () => {
