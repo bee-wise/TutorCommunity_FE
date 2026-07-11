@@ -525,7 +525,7 @@ export function DualRoleFeatureGrid() {
                     y: -4,
                     transition: { duration: 0.25 },
                   }}
-                  className="group rounded-2xl p-5 bg-white/60 backdrop-blur-md border border-[#280f91]/8 shadow-sm hover:shadow-xl hover:shadow-[#280f91]/8 transition-shadow duration-300"
+                  className="group rounded-2xl p-5 bg-white/95 md:bg-white/60 md:backdrop-blur-md border border-[#280f91]/8 shadow-sm hover:shadow-xl hover:shadow-[#280f91]/8 transition-shadow duration-300"
                 >
                   {/* Card header */}
                   <div className="flex items-center gap-3 mb-4">

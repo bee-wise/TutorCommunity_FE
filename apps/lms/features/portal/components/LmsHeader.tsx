@@ -117,6 +117,7 @@ export function LmsHeader() {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="lg:hidden overflow-hidden border-t border-[#280f91]/8 bg-white"
+            style={{ willChange: "height, opacity" }}
           >
             <div className="px-4 py-4 flex flex-col gap-1">
               {NAV_LINKS.map((link) => (

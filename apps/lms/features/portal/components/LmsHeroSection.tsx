@@ -167,8 +167,8 @@ export function LmsHeroSection() {
     <section className="min-h-[100dvh] flex items-center pt-20 pb-12 overflow-hidden bg-[#F8FAFC] relative">
       {/* Background accents */}
       <div className="absolute top-0 right-0 w-[55%] h-full bg-gradient-to-bl from-[#280f91]/4 via-[#cfe1fa]/10 to-transparent -z-0 rounded-bl-[120px]" />
-      <div className="absolute bottom-24 left-8 w-40 h-40 rounded-full bg-[#ffc500]/15 blur-[60px]" />
-      <div className="absolute top-40 right-16 w-56 h-56 rounded-full bg-[#280f91]/8 blur-[80px]" />
+      <div className="hidden md:block absolute bottom-24 left-8 w-40 h-40 rounded-full bg-[#ffc500]/15 blur-[60px]" />
+      <div className="hidden md:block absolute top-40 right-16 w-56 h-56 rounded-full bg-[#280f91]/8 blur-[80px]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -241,7 +241,7 @@ export function LmsHeroSection() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4, ease }}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/60 backdrop-blur-md border border-[#280f91]/8 shadow-sm"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/95 md:bg-white/60 md:backdrop-blur-md border border-[#280f91]/8 shadow-sm"
                   >
                     <Icon
                       size={18}
