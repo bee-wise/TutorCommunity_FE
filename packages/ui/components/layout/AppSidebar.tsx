@@ -27,7 +27,6 @@ import {
   AvatarImage,
 } from "@workspace/ui/components/ui/avatar";
 import { Skeleton } from "@workspace/ui/components/ui/skeleton";
-import { useTheme } from "next-themes";
 import { navigationConfig } from "@workspace/core/configs/navigation";
 
 export function AppSidebar() {
@@ -36,12 +35,6 @@ export function AppSidebar() {
 
   const normalizedRole = user?.role?.toUpperCase();
   const navGroups = normalizedRole ? navigationConfig[normalizedRole] : [];
-
-  const { theme } = useTheme();
-  const imageUrl =
-    theme === "dark"
-      ? "/brand/beewise-logo-nobackground.PNG"
-      : "/brand/beewise-logo.png";
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/40">
@@ -52,7 +45,7 @@ export function AppSidebar() {
         >
           <div className="relative w-8 h-8 border rounded-lg bg-background overflow-hidden shrink-0 flex items-center justify-center">
             <Image
-              src={imageUrl}
+              src="/brand/beewise-logo-nobackground.png"
               alt="BeeWise Logo"
               fill
               sizes="32px"

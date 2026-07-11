@@ -35,9 +35,7 @@ export const useLogin = ({
 
         const response = await authService.getMe();
         if (!response.success || !response.data) {
-          throw new Error(
-            "Khong the lay thong tin tai khoan sau khi dang nhap.",
-          );
+          throw new Error(AUTH_MESSAGE.ERROR.GET_ME_ERROR);
         }
 
         return response.data;
@@ -49,7 +47,7 @@ export const useLogin = ({
     onSuccess: (user) => {
       setAuthenticatedUser(user);
       queryClient.setQueryData([queryKeys.authKey.getMe], user);
-      toast.success(AUTH_MESSAGE.SUCCESS);
+      toast.success(AUTH_MESSAGE.SUCCESS, { position: "top-right" });
       router.push(
         getRoleRedirectPath(user, {
           returnUrl: redirectUrl,
