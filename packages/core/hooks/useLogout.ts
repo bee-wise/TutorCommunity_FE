@@ -9,14 +9,8 @@ export const useLogout = () => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: async () => {
-      try {
-        await authService.logout();
-      } catch {
-        // An expired session is already logged out from the user's perspective.
-      }
-    },
-    onSuccess: () => {
+    mutationFn: () => authService.logout(),
+    onSettled: () => {
       logout();
       queryClient.clear();
       router.push("/");
