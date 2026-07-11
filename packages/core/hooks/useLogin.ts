@@ -16,6 +16,8 @@ export const useLogin = ({
   onSuccess?: () => void;
 }) => {
   const router = useRouter();
+  const login = useAuthStore((s) => s.login);
+  const logout = useAuthStore((s) => s.logout);
 
   return useMutation({
     mutationKey: ["login"],
@@ -33,11 +35,15 @@ export const useLogin = ({
         return me.data;
       } catch (error) {
         await authService.logout().catch(() => {});
+        logout();
         throw error;
       }
     },
 
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data) {
+        login(data);
+      }
       onSuccess?.();
 
       if (redirectUrl) {
@@ -50,6 +56,7 @@ export const useLogin = ({
       toast.error(AUTH_MESSAGE.ERROR.INTERNAL_SERVER_ERROR, {
         position: "top-right",
       });
+      logout();
     },
   });
 };
