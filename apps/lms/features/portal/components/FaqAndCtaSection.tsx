@@ -15,27 +15,27 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const FAQ_ITEMS = [
   {
     q: "BeeWise LMS dành cho ai?",
-    a: "BeeWise LMS phục vụ hai nhóm người dùng chính: Học viên muốn học 1-1 với gia sư chất lượng, và Gia sư muốn quản lý lớp học, tài liệu và thu nhập một cách chuyên nghiệp.",
+    a: "BeeWise LMS dành cho học viên và gia sư đã kết nối thành công qua BeeWise. Học viên theo dõi lịch học, tài liệu và học phí. Gia sư quản lý lớp, tài liệu giảng dạy và thu nhập.",
   },
   {
     q: "Làm thế nào để bắt đầu sử dụng hệ thống?",
-    a: "Đăng ký tài khoản qua trang chủ BeeWise hoặc nhận lời mời từ gia sư. Sau khi cả hai bên xác nhận thông tin lớp học, hệ thống sẽ tự động kích hoạt quyền truy cập LMS cho bạn.",
+    a: "Học viên: Tìm gia sư trên trang chủ BeeWise → kết nối qua Chat Room có Consultant hỗ trợ → sau khi xác nhận học, hệ thống tự động cấp quyền LMS. Gia sư: Đăng ký hồ sơ → hoàn thành phỏng vấn → được duyệt → mở quyền LMS.",
   },
   {
-    q: "Học phí được tính như thế nào?",
-    a: "Học phí được tính theo đơn giá công khai cho mỗi buổi học (ví dụ: 220,000₫/buổi). Bảng kê chi tiết số buổi và tổng chi phí luôn minh bạch trên hệ thống để học viên theo dõi.",
+    q: "Học phí được quản lý như thế nào?",
+    a: "Học phí được thống nhất giữa học viên và gia sư trong Chat Room với sự hỗ trợ của Consultant. Sau khi xác nhận, hệ thống tự động ghi nhận và hiển thị trạng thái thanh toán rõ ràng trên LMS.",
   },
   {
     q: "Gia sư có thể quản lý nhiều lớp cùng lúc không?",
-    a: "Có. Không gian làm việc của Gia sư được thiết kế đa nhiệm — bạn có thể theo dõi và tương tác với nhiều phòng học đồng thời, quản lý tài liệu riêng cho từng lớp và xem thu nhập tổng hợp.",
+    a: "Có. Không gian gia sư hỗ trợ quản lý nhiều lớp đồng thời — theo dõi từng học viên, quản lý tài liệu riêng từng lớp và xem tổng thu nhập.",
   },
   {
     q: "Dữ liệu của tôi có được bảo mật không?",
-    a: "Tất cả dữ liệu trên BeeWise LMS được mã hóa AES-256 và truyền qua kết nối HTTPS bảo mật. Tài liệu học tập, thông tin cá nhân và lịch sử giao dịch đều được bảo vệ nghiêm ngặt.",
+    a: "Thông tin cá nhân, tài liệu học tập và lịch sử giao dịch đều được bảo mật. Hệ thống sử dụng kết nối mã hóa và tuân thủ các tiêu chuẩn bảo mật.",
   },
   {
     q: "Lớp học được kích hoạt như thế nào?",
-    a: "Sau khi Học viên và Gia sư cùng xác nhận thông tin lớp học (môn học, lịch trình, đơn giá), hệ thống sẽ tự động tạo phòng chat, lịch học và kho tài liệu — không cần thiết lập thủ công.",
+    a: "Khi học viên và gia sư đồng ý học trong Chat Room, Consultant xác nhận kết nối. Hệ thống tạo hợp đồng lớp học, thiết lập lịch trình và cấp quyền LMS — không cần thao tác thủ công từ người dùng.",
   },
 ];
 
@@ -127,7 +127,7 @@ export function FaqAndCtaSection() {
               Câu hỏi <span className="text-[#280f91]">thường gặp</span>
             </h2>
             <p className="text-[#0c0c0b]/60 text-base">
-              Giải đáp nhanh những thắc mắc phổ biến về hệ thống.
+              Những câu hỏi phổ biến về cách hoạt động của BeeWise LMS.
             </p>
           </motion.div>
 
@@ -167,11 +167,11 @@ export function FaqAndCtaSection() {
               className="text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight text-white mb-5"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
-              Trải Nghiệm Hệ Thống Ngay
+              Bắt Đầu Quản Lý Lớp Học
             </h2>
             <p className="text-white/60 text-base leading-relaxed mb-10 max-w-lg mx-auto">
-              Đăng nhập để khám phá không gian học tập và giảng dạy được thiết
-              kế riêng cho bạn.
+              Đăng nhập để theo dõi lịch học, tài liệu và tiến độ lớp học của
+              bạn.
             </p>
 
             {/* Pulse-animated CTA button */}

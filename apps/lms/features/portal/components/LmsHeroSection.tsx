@@ -20,12 +20,36 @@ const ease = [0.22, 1, 0.36, 1] as const;
 function ScheduleGrid() {
   const days = ["T2", "T3", "T4", "T5", "T6", "T7"];
   const slots = [
-    { day: 0, row: 0, label: "Toán 12", color: "#280f91", text: "white" },
-    { day: 2, row: 0, label: "Lý 11", color: "#ffc500", text: "#0c0c0b" },
-    { day: 4, row: 0, label: "Hóa 10", color: "#447353", text: "white" },
-    { day: 1, row: 1, label: "Anh Văn", color: "#280f91", text: "white" },
-    { day: 3, row: 1, label: "Văn 12", color: "#ffc500", text: "#0c0c0b" },
-    { day: 5, row: 1, label: "Toán 11", color: "#280f91", text: "white" },
+    { day: 0, row: 0, label: "Ielts Reading", color: "#280f91", text: "white" },
+    {
+      day: 2,
+      row: 0,
+      label: "Toeic Listening",
+      color: "#ffc500",
+      text: "#0c0c0b",
+    },
+    { day: 4, row: 0, label: "Toán cao cấp", color: "#447353", text: "white" },
+    {
+      day: 1,
+      row: 1,
+      label: "Xác xuất thống kê",
+      color: "#280f91",
+      text: "white",
+    },
+    {
+      day: 3,
+      row: 1,
+      label: "Hóa học hữu cơ",
+      color: "#ffc500",
+      text: "#0c0c0b",
+    },
+    {
+      day: 5,
+      row: 1,
+      label: "Tiếng anh giao tiếp",
+      color: "#280f91",
+      text: "white",
+    },
   ];
 
   return (
@@ -87,9 +111,11 @@ function SessionCard() {
         </div>
         <div>
           <p className="text-[10px] font-bold text-[#0c0c0b]">
-            Phiên Học Bảo Mật
+            Buổi Học Hôm Nay
           </p>
-          <p className="text-[9px] text-[#0c0c0b]/40">End-to-end encrypted</p>
+          <p className="text-[9px] text-[#0c0c0b]/40">
+            Theo dõi tiến độ lớp học
+          </p>
         </div>
       </div>
       {/* Session items */}
@@ -98,7 +124,7 @@ function SessionCard() {
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[#ffc500] animate-pulse" />
             <span className="text-[9px] font-semibold text-[#0c0c0b]">
-              Toán Cao Cấp — 14:00
+              Lớp A — 14:00
             </span>
           </div>
           <span className="text-[8px] font-bold text-[#ffc500] bg-[#ffc500]/15 px-2 py-0.5 rounded-full">
@@ -109,7 +135,7 @@ function SessionCard() {
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[#447353]" />
             <span className="text-[9px] font-semibold text-[#0c0c0b]">
-              Vật Lý 11 — 09:00
+              Lớp B — 09:00
             </span>
           </div>
           <span className="text-[8px] font-bold text-[#447353] bg-[#447353]/15 px-2 py-0.5 rounded-full">
@@ -120,7 +146,7 @@ function SessionCard() {
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[#447353]" />
             <span className="text-[9px] font-semibold text-[#0c0c0b]">
-              Tiếng Anh B2 — 07:30
+              Lớp C — 07:30
             </span>
           </div>
           <span className="text-[8px] font-bold text-[#447353] bg-[#447353]/15 px-2 py-0.5 rounded-full">
@@ -168,21 +194,21 @@ export function LmsHeroSection() {
               className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] leading-[1.1] tracking-tight text-[#0c0c0b] mb-5"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
-              Hệ Thống Quản Lý{" "}
-              <span className="text-[#280f91]">Học Tập Thông Minh</span> BeeWise
-              LMS
+              Quản Lý Lớp Học <br />
+              <span className="text-accent">Sau Kết Nối</span> Cùng BeeWise LMS
             </h1>
 
             <p className="text-base md:text-lg text-[#0c0c0b]/60 leading-relaxed max-w-[520px] mb-8">
-              Không gian làm việc và học tập của gia sư và học viên. Số hóa lịch
-              trình, lưu trữ tài liệu và tối ưu hóa hiệu quả dạy & học.
+              Không gian dành riêng cho gia sư và học viên đã kết nối thành
+              công. Theo dõi lịch học, quản lý tài liệu, kiểm soát học phí — tất
+              cả trong một hệ thống.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 mb-10">
               <Link
                 href="/login"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#ffc500] px-7 text-sm font-bold text-[#0c0c0b] hover:bg-[#ffcc1a] active:scale-[0.97] transition-all duration-200 shadow-lg shadow-[#ffc500]/25"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#ffc500] px-7 text-sm font-bold text-primary hover:bg-[#ffcc1a] active:scale-[0.97] transition-all duration-200 shadow-lg shadow-[#ffc500]/30"
                 style={{ fontFamily: "var(--font-montserrat)" }}
               >
                 Bắt Đầu Ngay
@@ -194,18 +220,18 @@ export function LmsHeroSection() {
               {[
                 {
                   icon: Clock,
-                  value: "99.9%",
-                  label: "Uptime hệ thống",
+                  value: "1 tài khoản",
+                  label: "Dùng chung toàn hệ thống",
                 },
                 {
                   icon: CalendarCheck,
-                  value: "12,400+",
-                  label: "Buổi học hoàn thành",
+                  value: "Tự động",
+                  label: "Kích hoạt lớp học",
                 },
                 {
                   icon: ShieldCheck,
-                  value: "AES-256",
-                  label: "Mã hóa dữ liệu",
+                  value: "Consultant",
+                  label: "Đồng hành & hỗ trợ",
                 },
               ].map((stat) => {
                 const Icon = stat.icon;
