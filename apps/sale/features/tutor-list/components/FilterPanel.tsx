@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   FunnelIcon,
   XIcon,
@@ -31,24 +32,16 @@ const RATING_OPTIONS = [
   { label: "4.0+", value: 4.0 },
 ] as const;
 
-const SORT_OPTIONS = [
-  { label: "Đánh giá cao nhất", value: "rating" as const },
-  { label: "Học phí tăng dần", value: "price_asc" as const },
-  { label: "Học phí giảm dần", value: "price_desc" as const },
-  { label: "Kinh nghiệm nhất", value: "experience" as const },
-];
-
 interface FilterPanelProps {
   filters: TutorFilters;
   onFiltersChange: (filters: TutorFilters) => void;
-  resultCount: number;
 }
 
 export function FilterPanel({
   filters,
   onFiltersChange,
-  resultCount,
 }: FilterPanelProps) {
+  const [showAllSubjects, setShowAllSubjects] = useState(false);
   const update = <K extends keyof TutorFilters>(key: K, value: TutorFilters[K]) =>
     onFiltersChange({ ...filters, [key]: value });
 
@@ -81,7 +74,7 @@ export function FilterPanel({
 
   return (
     <aside
-      className="flex flex-col gap-6"
+      className="flex flex-col gap-5"
       aria-label="Bộ lọc tìm kiếm gia sư"
     >
       {/* Header */}
@@ -113,41 +106,6 @@ export function FilterPanel({
         )}
       </div>
 
-      {/* Result count */}
-      <div className="rounded-xl bg-muted/60 px-3.5 py-2.5 text-center">
-        <span
-          className="text-base font-extrabold text-primary"
-          style={{ fontFamily: "var(--font-montserrat)" }}
-        >
-          {resultCount}
-        </span>
-        <span className="text-xs text-foreground/55 ml-1">gia sư phù hợp</span>
-      </div>
-
-      {/* Sort */}
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="filter-sort"
-          className="text-xs font-semibold text-foreground/70 uppercase tracking-wide"
-          style={{ fontFamily: "var(--font-montserrat)" }}
-        >
-          Sắp xếp theo
-        </label>
-        <select
-          id="filter-sort"
-          value={filters.sortBy}
-          onChange={(e) => update("sortBy", e.target.value as TutorFilters["sortBy"])}
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-          aria-label="Sắp xếp kết quả"
-        >
-          {SORT_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
       {/* Subjects */}
       <div className="flex flex-col gap-2.5">
         <span
@@ -157,7 +115,7 @@ export function FilterPanel({
           Môn học
         </span>
         <div className="flex flex-wrap gap-1.5" role="group" aria-label="Lọc theo môn học">
-          {ALL_SUBJECTS.map((subject) => {
+          {(showAllSubjects ? ALL_SUBJECTS : ALL_SUBJECTS.slice(0, 6)).map((subject) => {
             const isSelected = (filters.subjects as string[]).includes(subject);
             return (
               <button
@@ -177,6 +135,13 @@ export function FilterPanel({
             );
           })}
         </div>
+        <button
+          type="button"
+          onClick={() => setShowAllSubjects((value) => !value)}
+          className="w-fit text-xs font-bold text-primary hover:underline"
+        >
+          {showAllSubjects ? "Thu gọn" : `Xem thêm ${ALL_SUBJECTS.length - 6} môn`}
+        </button>
       </div>
 
       {/* Teaching mode */}

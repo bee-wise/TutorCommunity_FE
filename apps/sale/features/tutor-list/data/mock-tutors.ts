@@ -272,6 +272,7 @@ export function simulateManualSearch(
     return true;
   }).sort((a, b) => {
     switch (filters.sortBy) {
+      case "best_match":
       case "rating":
         return b.review.average - a.review.average;
       case "price_asc":
