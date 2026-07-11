@@ -119,7 +119,7 @@ export function ClassActivationShowcase() {
           backgroundSize: "32px 32px",
         }}
       />
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] bg-[#ffc500]/8 blur-[100px]" />
+      <div className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] bg-[#ffc500]/8 blur-[100px]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div
