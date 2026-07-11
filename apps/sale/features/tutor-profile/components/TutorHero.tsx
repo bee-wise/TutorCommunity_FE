@@ -33,16 +33,16 @@ interface HeroStatCardProps {
 
 const statToneClassName = {
   rating: {
-    card: "border-[#ffc500]/35 bg-[#fff3cb]/45 text-[#0c0c0b]",
-    icon: "bg-[#ffc500]/18 text-[#905b0f]",
+    card: "border-[#ffc510] bg-[#fff3cb] text-[#0c0c0b]",
+    icon: "bg-[#ffc510] text-[#280f91]",
   },
   primary: {
-    card: "border-[#280f91]/15 bg-[#280f91]/7 text-[#280f91]",
-    icon: "bg-white/70 text-[#280f91]",
+    card: "border-[#280f91]/20 bg-[#280f91]/8 text-[#280f91]",
+    icon: "bg-white text-[#280f91]",
   },
   secondary: {
-    card: "border-[#447353]/20 bg-[#447353]/8 text-[#447353]",
-    icon: "bg-white/70 text-[#447353]",
+    card: "border-[#447353]/30 bg-[#447353]/10 text-[#447353]",
+    icon: "bg-white text-[#447353]",
   },
 };
 
@@ -56,9 +56,9 @@ function CompactInfoCard({
     tone === "secondary" ? "text-[#447353]" : "text-[#280f91]";
 
   return (
-    <article className="w-full rounded-2xl border border-[#cfe1fa] bg-white p-4 shadow-sm">
+    <article className="w-full rounded-2xl border border-[#cfe1fa] bg-white p-4 shadow-[0_12px_30px_-20px_rgba(40,15,145,0.45)]">
       <div className="flex min-h-[72px] items-center gap-3">
-        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#cfe1fa]/45">
+        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#fff3cb] ring-1 ring-[#ffc510]/40">
           <Icon size={17} className={iconClassName} aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
@@ -131,24 +131,25 @@ export function TutorHero({ tutor }: TutorHeroProps) {
 
   return (
     <section className="overflow-hidden rounded-[2rem] border border-[#cfe1fa] bg-white shadow-[0_30px_80px_-42px_rgba(40,15,145,0.34)]">
+      <div className="h-2 bg-gradient-to-r from-[#280f91] via-[#ffc510] to-[#447353]" />
       <div className="grid gap-6 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6 lg:p-8 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="grid min-w-0 gap-5">
-          <div className="grid min-w-0 gap-5 sm:grid-cols-[136px_minmax(0,1fr)] sm:items-start lg:grid-cols-[152px_minmax(0,1fr)] lg:gap-6">
+          <div className="grid min-w-0 gap-5 sm:grid-cols-[156px_minmax(0,1fr)] sm:items-start lg:grid-cols-[172px_minmax(0,1fr)] lg:gap-6">
             <div className="flex justify-center sm:justify-start">
               <a
                 href={tutor.avatarUrl}
                 target="_blank"
                 rel="noreferrer"
                 aria-label={`Xem ảnh gia sư ${tutor.displayName}`}
-                className="group relative h-36 w-28 overflow-hidden rounded-[1.75rem] border-4 border-white bg-[#cfe1fa] shadow-2xl shadow-[#280f91]/14 outline-none transition hover:shadow-[#280f91]/20 focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2 sm:h-44 sm:w-36 lg:h-48 lg:w-40"
+                className="group relative aspect-square h-36 overflow-hidden rounded-[1.75rem] border-4 border-white bg-[#fff3cb] shadow-2xl shadow-[#280f91]/14 outline-none ring-1 ring-[#cfe1fa] transition hover:shadow-[#280f91]/20 focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2 sm:h-40 lg:h-44"
               >
                 <Image
                   src={tutor.avatarUrl}
                   alt={`Ảnh đại diện của gia sư ${tutor.displayName}`}
                   fill
                   priority
-                  sizes="(min-width: 1024px) 160px, (min-width: 640px) 144px, 112px"
-                  className="object-contain object-bottom p-2 transition duration-300 group-hover:scale-[1.02]"
+                  sizes="(min-width: 1024px) 176px, (min-width: 640px) 160px, 144px"
+                  className="object-cover object-center transition duration-300 group-hover:scale-[1.03]"
                 />
                 <span className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#447353] text-white shadow-lg">
                   <BadgeCheck size={15} aria-hidden="true" />
@@ -201,7 +202,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
             {tutor.subjects.map((subject) => (
               <span
                 key={subject}
-                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-2xl border border-[#280f91]/15 bg-[#280f91]/8 px-3 py-2 text-center text-xs font-semibold text-[#280f91] shadow-sm"
+                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-2xl border border-[#280f91]/18 bg-white px-3 py-2 text-center text-xs font-semibold text-[#280f91] shadow-sm"
               >
                 <BookOpen size={14} aria-hidden="true" />
                 {subject}
@@ -210,7 +211,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
             {tutor.specializations.map((specialization) => (
               <span
                 key={specialization}
-                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-2xl border border-[#ffc500]/45 bg-[#fff3cb] px-3 py-2 text-center text-xs font-semibold text-[#905b0f] shadow-sm"
+                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-2xl border border-[#ffc510] bg-[#fadc78] px-3 py-2 text-center text-xs font-semibold text-[#905b0f] shadow-sm"
               >
                 <Star size={14} aria-hidden="true" />
                 {specialization}
@@ -220,7 +221,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
         </div>
 
         <div className="border-t border-[#cfe1fa] pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-          <div className="grid h-full gap-3 rounded-3xl bg-[#cfe1fa]/18 p-4 sm:grid-cols-3 lg:grid-cols-1">
+          <div className="grid h-full gap-3 rounded-3xl bg-[#fff3cb]/55 p-4 ring-1 ring-[#ffc510]/25 sm:grid-cols-3 lg:grid-cols-1">
             {infoCards.map((card) => (
               <CompactInfoCard
                 key={card.title}

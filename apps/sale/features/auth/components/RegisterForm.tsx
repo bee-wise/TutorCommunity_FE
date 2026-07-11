@@ -1,19 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Eye,
-  EyeSlash,
-  ArrowRight,
-  Student,
-  ChalkboardTeacher,
-  CheckCircle,
-} from "@phosphor-icons/react";
+import { Eye, EyeSlash, Student, ChalkboardTeacher } from "@phosphor-icons/react";
+import { useRegister } from "@workspace/core/hooks/useRegister";
+import { getSafeInternalReturnUrl } from "@workspace/core/utils/auth-redirect";
 import {
   registerSchema,
   type RegisterFormValues,
@@ -22,12 +17,12 @@ import { FormField, Input } from "./FormField";
 
 const ROLES = [
   {
-    value: "learner" as const,
+    value: "LEARNER" as const,
     label: "HỌC VIÊN",
     icon: Student,
   },
   {
-    value: "tutor" as const,
+    value: "TUTOR" as const,
     label: "GIA SƯ",
     icon: ChalkboardTeacher,
   },
@@ -36,14 +31,16 @@ const ROLES = [
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = getSafeInternalReturnUrl(searchParams.get("returnUrl"));
+  const { mutate: registerAccount, isPending } = useRegister({
+    redirectUrl: returnUrl ?? undefined,
+  });
 
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<RegisterFormValues>({
@@ -51,23 +48,29 @@ export function RegisterForm() {
     defaultValues: { agreeTerms: false },
   });
 
-  const selectedRole = watch("role");
-  const agreeTerms = watch("agreeTerms");
+  const selectedRole = useWatch({ control, name: "role" });
+  const agreeTerms = useWatch({ control, name: "agreeTerms" });
 
-  const onSubmit = async (data: RegisterFormValues) => {
-    setIsLoading(true);
-    // TODO: gọi API đăng ký
-    console.log("Register data:", data);
-    await new Promise((r) => setTimeout(r, 1200));
-    setIsLoading(false);
-    
-    // Sau khi đăng ký thành công, chuyển hướng về trang Đăng nhập của Sale
-    router.push("/login");
+  const onSubmit = (data: RegisterFormValues) => {
+    if (isPending) return;
+    registerAccount({
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phoneNumber: data.phoneNumber,
+      role: data.role,
+      agreeTerms: true,
+    });
   };
+
+  const loginHref = returnUrl
+    ? `/login?returnUrl=${encodeURIComponent(returnUrl)}`
+    : "/login";
 
   return (
     <div className="w-full max-w-[460px] mx-auto">
-      {/* Header */}
       <div className="mb-5">
         <h1
           className="text-2xl tracking-tight text-foreground mb-1"
@@ -99,6 +102,7 @@ export function RegisterForm() {
                 <button
                   key={value}
                   type="button"
+                  disabled={isPending}
                   onClick={() =>
                     setValue("role", value, { shouldValidate: true })
                   }
@@ -130,7 +134,7 @@ export function RegisterForm() {
           </div>
           {errors.role && (
             <p className="text-xs text-red-500 flex items-center gap-1">
-              <span aria-hidden="true">✕</span>
+              <span aria-hidden="true">×</span>
               {errors.role.message}
             </p>
           )}
@@ -144,6 +148,7 @@ export function RegisterForm() {
               placeholder="Nguyễn"
               autoComplete="given-name"
               hasError={!!errors.firstName}
+              disabled={isPending}
               {...register("firstName")}
             />
           </FormField>
@@ -154,6 +159,7 @@ export function RegisterForm() {
               placeholder="Văn A"
               autoComplete="family-name"
               hasError={!!errors.lastName}
+              disabled={isPending}
               {...register("lastName")}
             />
           </FormField>
@@ -166,7 +172,20 @@ export function RegisterForm() {
             placeholder="you@example.com"
             autoComplete="email"
             hasError={!!errors.email}
+            disabled={isPending}
             {...register("email")}
+          />
+        </FormField>
+
+        <FormField label="Số điện thoại" error={errors.phoneNumber}>
+          <Input
+            id="register-phoneNumber"
+            type="tel"
+            placeholder="0912345678"
+            autoComplete="tel"
+            hasError={!!errors.phoneNumber}
+            disabled={isPending}
+            {...register("phoneNumber")}
           />
         </FormField>
 
@@ -180,6 +199,7 @@ export function RegisterForm() {
                 autoComplete="new-password"
                 hasError={!!errors.password}
                 className="pr-11"
+                disabled={isPending}
                 {...register("password")}
               />
               <button
@@ -202,6 +222,7 @@ export function RegisterForm() {
                 autoComplete="new-password"
                 hasError={!!errors.confirmPassword}
                 className="pr-11"
+                disabled={isPending}
                 {...register("confirmPassword")}
               />
               <button
@@ -220,6 +241,7 @@ export function RegisterForm() {
           <label className="flex items-center gap-3 cursor-pointer group">
             <div
               onClick={() =>
+                !isPending &&
                 setValue("agreeTerms", !agreeTerms, { shouldValidate: true })
               }
               className={`mt-0.5 shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 cursor-pointer
@@ -244,6 +266,7 @@ export function RegisterForm() {
             <input
               type="checkbox"
               className="sr-only"
+              disabled={isPending}
               {...register("agreeTerms")}
             />
             <span className="text-xs text-foreground/60 leading-relaxed">
@@ -266,30 +289,29 @@ export function RegisterForm() {
           </label>
           {errors.agreeTerms && (
             <p className="text-xs text-red-500 flex items-center gap-1">
-              <span aria-hidden="true">✕</span>
+              <span aria-hidden="true">×</span>
               {errors.agreeTerms.message}
             </p>
           )}
         </div>
 
-        {/* CTA */}
         <button
           id="register-submit"
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
           className="relative w-full h-10 rounded-xl bg-accent text-primary font-bold text-sm
             flex items-center justify-center gap-2
             hover:bg-accent/90 active:scale-[0.98] transition-all duration-200
             disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-accent/25"
           style={{ fontFamily: "var(--font-montserrat)" }}
         >
-          {isLoading ? (
+          {isPending ? (
             <span className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
           ) : (
             <>Tạo tài khoản</>
           )}
         </button>
-        {/* Divider */}
+
         <div className="relative mt-2">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-border" />
@@ -301,7 +323,6 @@ export function RegisterForm() {
           </div>
         </div>
 
-        {/* Social Logins */}
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
@@ -334,7 +355,7 @@ export function RegisterForm() {
         <p className="text-center text-sm text-foreground/60 mt-1">
           Đã có tài khoản?{" "}
           <Link
-            href="/login"
+            href={loginHref}
             className="font-bold text-primary hover:text-primary/80 transition-colors"
           >
             Đăng nhập

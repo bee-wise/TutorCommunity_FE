@@ -61,7 +61,7 @@ export interface TutorProfileData {
 export const mockTutorProfile: TutorProfileData = {
   id: "nguyen-minh-anh",
   displayName: "Nguyễn Minh Anh",
-  avatarUrl: "/images/tutors/1.png",
+  avatarUrl: "/images/Tutor/1.png",
   headline: "Gia sư Toán lớp 6-12, tập trung nền tảng và sự tự tin khi làm bài",
   shortIntro:
     "Giúp học sinh hiểu bản chất, sửa lỗi sai thường gặp và có lộ trình ôn tập rõ ràng sau mỗi buổi học.",

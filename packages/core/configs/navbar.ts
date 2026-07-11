@@ -51,7 +51,6 @@ export type NavbarContext = {
   lmsAccessEnabled?: boolean | null;
 };
 
-const approvedTutorStatuses = new Set(["APPROVED", "COMPLETED"]);
 const internalStaffRoles = new Set(["ADMIN", "CONSULTANT"]);
 
 export function normalizeRole(role?: string | null) {
@@ -75,7 +74,7 @@ export function getTutorOnboardingStatus(user?: MeType | null) {
 export function resolveNavbarState({
   isAuthenticated,
   role,
-  tutorOnboardingStatus,
+  lmsAccessEnabled,
 }: NavbarContext): NavbarState {
   if (!isAuthenticated) return "GUEST";
 
@@ -85,10 +84,8 @@ export function resolveNavbarState({
   if (normalizedRole === "LEARNER") return "LEARNER";
 
   if (normalizedRole === "TUTOR") {
-    const normalizedStatus = normalizeTutorStatus(tutorOnboardingStatus);
-    return approvedTutorStatuses.has(normalizedStatus)
-      ? "TUTOR_APPROVED"
-      : "TUTOR_ONBOARDING";
+    if (lmsAccessEnabled === true) return "TUTOR_APPROVED";
+    return "TUTOR_ONBOARDING";
   }
 
   return "GUEST";
