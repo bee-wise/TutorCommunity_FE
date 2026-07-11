@@ -16,30 +16,47 @@ export const useLogin = ({
   onSuccess?: () => void;
 }) => {
   const router = useRouter();
+  const login = useAuthStore((s) => s.login);
   const logout = useAuthStore((s) => s.logout);
 
   return useMutation({
     mutationKey: ["login"],
+
     mutationFn: async (req: LoginRequest) => {
       await authService.login(req);
-      const meResponse = await authService.getMe();
-      return meResponse;
-    },
-    onSuccess: async (res) => {
-      if (res.success) {
-        if (redirectUrl) {
-          router.push(redirectUrl);
+
+      try {
+        const me = await authService.getMe();
+
+        if (!me.success) {
+          throw new Error(AUTH_MESSAGE.ERROR.GET_ME_ERROR);
         }
-        onSuccess?.();
-      } else {
+
+        return me.data;
+      } catch (error) {
+        await authService.logout().catch(() => {});
         logout();
-        throw new Error(AUTH_MESSAGE.ERROR.GET_ME_ERROR);
+        throw error;
       }
     },
-    onError: () => {
+
+    onSuccess: (data) => {
+      if (data) {
+        login(data);
+      }
+      onSuccess?.();
+
+      if (redirectUrl) {
+        router.push(redirectUrl);
+      }
+    },
+
+    onError: (error) => {
+      handleApiError(error);
       toast.error(AUTH_MESSAGE.ERROR.INTERNAL_SERVER_ERROR, {
         position: "top-right",
       });
+      logout();
     },
   });
 };
