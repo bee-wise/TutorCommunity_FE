@@ -5,7 +5,7 @@ import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 export function TutorGuideCta() {
   return (
     <section
-      className="py-20 sm:py-28 relative overflow-hidden h-screen flex items-center"
+      className="py-20 sm:py-28 relative overflow-hidden min-h-[80vh] md:min-h-[100dvh] flex items-center"
       style={{
         background:
           "linear-gradient(145deg, #280f91 0%, #1a0a60 60%, #0f0638 100%)",
@@ -13,11 +13,11 @@ export function TutorGuideCta() {
       aria-labelledby="cta-final-heading"
     >
       <div
-        className="absolute -right-24 -top-24 w-96 h-96 rounded-full border border-white/5"
+        className="absolute -right-24 -top-24 w-64 h-64 sm:w-96 sm:h-96 rounded-full border border-white/5"
         aria-hidden="true"
       />
       <div
-        className="absolute -left-16 -bottom-16 w-72 h-72 rounded-full border border-accent/10"
+        className="absolute -left-16 -bottom-16 w-48 h-48 sm:w-72 sm:h-72 rounded-full border border-accent/10"
         aria-hidden="true"
       />
 
@@ -38,14 +38,13 @@ export function TutorGuideCta() {
         <div className="flex flex-col gap-6 items-center">
           <h5
             id="cta-final-heading"
-            className="text-white tracking-tight leading-tight"
+            className="text-white/90 tracking-widest leading-tight text-xs sm:text-sm uppercase"
             style={{
               fontFamily: "var(--font-montserrat)",
-              fontWeight: 800,
-              fontSize: "clamp(1rem, 2vw, 1rem)",
+              fontWeight: 700,
             }}
           >
-            LỰA CHỌN HÀNH TRÌNH KẾT NỐI DỄ DÀNG - AN TOÀN TẠI SAO KHÔNG?
+            Lựa chọn hành trình kết nối dễ dàng - an toàn tại sao không?
           </h5>
           <h2
             id="cta-final-heading"
@@ -69,7 +68,7 @@ export function TutorGuideCta() {
           <Link
             href="/register"
             id="cta-final-register"
-            className="mt-2 inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-accent px-10 text-sm font-bold text-accent-foreground transition-all duration-200 hover:bg-highlight active:scale-[0.98] shadow-xl shadow-accent/30 whitespace-nowrap"
+            className="mt-2 inline-flex min-h-[56px] items-center justify-center gap-2.5 rounded-full bg-accent px-6 sm:px-10 py-3 sm:py-0 text-xs sm:text-sm font-bold text-accent-foreground transition-all duration-200 hover:bg-highlight active:scale-[0.98] shadow-xl shadow-accent/30 text-center whitespace-normal sm:whitespace-nowrap max-w-full"
             style={{ fontFamily: "var(--font-montserrat)" }}
           >
             ĐĂNG KÝ TRỞ THÀNH GIA SƯ BEEWISE NGAY
