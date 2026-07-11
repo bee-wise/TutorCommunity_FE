@@ -13,6 +13,8 @@ interface TutorListResultsProps {
   query: string;
   aiReason?: string;
   isLoggedIn?: boolean;
+  onClearFilters: () => void;
+  onTryAI: () => void;
 }
 
 function ResultLabel({
@@ -28,7 +30,7 @@ function ResultLabel({
 }) {
   if (mode === "ai") {
     return (
-      <div className="flex flex-col gap-2 p-4 rounded-2xl border border-primary/15 bg-primary/5">
+      <div className="flex flex-col gap-1.5 rounded-xl border border-primary/10 bg-primary/5 px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary">
             <SparkleIcon size={13} className="text-white" weight="fill" aria-hidden="true" />
@@ -82,8 +84,12 @@ function ResultLabel({
 
 function EmptyState({
   mode,
+  onClearFilters,
+  onTryAI,
 }: {
   mode: SearchMode;
+  onClearFilters: () => void;
+  onTryAI: () => void;
 }) {
   return (
     <div className="flex flex-col items-center gap-5 py-20 text-center">
@@ -106,6 +112,10 @@ function EmptyState({
             : "Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác."}
         </p>
       </div>
+      <div className="flex flex-wrap justify-center gap-3">
+        <button type="button" onClick={onClearFilters} className="h-10 rounded-xl border border-primary px-4 text-sm font-bold text-primary hover:bg-primary/5">Xóa bộ lọc</button>
+        <button type="button" onClick={onTryAI} className="h-10 rounded-xl bg-primary px-4 text-sm font-bold text-white hover:bg-primary/90">Thử tìm bằng AI</button>
+      </div>
     </div>
   );
 }
@@ -117,6 +127,8 @@ export function TutorListResults({
   query,
   aiReason,
   isLoggedIn = false,
+  onClearFilters,
+  onTryAI,
 }: TutorListResultsProps) {
   if (isLoading) {
     return (
@@ -144,7 +156,7 @@ export function TutorListResults({
       )}
 
       {tutors.length === 0 ? (
-        <EmptyState mode={searchMode} />
+        <EmptyState mode={searchMode} onClearFilters={onClearFilters} onTryAI={onTryAI} />
       ) : (
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
