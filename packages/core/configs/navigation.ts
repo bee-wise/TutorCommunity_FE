@@ -139,7 +139,7 @@ export const navigationConfig: RoleNavigation = {
       items: [
         {
           title: "Tổng Quan",
-          url: "/consultant/dashboard",
+          url: "/consultant",
           icon: PieChart,
         },
         {

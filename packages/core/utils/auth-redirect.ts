@@ -34,12 +34,12 @@ export function getRoleRedirectPath(
 
   if (role === "TUTOR") {
     if (user.canAccessTutorLms === true) return "/lms/tutor/dashboard";
-    return "/tutor/onboarding";
+    return "https://beewise.vn/tutor/onboarding";
   }
 
-  if (role === "ADMIN" || role === "CONSULTANT") {
-    return "/staff";
+  if (role === "ADMIN") {
+    return "/admin";
   }
 
-  return safeReturnUrl ?? "/";
+  return "/consultant";
 }

@@ -1,8 +1,16 @@
 "use client";
 import { Button } from "@workspace/ui/components/ui/button";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "@phosphor-icons/react";
+import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@workspace/ui/components/ui/dialog";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -11,6 +19,8 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   const router = useRouter();
+  const isAccessTutorLms = useAuthStore((s) => s.isAccessTutorLms);
+  const setIsAccessTutorLms = useAuthStore((s) => s.setIsAccessTutorLms);
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center relative overflow-hidden bg-[#f8f9fc]">
@@ -25,7 +35,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         <Button
           className="flex items-center gap-2 text-[#0c0c0b]/50 hover:text-[#280f91] hover:bg-[#280f91]/5 rounded-full px-4 h-10 transition-colors backdrop-blur-md bg-white border border-[#0c0c0b]/5 shadow-sm"
           variant="ghost"
-          onClick={() => router.back()}
+          onClick={() => router.replace("/")}
         >
           <ArrowLeft weight="bold" className="w-4 h-4" />
           <span
@@ -44,6 +54,38 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         >
           {children}
         </div>
+
+        <Dialog
+          open={!isAccessTutorLms}
+          onOpenChange={(open) => {
+            if (!open) setIsAccessTutorLms(true);
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Tài khoản chưa xác thực</DialogTitle>
+              <DialogDescription>
+                Tài khoản gia chưa được xác thực, truy cập beewise.vn để xem
+                trạng thái hồ sơ.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsAccessTutorLms(true)}
+              >
+                Hủy
+              </Button>
+              <Button
+                onClick={() => {
+                  window.location.href = "https://beewise.vn/tutor/onboarding";
+                }}
+              >
+                Truy cập beewise.vn
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <div className="mt-2 text-center">
           <p className="text-xs text-[#0c0c0b]/40">

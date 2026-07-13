@@ -5,21 +5,24 @@ import { authService } from "@workspace/core/services/auth.service";
 import { LoginRequest } from "@workspace/core/types/auth.type";
 import { AUTH_MESSAGE } from "../constants/auth.message";
 import { useAuthStore } from "../store/useAuthStore";
-import { getApiErrorMessage } from "../sys-libs/error-handler";
+import { getApiErrorMessage, handleApiError } from "../sys-libs/error-handler";
 import { queryKeys } from "../sys-libs/queryKeys";
 import { getRoleRedirectPath } from "../utils/auth-redirect";
 
 export const useLogin = ({
   redirectUrl,
   onSuccess,
+  role = "ORTHER",
 }: {
   redirectUrl?: string;
   onSuccess?: () => void;
+  role?: "STAFF" | "ORTHER";
 }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const setAuthLoading = useAuthStore((s) => s.setAuthLoading);
   const setAuthenticatedUser = useAuthStore((s) => s.login);
+  const setIsAccessTutorLms = useAuthStore((s) => s.setIsAccessTutorLms);
   const clearAuth = useAuthStore((s) => s.logout);
 
   return useMutation({
@@ -45,6 +48,22 @@ export const useLogin = ({
       }
     },
     onSuccess: (user) => {
+      if (
+        role === "STAFF" &&
+        user.role !== "ADMIN" &&
+        user.role !== "CONSULTANT"
+      ) {
+        toast.warning("Bạn không có quyền truy cập vào trang này", {
+          position: "top-right",
+        });
+        authService.logout();
+        return;
+      }
+      if (user.canAccessTutorLms === false) {
+        setIsAccessTutorLms(false);
+        authService.logout();
+        return;
+      }
       setAuthenticatedUser(user);
       queryClient.setQueryData([queryKeys.authKey.getMe], user);
       toast.success(AUTH_MESSAGE.SUCCESS, { position: "top-right" });

@@ -9,15 +9,10 @@ import { Eye, EyeSlash } from "@phosphor-icons/react";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
 import { useLogin } from "@workspace/core/hooks/useLogin";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@workspace/ui/components/ui/tooltip";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { mutate: login, isPending } = useLogin({});
+  const { mutate: login, isPending } = useLogin({ role: "STAFF" });
 
   const {
     register,

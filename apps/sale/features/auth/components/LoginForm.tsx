@@ -135,34 +135,19 @@ export function LoginForm() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            className="flex items-center justify-center gap-2 h-10 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
-          >
-            <Image
-              src="/images/Logos/google.png"
-              alt="Google"
-              width={20}
-              height={20}
-              className="object-contain"
-            />
-            Google
-          </button>
-          <button
-            type="button"
-            className="flex items-center justify-center gap-2 h-10 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
-          >
-            <Image
-              src="/images/Logos/facebook.png"
-              alt="Facebook"
-              width={20}
-              height={20}
-              className="object-contain"
-            />
-            Facebook
-          </button>
-        </div>
+        <button
+          type="button"
+          className="flex items-center justify-center gap-2 h-10 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
+        >
+          <Image
+            src="/images/Logos/google.png"
+            alt="Google"
+            width={20}
+            height={20}
+            className="object-contain"
+          />
+          Google
+        </button>
 
         <p className="text-center text-sm text-foreground/60 mt-2">
           Chưa có tài khoản?{" "}
