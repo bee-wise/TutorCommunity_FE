@@ -178,6 +178,9 @@ export function useTutorSearch() {
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
     cachedPage = newPage;
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const manualResults = manualResponse?.data?.items || [];
