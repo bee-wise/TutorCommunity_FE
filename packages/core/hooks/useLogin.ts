@@ -47,7 +47,7 @@ export const useLogin = ({
         throw error;
       }
     },
-    onSuccess: (user) => {
+    onSuccess: async (user) => {
       if (
         role === "STAFF" &&
         user.role !== "ADMIN" &&
@@ -59,21 +59,22 @@ export const useLogin = ({
         authService.logout();
         return;
       }
-      if (user.canAccessTutorLms === false) {
+      if (user.canAccessTutorLms === false && user.role === "TUTOR") {
         setIsAccessTutorLms(false);
+        await authService.logout();
       } else {
         setIsAccessTutorLms(true);
+        setAuthenticatedUser(user);
+        queryClient.setQueryData([queryKeys.authKey.getMe], user);
+        toast.success(AUTH_MESSAGE.SUCCESS, { position: "top-right" });
+        router.push(
+          getRoleRedirectPath(user, {
+            returnUrl: redirectUrl,
+            preferReturnUrl: true,
+          }),
+        );
+        onSuccess?.();
       }
-      setAuthenticatedUser(user);
-      queryClient.setQueryData([queryKeys.authKey.getMe], user);
-      toast.success(AUTH_MESSAGE.SUCCESS, { position: "top-right" });
-      router.push(
-        getRoleRedirectPath(user, {
-          returnUrl: redirectUrl,
-          preferReturnUrl: true,
-        }),
-      );
-      onSuccess?.();
     },
     onError: (error) => {
       clearAuth();
