@@ -178,9 +178,7 @@ export function getNavbarConfig({
       homeHref: "/tutor/onboarding",
       centerItems: tutorOnboardingMenu,
       rightItems: [],
-      accountItems: [
-        { label: "Đăng xuất", href: "/", action: "logout" },
-      ],
+      accountItems: [{ label: "Đăng xuất", href: "/", action: "logout" }],
       showNotifications: false,
     };
   }
@@ -191,7 +189,7 @@ export function getNavbarConfig({
       lmsAccessEnabled === true;
 
     return {
-      homeHref: isCompleted ? "/tutor/home" : "/tutor/post-approval",
+      homeHref: isCompleted ? "/tutor" : "/tutor/post-approval",
       centerItems: isCompleted ? tutorApprovedMenu : tutorPostApprovalMenu,
       rightItems: lmsAccessEnabled
         ? [{ label: "Vào LMS", href: TUTOR_LMS_URL, variant: "primary" }]
