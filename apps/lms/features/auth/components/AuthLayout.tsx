@@ -61,7 +61,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
             if (!open) setIsAccessTutorLms(true);
           }}
         >
-          <DialogContent>
+          <DialogContent className="w-[90vw] max-w-md rounded-2xl sm:rounded-2xl">
             <DialogHeader>
               <DialogTitle>Tài khoản chưa xác thực</DialogTitle>
               <DialogDescription>
@@ -69,7 +69,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
                 trạng thái hồ sơ.
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter>
+            <DialogFooter className="gap-2 sm:gap-0">
               <Button
                 variant="outline"
                 onClick={() => setIsAccessTutorLms(true)}
