@@ -61,8 +61,8 @@ export const useLogin = ({
       }
       if (user.canAccessTutorLms === false) {
         setIsAccessTutorLms(false);
-        authService.logout();
-        return;
+      } else {
+        setIsAccessTutorLms(true);
       }
       setAuthenticatedUser(user);
       queryClient.setQueryData([queryKeys.authKey.getMe], user);
