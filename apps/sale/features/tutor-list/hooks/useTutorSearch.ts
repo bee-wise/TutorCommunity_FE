@@ -1,4 +1,5 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   DEFAULT_FILTERS,
   type SearchMode,
@@ -120,10 +121,43 @@ function applyLocalFiltersToAIResults(
 }
 
 export function useTutorSearch() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const isInitialized = useRef(false);
+
   const [searchMode, setSearchMode] = useState<SearchMode>(cachedSearchMode);
   const [filters, setFilters] = useState<TutorFilters>(cachedFilters);
   const [currentQuery, setCurrentQuery] = useState(cachedCurrentQuery);
   const [page, setPage] = useState(cachedPage);
+
+  // Sync state with URL params on first load
+  useEffect(() => {
+    if (!isInitialized.current) {
+      const mode = searchParams.get("mode") as SearchMode;
+      const q = searchParams.get("q");
+
+      let shouldUpdate = false;
+
+      if (mode && (mode === "ai" || mode === "manual")) {
+        setSearchMode(mode);
+        cachedSearchMode = mode;
+        shouldUpdate = true;
+      }
+      if (q !== null) {
+        setCurrentQuery(q);
+        cachedCurrentQuery = q;
+        shouldUpdate = true;
+      }
+
+      if (shouldUpdate) {
+        // Clear the URL params so they don't stick around if user changes search internally
+        router.replace(pathname, { scroll: false });
+      }
+
+      isInitialized.current = true;
+    }
+  }, [searchParams, pathname, router]);
 
   const aiSearchQuery = useMemo(
     () => ({ query: currentQuery, limit: 10, thresold: 0.65 }),
