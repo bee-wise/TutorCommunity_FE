@@ -114,7 +114,7 @@ export function TutorListController({
         onClose={() => setIsFilterDrawerOpen(false)}
         filters={filters}
         onFiltersChange={handleFiltersChange}
-        resultCount={displayTutors.length}
+        resultCount={searchMode === "manual" && pagination ? pagination.totalItems : displayTutors.length}
       />
 
       <div className="min-h-[calc(100dvh-64px)] bg-muted/30">
@@ -178,8 +178,11 @@ export function TutorListController({
                     >
                       <span>Bộ lọc</span>
                       <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                        {(filters.teachingMode !== "all" ? 1 : 0) +
-                          (filters.level !== "all" ? 1 : 0) || ""}
+                        {((filters.teachingMode !== "all" ? 1 : 0) +
+                          (filters.level !== "all" ? 1 : 0) +
+                          (filters.maxPricePerSession !== null ? 1 : 0) +
+                          (filters.minRating !== null ? 1 : 0) +
+                          (filters.availableOnly ? 1 : 0)) || ""}
                       </span>
                     </button>
                     <label htmlFor="result-sort" className="sr-only">
