@@ -115,6 +115,7 @@ export function TutorListController({
         filters={filters}
         onFiltersChange={handleFiltersChange}
         resultCount={searchMode === "manual" && pagination ? pagination.totalItems : displayTutors.length}
+        isLoading={displayIsLoading}
       />
 
       <div className="min-h-[calc(100dvh-64px)] bg-muted/30">

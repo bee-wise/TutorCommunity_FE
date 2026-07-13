@@ -11,6 +11,7 @@ interface MobileFilterDrawerProps {
   filters: TutorFilters;
   onFiltersChange: (f: TutorFilters) => void;
   resultCount: number;
+  isLoading?: boolean;
 }
 
 export function MobileFilterDrawer({
@@ -19,6 +20,7 @@ export function MobileFilterDrawer({
   filters,
   onFiltersChange,
   resultCount,
+  isLoading = false,
 }: MobileFilterDrawerProps) {
   return (
     <AnimatePresence>
@@ -70,10 +72,21 @@ export function MobileFilterDrawer({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full h-11 rounded-full bg-primary text-white text-sm font-bold transition-all hover:bg-primary/90 active:scale-[0.98]"
+                disabled={isLoading}
+                className="w-full h-11 flex items-center justify-center gap-2 rounded-full bg-primary text-white text-sm font-bold transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
                 style={{ fontFamily: "var(--font-montserrat)" }}
               >
-                Xem {resultCount} gia sư
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Đang lọc...
+                  </>
+                ) : (
+                  `Xem ${resultCount} gia sư`
+                )}
               </button>
             </div>
           </motion.div>
