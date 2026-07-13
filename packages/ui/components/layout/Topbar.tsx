@@ -52,7 +52,6 @@ export function Topbar() {
           {paths.map((path, index) => {
             const isLast = index === paths.length - 1;
             const href = `/${paths.slice(0, index + 1).join("/")}`;
-            // Capitalize and format text
             const title =
               path.charAt(0).toUpperCase() + path.slice(1).replace("-", " ");
 
@@ -86,7 +85,6 @@ export function Topbar() {
           <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-destructive border-2 border-background" />
         </button>
 
-        {/* Role Switcher & Profile Dropdown (Dev Mode) */}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 focus-visible:outline-none rounded-full pr-2 hover:bg-accent transition-colors">
             <Avatar className="h-8 w-8 rounded-full border border-border/50">

@@ -2,7 +2,7 @@
 export function TutorCardSkeleton() {
   return (
     <div
-      className="relative flex min-h-[430px] flex-col rounded-2xl border border-[#dce3f0] bg-white p-5 animate-pulse"
+      className="relative flex h-full min-h-[380px] flex-col rounded-2xl border border-[#dce3f0] bg-white p-4 animate-pulse"
       aria-hidden="true"
     >
       <div className="flex flex-col flex-1 gap-4">
@@ -19,12 +19,6 @@ export function TutorCardSkeleton() {
         <div className="flex flex-col gap-1.5">
           <div className="h-3 w-full bg-muted rounded-full" />
           <div className="h-3 w-4/5 bg-muted/70 rounded-full" />
-        </div>
-
-        {/* Subjects */}
-        <div className="flex gap-2">
-          <div className="h-6 w-16 bg-muted rounded-full" />
-          <div className="h-6 w-20 bg-muted/70 rounded-full" />
         </div>
 
         {/* Meta */}

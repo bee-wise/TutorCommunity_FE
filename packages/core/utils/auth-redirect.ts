@@ -36,11 +36,11 @@ export function getRoleRedirectPath(
     return resolveTutorLoginDestination(user);
   }
 
-  if (role === "ADMIN" || role === "CONSULTANT") {
-    return "/staff";
+  if (role === "ADMIN") {
+    return "/admin";
   }
 
-  return safeReturnUrl ?? "/";
+  return "/consultant";
 }
 
 export function resolveTutorLoginDestination(user: MeType) {
@@ -50,7 +50,9 @@ export function resolveTutorLoginDestination(user: MeType) {
     user.onboardingStatus ??
     user.status ??
     ""
-  ).trim().toUpperCase();
+  )
+    .trim()
+    .toUpperCase();
   const approved =
     profileStatus === "APPROVED" ||
     profileStatus === "COMPLETED" ||

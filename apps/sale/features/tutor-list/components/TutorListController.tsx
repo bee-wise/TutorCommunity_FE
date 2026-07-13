@@ -1,24 +1,14 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { SparkleIcon, XIcon } from "@phosphor-icons/react";
 import { SearchBar } from "./SearchBar";
 import { FilterPanel } from "./FilterPanel";
 import { TutorListResults } from "./TutorListResults";
-import {
-  MOCK_TUTORS,
-  simulateAISearch,
-  simulateManualSearch,
-} from "../data/mock-tutors";
-import {
-  DEFAULT_FILTERS,
-  type SearchMode,
-  type TutorFilters,
-  type Tutor,
-} from "../data/types";
+import { AILoadingOverlay } from "./AILoadingOverlay";
+import { MobileFilterDrawer } from "./MobileFilterDrawer";
+import { useTutorSearch } from "../hooks/useTutorSearch";
+import type { TutorFilters } from "../data/types";
 
 const SORT_OPTIONS = [
   { label: "Phù hợp nhất", value: "best_match" },
@@ -28,168 +18,6 @@ const SORT_OPTIONS = [
   { label: "Học phí cao nhất", value: "price_desc" },
 ] as const;
 
-// Strands is a heavy WebGL component — load only when needed
-const Strands = dynamic(() => import('@workspace/ui/components/Strands'), {
-  ssr: false,
-});
-
-// ─── AI Loading Overlay ────────────────────────────────────────────────────
-
-function AILoadingOverlay({ query }: { query: string }) {
-  return (
-    <AnimatePresence>
-      <motion.div
-        key="ai-loading"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-        style={{
-          background: "rgba(255,255,255,0.92)",
-          backdropFilter: "blur(8px)",
-        }}
-        aria-live="polite"
-        aria-label="AI đang tìm kiếm"
-        role="status"
-      >
-        {/* Strands WebGL animation */}
-        <div className="flex items-center justify-center w-36 h-36 mb-6 border rounded-full">
-          <Strands
-            colors={["#280f91", "#a855f7", "#3b82f6", "#ffc500"]}
-            count={6}
-            speed={0.6}
-            amplitude={1.2}
-            thickness={0.8}
-            glow={3}
-            intensity={0.7}
-            opacity={0.9}
-            waviness={1.2}
-          />
-        </div>
-
-        <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex items-center gap-2">
-            <SparkleIcon
-              size={20}
-              className="text-primary"
-              weight="fill"
-              aria-hidden="true"
-            />
-            <span
-              className="text-base font-bold text-primary"
-              style={{ fontFamily: "var(--font-montserrat)" }}
-            >
-              Đang tìm gia sư phù hợp...
-            </span>
-          </div>
-          {query && (
-            <p className="text-sm text-foreground/55 max-w-[32ch] leading-relaxed">
-              &ldquo;{query}&rdquo;
-            </p>
-          )}
-          <div className="flex gap-1.5 mt-1">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                className="w-1.5 h-1.5 rounded-full bg-primary"
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                  ease: "easeInOut",
-                }}
-                aria-hidden="true"
-              />
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
-// ─── Mobile Filter Drawer ──────────────────────────────────────────────────
-
-function MobileFilterDrawer({
-  isOpen,
-  onClose,
-  filters,
-  onFiltersChange,
-  resultCount,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  filters: TutorFilters;
-  onFiltersChange: (f: TutorFilters) => void;
-  resultCount: number;
-}) {
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/40"
-            onClick={onClose}
-            aria-hidden="true"
-          />
-          <motion.div
-            key="drawer"
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 32 }}
-            className="fixed top-0 left-0 z-50 h-full w-[88vw] max-w-sm bg-background shadow-2xl flex flex-col"
-            role="dialog"
-            aria-label="Bộ lọc gia sư"
-            aria-modal="true"
-          >
-            <div className="flex items-center justify-between p-5 border-b border-border">
-              <span
-                className="text-base font-bold text-foreground"
-                style={{ fontFamily: "var(--font-montserrat)" }}
-              >
-                Bộ lọc
-              </span>
-              <button
-                type="button"
-                onClick={onClose}
-                className="text-foreground/50 hover:text-foreground transition-colors"
-                aria-label="Đóng bộ lọc"
-              >
-                <XIcon size={20} aria-hidden="true" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5">
-              <FilterPanel
-                filters={filters}
-                onFiltersChange={onFiltersChange}
-              />
-            </div>
-            <div className="p-5 border-t border-border">
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full h-11 rounded-full bg-primary text-white text-sm font-bold transition-all hover:bg-primary/90 active:scale-[0.98]"
-                style={{ fontFamily: "var(--font-montserrat)" }}
-              >
-                Xem {resultCount} gia sư
-              </button>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}
-
-// ─── Main Controller ───────────────────────────────────────────────────────
-
 interface TutorListControllerProps {
   isLoggedIn?: boolean; // passed from server context in production
 }
@@ -197,110 +25,99 @@ interface TutorListControllerProps {
 export function TutorListController({
   isLoggedIn = false,
 }: TutorListControllerProps) {
-  const searchParams = useSearchParams();
-  const initMode = (searchParams.get("mode") as SearchMode) || "ai";
-  const initQuery = searchParams.get("q") || "";
-
-  const [searchMode, setSearchMode] = useState<SearchMode>(initMode);
-  const [filters, setFilters] = useState<TutorFilters>(DEFAULT_FILTERS);
-  const [tutors, setTutors] = useState<Tutor[]>(MOCK_TUTORS);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAILoading, setIsAILoading] = useState(false);
-  const [currentQuery, setCurrentQuery] = useState(initQuery);
-  const [aiReason, setAiReason] = useState<string | undefined>(undefined);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const hasPlayedGalaxyAnim = useRef(false);
 
-  const initialSearchDone = useRef(false);
+  const {
+    searchMode,
+    currentQuery,
+    filters,
+    displayTutors,
+    displayIsLoading,
+    isAIFetching,
+    aiReason,
+    pagination,
+    page,
+    handleSearch,
+    handleModeChange,
+    handleFiltersChange,
+    handleClearFilters,
+    handlePageChange,
+  } = useTutorSearch();
 
-  // Live filter updates for manual mode (no loading delay needed)
-  useEffect(() => {
-    if (searchMode === "manual") {
-      const results = simulateManualSearch(currentQuery, filters);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTutors(results);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
-
-  const handleSearch = useCallback(
-    async (query: string, mode: SearchMode) => {
-      setCurrentQuery(query);
-      setAiReason(undefined);
-
-      if (!query.trim()) {
-        setTutors(
-          mode === "manual" ? simulateManualSearch("", filters) : MOCK_TUTORS,
-        );
-        return;
-      }
-
-      if (mode === "ai") {
-        // AI: full-screen loading overlay with Strands
-        setIsAILoading(true);
-        setIsLoading(true);
-        await new Promise((r) => setTimeout(r, 2200)); // simulate AI latency
-        const results = simulateAISearch(query);
-        setTutors(results);
-        setAiReason(
-          results.length > 0
-            ? `Tìm thấy dựa trên môn học, hình thức dạy và mức học phí phù hợp với mô tả của bạn.`
-            : undefined,
-        );
-        setIsAILoading(false);
-        setIsLoading(false);
-      } else {
-        // Manual: quick skeleton loading
-        setIsLoading(true);
-        await new Promise((r) => setTimeout(r, 600));
-        const results = simulateManualSearch(query, filters);
-        setTutors(results);
-        setIsLoading(false);
-      }
-    },
-    [filters],
-  );
-
-  const handleModeChange = (mode: SearchMode) => {
-    setSearchMode(mode);
-    setCurrentQuery("");
-    setAiReason(undefined);
-    handleSearch("", mode);
-  };
-
-  const handleFiltersChange = (newFilters: TutorFilters) => {
-    setFilters(newFilters);
-  };
+  const shouldHideFiltersAndHeader =
+    searchMode === "ai" && (!currentQuery.trim() || displayTutors.length === 0);
 
   useEffect(() => {
-    if (!initialSearchDone.current) {
-      initialSearchDone.current = true;
-      if (initMode === "ai" && initQuery) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        handleSearch(initQuery, "ai");
-      }
-      // Xóa param trên URL để khi người dùng f5 không bị chạy lại AI mode loading
-      if (window.location.search) {
-        window.history.replaceState({}, "", window.location.pathname);
-      }
-    }
-  }, [initMode, initQuery, handleSearch]);
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!currentQuery.trim() && searchMode === "ai") return;
+
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [currentQuery, searchMode]);
 
   return (
     <>
-      {/* AI full-screen overlay */}
-      {isAILoading && <AILoadingOverlay query={currentQuery} />}
+      <AnimatePresence>
+        {searchMode === "ai" && !hasPlayedGalaxyAnim.current && (
+          <motion.div
+            key="ai-galaxy-border"
+            className="pointer-events-none fixed inset-0 z-[100] blur-[3px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 1, 0] }}
+            transition={{
+              duration: 4.5,
+              times: [0, 0.15, 0.85, 1],
+              ease: "easeInOut",
+            }}
+            onAnimationComplete={() => {
+              hasPlayedGalaxyAnim.current = true;
+            }}
+          >
+            <div
+              className="absolute inset-0 p-[5px] overflow-hidden"
+              style={{
+                WebkitMask:
+                  "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+              }}
+            >
+              <div
+                className="absolute -inset-full animate-spin"
+                style={{
+                  animationDuration: "3s",
+                  background:
+                    "conic-gradient(from 0deg, transparent 0%, transparent 25%, #280f91 50%, #3b82f6 70%, #ec4899 85%, #ffc500 100%)",
+                }}
+              />
+            </div>
+            <div
+              className="absolute inset-0"
+              style={{
+                boxShadow:
+                  "inset 0 0 80px rgba(168, 85, 247, 0.4), inset 0 0 15px rgba(255, 197, 0, 0.4)",
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Mobile filter drawer */}
+      {isAIFetching && <AILoadingOverlay query={currentQuery} />}
+
       <MobileFilterDrawer
         isOpen={isFilterDrawerOpen}
         onClose={() => setIsFilterDrawerOpen(false)}
         filters={filters}
         onFiltersChange={handleFiltersChange}
-        resultCount={tutors.length}
+        resultCount={displayTutors.length}
       />
 
       <div className="min-h-[calc(100dvh-64px)] bg-muted/30">
-        {/* Page header */}
         <div
           className="border-b border-border bg-background"
           style={{ boxShadow: "0 1px 0 rgba(40,15,145,0.04)" }}
@@ -309,7 +126,7 @@ export function TutorListController({
             <div className="flex flex-col gap-4">
               <div>
                 <h1
-                  className="text-[28px] sm:text-[34px] font-extrabold text-foreground tracking-tight leading-tight"
+                  className="text-2xl md:text-3xl font-extrabold text-[#0c0c0b] tracking-tight leading-tight"
                   style={{ fontFamily: "var(--font-montserrat)" }}
                 >
                   Tìm Gia Sư
@@ -320,75 +137,89 @@ export function TutorListController({
                 mode={searchMode}
                 onModeChange={handleModeChange}
                 onSearch={handleSearch}
-                isLoading={isLoading}
+                isLoading={displayIsLoading}
               />
             </div>
           </div>
         </div>
 
-        {/* Body: sidebar + results */}
         <div className="mx-auto max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8">
           <div className="flex gap-6">
-            {/* Sidebar filter — hidden on mobile */}
-            <aside className="hidden xl:block w-[270px] shrink-0">
-              <div className="sticky top-24 rounded-2xl border border-[#dce3f0] bg-white p-5 shadow-[0_8px_24px_rgba(40,15,145,0.05)]">
-                <FilterPanel
-                  filters={filters}
-                  onFiltersChange={handleFiltersChange}
-                />
-              </div>
-            </aside>
-
-            {/* Main results area */}
-            <div className="flex-1 min-w-0 flex flex-col gap-4">
-              {/* Result header */}
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#dce3f0] bg-white px-4 py-3 shadow-[0_4px_16px_rgba(40,15,145,0.04)]">
-                <p className="text-base font-extrabold text-foreground" style={{ fontFamily: "var(--font-montserrat)" }}>
-                  {tutors.length} gia sư phù hợp
-                </p>
-                <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsFilterDrawerOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground/70 shadow-sm hover:border-primary/30 transition-all xl:hidden"
-                  id="mobile-filter-trigger"
-                >
-                  <span>Bộ lọc</span>
-                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                    {filters.subjects.length +
-                      (filters.teachingMode !== "all" ? 1 : 0) +
-                      (filters.level !== "all" ? 1 : 0) || ""}
-                  </span>
-                </button>
-                <label htmlFor="result-sort" className="sr-only">Sắp xếp kết quả</label>
-                <select
-                  id="result-sort"
-                  value={filters.sortBy}
-                  onChange={(event) => handleFiltersChange({ ...filters, sortBy: event.target.value as TutorFilters["sortBy"] })}
-                  className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
-                >
-                  {SORT_OPTIONS.map((option, index) => (
-                    <option key={`${option.value}-${index}`} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
+            {!shouldHideFiltersAndHeader && (
+              <aside className="hidden xl:block w-[270px] shrink-0">
+                <div className="sticky top-24 rounded-2xl border border-[#dce3f0] bg-white shadow-sm overflow-hidden flex flex-col max-h-[calc(100vh-8rem)]">
+                  <div className="p-5 overflow-y-auto flex-1 custom-scrollbar">
+                    <FilterPanel
+                      filters={filters}
+                      onFiltersChange={handleFiltersChange}
+                    />
+                  </div>
                 </div>
-              </div>
+              </aside>
+            )}
 
-              {/* Results */}
+            <div className="flex-1 min-w-0 flex flex-col gap-4">
+              {!shouldHideFiltersAndHeader && (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#dce3f0] bg-white px-4 py-3 shadow-sm">
+                  <p
+                    className="text-base font-extrabold text-[#0c0c0b]"
+                    style={{ fontFamily: "var(--font-montserrat)" }}
+                  >
+                    {searchMode === "manual" && pagination
+                      ? `${pagination.totalItems} gia sư`
+                      : `${displayTutors.length} gia sư phù hợp`}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsFilterDrawerOpen(true)}
+                      className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground/70 shadow-sm hover:border-primary/30 transition-all xl:hidden"
+                      id="mobile-filter-trigger"
+                    >
+                      <span>Bộ lọc</span>
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                        {(filters.teachingMode !== "all" ? 1 : 0) +
+                          (filters.level !== "all" ? 1 : 0) || ""}
+                      </span>
+                    </button>
+                    <label htmlFor="result-sort" className="sr-only">
+                      Sắp xếp kết quả
+                    </label>
+                    <select
+                      id="result-sort"
+                      value={filters.sortBy}
+                      onChange={(event) =>
+                        handleFiltersChange({
+                          ...filters,
+                          sortBy: event.target.value as TutorFilters["sortBy"],
+                        })
+                      }
+                      className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    >
+                      {SORT_OPTIONS.map((option, index) => (
+                        <option
+                          key={`${option.value}-${index}`}
+                          value={option.value}
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
               <TutorListResults
-                tutors={tutors}
-                isLoading={isLoading && !isAILoading}
+                tutors={displayTutors}
+                isLoading={displayIsLoading && !isAIFetching}
                 searchMode={searchMode}
                 query={currentQuery}
                 aiReason={aiReason}
                 isLoggedIn={isLoggedIn}
-                onClearFilters={() => {
-                  setFilters(DEFAULT_FILTERS);
-                  setTutors(MOCK_TUTORS);
-                  setCurrentQuery("");
-                  setAiReason(undefined);
-                }}
+                pagination={pagination}
+                onClearFilters={handleClearFilters}
                 onTryAI={() => handleModeChange("ai")}
+                onPageChange={handlePageChange}
               />
             </div>
           </div>

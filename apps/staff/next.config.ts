@@ -6,7 +6,7 @@ const apiBaseUrl =
   "https://api.beewise.vn";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@workspace/ui', '@workspace/core'],
+  transpilePackages: ["@workspace/ui", "@workspace/core"],
   images: {
     remotePatterns: [
       {
@@ -30,6 +30,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
-
-

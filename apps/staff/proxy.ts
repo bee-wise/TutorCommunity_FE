@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 const publicPaths = ["/", "/login"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const token = request.cookies.get("beewise_access_token")?.value;
@@ -25,7 +25,19 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Nếu truy cập trang login hoặc trang chủ hoặc /staff mà đã có token -> phân luồng theo role
+  // Ngăn chặn truy cập sai role
+  if (pathname.startsWith("/admin") && role.toUpperCase() !== "ADMIN") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (
+    pathname.startsWith("/consultant") &&
+    role.toUpperCase() !== "CONSULTANT"
+  ) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Nếu truy cập trang login, trang chủ hoặc /staff mà đã có token -> phân luồng theo role
   if (
     (pathname === "/" || pathname === "/login" || pathname === "/staff") &&
     token
@@ -33,9 +45,7 @@ export function middleware(request: NextRequest) {
     if (role.toUpperCase() === "ADMIN") {
       return NextResponse.redirect(new URL("/admin", request.url));
     } else if (role.toUpperCase() === "CONSULTANT") {
-      return NextResponse.redirect(
-        new URL("/consultant/dashboard", request.url),
-      );
+      return NextResponse.redirect(new URL("/consultant", request.url));
     }
   }
 
