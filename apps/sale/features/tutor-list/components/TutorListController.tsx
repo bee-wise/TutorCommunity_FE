@@ -20,6 +20,14 @@ import {
   type Tutor,
 } from "../data/types";
 
+const SORT_OPTIONS = [
+  { label: "Phù hợp nhất", value: "best_match" },
+  { label: "Đánh giá cao nhất", value: "rating" },
+  { label: "Kinh nghiệm nhiều nhất", value: "experience" },
+  { label: "Học phí thấp nhất", value: "price_asc" },
+  { label: "Học phí cao nhất", value: "price_desc" },
+] as const;
+
 // Strands is a heavy WebGL component — load only when needed
 const Strands = dynamic(() => import('@workspace/ui/components/Strands'), {
   ssr: false,
@@ -72,7 +80,7 @@ function AILoadingOverlay({ query }: { query: string }) {
               className="text-base font-bold text-primary"
               style={{ fontFamily: "var(--font-montserrat)" }}
             >
-              AI đang phân tích...
+              Đang tìm gia sư phù hợp...
             </span>
           </div>
           {query && (
@@ -161,7 +169,6 @@ function MobileFilterDrawer({
               <FilterPanel
                 filters={filters}
                 onFiltersChange={onFiltersChange}
-                resultCount={resultCount}
               />
             </div>
             <div className="p-5 border-t border-border">
@@ -298,18 +305,15 @@ export function TutorListController({
           className="border-b border-border bg-background"
           style={{ boxShadow: "0 1px 0 rgba(40,15,145,0.04)" }}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="mx-auto max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1">
+              <div>
                 <h1
-                  className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight leading-tight"
+                  className="text-[28px] sm:text-[34px] font-extrabold text-foreground tracking-tight leading-tight"
                   style={{ fontFamily: "var(--font-montserrat)" }}
                 >
                   Tìm Gia Sư
                 </h1>
-                <p className="text-sm text-foreground/55">
-                  Kết nối với gia sư phù hợp — tìm thủ công hoặc để AI hỗ trợ
-                </p>
               </div>
 
               <SearchBar
@@ -323,27 +327,30 @@ export function TutorListController({
         </div>
 
         {/* Body: sidebar + results */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex gap-8">
+        <div className="mx-auto max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8">
+          <div className="flex gap-6">
             {/* Sidebar filter — hidden on mobile */}
-            <aside className="hidden lg:block w-64 shrink-0">
-              <div className="sticky top-24 bg-card rounded-2xl border border-border p-5 shadow-sm">
+            <aside className="hidden xl:block w-[270px] shrink-0">
+              <div className="sticky top-24 rounded-2xl border border-[#dce3f0] bg-white p-5 shadow-[0_8px_24px_rgba(40,15,145,0.05)]">
                 <FilterPanel
                   filters={filters}
                   onFiltersChange={handleFiltersChange}
-                  resultCount={tutors.length}
                 />
               </div>
             </aside>
 
             {/* Main results area */}
             <div className="flex-1 min-w-0 flex flex-col gap-4">
-              {/* Mobile filter trigger */}
-              <div className="flex items-center justify-between lg:hidden">
+              {/* Result header */}
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#dce3f0] bg-white px-4 py-3 shadow-[0_4px_16px_rgba(40,15,145,0.04)]">
+                <p className="text-base font-extrabold text-foreground" style={{ fontFamily: "var(--font-montserrat)" }}>
+                  {tutors.length} gia sư phù hợp
+                </p>
+                <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setIsFilterDrawerOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold text-foreground/70 shadow-sm hover:border-primary/30 transition-all"
+                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground/70 shadow-sm hover:border-primary/30 transition-all xl:hidden"
                   id="mobile-filter-trigger"
                 >
                   <span>Bộ lọc</span>
@@ -353,10 +360,18 @@ export function TutorListController({
                       (filters.level !== "all" ? 1 : 0) || ""}
                   </span>
                 </button>
-
-                <span className="text-sm text-foreground/50">
-                  {tutors.length} gia sư
-                </span>
+                <label htmlFor="result-sort" className="sr-only">Sắp xếp kết quả</label>
+                <select
+                  id="result-sort"
+                  value={filters.sortBy}
+                  onChange={(event) => handleFiltersChange({ ...filters, sortBy: event.target.value as TutorFilters["sortBy"] })}
+                  className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+                >
+                  {SORT_OPTIONS.map((option, index) => (
+                    <option key={`${option.value}-${index}`} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+                </div>
               </div>
 
               {/* Results */}
@@ -367,6 +382,13 @@ export function TutorListController({
                 query={currentQuery}
                 aiReason={aiReason}
                 isLoggedIn={isLoggedIn}
+                onClearFilters={() => {
+                  setFilters(DEFAULT_FILTERS);
+                  setTutors(MOCK_TUTORS);
+                  setCurrentQuery("");
+                  setAiReason(undefined);
+                }}
+                onTryAI={() => handleModeChange("ai")}
               />
             </div>
           </div>

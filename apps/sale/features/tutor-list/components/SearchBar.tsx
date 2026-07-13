@@ -51,7 +51,7 @@ export function SearchBar({
   return (
     <div className="flex flex-col gap-3">
       {/* Mode toggle pills */}
-      <div className="inline-flex self-start items-center rounded-full border border-border bg-muted/50 p-1 gap-1">
+      <div className="inline-flex self-start items-center rounded-xl border border-border bg-muted/50 p-1 gap-1" role="tablist" aria-label="Phương thức tìm kiếm">
         <button
           type="button"
           onClick={() => switchMode("manual")}
@@ -61,7 +61,8 @@ export function SearchBar({
               : "text-foreground/50 hover:text-foreground/80"
           }`}
           style={{ fontFamily: "var(--font-montserrat)" }}
-          aria-pressed={!isAI}
+          aria-selected={!isAI}
+          role="tab"
           id="search-mode-manual"
         >
           <MagnifyingGlassIcon size={13} aria-hidden="true" />
@@ -76,7 +77,8 @@ export function SearchBar({
               : "text-foreground/50 hover:text-foreground/80"
           }`}
           style={{ fontFamily: "var(--font-montserrat)" }}
-          aria-pressed={isAI}
+          aria-selected={isAI}
+          role="tab"
           id="search-mode-ai"
         >
           <SparkleIcon size={13} aria-hidden="true" />
@@ -114,7 +116,7 @@ export function SearchBar({
           )}
 
           <div
-            className={`relative z-10 flex items-center gap-3 px-4 py-3.5 ${
+            className={`relative z-10 flex h-14 items-center gap-3 px-4 ${
               isAI ? "rounded-[14.5px] bg-card" : "bg-background rounded-2xl"
             }`}
           >
@@ -144,7 +146,7 @@ export function SearchBar({
               onChange={(e) => setQuery(e.target.value)}
               placeholder={
                 isAI
-                  ? 'Ví dụ: "Gia sư Toán online, rẻ cho học sinh lớp 10"'
+                  ? "Ví dụ: Gia sư Toán lớp 10, dạy online vào buổi tối"
                   : "Tìm kiếm theo tên gia sư..."
               }
               className="flex-1 bg-transparent text-sm text-foreground placeholder-foreground/35 outline-none min-w-0"
@@ -189,13 +191,6 @@ export function SearchBar({
           </div>
         </div>
 
-        {/* AI mode hint */}
-        {isAI && (
-          <p className="mt-2 text-xs text-foreground/45 pl-1">
-            Mô tả nhu cầu của bạn bằng ngôn ngữ tự nhiên — AI sẽ tìm gia sư phù
-            hợp nhất cho bạn.
-          </p>
-        )}
       </form>
     </div>
   );

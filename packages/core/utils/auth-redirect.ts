@@ -33,8 +33,7 @@ export function getRoleRedirectPath(
   }
 
   if (role === "TUTOR") {
-    if (user.canAccessTutorLms === true) return "/lms/tutor/dashboard";
-    return "https://beewise.vn/tutor/onboarding";
+    return resolveTutorLoginDestination(user);
   }
 
   if (role === "ADMIN") {
@@ -42,4 +41,30 @@ export function getRoleRedirectPath(
   }
 
   return "/consultant";
+}
+
+export function resolveTutorLoginDestination(user: MeType) {
+  const profileStatus = (
+    user.tutorProfileStatus ??
+    user.tutorOnboardingStatus ??
+    user.onboardingStatus ??
+    user.status ??
+    ""
+  )
+    .trim()
+    .toUpperCase();
+  const approved =
+    profileStatus === "APPROVED" ||
+    profileStatus === "COMPLETED" ||
+    user.canAccessTutorLms === true;
+
+  if (!approved) return "/tutor/onboarding";
+
+  const postApprovalCompleted =
+    user.postApprovalCompleted === true ||
+    (user.bankInformationCompleted === true &&
+      user.availabilityCompleted === true) ||
+    user.canAccessTutorLms === true;
+
+  return postApprovalCompleted ? "/tutor/home" : "/tutor/post-approval";
 }

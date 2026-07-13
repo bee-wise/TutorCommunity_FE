@@ -19,6 +19,10 @@ const compiled = ts.transpileModule(source, {
 const navbarModule = new Module(navbarPath, module);
 navbarModule.filename = navbarPath;
 navbarModule.paths = Module._nodeModulePaths(__dirname);
+navbarModule.require = (request) =>
+  request === "../constants/tutor-links"
+    ? { TUTOR_LMS_URL: "https://superlms.beewise.vn" }
+    : require(request);
 navbarModule._compile(compiled.outputText, navbarPath);
 
 const { getNavbarConfig, resolveNavbarState } = navbarModule.exports;
@@ -67,16 +71,20 @@ test("resolves tutor draft and pending verification as onboarding", () => {
   );
 });
 
-test("rejected tutor receives rejection menu item", () => {
+test("onboarding tutor navbar is restricted to the onboarding journey", () => {
   const config = getNavbarConfig({
     state: "TUTOR_ONBOARDING",
     tutorOnboardingStatus: "REJECTED",
   });
 
-  assert.equal(
-    config.centerItems.some((item) => item.label === "Xem lý do từ chối"),
-    true,
-  );
+  assert.deepEqual(config.centerItems, [
+    { label: "Quy trình đăng ký", href: "/tutor/onboarding" },
+  ]);
+  assert.equal(config.homeHref, "/tutor/onboarding");
+  assert.equal(config.showNotifications, false);
+  assert.deepEqual(config.accountItems, [
+    { label: "Đăng xuất", href: "/", action: "logout" },
+  ]);
 });
 
 test("approved tutor does not see LMS CTA without LMS access", () => {
@@ -109,7 +117,7 @@ test("completed tutor sees LMS CTA when LMS access is enabled", () => {
   assert.equal(config.rightItems.some((item) => item.label === "Vào LMS"), true);
 });
 
-test("approved tutor remains onboarding when LMS access is disabled", () => {
+test("approved tutor uses post-approval navbar when LMS access is disabled", () => {
   assert.equal(
     resolveNavbarState({
       isAuthenticated: true,
@@ -117,7 +125,7 @@ test("approved tutor remains onboarding when LMS access is disabled", () => {
       tutorOnboardingStatus: "APPROVED",
       lmsAccessEnabled: false,
     }),
-    "TUTOR_ONBOARDING",
+    "TUTOR_APPROVED",
   );
 });
 

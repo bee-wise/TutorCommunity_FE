@@ -471,11 +471,26 @@ export function StatusCard({
 }
 
 export function PrimaryScreenActions() {
-  const { view } = useTutorOnboardingViewModel();
+  const { view, dispatchAction } = useTutorOnboardingViewModel();
+  const primaryAction =
+    view.currentScreen === "LISTING_WAIVED"
+      ? "continue-to-interview"
+      : view.currentScreen === "APPROVED"
+        ? "open-post-approval-form"
+        : view.currentScreen === "POST_APPROVAL"
+          ? "complete-onboarding"
+          : view.currentScreen === "COMPLETED"
+            ? "open-lms-preview"
+            : null;
   return (
     <div className="flex flex-wrap gap-3">
       {view.primaryAction && (
-        <Button className="rounded-full bg-[#280f91] px-5 text-white hover:bg-[#1f0b70]">
+        <Button
+          type="button"
+          onClick={() => primaryAction && dispatchAction(primaryAction)}
+          disabled={!primaryAction}
+          className="rounded-full bg-[#280f91] px-5 text-white hover:bg-[#1f0b70]"
+        >
           {view.primaryAction}
         </Button>
       )}

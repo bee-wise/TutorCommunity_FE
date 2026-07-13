@@ -48,7 +48,7 @@ export interface Tutor {
 
 // ─── Filter / Search Types ─────────────────────────────────────────────────
 
-export type SortOption = "rating" | "price_asc" | "price_desc" | "experience";
+export type SortOption = "best_match" | "rating" | "price_asc" | "price_desc" | "experience";
 
 export interface TutorFilters {
   subjects: Subject[];

@@ -17,6 +17,7 @@ interface Props {
   showNotifications: boolean;
   unreadNotificationCount: number;
   unreadChatCount: number;
+  notificationHref: string;
   onLogout: () => void;
 }
 
@@ -27,6 +28,7 @@ export function MobileNav({
   showNotifications,
   unreadNotificationCount,
   unreadChatCount,
+  notificationHref,
   onLogout,
 }: Props) {
   const [open, setOpen] = useState(false);
@@ -92,7 +94,10 @@ export function MobileNav({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-10 z-80 flex w-64 flex-col gap-3 rounded-2xl border border-white/10 bg-primary px-4 py-4 shadow-2xl shadow-primary/40">
+        <div
+          className="absolute right-0 top-10 z-80 flex w-64 flex-col gap-3 rounded-2xl border border-[#eadca8] px-4 py-4 shadow-2xl shadow-black/15"
+          style={{ backgroundColor: "#fffdf7", color: "#280f91" }}
+        >
           {menuLinks.map((link) => {
             const isActive =
               link.href === "/"
@@ -107,8 +112,8 @@ export function MobileNav({
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-2 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   isActive
-                    ? "text-accent"
-                    : "text-primary-foreground opacity-80 hover:opacity-100"
+                    ? "text-primary"
+                    : "text-foreground/80 hover:text-primary"
                 }`}
               >
                 <span>{link.label}</span>
@@ -119,9 +124,9 @@ export function MobileNav({
 
           {showNotifications && (
             <Link
-              href="/notifications"
+              href={notificationHref}
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 border-t border-white/10 pt-3 text-sm font-medium text-primary-foreground opacity-80 transition-colors hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="flex items-center gap-2 border-t border-border pt-3 text-sm font-medium text-foreground/80 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Bell size={16} weight="bold" />
               <span>Thông báo</span>
@@ -134,7 +139,7 @@ export function MobileNav({
           )}
 
           {accountItems.length > 0 && (
-            <div className="flex flex-col gap-3 border-t border-white/10 pt-3">
+            <div className="flex flex-col gap-3 border-t border-border pt-3">
               {accountItems.map((item) =>
                 item.action === "logout" ? (
                   <button
@@ -144,7 +149,7 @@ export function MobileNav({
                       setOpen(false);
                       onLogout();
                     }}
-                    className="text-left text-sm font-medium text-primary-foreground opacity-80 transition-colors hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="rounded-lg px-2 py-1 text-left text-sm font-semibold text-[#b42318] transition-colors hover:bg-[#fee4e2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b42318]"
                   >
                     {item.label}
                   </button>
@@ -153,7 +158,7 @@ export function MobileNav({
                     key={`${item.label}-${item.href}`}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="text-sm font-medium text-primary-foreground opacity-80 transition-colors hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="rounded-lg px-2 py-1 text-sm font-semibold text-[#280f91] transition-colors hover:bg-[#fff3cb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]"
                   >
                     {item.label}
                   </Link>

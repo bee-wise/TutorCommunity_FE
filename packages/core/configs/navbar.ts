@@ -1,4 +1,5 @@
 import type { MeType } from "../types/auth.type";
+import { TUTOR_LMS_URL } from "../constants/tutor-links";
 
 export type NavbarState =
   | "GUEST"
@@ -74,6 +75,7 @@ export function getTutorOnboardingStatus(user?: MeType | null) {
 export function resolveNavbarState({
   isAuthenticated,
   role,
+  tutorOnboardingStatus,
   lmsAccessEnabled,
 }: NavbarContext): NavbarState {
   if (!isAuthenticated) return "GUEST";
@@ -84,7 +86,15 @@ export function resolveNavbarState({
   if (normalizedRole === "LEARNER") return "LEARNER";
 
   if (normalizedRole === "TUTOR") {
-    if (lmsAccessEnabled === true) return "TUTOR_APPROVED";
+    const status = normalizeTutorStatus(tutorOnboardingStatus);
+    if (
+      lmsAccessEnabled === true ||
+      status === "APPROVED" ||
+      status === "COMPLETED" ||
+      status === "POST_APPROVAL_INFO_REQUIRED"
+    ) {
+      return "TUTOR_APPROVED";
+    }
     return "TUTOR_ONBOARDING";
   }
 
@@ -105,16 +115,15 @@ const learnerMenu: NavbarItem[] = [
 ];
 
 const tutorOnboardingMenu: NavbarItem[] = [
-  { label: "Quy trình đăng ký", href: "/tutor-guide" },
-  { label: "Hồ sơ gia sư", href: "/tutor/profile" },
-  { label: "Trạng thái hồ sơ", href: "/tutor/application-status" },
+  { label: "Quy trình đăng ký", href: "/tutor/onboarding" },
 ];
 
 const tutorApprovedMenu: NavbarItem[] = [
+  { label: "Trang chủ", href: "/tutor/home" },
   { label: "Hồ sơ của tôi", href: "/tutor/profile" },
-  { label: "Kết nối / Tin nhắn", href: "/messages", badgeKey: "unreadChatCount" },
+  { label: "Tin nhắn", href: "/tutor/messages", badgeKey: "unreadChatCount" },
   { label: "Lịch rảnh", href: "/tutor/availability" },
-  { label: "Thông tin thanh toán", href: "/tutor/payments" },
+  { label: "Gói hiển thị", href: "/tutor/subscription" },
 ];
 
 const tutorPostApprovalMenu: NavbarItem[] = [
@@ -165,49 +174,32 @@ export function getNavbarConfig({
   }
 
   if (state === "TUTOR_ONBOARDING") {
-    const status = normalizeTutorStatus(tutorOnboardingStatus);
-    const statusMenu: NavbarItem[] = [];
-
-    if (status === "PAYMENT_PENDING") {
-      statusMenu.push({ label: "Thanh toán", href: "/tutor/payment" });
-    }
-
-    if (status === "INTERVIEW_PENDING" || status === "INTERVIEW_COMPLETED") {
-      statusMenu.push({ label: "Phỏng vấn", href: "/tutor/interview" });
-    }
-
-    if (status === "PROFILE_DRAFT" || status === "POST_APPROVAL_INFO_REQUIRED") {
-      statusMenu.push({ label: "Bổ sung hồ sơ", href: "/tutor/profile" });
-    }
-
-    if (status === "REJECTED") {
-      statusMenu.push({ label: "Xem lý do từ chối", href: "/tutor/rejection" });
-    }
-
     return {
-      homeHref: "/tutor/application-status",
-      centerItems: [...tutorOnboardingMenu, ...statusMenu],
+      homeHref: "/tutor/onboarding",
+      centerItems: tutorOnboardingMenu,
       rightItems: [],
       accountItems: [
-        { label: "Tài khoản", href: "/account" },
-        { label: "Hỗ trợ", href: "/support" },
         { label: "Đăng xuất", href: "/", action: "logout" },
       ],
-      showNotifications: true,
+      showNotifications: false,
     };
   }
 
   if (state === "TUTOR_APPROVED") {
-    const isCompleted = normalizeTutorStatus(tutorOnboardingStatus) === "COMPLETED";
+    const isCompleted =
+      normalizeTutorStatus(tutorOnboardingStatus) === "COMPLETED" ||
+      lmsAccessEnabled === true;
 
     return {
-      homeHref: "/tutor/profile",
+      homeHref: isCompleted ? "/tutor/home" : "/tutor/post-approval",
       centerItems: isCompleted ? tutorApprovedMenu : tutorPostApprovalMenu,
       rightItems: lmsAccessEnabled
-        ? [{ label: "Vào LMS", href: "/lms/tutor/dashboard", variant: "primary" }]
+        ? [{ label: "Vào LMS", href: TUTOR_LMS_URL, variant: "primary" }]
         : [],
       accountItems: [
-        { label: "Tài khoản", href: "/account" },
+        { label: "Xem hồ sơ công khai", href: "/tutor/profile/public" },
+        { label: "Chỉnh sửa hồ sơ", href: "/tutor/profile/edit" },
+        { label: "Cài đặt tài khoản", href: "/account/settings" },
         { label: "Hỗ trợ", href: "/support" },
         { label: "Đăng xuất", href: "/", action: "logout" },
       ],

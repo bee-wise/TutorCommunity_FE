@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import { TUTOR_LMS_URL } from "@workspace/core/constants/tutor-links";
 import { TutorOnboardingProvider } from "./tutor-onboarding.provider";
 import {
   parseTutorOnboardingScenario,
@@ -37,7 +38,11 @@ export function TutorOnboardingPreview({
   );
 }
 
-export function TutorOnboardingExperience() {
+export function TutorOnboardingExperience({
+  scenario = "journey",
+}: {
+  scenario?: TutorOnboardingScenario;
+} = {}) {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -57,7 +62,7 @@ export function TutorOnboardingExperience() {
     }
 
     if (user.canAccessTutorLms === true) {
-      router.replace("/lms/tutor/dashboard");
+      window.location.assign(TUTOR_LMS_URL);
     }
   }, [isAuthenticated, isAuthLoading, router, user]);
 
@@ -72,7 +77,7 @@ export function TutorOnboardingExperience() {
   }
 
   return (
-    <TutorOnboardingProvider scenario="journey">
+    <TutorOnboardingProvider scenario={scenario}>
       <TutorOnboardingShell
         capture={false}
         toolbar={null}

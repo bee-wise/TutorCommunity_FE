@@ -92,6 +92,20 @@ test("rejected edit action returns to profile draft", () => {
   assert.equal(nextState.selectedStepId, "profile");
 });
 
+test("CTA actions can advance through every onboarding status", () => {
+  let state = { ...baseState, scenario: "listing-waived", selectedStepId: "listing" };
+  state = applyTutorOnboardingAction(state, "continue-to-interview");
+  assert.equal(state.scenario, "interview");
+  state = applyTutorOnboardingAction(state, "complete-mock-interview");
+  assert.equal(state.scenario, "pending-review");
+  state = applyTutorOnboardingAction(state, "approve-mock-profile");
+  assert.equal(state.scenario, "approved");
+  state = applyTutorOnboardingAction(state, "open-post-approval-form");
+  assert.equal(state.scenario, "post-approval");
+  state = applyTutorOnboardingAction(state, "complete-onboarding");
+  assert.equal(state.scenario, "completed");
+});
+
 test("preview source does not call backend APIs", () => {
   const files = [
     "tutor-onboarding.preview.tsx",
