@@ -66,5 +66,5 @@ export function resolveTutorLoginDestination(user: MeType) {
       user.availabilityCompleted === true) ||
     user.canAccessTutorLms === true;
 
-  return postApprovalCompleted ? "/tutor/home" : "/tutor/post-approval";
+  return postApprovalCompleted ? "/tutor" : "/tutor/post-approval";
 }
