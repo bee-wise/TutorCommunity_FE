@@ -27,27 +27,14 @@ import {
   AvatarImage,
 } from "@workspace/ui/components/ui/avatar";
 import { Skeleton } from "@workspace/ui/components/ui/skeleton";
-import { useTheme } from "next-themes";
 import { navigationConfig } from "@workspace/core/configs/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
-  const [imageUrl, setImageUrl] = React.useState(
-    "/brand/beewise-logo-nobackground.PNG",
-  );
 
-  const navGroups = user ? navigationConfig[user?.role.toUpperCase()] : [];
-
-  const { theme } = useTheme();
-
-  React.useEffect(() => {
-    if (theme === "dark") {
-      setImageUrl("/brand/beewise-logo-nobackground.PNG");
-    } else {
-      setImageUrl("/brand/beewise-logo.png");
-    }
-  }, [theme]);
+  const normalizedRole = user?.role?.toUpperCase();
+  const navGroups = normalizedRole ? navigationConfig[normalizedRole] : [];
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/40">
@@ -58,7 +45,7 @@ export function AppSidebar() {
         >
           <div className="relative w-8 h-8 border rounded-lg bg-background overflow-hidden shrink-0 flex items-center justify-center">
             <Image
-              src={imageUrl}
+              src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
               alt="BeeWise Logo"
               fill
               sizes="32px"
@@ -71,9 +58,9 @@ export function AppSidebar() {
               BeeWise
             </span>
             <span className="truncate text-xs text-muted-foreground font-medium">
-              {user?.role === "LEARNER" && "Học Viên"}
-              {user?.role === "TUTOR" && "Gia Sư"}
-              {user?.role === "CONSULTANT" && "Tư Vấn Viên"}
+              {normalizedRole === "LEARNER" && "Học Viên"}
+              {normalizedRole === "TUTOR" && "Gia Sư"}
+              {normalizedRole === "CONSULTANT" && "Tư Vấn Viên"}
             </span>
           </div>
         </Link>
@@ -112,7 +99,7 @@ export function AppSidebar() {
                       pathname === item.url ||
                       pathname.startsWith(`${item.url}/`);
 
-                    const isTutor = user?.role === "TUTOR";
+                    const isTutor = normalizedRole === "TUTOR";
                     const isUnverified =
                       isTutor && user?.status === "UNVERIFIED";
                     const isDashboard = item.url === "/lms/tutor";

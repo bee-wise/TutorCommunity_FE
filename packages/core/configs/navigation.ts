@@ -143,9 +143,9 @@ export const navigationConfig: RoleNavigation = {
           icon: PieChart,
         },
         {
-          title: "Điều Phối (Workspace)",
+          title: "Hỗ Trợ Kết Nối (Chat)",
           url: "/consultant/workspace",
-          icon: Users,
+          icon: MessageCircle,
         },
       ],
     },
@@ -158,14 +158,9 @@ export const navigationConfig: RoleNavigation = {
           icon: UserCheck,
         },
         {
-          title: "Quản Lý Lớp Học",
+          title: "Theo Dõi Lớp Học",
           url: "/consultant/classes",
           icon: MonitorPlay,
-        },
-        {
-          title: "Quản Lý Giao Dịch",
-          url: "/consultant/transactions",
-          icon: Receipt,
         },
         {
           title: "Lịch Sử Hỗ Trợ",
@@ -177,12 +172,42 @@ export const navigationConfig: RoleNavigation = {
   ],
   ADMIN: [
     {
+      groupName: "Tổng Quan",
+      items: [
+        {
+          title: "Dashboard Vận Hành",
+          url: "/admin",
+          icon: LayoutDashboard,
+        },
+      ],
+    },
+    {
+      groupName: "Quản Lý",
+      items: [
+        {
+          title: "Quản Lý Consultant",
+          url: "/admin/consultants",
+          icon: Users,
+        },
+        {
+          title: "Tài Khoản Hệ Thống",
+          url: "/admin/accounts",
+          icon: UserCircle,
+        },
+      ],
+    },
+    {
       groupName: "Hệ Thống",
       items: [
         {
-          title: "Dashboard",
-          url: "/admin",
-          icon: LayoutDashboard,
+          title: "Quản Lý Cấu Hình",
+          url: "/admin/settings",
+          icon: FolderCog,
+        },
+        {
+          title: "Quản Lý Rủi Ro",
+          url: "/admin/risks",
+          icon: Receipt,
         },
       ],
     },

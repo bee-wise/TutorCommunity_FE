@@ -51,17 +51,22 @@ export function SearchBar({
   return (
     <div className="flex flex-col gap-3">
       {/* Mode toggle pills */}
-      <div className="inline-flex self-start items-center rounded-full border border-border bg-muted/50 p-1 gap-1">
+      <div
+        className="inline-flex self-start items-center rounded-xl border border-border bg-muted/50 p-1 gap-1"
+        role="tablist"
+        aria-label="Phương thức tìm kiếm"
+      >
         <button
           type="button"
           onClick={() => switchMode("manual")}
-          className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+          className={`inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
             !isAI
               ? "bg-background text-foreground shadow-sm border border-border"
               : "text-foreground/50 hover:text-foreground/80"
           }`}
           style={{ fontFamily: "var(--font-montserrat)" }}
-          aria-pressed={!isAI}
+          aria-selected={!isAI}
+          role="tab"
           id="search-mode-manual"
         >
           <MagnifyingGlassIcon size={13} aria-hidden="true" />
@@ -70,13 +75,14 @@ export function SearchBar({
         <button
           type="button"
           onClick={() => switchMode("ai")}
-          className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+          className={`inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
             isAI
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-foreground/50 hover:text-foreground/80"
           }`}
           style={{ fontFamily: "var(--font-montserrat)" }}
-          aria-pressed={isAI}
+          aria-selected={isAI}
+          role="tab"
           id="search-mode-ai"
         >
           <SparkleIcon size={13} aria-hidden="true" />
@@ -95,7 +101,8 @@ export function SearchBar({
           style={
             isAI
               ? {
-                  boxShadow: "0 4px 24px var(--primary-opacity, rgba(40,15,145,0.10))",
+                  boxShadow:
+                    "0 4px 24px var(--primary-opacity, rgba(40,15,145,0.10))",
                 }
               : {}
           }
@@ -114,7 +121,7 @@ export function SearchBar({
           )}
 
           <div
-            className={`relative z-10 flex items-center gap-3 px-4 py-3.5 ${
+            className={`relative z-10 flex h-14 items-center gap-3 px-4 ${
               isAI ? "rounded-[14.5px] bg-card" : "bg-background rounded-2xl"
             }`}
           >
@@ -144,7 +151,7 @@ export function SearchBar({
               onChange={(e) => setQuery(e.target.value)}
               placeholder={
                 isAI
-                  ? 'Ví dụ: "Gia sư Toán online, rẻ cho học sinh lớp 10"'
+                  ? "Ví dụ: Gia sư Toán lớp 10, dạy online vào buổi tối"
                   : "Tìm kiếm theo tên gia sư..."
               }
               className="flex-1 bg-transparent text-sm text-foreground placeholder-foreground/35 outline-none min-w-0"
@@ -152,18 +159,6 @@ export function SearchBar({
               autoComplete="off"
               disabled={isLoading}
             />
-
-            {/* Clear */}
-            {query && !isLoading && (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="shrink-0 text-foreground/40 hover:text-foreground/70 transition-colors"
-                aria-label="Xóa tìm kiếm"
-              >
-                <XIcon size={16} aria-hidden="true" />
-              </button>
-            )}
 
             {/* Submit */}
             <button
@@ -174,28 +169,10 @@ export function SearchBar({
               style={{ fontFamily: "var(--font-montserrat)" }}
               aria-label={isAI ? "Tìm với AI" : "Tìm kiếm"}
             >
-              {isAI ? (
-                <>
-                  <SparkleIcon size={13} aria-hidden="true" />
-                  Tìm với AI
-                </>
-              ) : (
-                <>
-                  <ArrowRightIcon size={13} weight="bold" aria-hidden="true" />
-                  Tìm ngay
-                </>
-              )}
+              {isAI ? <>Tìm với AI</> : <>Tìm ngay</>}
             </button>
           </div>
         </div>
-
-        {/* AI mode hint */}
-        {isAI && (
-          <p className="mt-2 text-xs text-foreground/45 pl-1">
-            Mô tả nhu cầu của bạn bằng ngôn ngữ tự nhiên — AI sẽ tìm gia sư phù
-            hợp nhất cho bạn.
-          </p>
-        )}
       </form>
     </div>
   );

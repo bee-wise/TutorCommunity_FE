@@ -9,11 +9,17 @@ import { Eye, EyeSlash, ArrowRight } from "@phosphor-icons/react";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
 import { useLogin } from "@workspace/core/hooks/useLogin";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/ui/tooltip";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { mutate: login, isPending } = useLogin({
     redirectUrl: "/lms",
+    loginScreen: "LMS",
   });
 
   const {
@@ -131,34 +137,25 @@ export function LoginForm() {
         </div>
 
         {/* Social Login */}
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            className="flex items-center justify-center gap-2 h-11 rounded-xl border border-[#0c0c0b]/10 bg-white text-[#0c0c0b] font-semibold text-sm hover:bg-[#f8f9fc] transition-colors"
-          >
-            <Image
-              src="/images/Logos/google.png"
-              alt="Google"
-              width={20}
-              height={20}
-              className="object-contain"
-            />
-            Google
-          </button>
-          <button
-            type="button"
-            className="flex items-center justify-center gap-2 h-11 rounded-xl border border-[#0c0c0b]/10 bg-white text-[#0c0c0b] font-semibold text-sm hover:bg-[#f8f9fc] transition-colors"
-          >
-            <Image
-              src="/images/Logos/facebook.png"
-              alt="Facebook"
-              width={20}
-              height={20}
-              className="object-contain"
-            />
-            Facebook
-          </button>
-        </div>
+
+        <Tooltip>
+          <TooltipTrigger asChild className="w-full">
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 h-11 rounded-xl border border-[#0c0c0b]/10 bg-white text-[#0c0c0b] font-semibold text-sm hover:bg-[#f8f9fc] transition-colors"
+            >
+              <Image
+                src="/images/Logos/google.png"
+                alt="Google"
+                width={20}
+                height={20}
+                className="object-contain"
+              />
+              Google
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Tính năng đang được phát triển</TooltipContent>
+        </Tooltip>
       </form>
     </div>
   );

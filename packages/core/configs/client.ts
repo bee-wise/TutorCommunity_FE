@@ -5,10 +5,31 @@ import axios, {
 } from "axios";
 import { handleApiError } from "@workspace/core/sys-libs/error-handler";
 
+type RetriableRequestConfig = InternalAxiosRequestConfig & {
+  _retry?: boolean;
+};
+
+const AUTH_ENDPOINTS_WITHOUT_REFRESH = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/logout",
+  "/auth/refresh",
+];
+
+export function shouldAttemptRefresh(url?: string): boolean {
+  if (!url) return false;
+
+  return !AUTH_ENDPOINTS_WITHOUT_REFRESH.some((endpoint) =>
+    url.includes(endpoint),
+  );
+}
+
 const API_BASE_URL =
   typeof window !== "undefined"
     ? "/api"
-    : process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+    : process.env.NEXT_PUBLIC_API_BASE_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      "https://api.beewise.vn";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -32,10 +53,10 @@ apiClient.interceptors.request.use(
 let isRefreshing = false;
 let failedQueue: {
   resolve: (value?: unknown) => void;
-  reject: (reason?: any) => void;
+  reject: (reason?: unknown) => void;
 }[] = [];
 
-const processQueue = (error: any) => {
+const processQueue = (error: unknown) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -59,16 +80,10 @@ apiClient.interceptors.response.use(
     if (
       apiError.statusCode === 401 &&
       originalRequest &&
-      !(originalRequest as any)._retry
+      shouldAttemptRefresh(originalRequest.url) &&
+      !(originalRequest as RetriableRequestConfig)._retry
     ) {
-      // Tránh lặp vô hạn nếu chính API refresh token cũng trả về 401
-      if (originalRequest.url?.includes("/auth/refresh")) {
-        if (
-          typeof window !== "undefined" &&
-          !window.location.pathname.startsWith("/login")
-        ) {
-          window.location.href = "/login";
-        }
+      if (originalRequest.url?.includes("/auth/me")) {
         return Promise.reject(apiError);
       }
 
@@ -84,7 +99,7 @@ apiClient.interceptors.response.use(
           });
       }
 
-      (originalRequest as any)._retry = true;
+      (originalRequest as RetriableRequestConfig)._retry = true;
       isRefreshing = true;
 
       try {
@@ -98,12 +113,6 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        if (
-          typeof window !== "undefined" &&
-          !window.location.pathname.startsWith("/login")
-        ) {
-          window.location.href = "/login";
-        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

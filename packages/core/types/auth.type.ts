@@ -5,16 +5,55 @@ export type LoginRequest = {
   password: string;
 };
 
-export type MeType = {
-  id: string;
+export type RegisterRequest = {
   email: string;
+  password: string;
+  confirmPassword: string;
   firstName: string;
   lastName: string;
-  fullName: string;
   phoneNumber: string;
+  role: "LEARNER" | "TUTOR";
+  agreeTerms: true;
+};
+
+export type RegisterResponse = {
+  userId: string;
+  email: string;
   role: string;
-  status: string;
-  permissions: string[];
+};
+
+export type MeType = {
+  id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  fullName: string | null;
+  phoneNumber: string | null;
+  role: string | null;
+  status: string | null;
+  permissions: string[] | null;
+  tutorProfileId?: string | null;
+  hasActiveTutorSubscription?: boolean;
+  canAccessTutorLms?: boolean;
+  hasActiveLearnerClass?: boolean;
+  canAccessLearnerLms?: boolean;
+  activeClassId?: string | null;
+  activeChatRoomCount?: number;
+  displayName?: string;
+  avatarUrl?: string;
+  tutorOnboardingStatus?: string | null;
+  tutorProfileStatus?: string | null;
+  onboardingStatus?: string | null;
+  lmsAccessEnabled?: boolean | null;
+  unreadNotificationCount?: number | null;
+  unreadChatCount?: number | null;
+  bankInformationCompleted?: boolean | null;
+  availabilityCompleted?: boolean | null;
+  postApprovalCompleted?: boolean | null;
+  listingStatus?: "WAIVED_ACTIVE" | "ACTIVE" | "EXPIRING_SOON" | "EXPIRED" | string | null;
+  listingExpiresAt?: string | null;
+  isProfilePublic?: boolean | null;
+  canReceiveNewConnections?: boolean | null;
 };
 
 export type GetMeReponseType = ApiResponse<MeType>;

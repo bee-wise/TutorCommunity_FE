@@ -1,20 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
 import { authService } from "../services/auth.service";
 import { useAuthStore } from "../store/useAuthStore";
-import { toast } from "@workspace/ui/components/ui/bee-toast";
+import { queryKeys } from "../sys-libs/queryKeys";
 
 export const useGetMe = () => {
   const login = useAuthStore((s) => s.login);
+  const logout = useAuthStore((s) => s.logout);
+  const setAuthLoading = useAuthStore((s) => s.setAuthLoading);
+
   return useQuery({
-    queryKey: ["me"],
+    queryKey: [queryKeys.authKey.getMe],
     queryFn: async () => {
-      const response = await authService.getMe();
+      setAuthLoading(true);
 
-      if (response.success) {
-        login(response.data!);
+      try {
+        const response = await authService.getMe();
+
+        if (response.success && response.data) {
+          login(response.data);
+          return response.data;
+        }
+
+        logout();
+        return null;
+      } catch {
+        logout();
+        return null;
+      } finally {
+        setAuthLoading(false);
       }
-
-      return response.data;
     },
+    retry: false,
   });
 };

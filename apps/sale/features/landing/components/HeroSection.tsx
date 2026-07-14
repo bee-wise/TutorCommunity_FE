@@ -100,7 +100,7 @@ export function HeroSection() {
 
               <div className="flex items-center gap-4">
                 <Link
-                  href="/tutors"
+                  href="/tutors?mode=manual"
                   id="hero-cta-secondary"
                   className="inline-flex h-10 items-center justify-center rounded-full border-2 border-primary px-6 text-sm font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
                 >
@@ -118,4 +118,3 @@ export function HeroSection() {
     </section>
   );
 }
-

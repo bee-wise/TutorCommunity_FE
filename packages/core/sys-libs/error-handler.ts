@@ -13,6 +13,14 @@ export interface ApiErrorPayload {
   errors?: Record<string, string[]>;
 }
 
+export function getApiErrorMessage(
+  error: unknown,
+  fallbackMessage = "Đã xảy ra lỗi. Vui lòng thử lại.",
+) {
+  const apiError = handleApiError(error);
+  return apiError.message || fallbackMessage;
+}
+
 export class ApiError extends Error {
   public statusCode: number;
   public code?: string;

@@ -21,7 +21,7 @@ export function TutorFeedback({ tutor }: TutorFeedbackProps) {
         {tutor.reviews.map((review) => (
           <article
             key={review.author}
-            className="rounded-2xl border border-[#cfe1fa] bg-[#fff3cb]/35 p-4"
+            className="rounded-2xl border border-[#ffc510]/45 bg-[#fff3cb] p-4"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">

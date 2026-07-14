@@ -22,7 +22,7 @@ export function TutorTeachingMethods({ tutor }: TutorTeachingMethodsProps) {
           return (
             <article
               key={method.title}
-              className="rounded-2xl border border-[#cfe1fa] bg-[#fff3cb]/38 p-4 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-lg hover:shadow-[#280f91]/5"
+              className="rounded-2xl border border-[#ffc510]/45 bg-[#fff3cb] p-4 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-lg hover:shadow-[#280f91]/5"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[#280f91] shadow-sm">
                 <Icon size={19} aria-hidden="true" />

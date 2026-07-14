@@ -5,7 +5,6 @@ import { TutorGuideHero } from '@/features/tutor-guide/components/TutorGuideHero
 import { TutorGuidePainPoints } from '@/features/tutor-guide/components/TutorGuidePainPoints';
 import { TutorGuideFeatures } from '@/features/tutor-guide/components/TutorGuideFeatures';
 import { TutorGuideSteps } from '@/features/tutor-guide/components/TutorGuideSteps';
-import { TutorGuideTrust } from '@/features/tutor-guide/components/TutorGuideTrust';
 import { TutorGuideFaq } from '@/features/tutor-guide/components/TutorGuideFaq';
 import { TutorGuideCta } from '@/features/tutor-guide/components/TutorGuideCta';
 
@@ -26,15 +25,10 @@ export const metadata: Metadata = {
   ],
 };
 
-const NAV_LINKS = [
-  { label: "Tìm Gia Sư", href: "/" },
-  { label: "Gia nhập Beewise", href: "#how-to-register" },
-];
-
 export default function TutorGuidePage() {
   return (
     <div className="flex flex-col min-h-full">
-      <Header NAV_LINKS={NAV_LINKS} isTutorPage />
+      <Header />
 
       <main id="main-content">
         <TutorGuideHero />

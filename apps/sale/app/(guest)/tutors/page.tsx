@@ -20,18 +20,13 @@ export const metadata: Metadata = {
   ],
 };
 
-const NAV_LINKS = [
-  { label: "Gia Sư", href: "/tutors" },
-  { label: "Đăng Ký Làm Gia Sư", href: "/tutor-guide" },
-];
-
 export default function TutorListPage() {
   // isLoggedIn: false for guest users — pass auth state here from session/cookie in production
   const isLoggedIn = false;
 
   return (
     <div className="flex flex-col min-h-full">
-      <Header NAV_LINKS={NAV_LINKS} isTutorPage={false} />
+      <Header />
 
       <main id="main-content" className="flex-1 pt-16">
         <Suspense

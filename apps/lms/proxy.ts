@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
 
   if (!isPublicPath && !token) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
+    // loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -27,7 +27,7 @@ export function proxy(request: NextRequest) {
     }
 
     const targetUrl =
-      role.toUpperCase() === "TUTOR" ? "/lms/tutor/dashboard" : "/lms/learner";
+      role.toUpperCase() === "TUTOR" ? "/lms/tutor" : "/lms/learner";
     return NextResponse.redirect(new URL(targetUrl, request.url));
   }
 
@@ -35,15 +35,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match tất cả request paths ngoại trừ:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - các file tĩnh public như images, brand, etc.
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|images|brand).*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|images|brand).*)"],
 };

@@ -38,17 +38,17 @@ function StudentScheduleCard() {
       </p>
       {[
         {
-          subject: "Toán Cao Cấp",
+          subject: "Ielts Writing",
           time: "14:00 - 15:30",
           status: "upcoming" as const,
         },
         {
-          subject: "Vật Lý 11",
+          subject: "Ielts Speaking",
           time: "09:00 - 10:30",
           status: "completed" as const,
         },
         {
-          subject: "Tiếng Anh B2",
+          subject: "Ielts Reading",
           time: "16:00 - 17:00",
           status: "upcoming" as const,
         },
@@ -93,16 +93,16 @@ function StudentDocumentsCard() {
       </p>
       {[
         {
-          name: "Chương 5 - Đạo hàm.pdf",
+          name: "Chương 5 - Bài tập.pdf",
           icon: FilePdf,
-          by: "GS. Nguyễn Văn A",
+          by: "Gia sư Nguyễn Văn A",
         },
         {
-          name: "Slide Lý Thuyết T12.docx",
+          name: "Slide Lý Thuyết.docx",
           icon: FileDoc,
-          by: "GS. Trần Thị B",
+          by: "Gia sư Trần Thị B",
         },
-        { name: "AI Tóm Tắt Zoom #28", icon: Robot, by: "Hệ thống BeeWise" },
+        { name: "Tóm tắt buổi học #28", icon: Robot, by: "Hệ thống BeeWise" },
       ].map((doc) => {
         const Icon = doc.icon;
         return (
@@ -133,18 +133,18 @@ function StudentBillingCard() {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-xs font-semibold text-[#0c0c0b]/50 mb-1">
-        Bảng học phí tháng 7
+        Học phí tháng này
       </p>
       <div className="bg-[#F8FAFC] rounded-lg overflow-hidden">
         <div className="grid grid-cols-3 gap-0 text-[9px] font-bold text-[#0c0c0b]/50 px-3 py-2 border-b border-[#0c0c0b]/6">
-          <span>Môn học</span>
+          <span>Lớp học</span>
           <span className="text-center">Buổi</span>
-          <span className="text-right">Học phí</span>
+          <span className="text-right">Trạng thái</span>
         </div>
         {[
-          { subject: "Toán Cao Cấp", sessions: 8, fee: "1,760,000" },
-          { subject: "Vật Lý 11", sessions: 6, fee: "1,320,000" },
-          { subject: "Tiếng Anh B2", sessions: 4, fee: "880,000" },
+          { subject: "Lớp A", sessions: 8, status: "Đã thanh toán" },
+          { subject: "Lớp B", sessions: 6, status: "Đã thanh toán" },
+          { subject: "Lớp C", sessions: 4, status: "Chờ xác nhận" },
         ].map((row) => (
           <div
             key={row.subject}
@@ -154,23 +154,27 @@ function StudentBillingCard() {
             <span className="text-center text-[#0c0c0b]/60">
               {row.sessions}
             </span>
-            <span className="text-right font-bold text-[#280f91]">
-              {row.fee}₫
+            <span
+              className={`text-right font-bold ${row.status === "Đã thanh toán" ? "text-[#447353]" : "text-[#ffc500]"}`}
+            >
+              {row.status}
             </span>
           </div>
         ))}
       </div>
       <div className="flex items-center justify-between px-3 py-2 bg-[#280f91]/5 rounded-lg">
-        <span className="text-[10px] font-bold text-[#0c0c0b]">Tổng cộng</span>
+        <span className="text-[10px] font-bold text-[#0c0c0b]">
+          Tổng buổi học
+        </span>
         <span
           className="text-sm font-bold text-[#280f91]"
           style={{ fontFamily: "var(--font-montserrat)" }}
         >
-          3,960,000₫
+          18 buổi
         </span>
       </div>
       <p className="text-[8px] text-[#0c0c0b]/40 text-center">
-        Đơn giá 220,000₫/buổi · Giá đã bao gồm phí nền tảng
+        Học phí được hiển thị chi tiết trong hệ thống
       </p>
     </div>
   );
@@ -186,19 +190,19 @@ function TutorMultiRoomCard() {
       {[
         {
           name: "Nguyễn Văn Minh",
-          subject: "Toán 12",
+          subject: "Lớp A",
           status: "live" as const,
           unread: 3,
         },
         {
           name: "Trần Thị Hoa",
-          subject: "Vật Lý 11",
+          subject: "Lớp B",
           status: "live" as const,
           unread: 1,
         },
         {
           name: "Lê Hoàng Nam",
-          subject: "Hóa 10",
+          subject: "Lớp C",
           status: "idle" as const,
           unread: 0,
         },
@@ -250,8 +254,8 @@ function TutorDocumentsCard() {
         Quản lý tài liệu
       </p>
       {[
-        { name: "Bài tập Chương 6.pdf", action: "upload" as const },
-        { name: "Slide Lý Thuyết T12.docx", action: "edit" as const },
+        { name: "Bài tập buổi 6.pdf", action: "upload" as const },
+        { name: "Slide bài giảng.docx", action: "edit" as const },
         { name: "Tóm tắt buổi #25.pdf", action: "delete" as const },
       ].map((doc) => (
         <div
@@ -305,18 +309,18 @@ function TutorIncomeCard() {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-xs font-semibold text-[#0c0c0b]/50 mb-1">
-        Thu nhập thực nhận — Tháng 7
+        Thu nhập thực nhận — Tháng này
       </p>
       <div className="bg-[#F8FAFC] rounded-lg overflow-hidden">
         <div className="grid grid-cols-3 gap-0 text-[9px] font-bold text-[#0c0c0b]/50 px-3 py-2 border-b border-[#0c0c0b]/6">
           <span>Học viên</span>
           <span className="text-center">Buổi</span>
-          <span className="text-right">Thu nhập</span>
+          <span className="text-right">Trạng thái</span>
         </div>
         {[
-          { name: "Nguyễn Văn Minh", sessions: 8, income: "1,600,000" },
-          { name: "Trần Thị Hoa", sessions: 6, income: "1,200,000" },
-          { name: "Lê Hoàng Nam", sessions: 4, income: "800,000" },
+          { name: "Nguyễn Văn Minh", sessions: 8, status: "Đã thanh toán" },
+          { name: "Trần Thị Hoa", sessions: 6, status: "Đã thanh toán" },
+          { name: "Lê Hoàng Nam", sessions: 4, status: "Chờ đối soát" },
         ].map((row) => (
           <div
             key={row.name}
@@ -326,27 +330,29 @@ function TutorIncomeCard() {
             <span className="text-center text-[#0c0c0b]/60">
               {row.sessions}
             </span>
-            <span className="text-right font-bold text-[#447353]">
-              {row.income}₫
+            <span
+              className={`text-right font-bold ${row.status === "Đã thanh toán" ? "text-[#447353]" : "text-[#ffc500]"}`}
+            >
+              {row.status}
             </span>
           </div>
         ))}
       </div>
       <div className="flex items-center justify-between px-3 py-2 bg-[#447353]/8 rounded-lg">
         <span className="text-[10px] font-bold text-[#0c0c0b]">
-          Tổng thực nhận
+          Tổng buổi đã dạy
         </span>
         <span
           className="text-sm font-bold text-[#447353]"
           style={{ fontFamily: "var(--font-montserrat)" }}
         >
-          3,600,000₫
+          18 buổi
         </span>
       </div>
       <div className="flex items-center gap-1.5 justify-center">
         <EyeSlash size={11} className="text-[#0c0c0b]/30" />
         <p className="text-[8px] text-[#0c0c0b]/40">
-          Đơn giá 200,000₫/buổi · Phí hoa hồng nền tảng đã được ẩn
+          Thu nhập chi tiết được hiển thị trong hệ thống
         </p>
       </div>
     </div>
@@ -374,13 +380,13 @@ const STUDENT_CARDS: FeatureCard[] = [
   {
     icon: FolderOpen,
     title: "Kho Tài Liệu Tập Trung",
-    desc: "Truy cập PDF, slide bài giảng và tóm tắt AI từ gia sư.",
+    desc: "Truy cập tài liệu do gia sư chia sẻ theo từng lớp học.",
     content: <StudentDocumentsCard />,
   },
   {
     icon: CurrencyDollar,
-    title: "Học Phí Minh Bạch",
-    desc: "Bảng kê chi tiết buổi học và học phí theo đơn giá công khai.",
+    title: "Theo Dõi Học Phí",
+    desc: "Xem số buổi học và trạng thái thanh toán theo từng lớp.",
     content: <StudentBillingCard />,
   },
 ];
@@ -395,13 +401,13 @@ const TUTOR_CARDS: FeatureCard[] = [
   {
     icon: FolderOpen,
     title: "Kho Tài Liệu Toàn Quyền",
-    desc: "Tải lên, chỉnh sửa và quản lý toàn bộ tài liệu giảng dạy.",
+    desc: "Tải lên, chỉnh sửa và quản lý tài liệu riêng cho từng lớp.",
     content: <TutorDocumentsCard />,
   },
   {
     icon: CurrencyDollar,
-    title: "Theo Dõi Thu Nhập Thực Nhận",
-    desc: "Bảng thu nhập chi tiết theo đơn giá gốc của gia sư.",
+    title: "Theo Dõi Thu Nhập",
+    desc: "Xem số buổi đã dạy và trạng thái thanh toán từ học viên.",
     content: <TutorIncomeCard />,
   },
 ];
@@ -432,14 +438,13 @@ export function DualRoleFeatureGrid() {
             className="text-3xl md:text-4xl lg:text-[44px] leading-tight tracking-tight text-[#0c0c0b] mb-4"
             style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
           >
-            Hệ thống dành cho <br />
-            <span className="text-[#280f91]">
-              Gia Sư & Học Viên
-            </span> <br /> tại <span className="text-accent">Beewise</span>
+            <span className="text-[#280f91]">Mang lại giá trị riêng cho</span>
+            <br />
+            Gia Sư và Học Viên <br />
           </h2>
           <p className="text-[#0c0c0b]/60 text-base leading-relaxed">
-            Mỗi người dùng có trải nghiệm riêng biệt, được tối ưu cho công việc
-            của mình.
+            Mỗi vai trò có không gian riêng — được thiết kế cho đúng công việc
+            cần làm sau khi kết nối thành công.
           </p>
         </motion.div>
 
@@ -520,7 +525,7 @@ export function DualRoleFeatureGrid() {
                     y: -4,
                     transition: { duration: 0.25 },
                   }}
-                  className="group rounded-2xl p-5 bg-white/60 backdrop-blur-md border border-[#280f91]/8 shadow-sm hover:shadow-xl hover:shadow-[#280f91]/8 transition-shadow duration-300"
+                  className="group rounded-2xl p-5 bg-white/95 md:bg-white/60 md:backdrop-blur-md border border-[#280f91]/8 shadow-sm hover:shadow-xl hover:shadow-[#280f91]/8 transition-shadow duration-300"
                 >
                   {/* Card header */}
                   <div className="flex items-center gap-3 mb-4">

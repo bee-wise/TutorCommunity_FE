@@ -1,69 +1,74 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "motion/react";
 import {
-  StarIcon,
-  MapPinIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  MonitorIcon,
-  HouseLineIcon,
   ArrowsHorizontalIcon,
-  BookOpenIcon,
-  UserIcon,
+  CheckCircleIcon,
+  HeartIcon,
+  HouseLineIcon,
+  MapPinIcon,
+  MonitorIcon,
   SparkleIcon,
+  StarIcon,
+  UserIcon,
+  XIcon,
+  InfoIcon,
 } from "@phosphor-icons/react";
-import type { Tutor } from "../data/types";
+import type { ApiTutorProfile } from "../data/types";
 
 interface TutorCardProps {
-  tutor: Tutor;
-  isLoggedIn?: boolean; // flexible for auth state later
+  tutor: ApiTutorProfile;
+  isLoggedIn?: boolean;
   isBestMatch?: boolean;
 }
 
-const LEVEL_LABEL: Record<Tutor["level"], string> = {
-  student: "Sinh viên",
-  teacher: "Giáo viên",
-  expert: "Chuyên gia",
+const getLevelLabel = (studentYear: string) => {
+  if (studentYear === "GRADUATED") return "Giáo viên / Chuyên gia";
+  return "Sinh viên";
 };
 
-const MODE_CONFIG: Record<
-  Tutor["teachingMode"],
-  { label: string; icon: typeof MonitorIcon }
-> = {
-  online: { label: "Online", icon: MonitorIcon },
-  offline: { label: "Tại nhà", icon: HouseLineIcon },
-  both: { label: "Online & Tại nhà", icon: ArrowsHorizontalIcon },
+const getTeachingModeInfo = (modes: string[]) => {
+  if (modes.includes("ONLINE") && modes.includes("OFFLINE"))
+    return { label: "Online & Tại nhà", icon: ArrowsHorizontalIcon };
+  if (modes.includes("ONLINE")) return { label: "Online", icon: MonitorIcon };
+  return { label: "Tại nhà", icon: HouseLineIcon };
 };
 
-function StarRating({ value, count }: { value: number; count: number }) {
-  const full = Math.floor(value);
-  const hasHalf = value - full >= 0.5;
-
+function TutorAvatar({ tutor }: { tutor: ApiTutorProfile }) {
+  const [failed, setFailed] = useState(false);
+  const name = tutor.displayName || "Gia Sư";
   return (
-    <div className="flex items-center gap-1.5">
-      <div className="flex items-center gap-0.5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <StarIcon
-            key={i}
-            size={13}
-            className={
-              i < full || (hasHalf && i === full)
-                ? "text-accent"
-                : "text-foreground/20"
-            }
-            aria-hidden="true"
-          />
-        ))}
-      </div>
-      <span
-        className="text-xs font-bold text-foreground/80"
-        style={{ fontFamily: "var(--font-montserrat)" }}
-      >
-        {value.toFixed(1)}
-      </span>
-      <span className="text-xs text-foreground/45">({count})</span>
+    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-[#dce3f0] bg-[#cfe1fa] sm:h-24 sm:w-24">
+      {failed || !tutor.avatarUrl ? (
+        <div
+          className="flex h-full w-full items-center justify-center text-2xl font-extrabold text-[#280f91]"
+          aria-label={`Ảnh dự phòng của ${name}`}
+        >
+          {name
+            .split(" ")
+            .slice(-2)
+            .map((word) => word[0])
+            .join("")}
+        </div>
+      ) : (
+        <Image
+          src={tutor.avatarUrl}
+          alt={`Ảnh đại diện của gia sư ${name}`}
+          fill
+          className="object-cover object-center"
+          sizes="(max-width: 640px) 80px, 96px"
+          onError={() => setFailed(true)}
+        />
+      )}
+      {tutor.isOnline && (
+        <span
+          className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#447353]"
+          aria-label="Đang trực tuyến"
+        />
+      )}
     </div>
   );
 }
@@ -73,154 +78,239 @@ export function TutorCard({
   isLoggedIn = false,
   isBestMatch = false,
 }: TutorCardProps) {
-  const modeConfig = MODE_CONFIG[tutor.teachingMode];
-  const ModeIcon = modeConfig.icon;
+  const [showReason, setShowReason] = useState(false);
+  const modeInfo = getTeachingModeInfo(tutor.teachingModes || []);
+  const ModeIcon = modeInfo.icon;
+  const tags = [
+    ...(tutor.gradeLevels || []).map((g) => typeof g === "string" ? g : g?.name).filter(Boolean),
+    ...(tutor.specializations || []).map((s) => typeof s === "string" ? s : s?.name).filter(Boolean),
+  ];
+
+  const visibleTags = tags.slice(0, 3);
+  const extraCount = Math.max(0, tags.length - visibleTags.length);
+
+  const location =
+    tutor.offlineDistrict && tutor.offlineCity
+      ? `${tutor.offlineDistrict}, ${tutor.offlineCity}`
+      : tutor.offlineCity || "Online";
+
+  const name = tutor.displayName || "Gia Sư";
 
   return (
-    <article
-      className={`group relative flex flex-col h-full rounded-2xl border bg-card overflow-hidden transition-all duration-250 hover:-translate-y-1 hover:shadow-xl ${
-        isBestMatch
-          ? "border-primary/40 shadow-lg shadow-primary/5 hover:border-primary/60 hover:shadow-primary/15"
-          : "border-border hover:shadow-primary/10 hover:border-primary/20"
-      }`}
-      aria-label={`Gia sư ${tutor.name}`}
-    >
-      {isBestMatch && (
-        <div
-          className="absolute top-0 left-0 bg-linear-to-r from-primary to-blue-500 text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-br-xl z-20 flex items-center gap-1 shadow-sm"
-          style={{ fontFamily: "var(--font-montserrat)" }}
-        >
-          <SparkleIcon size={12} weight="fill" /> Phù hợp nhất
-        </div>
-      )}
-
-      <div className="flex flex-col flex-1 p-5 gap-4">
-        <div className="flex items-start gap-3">
-          <div className="relative shrink-0 w-14 h-14 rounded-xl overflow-hidden border-2 border-border">
-            <Image
-              src={tutor.avatarUrl}
-              alt={`Ảnh đại diện của ${tutor.name}`}
-              fill
-              className="object-cover"
-              sizes="56px"
-            />
-            {tutor.availableNow && (
-              <div
-                className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-secondary border-2 border-white"
-                title="Đang nhận lớp"
-                aria-label="Đang nhận lớp"
-              />
-            )}
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <h3
-                className="text-sm font-extrabold text-foreground leading-snug line-clamp-1"
+    <>
+      <article
+        className="group flex h-full flex-col rounded-2xl border border-[#dce3f0] bg-white p-4 shadow-sm transition duration-250 hover:-translate-y-1 hover:border-[#280f91]/30 hover:shadow-[0_12px_24px_rgba(40,15,145,0.08)]"
+        aria-label={`Gia sư ${name}`}
+      >
+        {(isBestMatch || tutor.reason) && (
+          <div className={`mb-3 flex items-center ${isBestMatch ? 'justify-between' : 'justify-end'}`}>
+            {isBestMatch && (
+              <span
+                className="inline-flex items-center gap-1 rounded-full bg-[#ffc500]/15 px-2.5 py-1 text-xs font-bold text-[#905b0f]"
                 style={{ fontFamily: "var(--font-montserrat)" }}
               >
-                {tutor.name}
-              </h3>
-              {tutor.verification === "verified" && (
-                <CheckCircleIcon
-                  size={16}
-                  weight="fill"
-                  className="text-secondary shrink-0 mt-0.5"
-                  aria-label="Đã xác thực"
-                />
-              )}
-            </div>
+                <SparkleIcon size={13} weight="fill" aria-hidden="true" /> Phù hợp nhất
+              </span>
+            )}
+            {tutor.reason && (
+              <button
+                type="button"
+                onClick={() => setShowReason(true)}
+                className="inline-flex items-center gap-1 text-xs font-bold text-[#280f91] hover:underline"
+              >
+                <InfoIcon size={14} weight="bold" /> Lý do lựa chọn
+              </button>
+            )}
+          </div>
+        )}
 
-            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-              <span className="inline-flex items-center gap-1 text-xs text-primary font-semibold">
-                <UserIcon size={11} aria-hidden="true" />
-                {LEVEL_LABEL[tutor.level]}
-              </span>
-              <span className="text-foreground/25 text-xs">·</span>
-              <span className="text-xs text-foreground/55">
-                {tutor.experience} năm KN
+        <div className="flex items-start gap-4">
+          <TutorAvatar tutor={tutor} />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <h3
+                className="text-lg font-extrabold leading-tight text-[#0c0c0b]"
+                style={{ fontFamily: "var(--font-montserrat)" }}
+              >
+                {name}
+              </h3>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#e6efe9] px-2 py-0.5 text-[11px] font-bold text-[#447353]">
+                <CheckCircleIcon size={13} weight="fill" aria-hidden="true" />{" "}
+                Đã xác thực
               </span>
             </div>
+            <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[13px] text-[#667085]">
+              <UserIcon
+                size={14}
+                className="text-[#280f91]"
+                aria-hidden="true"
+              />
+              <span className="font-semibold text-[#344054]">
+                {getLevelLabel(tutor.studentYear)}
+              </span>
+              <span aria-hidden="true">·</span>
+              <span className="line-clamp-1">{tutor.major}</span>
+            </p>
           </div>
         </div>
 
-        <p className="text-xs text-foreground/60 leading-relaxed line-clamp-2">
-          {tutor.headline}
+        <p className="mt-4 line-clamp-2 min-h-11 text-sm leading-[1.55] text-[#475467]">
+          {tutor.profileHeadline || tutor.bio || "Gia sư chuyên nghiệp"}
         </p>
-        <div className="flex flex-wrap gap-1.5">
-          {tutor.subjects.map((subject) => (
+
+        <div className="mt-4 flex min-h-8 flex-wrap content-start gap-2">
+          {visibleTags.map((tag) => (
             <span
-              key={subject}
-              className="inline-flex items-center gap-1 rounded-full bg-primary/8 px-2.5 py-1 text-xs font-semibold text-primary"
+              key={tag}
+              className="rounded-full bg-[#f8fafc] border border-[#dce3f0] px-2.5 py-1 text-xs font-semibold text-[#475467]"
             >
-              <BookOpenIcon size={10} aria-hidden="true" />
-              {subject}
+              {tag}
             </span>
           ))}
+          {extraCount > 0 && (
+            <span className="rounded-full bg-[#f2f4f7] px-2.5 py-1 text-xs font-bold text-[#667085]">
+              +{extraCount}
+            </span>
+          )}
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-foreground/55 flex-wrap">
-          <span className="inline-flex items-center gap-1">
-            <ModeIcon size={12} aria-hidden="true" />
-            {modeConfig.label}
-          </span>
-          <span className="text-foreground/25">·</span>
-          <span className="inline-flex items-center gap-1">
-            <MapPinIcon size={12} aria-hidden="true" />
-            <span className="line-clamp-1">{tutor.location}</span>
-          </span>
+        <div className="mt-3 space-y-2 text-[13px] text-[#667085]">
+          <p className="flex items-center gap-2">
+            <ModeIcon
+              size={16}
+              className="shrink-0 text-[#280f91]"
+              aria-hidden="true"
+            />
+            <span>{modeInfo.label}</span>
+          </p>
+          <p className="flex items-center gap-2">
+            <MapPinIcon
+              size={16}
+              className="shrink-0 text-[#280f91]"
+              aria-hidden="true"
+            />
+            <span className="line-clamp-1">{location}</span>
+          </p>
+          {tutor.isOnline && (
+            <p className="text-[#447353]">Rảnh buổi tối và cuối tuần</p>
+          )}
         </div>
 
-        {tutor.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {tutor.tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-foreground/50 border border-border"
+        <div className="mt-auto border-t border-[#eaecf0] pt-4">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p
+                className="flex items-center gap-1.5 text-[13px]"
+                aria-label={`${tutor.ratingAvg} trên 5 sao`}
               >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-3.5">
-        <div className="flex flex-col gap-0.5">
-          <StarRating value={tutor.review.average} count={tutor.review.count} />
-          <div className="flex items-baseline gap-1">
-            <span
-              className="text-sm font-extrabold text-foreground"
-              style={{ fontFamily: "var(--font-montserrat)" }}
+                <StarIcon
+                  size={16}
+                  weight="fill"
+                  className="text-[#ffc510]"
+                  aria-hidden="true"
+                />
+                <strong className="text-[#0c0c0b]">
+                  {tutor.ratingAvg ? tutor.ratingAvg.toFixed(1) : "5.0"}
+                </strong>
+              </p>
+              <p className="mt-1 text-base font-extrabold text-[#0c0c0b]">
+                {tutor.hourlyRate
+                  ? tutor.hourlyRate.toLocaleString("vi-VN")
+                  : "0"}{" "}
+                VNĐ
+                <span className="text-xs font-medium text-[#667085]">
+                  {" "}
+                  / 60 phút
+                </span>
+              </p>
+            </div>
+            <button
+              type="button"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#dce3f0] text-[#667085] hover:border-[#280f91] hover:text-[#280f91]"
+              aria-label={`Lưu gia sư ${name}`}
             >
-              {tutor.pricing.perSession.toLocaleString("vi-VN")}đ
-            </span>
-            <span className="text-xs text-foreground/45">
-              /{tutor.pricing.sessionDurationMin} phút
-            </span>
+              <HeartIcon size={18} aria-hidden="true" />
+            </button>
           </div>
+          <Link
+            href={`/tutors/${tutor.profileId}`}
+            id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
+            className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-xl bg-[#280f91] px-5 text-sm font-bold text-white transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40 sm:w-auto sm:self-end"
+          >
+            Xem hồ sơ
+          </Link>
         </div>
+      </article>
 
-        {isLoggedIn ? (
-          <Link
-            href={`/tutors/${tutor.id}`}
-            id={`tutor-card-cta-${tutor.id}`}
-            className="shrink-0 inline-flex h-8 items-center justify-center rounded-full bg-primary px-4 text-xs font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] whitespace-nowrap"
-            style={{ fontFamily: "var(--font-montserrat)" }}
+      <AnimatePresence>
+        {showReason && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center px-4"
+            aria-modal="true"
+            role="dialog"
           >
-            Xem hồ sơ
-          </Link>
-        ) : (
-          <Link
-            href={`/tutors/${tutor.id}`}
-            id={`tutor-card-view-${tutor.id}`}
-            className="shrink-0 inline-flex h-8 items-center justify-center rounded-full border border-primary px-4 text-xs font-bold text-primary transition-all duration-200 hover:bg-primary hover:text-primary-foreground active:scale-[0.98] whitespace-nowrap"
-            style={{ fontFamily: "var(--font-montserrat)" }}
-          >
-            Xem hồ sơ
-          </Link>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/40"
+              onClick={() => setShowReason(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-white/20 p-6 shadow-2xl"
+              style={{
+                background: "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(12px)",
+              }}
+            >
+              <div className="flex items-start justify-between border-b border-[#dce3f0]/50 pb-3 mb-4">
+                <h3
+                  className="text-lg font-extrabold text-[#0c0c0b] flex items-center gap-2"
+                  style={{ fontFamily: "var(--font-montserrat)" }}
+                >
+                  <SparkleIcon
+                    size={20}
+                    className="text-[#280f91]"
+                    weight="fill"
+                  />
+                  Lý do phù hợp
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowReason(false)}
+                  className="rounded-full p-1 text-[#667085] hover:bg-black/5 transition-colors"
+                  aria-label="Đóng"
+                >
+                  <XIcon size={18} weight="bold" />
+                </button>
+              </div>
+              <div className="text-sm leading-relaxed text-[#344054] space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+              {tutor.reason?.split(/(?=\d+\.\s)/).map((paragraph, index) => (
+                <p key={index}>{paragraph.trim()}</p>
+              ))}
+            </div>
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowReason(false)}
+                  className="rounded-xl border border-[#dce3f0] px-5 py-2 text-sm font-bold text-[#475467] hover:bg-[#f8fafc] transition-colors"
+                >
+                  Đóng
+                </button>
+                <Link
+                  href={`/tutors/${tutor.profileId}`}
+                  className="rounded-xl bg-[#280f91] px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-[#1f0b70]"
+                >
+                  Xem hồ sơ
+                </Link>
+              </div>
+            </motion.div>
+          </div>
         )}
-      </div>
-    </article>
+      </AnimatePresence>
+    </>
   );
 }
