@@ -19,8 +19,10 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   const router = useRouter();
-  const isAccessTutorLms = useAuthStore((s) => s.isAccessTutorLms);
-  const setIsAccessTutorLms = useAuthStore((s) => s.setIsAccessTutorLms);
+  const isOpenAccessLMSConfirm = useAuthStore((s) => s.isOpenAccessLMSConfirm);
+  const setIsOpenAccessLMSConfirm = useAuthStore(
+    (s) => s.setIsOpenAccessLMSConfirm,
+  );
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center relative overflow-hidden bg-[#f8f9fc]">
@@ -56,9 +58,9 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         </div>
 
         <Dialog
-          open={!isAccessTutorLms}
+          open={isOpenAccessLMSConfirm}
           onOpenChange={(open) => {
-            if (!open) setIsAccessTutorLms(true);
+            if (!open) setIsOpenAccessLMSConfirm(false);
           }}
         >
           <DialogContent className="w-[90vw] max-w-md rounded-2xl sm:rounded-2xl">
@@ -72,7 +74,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
             <DialogFooter className="gap-2 sm:gap-0">
               <Button
                 variant="outline"
-                onClick={() => setIsAccessTutorLms(true)}
+                onClick={() => setIsOpenAccessLMSConfirm(false)}
               >
                 Hủy
               </Button>

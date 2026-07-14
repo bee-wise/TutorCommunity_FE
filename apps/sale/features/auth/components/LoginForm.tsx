@@ -21,6 +21,7 @@ export function LoginForm() {
   const prefilledEmail = searchParams.get("email") ?? "";
   const { mutate: login, isPending } = useLogin({
     redirectUrl: returnUrl ?? undefined,
+    loginScreen: "SALE",
   });
 
   const {

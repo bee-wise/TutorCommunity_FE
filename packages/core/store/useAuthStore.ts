@@ -9,22 +9,22 @@ interface AuthState {
 
   // Mock methods for testing
   isAuthLoading: boolean;
-  isAccessTutorLms: boolean;
+  isOpenAccessLMSConfirm: boolean;
   setAuthLoading: (isAuthLoading: boolean) => void;
   login: (user: MeType) => void;
   logout: () => void;
-  setIsAccessTutorLms: (v: boolean) => void;
+  setIsOpenAccessLMSConfirm: (isOpenAccessLMSConfirm: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
   isAuthLoading: true,
-  isAccessTutorLms: true,
+  isOpenAccessLMSConfirm: false,
 
   setAuthLoading: (isAuthLoading) => set({ isAuthLoading }),
   login: (user) => set({ user, isAuthenticated: true, isAuthLoading: false }),
   logout: () =>
     set({ user: null, isAuthenticated: false, isAuthLoading: false }),
-  setIsAccessTutorLms: (v) => set({ isAccessTutorLms: v }),
+  setIsOpenAccessLMSConfirm: (v) => set({ isOpenAccessLMSConfirm: v }),
 }));

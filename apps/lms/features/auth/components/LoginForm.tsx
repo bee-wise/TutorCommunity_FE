@@ -19,6 +19,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { mutate: login, isPending } = useLogin({
     redirectUrl: "/lms",
+    loginScreen: "LMS",
   });
 
   const {
