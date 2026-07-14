@@ -12,7 +12,7 @@ import { useLogin } from "@workspace/core/hooks/useLogin";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { mutate: login, isPending } = useLogin({ role: "STAFF" });
+  const { mutate: login, isPending } = useLogin({ loginScreen: "STAFF" });
 
   const {
     register,

@@ -12,24 +12,36 @@ import { getRoleRedirectPath } from "../utils/auth-redirect";
 export const useLogin = ({
   redirectUrl,
   onSuccess,
-  role = "ORTHER",
+  loginScreen,
 }: {
   redirectUrl?: string;
   onSuccess?: () => void;
-  role?: "STAFF" | "ORTHER";
+  loginScreen?: "SALE" | "LMS" | "STAFF";
 }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const setAuthLoading = useAuthStore((s) => s.setAuthLoading);
   const setAuthenticatedUser = useAuthStore((s) => s.login);
-  const setIsAccessTutorLms = useAuthStore((s) => s.setIsAccessTutorLms);
+  const setIsOpenAccessLMSConfirm = useAuthStore(
+    (s) => s.setIsOpenAccessLMSConfirm,
+  );
   const clearAuth = useAuthStore((s) => s.logout);
+
+  const handleUnauthorized = async () => {
+    toast.warning(AUTH_MESSAGE.ERROR.FORBIDDEN, {
+      position: "top-right",
+    });
+    try {
+      await authService.logout();
+    } catch {
+    } finally {
+      clearAuth();
+    }
+  };
 
   return useMutation({
     mutationKey: ["login"],
     mutationFn: async (req: LoginRequest) => {
-      setAuthLoading(true);
-
       try {
         await authService.login({
           email: req.email.trim(),
@@ -47,28 +59,32 @@ export const useLogin = ({
         throw error;
       }
     },
+    onMutate: () => {
+      setAuthLoading(true);
+    },
     onSuccess: async (user) => {
-      if (
-        role === "STAFF" &&
-        user.role !== "ADMIN" &&
-        user.role !== "CONSULTANT"
-      ) {
-        toast.warning("Bạn không có quyền truy cập vào trang này", {
-          position: "top-right",
-        });
-        authService.logout();
-        return;
-      }
-      if (
-        user.canAccessTutorLms === false &&
-        user.role === "TUTOR" &&
-        role !== "ORTHER"
-      ) {
-        setIsAccessTutorLms(false);
-      } else {
-        setIsAccessTutorLms(true);
+      if (loginScreen === "SALE") {
+        setIsOpenAccessLMSConfirm(false);
+        if (user.role !== "TUTOR" && user.role !== "LEARNER") {
+          return handleUnauthorized();
+        }
+      } else if (loginScreen === "LMS") {
+        if (user.role !== "TUTOR" && user.role !== "LEARNER") {
+          return handleUnauthorized();
+        }
+        if (!user.canAccessLearnerLms && user.role === "TUTOR") {
+          setIsOpenAccessLMSConfirm(true);
+          await authService.logout();
+          clearAuth();
+          return;
+        }
+      } else if (loginScreen === "STAFF") {
+        if (user.role !== "ADMIN" && user.role !== "CONSULTANT") {
+          return handleUnauthorized();
+        }
       }
 
+      setIsOpenAccessLMSConfirm(false);
       setAuthenticatedUser(user);
       queryClient.setQueryData([queryKeys.authKey.getMe], user);
       toast.success(AUTH_MESSAGE.SUCCESS, { position: "top-right" });
