@@ -1,5 +1,5 @@
 import { MessageSquareQuote, Star } from "lucide-react";
-import type { TutorProfileData } from "../data/mockTutorProfile";
+import type { TutorProfileData } from "../types/mockTutorProfile";
 import {
   getInitials,
   RatingStars,

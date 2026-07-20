@@ -10,8 +10,7 @@ import {
 import { useGetTutorByAI } from "./useGetTutorByAI";
 import { useGetTutorsManual } from "./useGetTutorsManual";
 
-// Module-level cache: survives SPA navigation (Back/Forward) but resets on F5 (Full Reload)
-let cachedSearchMode: SearchMode = "ai";
+let cachedSearchMode: SearchMode = "manual";
 let cachedCurrentQuery: string = "";
 let cachedFilters: TutorFilters = DEFAULT_FILTERS;
 let cachedPage: number = 1;

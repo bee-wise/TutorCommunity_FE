@@ -21,14 +21,14 @@ import {
 } from "lucide-react";
 import { Header } from "@workspace/ui/components/layout/Header";
 import { Button } from "@workspace/ui/components/ui/button";
-import { onboardingSteps } from "../tutor-onboarding.fixtures";
-import { useTutorOnboardingViewModel } from "../tutor-onboarding.provider";
+import { onboardingSteps } from "../constants/tutor-onboarding.fixtures";
+import { useTutorOnboardingViewModel } from "./TutorOnboardingProvider";
 import type {
   TutorOnboardingScenario,
   TutorOnboardingStep,
   TutorOnboardingStepId,
   TutorOnboardingStepStatus,
-} from "../tutor-onboarding.types";
+} from "../types";
 
 const stepIcons: Record<TutorOnboardingStepId, typeof UserRoundCheck> = {
   account: UserRoundCheck,

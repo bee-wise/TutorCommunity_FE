@@ -44,27 +44,7 @@ export function getRoleRedirectPath(
 }
 
 export function resolveTutorLoginDestination(user: MeType) {
-  const profileStatus = (
-    user.tutorProfileStatus ??
-    user.tutorOnboardingStatus ??
-    user.onboardingStatus ??
-    user.status ??
-    ""
-  )
-    .trim()
-    .toUpperCase();
-  const approved =
-    profileStatus === "APPROVED" ||
-    profileStatus === "COMPLETED" ||
-    user.canAccessTutorLms === true;
-
-  if (!approved) return "/tutor/onboarding";
-
-  const postApprovalCompleted =
-    user.postApprovalCompleted === true ||
-    (user.bankInformationCompleted === true &&
-      user.availabilityCompleted === true) ||
-    user.canAccessTutorLms === true;
-
-  return postApprovalCompleted ? "/lms/tutor" : "/tutor/post-approval";
+  return user.postApprovalCompleted
+    ? "/tutor/onboarding"
+    : "/tutor/post-approval";
 }

@@ -1,5 +1,5 @@
 import { Clock3, MapPin, MessageCircleMore, Sparkles } from "lucide-react";
-import type { TutorProfileData } from "../data/mockTutorProfile";
+import type { TutorProfileData } from "../types/mockTutorProfile";
 
 interface TutorStatsProps {
   tutor: TutorProfileData;
