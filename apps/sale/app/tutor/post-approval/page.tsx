@@ -1,4 +1,4 @@
-import { TutorOnboardingExperience } from "@/features/tutor-onboarding/tutor-onboarding.preview";
+import { TutorOnboardingExperience } from "@/features/tutor-onboarding";
 
 export default function Page() {
   return <TutorOnboardingExperience scenario="post-approval" />;

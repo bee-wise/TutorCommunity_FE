@@ -1,5 +1,5 @@
 import { CheckCircle2, GraduationCap, Trophy } from "lucide-react";
-import type { TutorProfileData } from "../data/mockTutorProfile";
+import type { TutorProfileData } from "../types/mockTutorProfile";
 import { SectionShell } from "./TutorProfilePrimitives";
 
 interface TutorEducationAchievementsProps {

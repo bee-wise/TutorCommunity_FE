@@ -19,9 +19,9 @@ import {
   TUTOR_LMS_URL,
   getTutorPublicProfilePath,
 } from "@workspace/core/constants/tutor-links";
-import { onboardingSteps } from "../tutor-onboarding.fixtures";
-import { useTutorOnboardingViewModel } from "../tutor-onboarding.provider";
-import type { AvailabilitySlot } from "../tutor-onboarding.types";
+import { onboardingSteps } from "../constants/tutor-onboarding.fixtures";
+import { useTutorOnboardingViewModel } from "./TutorOnboardingProvider";
+import type { AvailabilitySlot } from "../types";
 import {
   PrimaryScreenActions,
   StepDetailPanel,
@@ -64,7 +64,7 @@ function ReadOnlyItem({
   );
 }
 
-export function TutorOnboardingScreen() {
+export function TutorOnboardingScreenView() {
   const { view } = useTutorOnboardingViewModel();
 
   switch (view.currentScreen) {

@@ -1,2 +1,2 @@
-import { TutorApprovedRoute } from "@/features/tutor-approved/tutor-approved.route";
+import { TutorApprovedRoute } from "@/features/tutor-approved";
 export default function Page(){return <TutorApprovedRoute screen="subscription"/>}

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { TutorOnboardingPreview } from "@/features/tutor-onboarding/tutor-onboarding.preview";
+import { TutorOnboardingPreview } from "@/features/tutor-onboarding";
 
 const previewEnabled =
   process.env.NODE_ENV === "development" &&
