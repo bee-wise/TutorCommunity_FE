@@ -33,7 +33,9 @@ export function getRoleRedirectPath(
   }
 
   if (role === "TUTOR") {
-    return resolveTutorLoginDestination(user);
+    return options.preferReturnUrl && safeReturnUrl
+      ? safeReturnUrl
+      : resolveTutorLoginDestination(user);
   }
 
   if (role === "ADMIN") {
@@ -44,6 +46,10 @@ export function getRoleRedirectPath(
 }
 
 export function resolveTutorLoginDestination(user: MeType) {
+  if (user.canAccessTutorLms) {
+    return "/lms/tutor";
+  }
+
   return user.postApprovalCompleted
     ? "/tutor/onboarding"
     : "/tutor/post-approval";

@@ -72,7 +72,13 @@ export const useLogin = ({
         if (user.role !== "TUTOR" && user.role !== "LEARNER") {
           return handleUnauthorized();
         }
-        if (!user.canAccessLearnerLms && user.role === "TUTOR") {
+        if (!user.canAccessTutorLms && user.role === "TUTOR") {
+          setIsOpenAccessLMSConfirm(true);
+          await authService.logout();
+          clearAuth();
+          return;
+        }
+        if (!user.canAccessLearnerLms && user.role === "LEARNER") {
           setIsOpenAccessLMSConfirm(true);
           await authService.logout();
           clearAuth();
