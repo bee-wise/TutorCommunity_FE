@@ -139,7 +139,9 @@ export function Header({
   const isActiveLink = (href: string) => {
     if (href.includes("#")) {
       const [basePath] = href.split("#");
-      return basePath === "" || basePath === "/" ? pathname === "/" : pathname === basePath;
+      return basePath === "" || basePath === "/"
+        ? pathname === "/"
+        : pathname === basePath;
     }
 
     return href === "/"
@@ -345,7 +347,9 @@ export function Header({
               links={isAuthLoading ? [] : navbarConfig.centerItems}
               actions={isAuthLoading ? [] : navbarConfig.rightItems}
               accountItems={isAuthLoading ? [] : navbarConfig.accountItems}
-              showNotifications={!isAuthLoading && navbarConfig.showNotifications}
+              showNotifications={
+                !isAuthLoading && navbarConfig.showNotifications
+              }
               unreadNotificationCount={unreadNotificationCount}
               unreadChatCount={unreadChatCount}
               notificationHref={notificationHref}

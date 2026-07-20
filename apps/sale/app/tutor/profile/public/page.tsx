@@ -1,2 +1,2 @@
-import { TutorPublicProfileRedirect } from "@/features/tutor-approved/tutor-approved.route";
+import { TutorPublicProfileRedirect } from "@/features/tutor-approved";
 export default function Page(){return <TutorPublicProfileRedirect/>}

@@ -9,7 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import type { TutorProfileData } from "../data/mockTutorProfile";
+import type { TutorProfileData } from "../types/mockTutorProfile";
 import { InfoPill } from "./TutorProfilePrimitives";
 
 interface TutorHeroProps {
@@ -21,6 +21,7 @@ interface CompactInfoCardProps {
   title: string;
   value: string;
   tone?: "primary" | "secondary";
+  isHidden?: boolean;
 }
 
 interface HeroStatCardProps {
@@ -65,9 +66,7 @@ function CompactInfoCard({
           <h3 className="text-sm font-semibold leading-5 text-[#0c0c0b]">
             {title}
           </h3>
-          <p className="mt-1.5 text-sm leading-6 text-[#0c0c0b]/62">
-            {value}
-          </p>
+          <p className="mt-1.5 text-sm leading-6 text-[#0c0c0b]/62">{value}</p>
         </div>
       </div>
     </article>
@@ -98,9 +97,7 @@ function HeroStatCard({
         </p>
         <p className="mt-1 text-base font-semibold leading-5">{value}</p>
         {detail ? (
-          <p className="mt-0.5 text-xs leading-5 text-[#0c0c0b]/50">
-            {detail}
-          </p>
+          <p className="mt-0.5 text-xs leading-5 text-[#0c0c0b]/50">{detail}</p>
         ) : null}
       </div>
     </div>
@@ -108,7 +105,7 @@ function HeroStatCard({
 }
 
 export function TutorHero({ tutor }: TutorHeroProps) {
-  const infoCards = [
+  const infoCards: CompactInfoCardProps[] = [
     {
       icon: GraduationCap,
       title: tutor.studentYear,
@@ -120,6 +117,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
       title: "Khu vực dạy",
       value: tutor.area,
       tone: "secondary" as const,
+      isHidden: !tutor.teachingModes.includes("Offline"),
     },
     {
       icon: Users,
@@ -137,14 +135,14 @@ export function TutorHero({ tutor }: TutorHeroProps) {
           <div className="grid min-w-0 gap-5 sm:grid-cols-[156px_minmax(0,1fr)] sm:items-start lg:grid-cols-[172px_minmax(0,1fr)] lg:gap-6">
             <div className="flex justify-center sm:justify-start">
               <a
-                href={tutor.avatarUrl}
+                href={tutor.avatarUrl || "/images/Tutor/1.png"}
                 target="_blank"
                 rel="noreferrer"
                 aria-label={`Xem ảnh gia sư ${tutor.displayName}`}
                 className="group relative aspect-square h-36 overflow-hidden rounded-[1.75rem] border-4 border-white bg-[#fff3cb] shadow-2xl shadow-[#280f91]/14 outline-none ring-1 ring-[#cfe1fa] transition hover:shadow-[#280f91]/20 focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2 sm:h-40 lg:h-44"
               >
                 <Image
-                  src={tutor.avatarUrl}
+                  src={tutor.avatarUrl || "/images/Tutor/1.png"}
                   alt={`Ảnh đại diện của gia sư ${tutor.displayName}`}
                   fill
                   priority
@@ -222,15 +220,17 @@ export function TutorHero({ tutor }: TutorHeroProps) {
 
         <div className="border-t border-[#cfe1fa] pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
           <div className="grid h-full gap-3 rounded-3xl bg-[#fff3cb]/55 p-4 ring-1 ring-[#ffc510]/25 sm:grid-cols-3 lg:grid-cols-1">
-            {infoCards.map((card) => (
-              <CompactInfoCard
-                key={card.title}
-                icon={card.icon}
-                title={card.title}
-                value={card.value}
-                tone={card.tone}
-              />
-            ))}
+            {infoCards
+              .filter((item) => !item.isHidden)
+              .map((card) => (
+                <CompactInfoCard
+                  key={card.title}
+                  icon={card.icon}
+                  title={card.title}
+                  value={card.value}
+                  tone={card.tone}
+                />
+              ))}
           </div>
         </div>
       </div>

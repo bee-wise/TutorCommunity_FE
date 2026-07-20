@@ -109,7 +109,7 @@ const guestMenu: NavbarItem[] = [
 
 const learnerMenu: NavbarItem[] = [
   { label: "Tìm gia sư", href: "/tutors" },
-  { label: "Tin nhắn", href: "/messages", badgeKey: "unreadChatCount" },
+  { label: "Tin nhắn", href: "/learner/messages", badgeKey: "unreadChatCount" },
   { label: "Lịch sử kết nối", href: "/connections" },
   { label: "Gia sư yêu thích", href: "/favorite-tutors" },
 ];
@@ -189,7 +189,7 @@ export function getNavbarConfig({
       lmsAccessEnabled === true;
 
     return {
-      homeHref: isCompleted ? "/tutor" : "/tutor/post-approval",
+      homeHref: isCompleted ? "/" : "/tutor/post-approval",
       centerItems: isCompleted ? tutorApprovedMenu : tutorPostApprovalMenu,
       rightItems: lmsAccessEnabled
         ? [{ label: "Vào LMS", href: TUTOR_LMS_URL, variant: "primary" }]

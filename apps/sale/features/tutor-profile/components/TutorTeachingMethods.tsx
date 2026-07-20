@@ -1,5 +1,5 @@
 import { BrainCircuit, ClipboardCheck, Compass, Target } from "lucide-react";
-import type { TutorProfileData } from "../data/mockTutorProfile";
+import type { TutorProfileData } from "../types/mockTutorProfile";
 import { SectionShell } from "./TutorProfilePrimitives";
 
 interface TutorTeachingMethodsProps {
