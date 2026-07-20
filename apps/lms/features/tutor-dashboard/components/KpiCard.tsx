@@ -23,23 +23,23 @@ export const KpiCard = ({
   return (
     <div className="relative overflow-hidden rounded-2xl p-5 border border-white/40 shadow-sm
       bg-[#fff3cb]/20 backdrop-blur-xl 
-      dark:bg-[#fff3cb]/10 dark:border-white/10
+       
       flex flex-col gap-3 transition-transform hover:-translate-y-1 duration-300 ease-out"
     >
       {/* Inner shadow for physical edge refraction */}
-      <div className="absolute inset-0 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] pointer-events-none" />
+      <div className="absolute inset-0 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]  pointer-events-none" />
 
       <div className="flex items-start justify-between relative z-10">
-        <p className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+        <p className="text-sm font-semibold text-gray-600 ">
           {title}
         </p>
-        <div className="p-2 rounded-full bg-white/60 dark:bg-white/5 text-[#280F91] dark:text-[#cfe1fa]">
+        <div className="p-2 rounded-full bg-white/60  text-[#280F91] ">
           <IconComponent size={20} weight="duotone" />
         </div>
       </div>
       
       <div className="relative z-10">
-        <h3 className="text-3xl font-extrabold text-[#280F91] dark:text-[#cfe1fa] tracking-tight" style={{ fontFamily: "var(--font-montserrat)" }}>
+        <h3 className="text-3xl font-extrabold text-[#280F91]  tracking-tight" style={{ fontFamily: "var(--font-montserrat)" }}>
           {value}
         </h3>
         
@@ -60,7 +60,7 @@ export const KpiCard = ({
               </span>
             )}
             {description && (
-              <span className="text-gray-500 dark:text-gray-400">{description}</span>
+              <span className="text-gray-500 ">{description}</span>
             )}
           </div>
         )}

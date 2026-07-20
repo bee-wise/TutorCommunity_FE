@@ -78,7 +78,7 @@ export function TutorDashboard() {
           {currentDate}
         </p>
         <h1
-          className="text-3xl md:text-4xl text-[#280F91] dark:text-[#cfe1fa]"
+          className="text-3xl md:text-4xl text-[#280F91] "
           style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
         >
           Chào buổi sáng, {user?.fullName?.split(" ").pop() || "Gia sư"}!
@@ -126,10 +126,10 @@ export function TutorDashboard() {
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column (8/12): Upcoming Classes */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border p-6 shadow-sm flex flex-col h-full">
+          <div className="bg-white  rounded-2xl border p-6 shadow-sm flex flex-col h-full">
             <div className="flex items-center justify-between mb-6">
               <h2
-                className="text-xl text-gray-900 dark:text-white"
+                className="text-xl text-gray-900 "
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 800,
@@ -149,7 +149,7 @@ export function TutorDashboard() {
               {UPCOMING_CLASSES.map((cls) => (
                 <div
                   key={cls.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border bg-gray-50/50 dark:bg-gray-800/50 hover:bg-gray-50 transition-colors gap-4"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border bg-gray-50/50  hover:bg-gray-50 transition-colors gap-4"
                 >
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
@@ -162,7 +162,7 @@ export function TutorDashboard() {
                         <CalendarBlank weight="fill" /> {cls.time}
                       </span>
                     </div>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-lg">
+                    <h3 className="font-bold text-gray-900  text-lg">
                       {cls.name}
                     </h3>
                     <p className="text-sm text-gray-500 flex items-center gap-1">
@@ -186,9 +186,9 @@ export function TutorDashboard() {
         {/* Right Column (4/12): Quick Actions & Notifications */}
         <div className="lg:col-span-4 flex flex-col gap-6">
           {/* Quick Actions */}
-          <div className="bg-[#CFE1FA]/20 dark:bg-[#CFE1FA]/5 rounded-2xl border border-[#CFE1FA] p-6">
+          <div className="bg-[#CFE1FA]/20  rounded-2xl border border-[#CFE1FA] p-6">
             <h2
-              className="text-xl text-[#280F91] dark:text-[#CFE1FA] mb-4"
+              className="text-xl text-[#280F91]  mb-4"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
               Thao tác nhanh
@@ -196,13 +196,13 @@ export function TutorDashboard() {
             <div className="flex flex-col gap-3">
               <Link
                 href="/lms/tutor/materials"
-                className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-transparent hover:border-[#280F91]/20"
+                className="flex items-center justify-between p-4 bg-white  rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-transparent hover:border-[#280F91]/20"
               >
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-[#FFC500]/20 text-[#905b0f] rounded-lg">
                     <MagicWand weight="fill" size={20} />
                   </div>
-                  <span className="font-bold text-gray-900 dark:text-white">
+                  <span className="font-bold text-gray-900 ">
                     Soạn tài liệu AI
                   </span>
                 </div>
@@ -214,13 +214,13 @@ export function TutorDashboard() {
 
               <Link
                 href="/lms/tutor/classes"
-                className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-transparent hover:border-[#280F91]/20"
+                className="flex items-center justify-between p-4 bg-white  rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-transparent hover:border-[#280F91]/20"
               >
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-[#447353]/10 text-[#447353] rounded-lg">
                     <UsersThree weight="fill" size={20} />
                   </div>
-                  <span className="font-bold text-gray-900 dark:text-white">
+                  <span className="font-bold text-gray-900 ">
                     Quản lý lớp học
                   </span>
                 </div>
@@ -233,10 +233,10 @@ export function TutorDashboard() {
           </div>
 
           {/* Notifications */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border p-6 shadow-sm flex-1">
+          <div className="bg-white  rounded-2xl border p-6 shadow-sm flex-1">
             <div className="flex items-center justify-between mb-4">
               <h2
-                className="text-xl text-gray-900 dark:text-white flex items-center gap-2"
+                className="text-xl text-gray-900  flex items-center gap-2"
                 style={{
                   fontFamily: "var(--font-montserrat)",
                   fontWeight: 800,
@@ -253,12 +253,12 @@ export function TutorDashboard() {
                   className="flex flex-col gap-1 border-b pb-4 last:border-0 last:pb-0"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-gray-900 dark:text-gray-100">
+                    <span className="font-bold text-sm text-gray-900 ">
                       {notif.title}
                     </span>
                     <span className="text-xs text-gray-500">{notif.time}</span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 ">
                     {notif.content}
                   </p>
                 </div>
