@@ -1,14 +1,16 @@
 import { CalendarClock, Heart, MessageCircle, ShieldCheck } from "lucide-react";
-import type { TutorProfileData } from "../data/mockTutorProfile";
+import type { TutorProfileData } from "../types/mockTutorProfile";
 
 interface TutorConnectCardProps {
   tutor: TutorProfileData;
+  isSaved?: boolean;
   onConnect: () => void;
   onSave: () => void;
 }
 
 export function TutorConnectCard({
   tutor,
+  isSaved = false,
   onConnect,
   onSave,
 }: TutorConnectCardProps) {
@@ -68,10 +70,18 @@ export function TutorConnectCard({
             <button
               type="button"
               onClick={onSave}
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-[#280f91]/18 bg-white px-4 py-3 text-sm font-semibold text-[#280f91] transition hover:bg-[#280f91]/5 active:scale-[0.99]"
+              className={`flex w-full items-center justify-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold transition active:scale-[0.99] ${
+                isSaved
+                  ? "border-[#447353] bg-[#447353] text-white hover:bg-[#3b6348]"
+                  : "border-[#280f91]/18 bg-white text-[#280f91] hover:bg-[#280f91]/5"
+              }`}
             >
-              <Heart size={17} aria-hidden="true" />
-              Lưu hồ sơ
+              <Heart
+                size={17}
+                aria-hidden="true"
+                className={isSaved ? "fill-current" : ""}
+              />
+              {isSaved ? "Đã lưu hồ sơ" : "Lưu hồ sơ"}
             </button>
           </div>
 

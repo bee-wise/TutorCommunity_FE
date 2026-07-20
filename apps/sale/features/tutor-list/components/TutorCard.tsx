@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
@@ -79,6 +79,39 @@ export function TutorCard({
   isBestMatch = false,
 }: TutorCardProps) {
   const [showReason, setShowReason] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved: string[] = JSON.parse(
+        localStorage.getItem("savedTutors") || "[]"
+      );
+      if (saved.includes(tutor.profileId || tutor.userId || "")) {
+        setIsSaved(true);
+      }
+    } catch (e) {}
+  }, [tutor.profileId, tutor.userId]);
+
+  const handleSave = () => {
+    try {
+      const id = tutor.profileId || tutor.userId || "";
+      if (!id) return;
+      const saved: string[] = JSON.parse(
+        localStorage.getItem("savedTutors") || "[]"
+      );
+      if (isSaved) {
+        const newSaved = saved.filter((tutorId) => tutorId !== id);
+        localStorage.setItem("savedTutors", JSON.stringify(newSaved));
+        setIsSaved(false);
+      } else {
+        if (!saved.includes(id)) {
+          saved.push(id);
+          localStorage.setItem("savedTutors", JSON.stringify(saved));
+        }
+        setIsSaved(true);
+      }
+    } catch (e) {}
+  };
   const modeInfo = getTeachingModeInfo(tutor.teachingModes || []);
   const ModeIcon = modeInfo.icon;
   const tags = [
@@ -226,10 +259,19 @@ export function TutorCard({
             </div>
             <button
               type="button"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#dce3f0] text-[#667085] hover:border-[#280f91] hover:text-[#280f91]"
-              aria-label={`Lưu gia sư ${name}`}
+              onClick={handleSave}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
+                isSaved
+                  ? "border-red-500 text-red-500 bg-red-50 hover:bg-red-100"
+                  : "border-[#dce3f0] text-[#667085] hover:border-[#280f91] hover:text-[#280f91]"
+              }`}
+              aria-label={`${isSaved ? "Bỏ lưu" : "Lưu"} gia sư ${name}`}
             >
-              <HeartIcon size={18} aria-hidden="true" />
+              <HeartIcon
+                size={18}
+                weight={isSaved ? "fill" : "regular"}
+                aria-hidden="true"
+              />
             </button>
           </div>
           <Link

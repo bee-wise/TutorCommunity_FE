@@ -1,5 +1,5 @@
 import { BookOpenCheck, History, Rocket, ShieldCheck } from "lucide-react";
-import type { TutorProfileData } from "../data/mockTutorProfile";
+import type { TutorProfileData } from "../types/mockTutorProfile";
 import { SectionShell } from "./TutorProfilePrimitives";
 
 interface TutorTeachingHistoryProps {
@@ -10,7 +10,11 @@ export function TutorTeachingHistory({ tutor }: TutorTeachingHistoryProps) {
   const icons = [BookOpenCheck, Rocket, ShieldCheck];
 
   return (
-    <SectionShell eyebrow="Kinh nghiệm" title="Lịch sử giảng dạy" icon={History}>
+    <SectionShell
+      eyebrow="Kinh nghiệm"
+      title="Lịch sử giảng dạy"
+      icon={History}
+    >
       <div className="space-y-3">
         {tutor.teachingHistory.map((item, index) => {
           const Icon = icons[index % icons.length];

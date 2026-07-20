@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { TutorApprovedPreview } from "@/features/tutor-approved/tutor-approved.preview";
+import { TutorApprovedPreview } from "@/features/tutor-approved/components/TutorApprovedPreview";
 
 const enabled = process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_ENABLE_TUTOR_APPROVED_PREVIEW === "true";
 
