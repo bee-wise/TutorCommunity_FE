@@ -31,7 +31,9 @@ export const useRegister = ({
       const registerResponse = await authService.register(req);
 
       if (!registerResponse.success) {
-        throw new Error(registerResponse.message || "Đăng ký không thành công.");
+        throw new Error(
+          registerResponse.message || "Đăng ký không thành công.",
+        );
       }
 
       try {

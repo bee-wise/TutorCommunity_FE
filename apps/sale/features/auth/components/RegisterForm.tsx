@@ -6,7 +6,12 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeSlash, Student, ChalkboardTeacher } from "@phosphor-icons/react";
+import {
+  Eye,
+  EyeSlash,
+  Student,
+  ChalkboardTeacher,
+} from "@phosphor-icons/react";
 import { useRegister } from "@workspace/core/hooks/useRegister";
 import { getSafeInternalReturnUrl } from "@workspace/core/utils/auth-redirect";
 import {
@@ -237,14 +242,10 @@ export function RegisterForm() {
           </FormField>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-1.5">
           <label className="flex items-center gap-3 cursor-pointer group">
             <div
-              onClick={() =>
-                !isPending &&
-                setValue("agreeTerms", !agreeTerms, { shouldValidate: true })
-              }
-              className={`mt-0.5 shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 cursor-pointer
+              className={` shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 cursor-pointer
                 ${
                   agreeTerms
                     ? "bg-primary border-primary"
