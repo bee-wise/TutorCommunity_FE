@@ -43,6 +43,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
- 
+
+# Local Materials
+.agents-feature-md
  
  

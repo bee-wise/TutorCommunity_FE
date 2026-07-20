@@ -208,7 +208,8 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--primary) 30%, transparent) transparent;
+    scrollbar-color: color-mix(in srgb, var(--primary) 30%, transparent)
+      transparent;
   }
 }
 
@@ -235,4 +236,16 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: color-mix(in srgb, var(--primary) 70%, transparent);
   }
+}
+
+.katex .mtight,
+.katex .sizing.size1,
+.katex .sizing.size2,
+.katex .sizing.size3,
+.katex .sizing.size4 {
+  font-size: 0.9em !important;
+}
+
+.katex .msupsub .vlist .mord {
+  font-size: 0.75em !important;
 }
