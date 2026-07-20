@@ -1,7 +1,14 @@
+import React from "react";
+import { TutorDashboard } from "@/features/tutor-dashboard/components/TutorDashboard";
+
+export const metadata = {
+  title: "Dashboard Gia sư | BeeWise",
+};
+
 export default function TutorDashboardPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Dashboard Gia sư</h1>
+    <div className="container mx-auto p-2 md:p-4 max-w-[1400px]">
+      <TutorDashboard />
     </div>
   );
 }

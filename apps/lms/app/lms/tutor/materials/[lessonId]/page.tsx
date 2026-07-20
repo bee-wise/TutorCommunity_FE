@@ -13,7 +13,7 @@ export default async function LessonDetailPage({ params }: PageProps) {
   const resolvedParams = await params;
 
   return (
-    <div className="container mx-auto p-1 md:p-2 max-w-6xl flex items-center justify-center min-h-[calc(100vh-8rem)]">
+    <div className="container mx-auto p-4 max-w-7xl h-[calc(100vh-8rem)] flex flex-col">
       <LessonDetailScreen lessonId={resolvedParams.lessonId} />
     </div>
   );
