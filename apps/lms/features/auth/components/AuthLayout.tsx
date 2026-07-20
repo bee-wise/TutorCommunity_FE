@@ -65,10 +65,10 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         >
           <DialogContent className="w-[90vw] max-w-md rounded-2xl sm:rounded-2xl">
             <DialogHeader>
-              <DialogTitle>Tài khoản chưa xác thực</DialogTitle>
+              <DialogTitle>Tài khoản chưa được kích hoạt LMS</DialogTitle>
               <DialogDescription>
-                Tài khoản gia chưa được xác thực, truy cập beewise.vn để xem
-                trạng thái hồ sơ.
+                Tài khoản của bạn chưa được kích hoạt LMS, vui lòng truy cập
+                beewise.vn để xem thêm.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="gap-2 sm:gap-0">
