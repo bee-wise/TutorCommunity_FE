@@ -29,7 +29,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       user: null,
       isAuthenticated: false,
       isAuthLoading: false,
-      isOpenAccessLMSConfirm: false,
     }),
   setIsOpenAccessLMSConfirm: (v) => set({ isOpenAccessLMSConfirm: v }),
 }));
