@@ -11,11 +11,11 @@ const TUTORS = [
     id: 1,
     avatarUrl:
       "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561335/beewise/1.png",
-    name: "Jessica Hương",
+    name: "Tuyết Hương",
     title: "Gia sư Toán – Lý",
     handle: "tuyethuong.gv",
     status: "Oxford University",
-    contactText: "Liên hệ",
+    contactText: "Kết Nối",
     behindGlowColor: "rgba(40, 15, 145, 0.55)",
     innerGradient:
       "linear-gradient(145deg, rgba(40,15,145,0.6) 0%, rgba(255,197,0,0.18) 100%)",
@@ -28,7 +28,7 @@ const TUTORS = [
     title: "Gia sư Tiếng Anh",
     handle: "huy.do",
     status: "Trinity CertTESOL",
-    contactText: "Liên hệ",
+    contactText: "Kết Nối",
     behindGlowColor: "rgba(68, 115, 83, 0.55)",
     innerGradient:
       "linear-gradient(145deg, rgba(68,115,83,0.5) 0%, rgba(207,225,250,0.2) 100%)",
@@ -41,7 +41,7 @@ const TUTORS = [
     title: "Gia sư Hóa – Sinh",
     handle: "yentran.sci",
     status: "University of Glasgow",
-    contactText: "Liên hệ",
+    contactText: "Kết Nối",
     behindGlowColor: "rgba(144, 91, 15, 0.45)",
     innerGradient:
       "linear-gradient(145deg, rgba(144,91,15,0.45) 0%, rgba(255,197,0,0.25) 100%)",
@@ -51,10 +51,10 @@ const TUTORS = [
     avatarUrl:
       "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561338/beewise/4.png",
     name: "Vỹ Ngô",
-    title: "Gia sư IELTS",
+    title: "Gia sư Tiếng Anh",
     handle: "vy.ngo",
     status: "University of London",
-    contactText: "Liên hệ",
+    contactText: "Kết Nối",
     behindGlowColor: "rgba(40, 15, 145, 0.50)",
     innerGradient:
       "linear-gradient(145deg, rgba(60,20,160,0.55) 0%, rgba(250,220,118,0.2) 100%)",
@@ -67,7 +67,7 @@ const TUTORS = [
     title: "Gia sư Lập trình",
     handle: "huannguyen.dev",
     status: "University of California",
-    contactText: "Liên hệ",
+    contactText: "Kết Nối",
     behindGlowColor: "rgba(68, 115, 83, 0.50)",
     innerGradient:
       "linear-gradient(145deg, rgba(40,15,145,0.4) 0%, rgba(68,115,83,0.35) 100%)",
@@ -80,7 +80,7 @@ const TUTORS = [
     title: "Gia sư Piano",
     handle: "nhanhuynh.music",
     status: "Yamaha Music School",
-    contactText: "Liên hệ",
+    contactText: "Kết Nối",
     behindGlowColor: "rgba(144, 91, 15, 0.40)",
     innerGradient:
       "linear-gradient(145deg, rgba(255,197,0,0.3) 0%, rgba(40,15,145,0.5) 100%)",

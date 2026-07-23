@@ -43,7 +43,7 @@ const FLOATING_ICONS = [
   {
     Icon: StarIcon,
     top: "10%",
-    left: "55%",
+    left: "40%",
     size: 18,
     delay: 1.4,
     duration: 6.1,
@@ -307,16 +307,16 @@ export function HeroVisual() {
 
       <motion.div
         className="relative z-20"
-        style={{ width: "75%", maxWidth: "380px" }}
+        style={{ width: "85%", maxWidth: "480px" }}
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
       >
         <Image
-          src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561333/beewise/Hero-Image.png"
+          src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561335/beewise/1.png"
           alt="Sinh viên dùng BeeWise tìm gia sư phù hợp"
-          width={380}
-          height={500}
+          width={400}
+          height={600}
           className="w-full h-auto object-contain drop-shadow-2xl"
           priority
         />

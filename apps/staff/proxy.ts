@@ -7,40 +7,42 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const token = request.cookies.get("beewise_access_token")?.value;
+  const refreshToken = request.cookies.get("beewise_refresh_token")?.value;
 
   const isPublicPath = publicPaths.includes(pathname);
 
-  if (!isPublicPath && !token) {
+  if (!isPublicPath && !token && !refreshToken) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 
   let role = "";
-  if (token) {
+  const tokenToParse = token;
+  if (tokenToParse) {
     try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
+      const payload = JSON.parse(atob(tokenToParse.split(".")[1]));
       if (payload?.role) role = payload.role;
     } catch (e) {
       // ignore parsing error
     }
   }
 
-  // Ngăn chặn truy cập sai role
-  if (pathname.startsWith("/admin") && role.toUpperCase() !== "ADMIN") {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (role) {
+    if (pathname.startsWith("/admin") && role.toUpperCase() !== "ADMIN") {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    if (
+      pathname.startsWith("/consultant") &&
+      role.toUpperCase() !== "CONSULTANT"
+    ) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
-  if (
-    pathname.startsWith("/consultant") &&
-    role.toUpperCase() !== "CONSULTANT"
-  ) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // Nếu truy cập trang login, trang chủ hoặc /staff mà đã có token -> phân luồng theo role
   if (
     (pathname === "/" || pathname === "/login" || pathname === "/staff") &&
-    token
+    (token || refreshToken)
   ) {
     if (role.toUpperCase() === "ADMIN") {
       return NextResponse.redirect(new URL("/admin", request.url));
@@ -49,8 +51,7 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // Nếu pathname là /staff hoặc / mà không có token
-  if ((pathname === "/staff" || pathname === "/") && !token) {
+  if ((pathname === "/staff" || pathname === "/") && !token && !refreshToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

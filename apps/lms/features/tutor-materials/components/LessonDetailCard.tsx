@@ -63,16 +63,6 @@ export const LessonDetailCard = ({
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="shrink-0 mb-4">
-        <Link
-          href="/lms/tutor/materials"
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#280F91] transition-colors"
-        >
-          <ArrowLeft weight="bold" />
-          Quay lại danh sách
-        </Link>
-      </div>
-
       <div className="flex flex-col md:flex-row gap-4 md:gap-6 flex-1 min-h-0">
         {/* Lẽft Side: Chi tiết buổi học */}
         <div className="w-full md:w-1/3 flex flex-col bg-white rounded-2xl border shadow-sm p-4 md:p-6 overflow-y-auto shrink-0 md:h-full">
@@ -98,15 +88,21 @@ export const LessonDetailCard = ({
           <div className="flex flex-col sm:flex-row md:flex-col gap-4 bg-gray-50/50 p-4 md:p-5 rounded-xl border border-gray-100 mb-0 md:mb-4">
             <div className="flex-1">
               <p className="text-xs text-gray-500 mb-1">Học sinh</p>
-              <p className="font-semibold text-gray-900 text-sm">{lesson.studentName}</p>
+              <p className="font-semibold text-gray-900 text-sm">
+                {lesson.studentName}
+              </p>
             </div>
             <div className="flex-1">
               <p className="text-xs text-gray-500 mb-1">Môn/Chủ đề</p>
-              <p className="font-semibold text-gray-900 text-sm">{lesson.subject}</p>
+              <p className="font-semibold text-gray-900 text-sm">
+                {lesson.subject}
+              </p>
             </div>
             <div className="flex-1">
               <p className="text-xs text-gray-500 mb-1">Ngày học</p>
-              <p className="font-semibold text-gray-900 text-sm">{lesson.date}</p>
+              <p className="font-semibold text-gray-900 text-sm">
+                {lesson.date}
+              </p>
             </div>
           </div>
         </div>
