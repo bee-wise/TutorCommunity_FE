@@ -1,9 +1,12 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { TUTOR_BENEFITS } from "../data/landing.data";
+import { useRouter } from "next/navigation";
 
 export function TutorSection() {
+  const router = useRouter();
   return (
     <section
       className="bg-glass py-20 sm:py-24"
@@ -13,12 +16,15 @@ export function TutorSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="order-2 lg:order-1 relative hidden lg:flex justify-center items-center w-full">
-            <div className="relative w-full max-w-[540px] aspect-square mx-auto">
+            <div
+              onClick={() => router.push("/tutor-guide")}
+              className="relative w-full max-w-135 aspect-square mx-auto"
+            >
               <Image
-                src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783683804/Poster-1_t5rrzx.png"
+                src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1784773674/Tutor-Section-Image_lj3rpo.png"
                 alt="Quyền lợi dành cho gia sư BeeWise"
                 fill
-                className="object-contain drop-shadow-2xl rounded-4xl hover:scale-[1.02] transition-transform duration-500"
+                className="object-contain drop-shadow-2xl rounded-4xl hover:scale-[1.02] transition-transform duration-500 cursor-pointer"
                 sizes="(max-width: 1024px) 0px, 50vw"
               />
             </div>
