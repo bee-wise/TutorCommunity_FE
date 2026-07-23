@@ -25,7 +25,7 @@ export function getSafeInternalReturnUrl(returnUrl?: string | null) {
 export function getRoleRedirectPath(
   user: MeType,
   options: { returnUrl?: string | null; preferReturnUrl?: boolean } = {},
-  app: "SALE" | "LMS" | "STAFF",
+  app?: "SALE" | "LMS" | "STAFF",
 ) {
   const role = normalizeAuthRole(user.role);
   const safeReturnUrl = getSafeInternalReturnUrl(options.returnUrl);
