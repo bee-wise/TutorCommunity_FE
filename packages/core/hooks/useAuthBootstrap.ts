@@ -39,7 +39,10 @@ export function useAuthBootstrap({ enabled = true }: { enabled?: boolean } = {})
         const apiError = handleApiError(error);
 
         if (apiError.statusCode !== 401) {
-          if (!cancelled) logout();
+          if (!cancelled) {
+            queryClient.clear();
+            logout();
+          }
           return;
         }
 
@@ -57,9 +60,13 @@ export function useAuthBootstrap({ enabled = true }: { enabled?: boolean } = {})
             return;
           }
 
+          queryClient.clear();
           logout();
         } catch {
-          if (!cancelled) logout();
+          if (!cancelled) {
+            queryClient.clear();
+            logout();
+          }
         }
       }
     };
