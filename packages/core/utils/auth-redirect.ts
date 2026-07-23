@@ -1,3 +1,4 @@
+import { toast } from "@workspace/ui/components/ui/bee-toast";
 import type { MeType } from "../types/auth.type";
 
 export function normalizeAuthRole(role?: string | null) {
@@ -24,33 +25,48 @@ export function getSafeInternalReturnUrl(returnUrl?: string | null) {
 export function getRoleRedirectPath(
   user: MeType,
   options: { returnUrl?: string | null; preferReturnUrl?: boolean } = {},
+  app: "SALE" | "LMS" | "STAFF",
 ) {
   const role = normalizeAuthRole(user.role);
   const safeReturnUrl = getSafeInternalReturnUrl(options.returnUrl);
 
-  if (role === "LEARNER") {
-    return options.preferReturnUrl && safeReturnUrl ? safeReturnUrl : "/tutors";
+  if (app === "SALE") {
+    if (role === "LEARNER") {
+      return options.preferReturnUrl && safeReturnUrl
+        ? safeReturnUrl
+        : "/tutors";
+    }
+    if (role === "TUTOR") {
+      return options.preferReturnUrl && safeReturnUrl
+        ? safeReturnUrl
+        : resolveTutorLoginDestination(user);
+    }
   }
 
-  if (role === "TUTOR") {
-    return options.preferReturnUrl && safeReturnUrl
-      ? safeReturnUrl
-      : resolveTutorLoginDestination(user);
+  if (app === "LMS") {
+    if (role === "TUTOR") {
+      return "/lms/tutor/dashboard";
+    }
+
+    if (role === "LEARNER") {
+      return "/lms/learner";
+    }
   }
 
-  if (role === "ADMIN") {
-    return "/admin";
+  if (app === "STAFF") {
+    if (role === "ADMIN") {
+      return "/admin";
+    } else {
+      return "/consultant";
+    }
   }
 
-  return "/consultant";
+  return "/";
 }
 
 export function resolveTutorLoginDestination(user: MeType) {
-  if (user.canAccessTutorLms) {
-    return "/lms/tutor";
-  }
+  const completeProfile =
+    user.role === "TUTOR" && user.tutorProfileStatus === "APPROVED";
 
-  return user.postApprovalCompleted
-    ? "/tutor/onboarding"
-    : "/tutor/post-approval";
+  return completeProfile ? "/tutor/post-approval" : "/tutor/onboarding";
 }

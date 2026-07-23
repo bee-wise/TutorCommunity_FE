@@ -16,7 +16,7 @@ export const useLogin = ({
 }: {
   redirectUrl?: string;
   onSuccess?: () => void;
-  loginScreen?: "SALE" | "LMS" | "STAFF";
+  loginScreen: "SALE" | "LMS" | "STAFF";
 }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -95,10 +95,14 @@ export const useLogin = ({
       queryClient.setQueryData([queryKeys.authKey.getMe], user);
       toast.success(AUTH_MESSAGE.SUCCESS, { position: "top-right" });
       router.push(
-        getRoleRedirectPath(user, {
-          returnUrl: redirectUrl,
-          preferReturnUrl: true,
-        }),
+        getRoleRedirectPath(
+          user,
+          {
+            returnUrl: redirectUrl,
+            preferReturnUrl: true,
+          },
+          loginScreen,
+        ),
       );
       onSuccess?.();
     },

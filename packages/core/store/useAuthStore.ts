@@ -25,6 +25,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuthLoading: (isAuthLoading) => set({ isAuthLoading }),
   login: (user) => set({ user, isAuthenticated: true, isAuthLoading: false }),
   logout: () =>
-    set({ user: null, isAuthenticated: false, isAuthLoading: false }),
+    set({
+      user: null,
+      isAuthenticated: false,
+      isAuthLoading: false,
+      isOpenAccessLMSConfirm: false,
+    }),
   setIsOpenAccessLMSConfirm: (v) => set({ isOpenAccessLMSConfirm: v }),
 }));

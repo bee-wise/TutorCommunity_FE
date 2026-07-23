@@ -20,7 +20,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
   const lastNonAuthRoute = useRouteStore((state) => state.lastNonAuthRoute);
 
   const handleBack = () => {
-    router.push(lastNonAuthRoute || "/");
+    router.replace(lastNonAuthRoute || "/");
   };
 
   return (
