@@ -5,8 +5,16 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 const IMAGES = [
-  { id: 1, src: "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561297/beewise/Hero-1.png", alt: "BeeWise Hero 1" },
-  { id: 2, src: "https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561309/beewise/Hero-2.png", alt: "BeeWise Hero 2" },
+  {
+    id: 1,
+    src: "https://res.cloudinary.com/dqevxj2k6/image/upload/v1784773414/beewise/Hero-1.png",
+    alt: "BeeWise Hero 1",
+  },
+  {
+    id: 2,
+    src: "https://res.cloudinary.com/dqevxj2k6/image/upload/v1784773423/beewise/Hero-2.png",
+    alt: "BeeWise Hero 2",
+  },
 ];
 
 export function HeroCarousel() {

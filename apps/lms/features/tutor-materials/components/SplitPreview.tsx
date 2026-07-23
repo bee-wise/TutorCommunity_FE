@@ -26,16 +26,31 @@ export const SplitPreview = ({ data, lessonId }: SplitPreviewProps) => {
   };
 
   return (
-    <div className="w-full flex flex-col h-[calc(100vh-8rem)]">
+    <div className="w-full flex flex-col h-[calc(100vh-6rem)]">
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-1 shrink-0">
-        <Link
-          href={`/lms/tutor/materials/${lessonId}`}
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#280F91] transition-colors"
-        >
-          <ArrowLeft weight="bold" />
-          Quay lại chi tiết buổi học
-        </Link>
+        <div className="flex p-1 bg-gray-100 rounded-lg shrink-0 w-full sm:w-1/4 ">
+          <button
+            onClick={() => setActiveTab("theory")}
+            className={`flex-1 sm:px-2 py-2 text-xs font-bold rounded-md transition-colors ${
+              activeTab === "theory"
+                ? "bg-white text-[#280F91] shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Tóm tắt lý thuyết
+          </button>
+          <button
+            onClick={() => setActiveTab("quiz")}
+            className={`flex-1 sm:px-2 py-2 text-xs font-bold rounded-md transition-colors ${
+              activeTab === "quiz"
+                ? "bg-white text-[#280F91] shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Bài tập
+          </button>
+        </div>
 
         <button
           onClick={handlePublish}
@@ -77,7 +92,7 @@ export const SplitPreview = ({ data, lessonId }: SplitPreviewProps) => {
             </>
           ) : (
             <>
-              <CloudArrowUp weight="fill" className="text-lg text-[#FFC500]" />
+              <CloudArrowUp weight="fill" className="text-lg text-white" />
               Lưu & Xuất bản cho học viên
             </>
           )}
@@ -85,30 +100,7 @@ export const SplitPreview = ({ data, lessonId }: SplitPreviewProps) => {
       </div>
 
       {/* Tabs */}
-      <div className="flex p-1 bg-gray-100 rounded-lg mb-4 shrink-0 w-full sm:w-2/5 sm:mx-auto">
-        <button
-          onClick={() => setActiveTab("theory")}
-          className={`flex-1 sm:px-12 py-2 text-sm font-medium rounded-md transition-colors ${
-            activeTab === "theory"
-              ? "bg-white text-[#280F91] shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          Tóm tắt lý thuyết
-        </button>
-        <button
-          onClick={() => setActiveTab("quiz")}
-          className={`flex-1 sm:px-12 py-2 text-sm font-medium rounded-md transition-colors ${
-            activeTab === "quiz"
-              ? "bg-white text-[#280F91] shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          Bài tập
-        </button>
-      </div>
 
-      {/* Main Content Area */}
       <div className="flex-1 overflow-hidden">
         {/* Tab View */}
         <div className="h-full flex flex-col gap-6">

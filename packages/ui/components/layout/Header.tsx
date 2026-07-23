@@ -191,9 +191,7 @@ export function Header({
         <div
           className={`flex h-16 items-center justify-between gap-3 transition-all ${
             isReady ? "duration-300" : "duration-0"
-          } ${
-            scrolled ? "px-5" : "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8"
-          }`}
+          } ${scrolled ? "px-5" : "mx-auto w-full max-w-350 px-4 sm:px-6 lg:px-8"}`}
         >
           <Link
             href={navbarConfig.homeHref}
@@ -235,7 +233,7 @@ export function Header({
                   <Link
                     key={`${link.label}-${link.href}`}
                     href={link.href}
-                    className={`inline-flex items-center text-sm font-bold font-google-sans transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[16px] ${
+                    className={`inline-flex uppercase items-center text-sm font-bold font-google-sans transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[16px] ${
                       isActive
                         ? "text-accent"
                         : "text-primary-foreground hover:text-accent"

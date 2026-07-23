@@ -161,7 +161,7 @@ export function TutorGuideHero() {
             }}
             className="hidden lg:flex justify-center items-center relative"
           >
-            <div className="relative w-[500px] h-[440px] rounded-3xl flex items-center justify-center bg-[rgba(255,255,255,0.6)] border border-[rgba(255,197,0,0.3)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_32px_64px_rgba(255,197,0,0.15)] backdrop-blur-[24px]">
+            <div className="relative w-125 h-110 rounded-3xl flex items-center justify-center bg-[rgba(255,255,255,0.6)] border border-[rgba(255,197,0,0.3)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_32px_64px_rgba(255,197,0,0.15)] backdrop-blur-[24px]">
               <div className="absolute z-999 -top-5 -left-6 rounded-2xl px-4 py-2.5 shadow-xl bg-white border border-black/5">
                 <p
                   className="text-xs text-foreground/60 leading-none mb-1"
@@ -200,12 +200,13 @@ export function TutorGuideHero() {
 
               <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-white/20">
                 <Image
-                  src="/brand/BeeWiseTeam-2.JPG"
+                  src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1784775328/Tutor-Guide-Hero_s9y0sq.png"
                   alt="Đội ngũ BeeWise"
                   fill
                   className="object-cover"
                   priority
-                  sizes="(max-width: 768px) 100vw, 340px"
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                  quality={90}
                 />
               </div>
             </div>

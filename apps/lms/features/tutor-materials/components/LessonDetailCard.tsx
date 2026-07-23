@@ -63,30 +63,20 @@ export const LessonDetailCard = ({
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="shrink-0 mb-4">
-        <Link
-          href="/lms/tutor/materials"
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#280F91] transition-colors"
-        >
-          <ArrowLeft weight="bold" />
-          Quay lại danh sách
-        </Link>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6 flex-1 min-h-0">
         {/* Lẽft Side: Chi tiết buổi học */}
-        <div className="w-full md:w-1/3 flex flex-col bg-white rounded-2xl border shadow-sm p-6 overflow-y-auto shrink-0 h-full">
-          <div className="flex flex-col gap-4 mb-8">
+        <div className="w-full md:w-1/3 flex flex-col bg-white rounded-2xl border shadow-sm p-4 md:p-6 overflow-y-auto shrink-0 md:h-full">
+          <div className="flex flex-col gap-4 mb-4 md:mb-8">
             <div>
               <h1
-                className="text-2xl font-extrabold text-[#280F91] mb-2"
+                className="text-xl md:text-2xl font-extrabold text-[#280F91] mb-2"
                 style={{
                   fontFamily: "var(--font-montserrat, Montserrat), sans-serif",
                 }}
               >
                 Chi tiết buổi học
               </h1>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 text-xs md:text-sm">
                 Kiểm tra thông tin và tạo tài liệu học tập từ bản ghi hình Zoom.
               </p>
             </div>
@@ -95,31 +85,30 @@ export const LessonDetailCard = ({
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 bg-gray-50/50 p-5 rounded-xl border border-gray-100 mb-4">
-            <div>
+          <div className="flex flex-col sm:flex-row md:flex-col gap-4 bg-gray-50/50 p-4 md:p-5 rounded-xl border border-gray-100 mb-0 md:mb-4">
+            <div className="flex-1">
               <p className="text-xs text-gray-500 mb-1">Học sinh</p>
-              <p className="font-semibold text-gray-900 text-sm">{lesson.studentName}</p>
+              <p className="font-semibold text-gray-900 text-sm">
+                {lesson.studentName}
+              </p>
             </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Môn học & Chủ đề</p>
-              <p className="font-semibold text-gray-900 text-sm">{lesson.subject}</p>
+            <div className="flex-1">
+              <p className="text-xs text-gray-500 mb-1">Môn/Chủ đề</p>
+              <p className="font-semibold text-gray-900 text-sm">
+                {lesson.subject}
+              </p>
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-xs text-gray-500 mb-1">Ngày học</p>
-              <p className="font-semibold text-gray-900 text-sm">{lesson.date}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Nguồn dữ liệu</p>
-              <div className="flex items-center gap-2 text-gray-900 font-semibold text-sm">
-                <span className="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
-                Bản ghi Zoom đã sẵn sàng
-              </div>
+              <p className="font-semibold text-gray-900 text-sm">
+                {lesson.date}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Right Side: Transcript & Actions */}
-        <div className="w-full md:w-2/3 flex flex-col bg-white rounded-2xl border shadow-sm p-6 overflow-hidden h-full">
+        <div className="w-full md:w-2/3 flex flex-col bg-white rounded-2xl border shadow-sm p-4 md:p-6 overflow-hidden flex-1 md:h-full">
           <div className="shrink-0 mb-4">
             <label
               htmlFor="transcript"

@@ -70,7 +70,7 @@ export function TutorGuidePainPoints() {
               return (
                 <li
                   key={point.id}
-                  className="flex items-start gap-4 p-5 rounded-2xl border border-accent bg-muted/40 hover:border-primary/20 hover:bg-muted/70 transition-all duration-200"
+                  className="flex items-start gap-4 p-5 rounded-2xl border border-accent/20 bg-accent/5 hover:border-accent/40 hover:bg-accent/10 transition-all duration-300"
                   style={{ transitionDelay: `${i * 40}ms` }}
                 >
                   <div
