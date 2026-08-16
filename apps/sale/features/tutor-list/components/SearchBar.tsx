@@ -4,13 +4,13 @@ import { useState, useRef, useCallback } from "react";
 import {
   MagnifyingGlassIcon,
   SparkleIcon,
-  XIcon,
-  ArrowRightIcon,
+  CircleNotchIcon,
 } from "@phosphor-icons/react";
 import type { SearchMode } from "../data/types";
 
 interface SearchBarProps {
   mode: SearchMode;
+  currentQuery: string;
   onModeChange: (mode: SearchMode) => void;
   onSearch: (query: string, mode: SearchMode) => void;
   isLoading: boolean;
@@ -18,31 +18,24 @@ interface SearchBarProps {
 
 export function SearchBar({
   mode,
+  currentQuery,
   onModeChange,
   onSearch,
   isLoading,
 }: SearchBarProps) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(currentQuery);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
       e?.preventDefault();
-      if (!isLoading) {
-        onSearch(query, mode);
-      }
+      onSearch(query, mode);
     },
-    [query, mode, isLoading, onSearch],
+    [query, mode, onSearch],
   );
-
-  const handleClear = () => {
-    setQuery("");
-    inputRef.current?.focus();
-  };
 
   const switchMode = (newMode: SearchMode) => {
     onModeChange(newMode);
-    setQuery("");
     inputRef.current?.focus();
   };
 
@@ -157,19 +150,20 @@ export function SearchBar({
               className="flex-1 bg-transparent text-sm text-foreground placeholder-foreground/35 outline-none min-w-0"
               aria-label={isAI ? "Mô tả gia sư bạn cần" : "Nhập tên gia sư"}
               autoComplete="off"
-              disabled={isLoading}
             />
 
             {/* Submit */}
             <button
               type="submit"
-              disabled={isLoading || !query.trim()}
+              disabled={!query.trim()}
               id="tutor-search-submit"
               className="shrink-0 inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-primary px-5 text-xs font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               style={{ fontFamily: "var(--font-montserrat)" }}
               aria-label={isAI ? "Tìm với AI" : "Tìm kiếm"}
             >
-              {isAI ? <>Tìm với AI</> : <>Tìm ngay</>}
+              {isLoading && isAI ? (
+                <><CircleNotchIcon className="animate-spin" size={14} aria-hidden="true" />Đang tìm</>
+              ) : isAI ? <>Tìm với AI</> : <>Tìm ngay</>}
             </button>
           </div>
         </div>

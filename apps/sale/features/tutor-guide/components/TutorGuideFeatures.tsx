@@ -1,250 +1,48 @@
 import Image from "next/image";
-import {
-  CurrencyCircleDollarIcon,
-  RobotIcon,
-  HeadsetIcon,
-  MonitorIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { ChalkboardTeacherIcon, HeadsetIcon, MagicWandIcon, WalletIcon } from "@phosphor-icons/react/dist/ssr";
 
-const FEATURES = [
-  {
-    id: "no-fee",
-    icon: CurrencyCircleDollarIcon,
-    sticker: null,
-    stickerAlt: "",
-    title: "Không phí nhận lớp",
-    body: "Bạn không cần đóng tiền cọc hay phí nhận lớp trước. Học phí do gia sư đưa ra bao gồm phí hoa hồng nền tảng. Mức thu nhập của gia sư luôn được hiển thị rõ ràng trước khi bắt đầu.",
-    accent: "#280f91",
-    bg: "bg-white",
-    textAccent: "text-primary",
-  },
-  {
-    id: "ai-match",
-    icon: RobotIcon,
-    sticker: "/images/Sticker/E2-1.PNG",
-    stickerAlt:
-      "Bee với cây đũa phép và các con số - AI kết nối học viên phù hợp",
-    title: "AI sinh bài tập từ buổi học",
-    body: "Sau mỗi buổi học với học viên, bạn có thể dùng AI để tóm tắt nội dung và tự động tạo bài tập ôn luyện tương ứng. Giúp bạn tiết kiệm thời gian soạn bài mà vẫn đảm bảo chất lượng dạy học.",
-    accent: "#ffc500",
-    bg: "bg-primary",
-    textAccent: "text-accent",
-  },
-  {
-    id: "support",
-    icon: HeadsetIcon,
-    sticker: null,
-    stickerAlt: "",
-    title: "Đội ngũ hỗ trợ đồng hành",
-    body: "Mỗi kết nối đều có sự đồng hành của đội ngũ BeeWise. Từ việc sắp xếp buổi học thử, hỗ trợ trao đổi giữa hai bên đến giải quyết các vấn đề phát sinh, bạn luôn có người hỗ trợ khi cần.",
-    accent: "#447353",
-    bg: "bg-white",
-    textAccent: "text-secondary",
-  },
-  {
-    id: "dashboard",
-    icon: MonitorIcon,
-    sticker: null,
-    stickerAlt: "",
-    title: "Nền tảng học tập Super LMS",
-    body: "Theo dõi lịch dạy, danh sách học viên, tin nhắn, thu nhập và trạng thái từng lớp — tất cả trên Dashboard cá nhân, giúp bạn dễ dàng dạy nhiều học viên cùng lúc.",
-    accent: "#280f91",
-    bg: "bg-muted",
-    textAccent: "text-primary",
-  },
+const SUPPORT_ITEMS = [
+  { icon: WalletIcon, title: "Thu nhập rõ ràng", text: "Biết trước mức học phí, hoa hồng nền tảng và khoản thực nhận của từng lớp." },
+  { icon: HeadsetIcon, title: "Có người cùng xử lý", text: "Cố vấn hỗ trợ lịch học thử, trao đổi kỳ vọng và các vấn đề phát sinh." },
+  { icon: MagicWandIcon, title: "Công cụ hỗ trợ soạn dạy", text: "Tóm tắt buổi học và tạo bài ôn luyện để giảm thời gian chuẩn bị thủ công." },
 ];
 
 export function TutorGuideFeatures() {
   return (
-    <section
-      className="py-20 sm:py-24 bg-muted"
-      aria-labelledby="features-heading"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mb-14">
-          <h2
-            id="features-heading"
-            className="tracking-tight leading-tight text-foreground mb-4"
-            style={{
-              fontFamily: "var(--font-montserrat)",
-              fontWeight: 800,
-              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-            }}
-          >
-            BeeWise giúp gia sư <br />
-            <span className="text-accent">an tâm giảng dạy</span>
-          </h2>
-          <p className="text-foreground/60 leading-relaxed max-w-[52ch]">
-            Chúng tôi hỗ trợ gia sư tương lai từ kết nối học viên đến quản lý
-            lớp học và cung cấp các quyền lợi bạn sẽ nhận được
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="relative rounded-3xl p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-accent/20 transition-all duration-300">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ background: "rgba(255,197,0,0.15)" }}
-            >
-              <CurrencyCircleDollarIcon
-                size={24}
-                className="text-accent"
-                aria-hidden="true"
-              />
-            </div>
-            <div className="flex flex-col gap-3">
-              <h3
-                className="text-xl text-foreground leading-snug"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 800,
-                }}
-              >
-                {FEATURES[0].title}
-              </h3>
-              <p className="text-foreground/60 leading-relaxed text-sm sm:text-base">
-                {FEATURES[0].body}
-              </p>
-            </div>
-            <div className="mt-auto inline-flex self-start items-center gap-2 rounded-full bg-accent/8 px-4 py-2">
-              <span
-                className="text-xs text-accent"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 700,
-                }}
-              >
-                Hoa hồng minh bạch
-              </span>
+    <section className="bg-background py-20 sm:py-28" aria-labelledby="features-heading">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-16">
+          <div>
+            <h2 id="features-heading" className="font-montserrat font-extrabold leading-[1.12] tracking-tight text-foreground">
+              <span className="block text-3xl sm:text-4xl">Một hồ sơ có chiều sâu,</span>
+              <span className="mt-2 block text-2xl text-primary sm:text-[2rem]">không chỉ là vài dòng giới thiệu</span>
+            </h2>
+            <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-foreground/65">Môn dạy, kinh nghiệm, bằng cấp, lịch trống và phương pháp giảng dạy được trình bày trong cùng một hồ sơ để học viên hiểu rõ bạn trước khi kết nối.</p>
+            <div className="relative mt-9 aspect-[16/10] overflow-hidden rounded-[2rem] bg-muted">
+              <Image src="/brand/BeeWiseTeam.JPG" alt="Đội ngũ BeeWise xây dựng nền tảng dành cho gia sư" fill sizes="(max-width: 1024px) 100vw, 58vw" className="object-cover object-center" />
             </div>
           </div>
 
-          <div className="relative rounded-3xl p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-accent/20 transition-all duration-300">
-            <div
-              className="absolute -right-8 -bottom-6 w-44 h-44 pointer-events-none select-none"
-              aria-hidden="true"
-            >
-              <Image
-                src="/images/Sticker/E2-1.PNG"
-                alt={FEATURES[1].stickerAlt}
-                width={176}
-                height={176}
-                className="object-contain"
-              />
+          <div className="lg:pt-18">
+            <div className="rounded-[2rem] bg-accent p-7 text-accent-foreground sm:p-9">
+              <ChalkboardTeacherIcon size={34} weight="duotone" aria-hidden="true" />
+              <h3 className="mt-6 font-montserrat text-2xl font-extrabold leading-tight">Tập trung vào việc dạy</h3>
+              <p className="mt-3 text-sm leading-relaxed text-accent-foreground/75">BeeWise lo phần kết nối, xác thực và vận hành để bạn dành nhiều thời gian hơn cho chất lượng buổi học.</p>
             </div>
 
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ background: "rgba(255,197,0,0.15)" }}
-            >
-              <RobotIcon size={24} className="text-accent" aria-hidden="true" />
-            </div>
-            <div className="flex flex-col gap-3 relative z-10">
-              <h3
-                className="text-xl text-foreground leading-snug"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 800,
-                }}
-              >
-                {FEATURES[1].title}
-              </h3>
-              <p className="text-foreground/60 leading-relaxed text-sm sm:text-base max-w-[36ch]">
-                {FEATURES[1].body}
-              </p>
-            </div>
-            <div className="mt-auto inline-flex self-start items-center gap-2 rounded-full bg-accent/15 px-4 py-2 relative z-10">
-              <span
-                className="text-xs text-accent"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 700,
-                }}
-              >
-                Công nghệ AI
-              </span>
-            </div>
-          </div>
-
-          {/* Card 2: Support — with secondary color accent */}
-          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-accent/20 transition-all duration-300">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ background: "rgba(255,197,0,0.15)" }}
-            >
-              <HeadsetIcon
-                size={24}
-                className="text-accent"
-                aria-hidden="true"
-              />
-            </div>
-            <div className="flex flex-col gap-3">
-              <h3
-                className="text-xl text-foreground leading-snug"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 800,
-                }}
-              >
-                {FEATURES[2].title}
-              </h3>
-              <p className="text-foreground/60 leading-relaxed text-sm sm:text-base">
-                {FEATURES[2].body}
-              </p>
-            </div>
-            <div className="mt-auto inline-flex self-start items-center gap-2 rounded-full bg-accent/15 px-4 py-2 relative z-10">
-              <span
-                className="text-xs text-accent"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 700,
-                }}
-              >
-                Hỗ trợ 1-1
-              </span>
-            </div>
-          </div>
-
-          {/* Card 3: Dashboard — with list of tracking items */}
-          <div className="relative rounded-3xl border border-border p-8 flex flex-col gap-5 bg-card overflow-hidden group hover:shadow-xl hover:shadow-accent/20 transition-all duration-300">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ background: "rgba(255,197,0,0.15)" }}
-            >
-              <MonitorIcon
-                size={24}
-                className="text-accent"
-                aria-hidden="true"
-              />
-            </div>
-            <div className="flex flex-col gap-3">
-              <h3
-                className="text-xl text-foreground leading-snug"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 800,
-                }}
-              >
-                {FEATURES[3].title}
-              </h3>
-              {/* 2-col mini tag grid instead of bullet list */}
-              <div className="grid grid-cols-2 gap-2 mt-1">
-                {[
-                  "Lịch dạy",
-                  "Danh sách học viên",
-                  "Tin nhắn",
-                  "Thu nhập",
-                  "Trạng thái lớp",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-1.5 text-sm text-foreground/70"
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-                    {item}
-                  </div>
-                ))}
-              </div>
+            <div className="mt-8 grid gap-7">
+              {SUPPORT_ITEMS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <article key={item.title} className="grid grid-cols-[auto_1fr] gap-4 border-b border-border pb-7 last:border-b-0 last:pb-0">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/8 text-primary"><Icon size={22} weight="duotone" aria-hidden="true" /></div>
+                    <div>
+                      <h3 className="font-montserrat text-lg font-bold text-foreground">{item.title}</h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-foreground/60">{item.text}</p>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </div>

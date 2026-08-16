@@ -1,95 +1,33 @@
-import {
-  WarningCircleIcon,
-  CurrencyCircleDollarIcon,
-  UsersFourIcon,
-  ChatCircleTextIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { ChatCircleTextIcon, CurrencyCircleDollarIcon, MagnifyingGlassIcon, ShieldWarningIcon } from "@phosphor-icons/react/dist/ssr";
 
 const PAIN_POINTS = [
-  {
-    id: "fee",
-    icon: CurrencyCircleDollarIcon,
-    text: "Phải đóng phí nhận lớp ngay từ đầu.",
-  },
-  {
-    id: "search",
-    icon: UsersFourIcon,
-    text: "Mất nhiều thời gian tìm học viên trên Facebook hoặc các hội nhóm.",
-  },
-  {
-    id: "trust",
-    icon: WarningCircleIcon,
-    text: "Lo ngại trung tâm thiếu minh bạch hoặc thanh toán chậm.",
-  },
-  {
-    id: "support",
-    icon: ChatCircleTextIcon,
-    text: "Không có người hỗ trợ khi phát sinh vấn đề trong quá trình dạy.",
-  },
+  { id: "search", icon: MagnifyingGlassIcon, title: "Tìm lớp mất nhiều thời gian", text: "Bài đăng trôi nhanh, nhu cầu thiếu rõ ràng và khó biết học viên có thực sự phù hợp hay không." },
+  { id: "fee", icon: CurrencyCircleDollarIcon, title: "Phí nhận lớp thiếu minh bạch", text: "Gia sư thường phải trả tiền trước khi có đủ thông tin để đánh giá cơ hội giảng dạy." },
+  { id: "trust", icon: ShieldWarningIcon, title: "Năng lực khó được ghi nhận", text: "Bằng cấp, kinh nghiệm và phương pháp dạy dễ bị thu gọn thành vài dòng giới thiệu chung chung." },
+  { id: "support", icon: ChatCircleTextIcon, title: "Thiếu người hỗ trợ khi kết nối", text: "Khi lịch học hoặc kỳ vọng thay đổi, gia sư thường phải tự xử lý toàn bộ trao đổi với học viên." },
 ];
 
 export function TutorGuidePainPoints() {
   return (
-    <section
-      className="py-20 sm:py-24 bg-background h-screen flex items-center"
-      aria-labelledby="pain-points-heading"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left: Heading */}
-          <div className="flex flex-col gap-6">
-            <h2
-              id="pain-points-heading"
-              className="tracking-tight leading-tight text-foreground"
-              style={{
-                fontFamily: "var(--font-montserrat)",
-                fontWeight: 800,
-                fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-              }}
-            >
-              Vì sao nhiều gia sư{" "}
-              <span className="text-accent">gặp khó khăn</span> khi tìm lớp?
-            </h2>
-            <p className="text-foreground/60 leading-relaxed max-w-[45ch]">
-              BeeWise được xây dựng để giải quyết những khó khăn này bằng một
-              nền tảng quản lý tập trung và minh bạch hơn.
-            </p>
-
-            {/* Accent underline bar */}
-            <div className="flex items-center gap-3">
-              <div className="h-1 w-12 rounded-full bg-primary" />
-              <div className="h-1 w-4 rounded-full bg-accent" />
-              <div className="h-1 w-2 rounded-full bg-secondary" />
-            </div>
-          </div>
-
-          {/* Right: Pain points list */}
-          <ul className="flex flex-col gap-4" role="list">
-            {PAIN_POINTS.map((point, i) => {
-              const Icon = point.icon;
-              return (
-                <li
-                  key={point.id}
-                  className="flex items-start gap-4 p-5 rounded-2xl border border-accent/20 bg-accent/5 hover:border-accent/40 hover:bg-accent/10 transition-all duration-300"
-                  style={{ transitionDelay: `${i * 40}ms` }}
-                >
-                  <div
-                    className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-                    style={{ background: "rgba(255,197,0,0.15)" }}
-                  >
-                    <Icon
-                      size={20}
-                      className="text-accent"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <span className="text-sm sm:text-base font-bold text-primary/75 leading-relaxed pt-1">
-                    {point.text}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
+    <section className="bg-primary py-18 sm:py-24" aria-labelledby="pain-points-heading">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl">
+          <h2 id="pain-points-heading" className="font-montserrat text-3xl font-extrabold leading-tight text-primary-foreground sm:text-4xl">Gia sư giỏi không nên mất thời gian săn lớp</h2>
+          <p className="mt-4 max-w-[58ch] text-base leading-relaxed text-primary-foreground/70">BeeWise được xây dựng từ những vướng mắc rất thật trong quá trình tìm học viên và duy trì một lớp học lâu dài.</p>
+        </div>
+        <div className="mt-12 grid grid-cols-1 gap-x-12 gap-y-9 md:grid-cols-2">
+          {PAIN_POINTS.map((point) => {
+            const Icon = point.icon;
+            return (
+              <article key={point.id} className="grid grid-cols-[auto_1fr] gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-accent-foreground"><Icon size={22} weight="bold" aria-hidden="true" /></div>
+                <div>
+                  <h3 className="font-montserrat text-lg font-bold text-primary-foreground">{point.title}</h3>
+                  <p className="mt-2 max-w-[48ch] text-sm leading-relaxed text-primary-foreground/65">{point.text}</p>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>

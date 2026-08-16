@@ -10,9 +10,9 @@ import { TutorGuideCta } from '@/features/tutor-guide/components/TutorGuideCta';
 
 export const metadata: Metadata = {
   title:
-    "Đăng Ký Làm Gia Sư BeeWise | Không Phí Nhận Lớp, Kết Nối Học Viên Nhanh",
+    "Trở Thành Gia Sư BeeWise | Hồ Sơ Xác Thực, Kết Nối Minh Bạch",
   description:
-    "Đăng ký làm gia sư BeeWise miễn phí. Không mất phí nhận lớp, kết nối học viên bằng công nghệ AI, quản lý lớp học thông minh, thanh toán minh bạch và có đội ngũ hỗ trợ đồng hành.",
+    "Tạo hồ sơ gia sư BeeWise miễn phí, xác thực năng lực và kết nối với học viên phù hợp. Cơ chế thu nhập rõ ràng, có đội ngũ hỗ trợ đồng hành.",
   keywords: [
     "đăng ký làm gia sư",
     "tìm việc gia sư",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function TutorGuidePage() {
   return (
-    <div className="flex flex-col min-h-full">
+    <div className="flex min-h-full flex-col">
       <Header />
 
       <main id="main-content">

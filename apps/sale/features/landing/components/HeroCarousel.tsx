@@ -44,7 +44,7 @@ export function HeroCarousel() {
               alt={IMAGES[activeIndex].alt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
+              className="object-contain object-center"
               priority
             />
           </motion.div>

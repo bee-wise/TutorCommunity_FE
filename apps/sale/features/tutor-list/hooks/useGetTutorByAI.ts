@@ -8,9 +8,9 @@ export const useGetTutorByAI = (
 ) => {
   return useQuery({
     queryKey: ["search-tutor-ai", params],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       try {
-        const res = await tutorListService.searchAI(params);
+        const res = await tutorListService.searchAI(params, signal);
         return res.data?.items || [];
       } catch (error) {
         throw error;

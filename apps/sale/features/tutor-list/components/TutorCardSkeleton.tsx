@@ -2,12 +2,16 @@
 export function TutorCardSkeleton() {
   return (
     <div
-      className="relative flex h-full min-h-[380px] flex-col rounded-2xl border border-[#dce3f0] bg-white p-4 animate-pulse"
+      className="relative flex h-full min-h-[430px] flex-col overflow-hidden rounded-[22px] border border-[#dce3f0] bg-white p-5 animate-pulse"
       aria-hidden="true"
     >
       <div className="flex flex-col flex-1 gap-4">
         {/* Avatar + Name row */}
-        <div className="flex items-start gap-3">
+        <div className="mb-1 flex items-center justify-between">
+          <div className="h-6 w-28 rounded-full bg-muted" />
+          <div className="h-9 w-9 rounded-full bg-muted" />
+        </div>
+        <div className="flex items-start gap-4">
           <div className="h-20 w-20 rounded-2xl bg-muted shrink-0 sm:h-24 sm:w-24" />
           <div className="flex-1 flex flex-col gap-2 pt-1">
             <div className="h-3.5 w-3/4 bg-muted rounded-full" />
@@ -22,9 +26,9 @@ export function TutorCardSkeleton() {
         </div>
 
         {/* Meta */}
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-2.5 rounded-xl bg-muted/30 p-3">
           <div className="h-3 w-20 bg-muted rounded-full" />
-          <div className="h-3 w-24 bg-muted/70 rounded-full" />
+          <div className="h-3 w-4/5 bg-muted/70 rounded-full" />
         </div>
 
         {/* Tags */}
@@ -36,7 +40,7 @@ export function TutorCardSkeleton() {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between border-t border-border pt-4">
+      <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
         <div className="flex flex-col gap-1.5">
           <div className="h-3 w-24 bg-muted rounded-full" />
           <div className="h-4 w-32 bg-muted/80 rounded-full" />
