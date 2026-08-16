@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowsHorizontalIcon,
+  ArrowRightIcon,
   CheckCircleIcon,
   HeartIcon,
   HouseLineIcon,
@@ -82,22 +84,41 @@ export function TutorCard({
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    try {
-      const saved: string[] = JSON.parse(
-        localStorage.getItem("savedTutors") || "[]"
-      );
-      if (saved.includes(tutor.profileId || tutor.userId || "")) {
-        setIsSaved(true);
-      }
-    } catch (e) {}
+    const frame = window.requestAnimationFrame(() => {
+      try {
+        const saved: string[] = JSON.parse(
+          localStorage.getItem("savedTutors") || "[]",
+        );
+        setIsSaved(saved.includes(tutor.profileId || tutor.userId || ""));
+      } catch {}
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [tutor.profileId, tutor.userId]);
+
+  useEffect(() => {
+    if (!showReason) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setShowReason(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showReason]);
 
   const handleSave = () => {
     try {
       const id = tutor.profileId || tutor.userId || "";
       if (!id) return;
       const saved: string[] = JSON.parse(
-        localStorage.getItem("savedTutors") || "[]"
+        localStorage.getItem("savedTutors") || "[]",
       );
       if (isSaved) {
         const newSaved = saved.filter((tutorId) => tutorId !== id);
@@ -110,13 +131,18 @@ export function TutorCard({
         }
         setIsSaved(true);
       }
-    } catch (e) {}
+    } catch {}
   };
   const modeInfo = getTeachingModeInfo(tutor.teachingModes || []);
   const ModeIcon = modeInfo.icon;
   const tags = [
-    ...(tutor.gradeLevels || []).map((g) => typeof g === "string" ? g : g?.name).filter(Boolean),
-    ...(tutor.specializations || []).map((s) => typeof s === "string" ? s : s?.name).filter(Boolean),
+    ...(tutor.subjects || []).map((subject) => subject?.name).filter(Boolean),
+    ...(tutor.gradeLevels || [])
+      .map((g) => (typeof g === "string" ? g : g?.name))
+      .filter(Boolean),
+    ...(tutor.specializations || [])
+      .map((s) => (typeof s === "string" ? s : s?.name))
+      .filter(Boolean),
   ];
 
   const visibleTags = tags.slice(0, 3);
@@ -132,227 +158,284 @@ export function TutorCard({
   return (
     <>
       <article
-        className="group flex h-full flex-col rounded-2xl border border-[#dce3f0] bg-white p-4 shadow-sm transition duration-250 hover:-translate-y-1 hover:border-[#280f91]/30 hover:shadow-[0_12px_24px_rgba(40,15,145,0.08)]"
+        className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border border-[#dce3f0] bg-white shadow-[0_4px_16px_rgba(16,24,40,0.04)] transition duration-300 hover:-translate-y-1 hover:border-[#280f91]/25 hover:shadow-[0_18px_38px_rgba(40,15,145,0.10)]"
         aria-label={`Gia sư ${name}`}
       >
-        {(isBestMatch || tutor.reason) && (
-          <div className={`mb-3 flex items-center ${isBestMatch ? 'justify-between' : 'justify-end'}`}>
-            {isBestMatch && (
-              <span
-                className="inline-flex items-center gap-1 rounded-full bg-[#ffc500]/15 px-2.5 py-1 text-xs font-bold text-[#905b0f]"
-                style={{ fontFamily: "var(--font-montserrat)" }}
-              >
-                <SparkleIcon size={13} weight="fill" aria-hidden="true" /> Phù hợp nhất
-              </span>
-            )}
-            {tutor.reason && (
-              <button
-                type="button"
-                onClick={() => setShowReason(true)}
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#280f91] hover:underline"
-              >
-                <InfoIcon size={14} weight="bold" /> Lý do lựa chọn
-              </button>
-            )}
-          </div>
+        {isBestMatch && (
+          <div className="h-1 w-full bg-[#ffc500]" aria-hidden="true" />
         )}
 
-        <div className="flex items-start gap-4">
-          <TutorAvatar tutor={tutor} />
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <h3
-                className="text-lg font-extrabold leading-tight text-[#0c0c0b]"
+        <div className="flex flex-1 flex-col p-4 sm:p-5">
+          <div className="mb-4 flex min-h-8 items-center justify-between gap-3">
+            {isBestMatch ? (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#fff6d6] px-2.5 py-1 text-[11px] font-extrabold text-[#8a5a00]"
                 style={{ fontFamily: "var(--font-montserrat)" }}
               >
-                {name}
-              </h3>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#e6efe9] px-2 py-0.5 text-[11px] font-bold text-[#447353]">
-                <CheckCircleIcon size={13} weight="fill" aria-hidden="true" />{" "}
-                Đã xác thực
+                <SparkleIcon size={13} weight="fill" aria-hidden="true" />
+                Phù hợp nhất
               </span>
-            </div>
-            <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[13px] text-[#667085]">
-              <UserIcon
-                size={14}
-                className="text-[#280f91]"
-                aria-hidden="true"
-              />
-              <span className="font-semibold text-[#344054]">
-                {getLevelLabel(tutor.studentYear)}
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#447353]">
+                <CheckCircleIcon size={15} weight="fill" aria-hidden="true" />
+                Hồ sơ đã xác thực
               </span>
-              <span aria-hidden="true">·</span>
-              <span className="line-clamp-1">{tutor.major}</span>
-            </p>
-          </div>
-        </div>
-
-        <p className="mt-4 line-clamp-2 min-h-11 text-sm leading-[1.55] text-[#475467]">
-          {tutor.profileHeadline || tutor.bio || "Gia sư chuyên nghiệp"}
-        </p>
-
-        <div className="mt-4 flex min-h-8 flex-wrap content-start gap-2">
-          {visibleTags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full bg-[#f8fafc] border border-[#dce3f0] px-2.5 py-1 text-xs font-semibold text-[#475467]"
-            >
-              {tag}
-            </span>
-          ))}
-          {extraCount > 0 && (
-            <span className="rounded-full bg-[#f2f4f7] px-2.5 py-1 text-xs font-bold text-[#667085]">
-              +{extraCount}
-            </span>
-          )}
-        </div>
-
-        <div className="mt-3 space-y-2 text-[13px] text-[#667085]">
-          <p className="flex items-center gap-2">
-            <ModeIcon
-              size={16}
-              className="shrink-0 text-[#280f91]"
-              aria-hidden="true"
-            />
-            <span>{modeInfo.label}</span>
-          </p>
-          <p className="flex items-center gap-2">
-            <MapPinIcon
-              size={16}
-              className="shrink-0 text-[#280f91]"
-              aria-hidden="true"
-            />
-            <span className="line-clamp-1">{location}</span>
-          </p>
-          {tutor.isOnline && (
-            <p className="text-[#447353]">Rảnh buổi tối và cuối tuần</p>
-          )}
-        </div>
-
-        <div className="mt-auto border-t border-[#eaecf0] pt-4">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <p
-                className="flex items-center gap-1.5 text-[13px]"
-                aria-label={`${tutor.ratingAvg} trên 5 sao`}
-              >
-                <StarIcon
-                  size={16}
-                  weight="fill"
-                  className="text-[#ffc510]"
-                  aria-hidden="true"
-                />
-                <strong className="text-[#0c0c0b]">
-                  {tutor.ratingAvg ? tutor.ratingAvg.toFixed(1) : "5.0"}
-                </strong>
-              </p>
-              <p className="mt-1 text-base font-extrabold text-[#0c0c0b]">
-                {tutor.hourlyRate
-                  ? tutor.hourlyRate.toLocaleString("vi-VN")
-                  : "0"}{" "}
-                VNĐ
-                <span className="text-xs font-medium text-[#667085]">
-                  {" "}
-                  / 60 phút
-                </span>
-              </p>
-            </div>
+            )}
             <button
               type="button"
               onClick={handleSave}
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
-                isSaved
-                  ? "border-red-500 text-red-500 bg-red-50 hover:bg-red-100"
-                  : "border-[#dce3f0] text-[#667085] hover:border-[#280f91] hover:text-[#280f91]"
-              }`}
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition ${isSaved ? "border-[#f1b8c0] bg-[#fff1f3] text-[#c52f47]" : "border-[#dce3f0] bg-white text-[#667085] hover:border-[#280f91]/30 hover:bg-[#f7f5ff] hover:text-[#280f91]"}`}
               aria-label={`${isSaved ? "Bỏ lưu" : "Lưu"} gia sư ${name}`}
             >
               <HeartIcon
-                size={18}
+                size={17}
                 weight={isSaved ? "fill" : "regular"}
                 aria-hidden="true"
               />
             </button>
           </div>
-          <Link
-            href={`/tutors/${tutor.profileId}`}
-            id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
-            className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-xl bg-[#280f91] px-5 text-sm font-bold text-white transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40 sm:w-auto sm:self-end"
-          >
-            Xem hồ sơ
-          </Link>
+
+          <div className="flex items-start gap-4">
+            <TutorAvatar tutor={tutor} />
+            <div className="min-w-0 flex-1 pt-0.5">
+              <h3
+                className="line-clamp-2 text-lg font-extrabold leading-[1.25] text-[#17131f]"
+                style={{ fontFamily: "var(--font-montserrat)" }}
+              >
+                {name}
+              </h3>
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-[#475467]">
+                <UserIcon
+                  size={14}
+                  className="shrink-0 text-[#280f91]"
+                  aria-hidden="true"
+                />
+                <span className="line-clamp-1">
+                  {getLevelLabel(tutor.studentYear)}
+                </span>
+              </p>
+              <p className="mt-1 line-clamp-1 text-xs text-[#667085]">
+                {tutor.major || tutor.universityName}
+              </p>
+              <p
+                className="mt-2 flex items-center gap-1.5 text-sm"
+                aria-label={`${tutor.ratingAvg || 5} trên 5 sao`}
+              >
+                <StarIcon
+                  size={16}
+                  weight="fill"
+                  className="text-[#e6a700]"
+                  aria-hidden="true"
+                />
+                <strong className="text-[#17131f]">
+                  {tutor.ratingAvg ? tutor.ratingAvg.toFixed(1) : "5.0"}
+                </strong>
+                <span className="text-xs text-[#98a2b3]">đánh giá</span>
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-4 line-clamp-2 min-h-11 text-sm leading-[1.55] text-[#475467]">
+            {tutor.profileHeadline || tutor.bio || "Gia sư chuyên nghiệp"}
+          </p>
+
+          <div className="mt-3 flex min-h-7 flex-wrap content-start gap-1.5">
+            {visibleTags.map((tag, index) => (
+              <span
+                key={`${tag}-${index}`}
+                className={`rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-[#280f91]" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
+              >
+                {tag}
+              </span>
+            ))}
+            {extraCount > 0 && (
+              <span className="rounded-lg bg-[#f2f4f7] px-2.5 py-1 text-[11px] font-bold text-[#667085]">
+                +{extraCount}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-col gap-2.5 rounded-xl border border-[#e7eaf2] bg-[#fafbfc] p-3 text-xs text-[#475467]">
+            <p className="flex min-w-0 items-center gap-2">
+              <ModeIcon
+                size={16}
+                className="shrink-0 text-[#280f91]"
+                aria-hidden="true"
+              />
+              <span className="font-semibold">{modeInfo.label}</span>
+            </p>
+            <p className="flex min-w-0 items-start gap-2">
+              <MapPinIcon
+                size={16}
+                className="mt-0.5 shrink-0 text-[#280f91]"
+                aria-hidden="true"
+              />
+              <span className="min-w-0 break-words font-semibold leading-5">
+                {location}
+              </span>
+            </p>
+          </div>
+
+          {tutor.reason && (
+            <button
+              type="button"
+              onClick={() => setShowReason(true)}
+              className="mt-3 flex w-full items-center justify-between gap-3 rounded-xl bg-[#f5f2ff] px-3.5 py-2.5 text-left text-xs font-bold text-[#280f91] transition hover:bg-[#eeeaff]"
+            >
+              <span className="flex items-center gap-2">
+                <InfoIcon size={16} weight="fill" aria-hidden="true" />
+                Vì sao gia sư này phù hợp?
+              </span>
+              <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />
+            </button>
+          )}
+
+          <div className="mt-auto flex items-end justify-between gap-4 pt-4">
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#98a2b3]">
+                Học phí từ
+              </p>
+              <p
+                className="mt-0.5 text-lg font-extrabold tracking-tight text-[#17131f]"
+                style={{ fontFamily: "var(--font-montserrat)" }}
+              >
+                {tutor.hourlyRate
+                  ? tutor.hourlyRate.toLocaleString("vi-VN")
+                  : "Liên hệ"}
+                {tutor.hourlyRate ? (
+                  <span className="ml-1 text-[11px] font-semibold tracking-normal text-[#667085]">
+                    VNĐ / 60 phút
+                  </span>
+                ) : null}
+              </p>
+            </div>
+            <Link
+              href={`/tutors/${tutor.profileId}`}
+              id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#280f91] px-4 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
+            >
+              Xem hồ sơ
+              <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </article>
 
-      <AnimatePresence>
-        {showReason && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center px-4"
-            aria-modal="true"
-            role="dialog"
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/40"
-              onClick={() => setShowReason(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-white/20 p-6 shadow-2xl"
-              style={{
-                background: "rgba(255, 255, 255, 0.85)",
-                backdropFilter: "blur(12px)",
-              }}
-            >
-              <div className="flex items-start justify-between border-b border-[#dce3f0]/50 pb-3 mb-4">
-                <h3
-                  className="text-lg font-extrabold text-[#0c0c0b] flex items-center gap-2"
-                  style={{ fontFamily: "var(--font-montserrat)" }}
-                >
-                  <SparkleIcon
-                    size={20}
-                    className="text-[#280f91]"
-                    weight="fill"
-                  />
-                  Lý do phù hợp
-                </h3>
-                <button
-                  type="button"
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {showReason && (
+              <div
+                className="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-6"
+                aria-modal="true"
+                aria-labelledby={`reason-title-${tutor.profileId}`}
+                aria-describedby={`reason-description-${tutor.profileId}`}
+                role="dialog"
+              >
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0 bg-[#09051b]/60 backdrop-blur-[3px]"
                   onClick={() => setShowReason(false)}
-                  className="rounded-full p-1 text-[#667085] hover:bg-black/5 transition-colors"
-                  aria-label="Đóng"
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.97, y: 16 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.97, y: 12 }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative z-10 flex max-h-[min(760px,calc(100dvh-2rem))] w-full max-w-2xl flex-col overflow-hidden rounded-[24px] border border-white bg-white shadow-[0_32px_90px_rgba(9,5,27,0.32)]"
                 >
-                  <XIcon size={18} weight="bold" />
-                </button>
+                  <div className="flex items-start justify-between gap-5 border-b border-[#e7eaf2] bg-[#faf9ff] px-5 py-5 sm:px-7 sm:py-6">
+                    <div className="flex min-w-0 items-start gap-3.5">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#280f91] text-white shadow-[0_8px_20px_rgba(40,15,145,0.2)]">
+                        <SparkleIcon
+                          size={21}
+                          weight="fill"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-[#280f91]/65">
+                          BeeWise AI phân tích
+                        </p>
+                        <h3
+                          id={`reason-title-${tutor.profileId}`}
+                          className="text-xl font-extrabold leading-tight text-[#17131f] sm:text-2xl"
+                          style={{ fontFamily: "var(--font-montserrat)" }}
+                        >
+                          Vì sao {name} phù hợp với bạn?
+                        </h3>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowReason(false)}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#dce3f0] bg-white text-[#667085] shadow-sm transition hover:border-[#280f91]/25 hover:bg-[#f5f2ff] hover:text-[#280f91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/30"
+                      aria-label="Đóng cửa sổ lý do phù hợp"
+                    >
+                      <XIcon size={19} weight="bold" aria-hidden="true" />
+                    </button>
+                  </div>
+
+                  <div
+                    id={`reason-description-${tutor.profileId}`}
+                    className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7 sm:py-6"
+                  >
+                    <div className="mb-5 flex items-center gap-3 rounded-xl border border-[#dfe5f0] bg-[#f8fafc] px-4 py-3">
+                      <CheckCircleIcon
+                        size={20}
+                        weight="fill"
+                        className="shrink-0 text-[#447353]"
+                        aria-hidden="true"
+                      />
+                      <p className="text-sm leading-relaxed text-[#475467]">
+                        Gợi ý này được đối chiếu từ nhu cầu của bạn với chuyên
+                        môn và thông tin hồ sơ của gia sư.
+                      </p>
+                    </div>
+                    <div className="space-y-3">
+                      {tutor.reason
+                        ?.split(/(?=\d+\.\s)/)
+                        .filter(Boolean)
+                        .map((paragraph, index) => (
+                          <div
+                            key={index}
+                            className="flex gap-3 rounded-xl border border-[#e7eaf2] p-4"
+                          >
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#280f91]/8 text-xs font-extrabold text-[#280f91]">
+                              {index + 1}
+                            </span>
+                            <p className="pt-0.5 text-sm leading-6 text-[#344054]">
+                              {paragraph.trim().replace(/^\d+\.\s*/, "")}
+                            </p>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col-reverse gap-3 border-t border-[#e7eaf2] bg-white px-5 py-4 sm:flex-row sm:justify-end sm:px-7">
+                    <button
+                      type="button"
+                      onClick={() => setShowReason(false)}
+                      className="inline-flex h-11 items-center justify-center rounded-xl border border-[#dce3f0] px-5 text-sm font-bold text-[#475467] transition hover:bg-[#f8fafc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/25"
+                    >
+                      Đóng
+                    </button>
+                    <Link
+                      href={`/tutors/${tutor.profileId}`}
+                      className="inline-flex h-11 items-center justify-center rounded-xl bg-[#280f91] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(40,15,145,0.18)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/35 focus-visible:ring-offset-2"
+                    >
+                      Xem hồ sơ {name}
+                    </Link>
+                  </div>
+                </motion.div>
               </div>
-              <div className="text-sm leading-relaxed text-[#344054] space-y-3 max-h-[60vh] overflow-y-auto pr-2">
-              {tutor.reason?.split(/(?=\d+\.\s)/).map((paragraph, index) => (
-                <p key={index}>{paragraph.trim()}</p>
-              ))}
-            </div>
-              <div className="mt-6 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowReason(false)}
-                  className="rounded-xl border border-[#dce3f0] px-5 py-2 text-sm font-bold text-[#475467] hover:bg-[#f8fafc] transition-colors"
-                >
-                  Đóng
-                </button>
-                <Link
-                  href={`/tutors/${tutor.profileId}`}
-                  className="rounded-xl bg-[#280f91] px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-[#1f0b70]"
-                >
-                  Xem hồ sơ
-                </Link>
-              </div>
-            </motion.div>
-          </div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </>
   );
 }

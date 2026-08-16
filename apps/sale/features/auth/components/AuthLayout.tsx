@@ -24,8 +24,8 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
   };
 
   return (
-    <div className="h-dvh flex overflow-hidden">
-      <div className="hidden lg:flex relative w-[55%] shrink-0 overflow-hidden">
+    <div className="flex h-dvh overflow-hidden">
+      <div className="relative hidden w-[48%] shrink-0 overflow-hidden lg:flex xl:w-[52%]">
         <Image
           src={url}
           alt="Đội ngũ BeeWise"
@@ -63,7 +63,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
               className="text-2xl leading-snug mb-4"
               style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
             >
-              &quot;Gia nhập BeeWise —<br />
+              &quot;Gia nhập BeeWise,<br />
               Kiến tạo tương lai.&quot;
             </blockquote>
             <p className="text-sm text-white/70">
@@ -73,21 +73,21 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
         </div>
       </div>
 
-      <div className="flex-1 relative flex flex-col items-center bg-background px-4 py-6 md:py-10 overflow-y-auto no-scrollbar">
-        <div className="w-full max-w-[500px] flex flex-col justify-center min-h-full">
-          <div className="mb-4 self-start">
-            <Button
-              className="flex items-center gap-2 text-foreground/60 hover:text-foreground hover:bg-foreground/5 rounded-full px-4 h-10 transition-colors -ml-4"
-              variant="ghost"
-              onClick={handleBack}
-            >
-              <ArrowLeft weight="bold" className="w-4 h-4" />
-              <span className="font-semibold text-sm">Quay lại trang chủ</span>
-            </Button>
-          </div>
+      <div className="relative flex h-dvh min-w-0 flex-1 items-center justify-center overflow-hidden bg-background px-3 pb-3 pt-14 sm:px-5 sm:pb-4 sm:pt-16">
+        <Button
+          className="absolute left-3 top-2 z-10 flex h-9 items-center gap-2 rounded-full px-3 text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground sm:left-5 sm:top-3"
+          variant="ghost"
+          onClick={handleBack}
+        >
+          <ArrowLeft weight="bold" className="h-4 w-4" />
+          <span className="text-sm font-semibold">Quay lại trang chủ</span>
+        </Button>
+
+        <div className="flex h-full w-full max-w-[520px] items-center justify-center">
           <div
-            className="w-full rounded-2xl border border-border bg-card/60 backdrop-blur-xl
-              shadow-xl shadow-primary/5 p-6 sm:p-8"
+            className={`w-full rounded-2xl border border-border bg-card/60 shadow-xl shadow-primary/5 backdrop-blur-xl ${
+              variant === "register" ? "p-3 sm:p-4" : "p-6 sm:p-8"
+            }`}
           >
             {children}
           </div>

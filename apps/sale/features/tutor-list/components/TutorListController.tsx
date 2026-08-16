@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState, useEffect } from "react";
+import { CircleNotchIcon, SparkleIcon } from "@phosphor-icons/react";
 import { SearchBar } from "./SearchBar";
 import { FilterPanel } from "./FilterPanel";
 import { TutorListResults } from "./TutorListResults";
@@ -26,7 +26,6 @@ export function TutorListController({
   isLoggedIn = false,
 }: TutorListControllerProps) {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const hasPlayedGalaxyAnim = useRef(false);
 
   const {
     searchMode,
@@ -35,9 +34,9 @@ export function TutorListController({
     displayTutors,
     displayIsLoading,
     isAIFetching,
+    isAIBackgroundFetching,
     aiReason,
     pagination,
-    page,
     handleSearch,
     handleModeChange,
     handleFiltersChange,
@@ -62,59 +61,16 @@ export function TutorListController({
 
   return (
     <>
-      <AnimatePresence>
-        {searchMode === "ai" && !hasPlayedGalaxyAnim.current && (
-          <motion.div
-            key="ai-galaxy-border"
-            className="pointer-events-none fixed inset-0 z-[100] blur-[3px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 1, 0] }}
-            transition={{
-              duration: 4.5,
-              times: [0, 0.15, 0.85, 1],
-              ease: "easeInOut",
-            }}
-            onAnimationComplete={() => {
-              hasPlayedGalaxyAnim.current = true;
-            }}
-          >
-            <div
-              className="absolute inset-0 p-[5px] overflow-hidden"
-              style={{
-                WebkitMask:
-                  "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-              }}
-            >
-              <div
-                className="absolute -inset-full animate-spin"
-                style={{
-                  animationDuration: "3s",
-                  background:
-                    "conic-gradient(from 0deg, transparent 0%, transparent 25%, #280f91 50%, #3b82f6 70%, #ec4899 85%, #ffc500 100%)",
-                }}
-              />
-            </div>
-            <div
-              className="absolute inset-0"
-              style={{
-                boxShadow:
-                  "inset 0 0 80px rgba(168, 85, 247, 0.4), inset 0 0 15px rgba(255, 197, 0, 0.4)",
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {isAIFetching && <AILoadingOverlay query={currentQuery} />}
-
       <MobileFilterDrawer
         isOpen={isFilterDrawerOpen}
         onClose={() => setIsFilterDrawerOpen(false)}
         filters={filters}
         onFiltersChange={handleFiltersChange}
-        resultCount={searchMode === "manual" && pagination ? pagination.totalItems : displayTutors.length}
+        resultCount={
+          searchMode === "manual" && pagination
+            ? pagination.totalItems
+            : displayTutors.length
+        }
         isLoading={displayIsLoading}
       />
 
@@ -127,19 +83,46 @@ export function TutorListController({
             <div className="flex flex-col gap-4">
               <div>
                 <h1
-                  className="text-2xl md:text-3xl font-extrabold text-[#0c0c0b] tracking-tight leading-tight"
-                  style={{ fontFamily: "var(--font-montserrat)" }}
+                  className="text-2xl uppercase md:text-3xl font-extrabold text-[#0c0c0b] tracking-tight leading-tight"
+                  style={{ fontFamily: "var(--font-google-sans)" }}
                 >
-                  Tìm Gia Sư
+                  Tìm Kiếm Gia Sư
                 </h1>
               </div>
 
               <SearchBar
+                key={searchMode}
                 mode={searchMode}
+                currentQuery={currentQuery}
                 onModeChange={handleModeChange}
                 onSearch={handleSearch}
                 isLoading={displayIsLoading}
               />
+              {isAIBackgroundFetching && (
+                <div
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/15 bg-primary/5 px-3 py-2 text-xs text-foreground/65"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <span className="flex items-center gap-2">
+                    <CircleNotchIcon
+                      className="animate-spin text-primary"
+                      size={15}
+                      aria-hidden="true"
+                    />
+                    AI vẫn đang tìm gia sư trong nền. Bạn có thể tiếp tục tìm
+                    thủ công.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleModeChange("ai")}
+                    className="inline-flex items-center gap-1.5 font-bold text-primary hover:underline"
+                  >
+                    <SparkleIcon size={14} weight="fill" aria-hidden="true" />
+                    Quay lại AI
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -179,11 +162,11 @@ export function TutorListController({
                     >
                       <span>Bộ lọc</span>
                       <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                        {((filters.teachingMode !== "all" ? 1 : 0) +
+                        {(filters.teachingMode !== "all" ? 1 : 0) +
                           (filters.level !== "all" ? 1 : 0) +
                           (filters.maxPricePerSession !== null ? 1 : 0) +
                           (filters.minRating !== null ? 1 : 0) +
-                          (filters.availableOnly ? 1 : 0)) || ""}
+                          (filters.availableOnly ? 1 : 0) || ""}
                       </span>
                     </button>
                     <label htmlFor="result-sort" className="sr-only">
@@ -213,18 +196,22 @@ export function TutorListController({
                 </div>
               )}
 
-              <TutorListResults
-                tutors={displayTutors}
-                isLoading={displayIsLoading && !isAIFetching}
-                searchMode={searchMode}
-                query={currentQuery}
-                aiReason={aiReason}
-                isLoggedIn={isLoggedIn}
-                pagination={pagination}
-                onClearFilters={handleClearFilters}
-                onTryAI={() => handleModeChange("ai")}
-                onPageChange={handlePageChange}
-              />
+              {isAIFetching ? (
+                <AILoadingOverlay key={currentQuery} query={currentQuery} />
+              ) : (
+                <TutorListResults
+                  tutors={displayTutors}
+                  isLoading={displayIsLoading}
+                  searchMode={searchMode}
+                  query={currentQuery}
+                  aiReason={aiReason}
+                  isLoggedIn={isLoggedIn}
+                  pagination={pagination}
+                  onClearFilters={handleClearFilters}
+                  onTryAI={() => handleModeChange("ai")}
+                  onPageChange={handlePageChange}
+                />
+              )}
             </div>
           </div>
         </div>

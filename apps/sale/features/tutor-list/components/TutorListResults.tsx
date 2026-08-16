@@ -140,12 +140,12 @@ function EmptyState({
           style={{ fontFamily: "var(--font-montserrat)" }}
         >
           {isAIPrompt
-            ? "Tìm kiếm gia sư với AI"
+            ? "Tìm kiếm gia sư với Beewise AI"
             : "Không tìm thấy gia sư phù hợp"}
         </p>
         <p className="text-sm text-[#475467] leading-relaxed">
           {isAIPrompt
-            ? "Hãy mô tả chi tiết nhu cầu học tập của bạn, AI sẽ phân tích và gợi ý gia sư phù hợp nhất."
+            ? "Hãy mô tả chi tiết nhu cầu học tập của bạn, Beewise AI sẽ phân tích và gợi ý gia sư phù hợp nhất."
             : mode === "ai"
               ? "Hãy thử mô tả lại nhu cầu theo cách khác, hoặc chuyển sang tìm kiếm thủ công."
               : "Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác."}
@@ -265,14 +265,19 @@ export function TutorListResults({
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => onPageChange(Math.max(1, pagination.page - 1))}
-                  className={pagination.page <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  className={
+                    pagination.page <= 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
                 />
               </PaginationItem>
               {Array.from({ length: pagination.totalPages }).map((_, i) => {
                 const pageNum = i + 1;
                 // Simple logic: show first, last, current, and adjacent
                 const isNearCurrent = Math.abs(pageNum - pagination.page) <= 1;
-                const isEdge = pageNum === 1 || pageNum === pagination.totalPages;
+                const isEdge =
+                  pageNum === 1 || pageNum === pagination.totalPages;
                 if (!isNearCurrent && !isEdge) {
                   if (pageNum === 2 || pageNum === pagination.totalPages - 1) {
                     return (
@@ -297,8 +302,16 @@ export function TutorListResults({
               })}
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => onPageChange(Math.min(pagination.totalPages, pagination.page + 1))}
-                  className={pagination.page >= pagination.totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  onClick={() =>
+                    onPageChange(
+                      Math.min(pagination.totalPages, pagination.page + 1),
+                    )
+                  }
+                  className={
+                    pagination.page >= pagination.totalPages
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

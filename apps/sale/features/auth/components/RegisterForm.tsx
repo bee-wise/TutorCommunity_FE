@@ -75,8 +75,8 @@ export function RegisterForm() {
     : "/login";
 
   return (
-    <div className="w-full max-w-[460px] mx-auto">
-      <div className="mb-5">
+    <div className="mx-auto w-full max-w-[480px]">
+      <div className="mb-2">
         <h1
           className="text-2xl tracking-tight text-foreground mb-1"
           style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
@@ -90,7 +90,7 @@ export function RegisterForm() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-2"
         noValidate
       >
         <div className="flex flex-col gap-1.5">
@@ -100,7 +100,7 @@ export function RegisterForm() {
           >
             Bạn muốn trở thành
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {ROLES.map(({ value, label, icon: Icon }) => {
               const isSelected = selectedRole === value;
               return (
@@ -111,7 +111,7 @@ export function RegisterForm() {
                   onClick={() =>
                     setValue("role", value, { shouldValidate: true })
                   }
-                  className={`relative flex flex-col gap-1 p-3 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer
+                  className={`relative flex flex-col gap-1 rounded-xl border-2 px-2 py-1.5 text-left transition-all duration-200 cursor-pointer
                     ${
                       isSelected
                         ? "border-primary bg-primary/5 shadow-sm shadow-primary/10"
@@ -153,6 +153,7 @@ export function RegisterForm() {
               placeholder="Nguyễn"
               autoComplete="given-name"
               hasError={!!errors.firstName}
+              className="h-7.5"
               disabled={isPending}
               {...register("firstName")}
             />
@@ -164,6 +165,7 @@ export function RegisterForm() {
               placeholder="Văn A"
               autoComplete="family-name"
               hasError={!!errors.lastName}
+              className="h-7.5"
               disabled={isPending}
               {...register("lastName")}
             />
@@ -177,6 +179,7 @@ export function RegisterForm() {
             placeholder="you@example.com"
             autoComplete="email"
             hasError={!!errors.email}
+            className="h-7.5"
             disabled={isPending}
             {...register("email")}
           />
@@ -189,12 +192,13 @@ export function RegisterForm() {
             placeholder="0912345678"
             autoComplete="tel"
             hasError={!!errors.phoneNumber}
+            className="h-7.5"
             disabled={isPending}
             {...register("phoneNumber")}
           />
         </FormField>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <FormField label="Mật khẩu" error={errors.password}>
             <div className="relative">
               <Input
@@ -203,7 +207,7 @@ export function RegisterForm() {
                 placeholder="Tối thiểu 8 ký tự"
                 autoComplete="new-password"
                 hasError={!!errors.password}
-                className="pr-11"
+                className="h-7.5 pr-11"
                 disabled={isPending}
                 {...register("password")}
               />
@@ -226,7 +230,7 @@ export function RegisterForm() {
                 placeholder="Nhập lại mật khẩu"
                 autoComplete="new-password"
                 hasError={!!errors.confirmPassword}
-                className="pr-11"
+                className="h-7.5 pr-11"
                 disabled={isPending}
                 {...register("confirmPassword")}
               />
@@ -300,8 +304,7 @@ export function RegisterForm() {
           id="register-submit"
           type="submit"
           disabled={isPending}
-          className="relative w-full h-10 rounded-xl bg-accent text-primary font-bold text-sm
-            flex items-center justify-center gap-2
+          className="relative flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-accent text-sm font-bold text-primary
             hover:bg-accent/90 active:scale-[0.98] transition-all duration-200
             disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-accent/25"
           style={{ fontFamily: "var(--font-montserrat)" }}
@@ -313,7 +316,7 @@ export function RegisterForm() {
           )}
         </button>
 
-        <div className="relative mt-2">
+        <div className="relative mt-1">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-border" />
           </div>
@@ -326,7 +329,7 @@ export function RegisterForm() {
 
         <button
           type="button"
-          className="flex items-center justify-center gap-2 h-10 w-full rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
+          className="flex h-9 w-full items-center justify-center gap-2 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted"
         >
           <Image
             src="/images/Logos/google.png"

@@ -1,23 +1,21 @@
 import Image from "next/image";
+import {
+  ArrowRightIcon,
+  CheckCircleIcon,
+} from "@phosphor-icons/react/dist/ssr";
 
 const STEPS = [
   {
-    id: "register",
-    number: "01",
-    title: "Đăng ký tài khoản",
-    body: "Tạo hồ sơ gia sư và bổ sung thông tin chuyên môn, môn dạy, khu vực, kinh nghiệm cùng các giấy tờ xác thực.",
+    title: "Hoàn thiện hồ sơ",
+    body: "Chia sẻ môn dạy, kinh nghiệm, khu vực, lịch trống và cách bạn tổ chức một buổi học.",
   },
   {
-    id: "verify",
-    number: "02",
-    title: "Xác minh hồ sơ",
-    body: "Đội ngũ BeeWise kiểm tra thông tin và xác thực hồ sơ để tăng độ tin cậy trước khi hiển thị với học viên.",
+    title: "Xác thực năng lực",
+    body: "Gửi giấy tờ cần thiết để đội ngũ BeeWise kiểm tra và phản hồi nếu cần bổ sung.",
   },
   {
-    id: "teach",
-    number: "03",
-    title: "Kết nối và bắt đầu giảng dạy",
-    body: "Khi có học viên phù hợp, bạn sẽ được mời tham gia kết nối, sắp xếp buổi học thử và bắt đầu lớp học sau khi hai bên thống nhất.",
+    title: "Chọn kết nối phù hợp",
+    body: "Xem nhu cầu học tập, trao đổi cùng học viên và chỉ nhận lớp khi hai bên thống nhất.",
   },
 ];
 
@@ -25,110 +23,64 @@ export function TutorGuideSteps() {
   return (
     <section
       id="how-to-register"
-      className="py-20 sm:py-24 bg-background"
+      className="bg-muted py-20 sm:py-28"
       aria-labelledby="steps-heading"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Sticker left */}
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="relative w-72 h-72">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-20">
+          <div>
+            <h2
+              id="steps-heading"
+              className="font-montserrat text-3xl font-extrabold leading-tight text-foreground sm:text-4xl"
+            >
+              Từ hồ sơ đến lớp học đầu tiên
+            </h2>
+            <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-foreground/60">
+              Ba việc rõ ràng, có hướng dẫn ở từng chặng và không cần trả phí để
+              nhận lớp.
+            </p>
+            <div className="relative mt-8 aspect-[4/5] max-w-sm overflow-hidden rounded-[2rem] bg-[#d7d8dc]">
               <Image
-                src="/images/Sticker/E2-1.PNG"
-                alt="Bee đang học và dạy học với cây đũa phép"
-                width={288}
-                height={288}
-                className="object-contain drop-shadow-xl"
+                src="/images/Tutor/1.png"
+                alt="Gia sư trong cộng đồng BeeWise"
+                fill
+                sizes="(max-width: 1024px) 100vw, 32vw"
+                className="object-cover object-top"
               />
             </div>
           </div>
 
-          {/* Steps content right */}
-          <div className="flex flex-col gap-10">
-            <div className="flex flex-col gap-3">
-              <h2
-                id="steps-heading"
-                className="tracking-tight leading-tight text-foreground"
-                style={{
-                  fontFamily: "var(--font-montserrat)",
-                  fontWeight: 800,
-                  fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)",
-                }}
+          <ol className="grid gap-4" aria-label="Quy trình đăng ký gia sư">
+            {STEPS.map((step, index) => (
+              <li
+                key={step.title}
+                className="group grid gap-5 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/25 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-7"
               >
-                Chỉ cần <span className="text-accent">3 bước</span> để bắt đầu
-              </h2>
-              <p className="text-foreground/60 leading-relaxed max-w-[44ch]">
-                Quy trình đơn giản, rõ ràng. Chỉ cần phí xác minh hồ sơ, bạn có
-                thể bắt đầu nhận học viên.
-              </p>
-            </div>
-
-            {/* Step cards — vertical stack with connecting line */}
-            <div className="relative flex flex-col gap-0">
-              {/* Vertical connector line */}
-              <div
-                className="absolute left-[23px] top-12 bottom-12 w-px"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, #280f91 0%, #447353 50%, #ffc500 100%)",
-                  opacity: 0.25,
-                }}
-                aria-hidden="true"
-              />
-
-              {STEPS.map((step, i) => (
-                <div
-                  key={step.id}
-                  className="relative flex items-start gap-6 py-6"
-                >
-                  {/* Number badge */}
-                  <div
-                    className="relative z-10 shrink-0 w-12 h-12 rounded-full flex items-center justify-center border-2 bg-background"
-                    style={{
-                      borderColor:
-                        i === 0
-                          ? "var(--primary)"
-                          : i === 1
-                            ? "var(--secondary)"
-                            : "var(--accent)",
-                    }}
-                  >
-                    <span
-                      className="text-sm leading-none"
-                      style={{
-                        fontFamily: "var(--font-montserrat)",
-                        fontWeight: 800,
-                        color:
-                          i === 0
-                            ? "var(--primary)"
-                            : i === 1
-                              ? "var(--secondary)"
-                              : "var(--accent)",
-                      }}
-                    >
-                      {step.number}
-                    </span>
-                  </div>
-
-                  {/* Text */}
-                  <div className="flex flex-col gap-2 pt-1">
-                    <h3
-                      className="text-base sm:text-lg text-foreground leading-snug"
-                      style={{
-                        fontFamily: "var(--font-montserrat)",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {step.title}
-                    </h3>
-                    <p className="text-sm text-foreground/60 leading-relaxed max-w-[42ch]">
-                      {step.body}
-                    </p>
-                  </div>
+                <div className="font-montserrat text-3xl font-extrabold text-primary/25">
+                  0{index + 1}
                 </div>
-              ))}
-            </div>
-          </div>
+                <div>
+                  <h3 className="flex items-center gap-2 font-montserrat text-lg font-bold text-foreground">
+                    <CheckCircleIcon
+                      size={19}
+                      weight="fill"
+                      className="text-secondary"
+                      aria-hidden="true"
+                    />
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 max-w-[50ch] text-sm leading-relaxed text-foreground/60">
+                    {step.body}
+                  </p>
+                </div>
+                <ArrowRightIcon
+                  size={20}
+                  className="hidden text-primary/30 transition-transform group-hover:translate-x-1 sm:block"
+                  aria-hidden="true"
+                />
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>
