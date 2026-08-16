@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   DEFAULT_FILTERS,
@@ -11,8 +11,11 @@ import { useGetTutorByAI } from "./useGetTutorByAI";
 import { useGetTutorsManual } from "./useGetTutorsManual";
 
 let cachedSearchMode: SearchMode = "manual";
-let cachedCurrentQuery: string = "";
-let cachedFilters: TutorFilters = DEFAULT_FILTERS;
+let cachedQueries: Record<SearchMode, string> = { manual: "", ai: "" };
+let cachedFiltersByMode: Record<SearchMode, TutorFilters> = {
+  manual: DEFAULT_FILTERS,
+  ai: DEFAULT_FILTERS,
+};
 let cachedPage: number = 1;
 
 const mapFiltersToManualQuery = (
@@ -123,62 +126,54 @@ export function useTutorSearch() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const isInitialized = useRef(false);
+  const requestedMode = searchParams.get("mode");
+  const initialMode: SearchMode =
+    requestedMode === "ai" || requestedMode === "manual"
+      ? requestedMode
+      : cachedSearchMode;
+  const initialQuery = searchParams.get("q");
 
-  const [searchMode, setSearchMode] = useState<SearchMode>(cachedSearchMode);
-  const [filters, setFilters] = useState<TutorFilters>(cachedFilters);
-  const [currentQuery, setCurrentQuery] = useState(cachedCurrentQuery);
+  const [searchMode, setSearchMode] = useState<SearchMode>(initialMode);
+  const [filtersByMode, setFiltersByMode] = useState<
+    Record<SearchMode, TutorFilters>
+  >(cachedFiltersByMode);
+  const [queries, setQueries] = useState<Record<SearchMode, string>>(() =>
+    initialQuery === null
+      ? cachedQueries
+      : { ...cachedQueries, [initialMode]: initialQuery },
+  );
   const [page, setPage] = useState(cachedPage);
+  const currentQuery = queries[searchMode];
+  const filters = filtersByMode[searchMode];
 
-  // Sync state with URL params on first load
+  // URL params are only an entry point; internal searches remain local afterwards.
   useEffect(() => {
-    if (!isInitialized.current) {
-      const mode = searchParams.get("mode") as SearchMode;
-      const q = searchParams.get("q");
-
-      let shouldUpdate = false;
-
-      if (mode && (mode === "ai" || mode === "manual")) {
-        setSearchMode(mode);
-        cachedSearchMode = mode;
-        shouldUpdate = true;
-      }
-      if (q !== null) {
-        setCurrentQuery(q);
-        cachedCurrentQuery = q;
-        shouldUpdate = true;
-      }
-
-      if (shouldUpdate) {
-        // Clear the URL params so they don't stick around if user changes search internally
-        router.replace(pathname, { scroll: false });
-      }
-
-      isInitialized.current = true;
+    if (requestedMode !== null || initialQuery !== null) {
+      router.replace(pathname, { scroll: false });
     }
-  }, [searchParams, pathname, router]);
+  }, [initialQuery, pathname, requestedMode, router]);
 
   const aiSearchQuery = useMemo(
-    () => ({ query: currentQuery, limit: 10, thresold: 0.65 }),
-    [currentQuery],
+    () => ({ query: queries.ai, limit: 10, thresold: 0.65 }),
+    [queries.ai],
   );
 
-  const { data: aiTutors, isFetching: isAIFetching } = useGetTutorByAI(
+  const { data: aiTutors, isFetching: isAIRequestFetching } = useGetTutorByAI(
     { ...aiSearchQuery },
-    searchMode === "ai" && currentQuery.trim().length > 0,
+    queries.ai.trim().length > 0,
   );
 
   const manualSearchQueryObj = useMemo(
-    () => mapFiltersToManualQuery(currentQuery, filters, page),
-    [currentQuery, filters, page],
+    () => mapFiltersToManualQuery(queries.manual, filtersByMode.manual, page),
+    [queries.manual, filtersByMode.manual, page],
   );
 
   const { data: manualResponse, isFetching: isManualFetching } =
     useGetTutorsManual(manualSearchQueryObj, searchMode === "manual");
 
   const handleSearch = useCallback(async (query: string, mode: SearchMode) => {
-    setCurrentQuery(query);
-    cachedCurrentQuery = query;
+    setQueries((currentQueries) => ({ ...currentQueries, [mode]: query }));
+    cachedQueries = { ...cachedQueries, [mode]: query };
     setPage(1);
     cachedPage = 1;
   }, []);
@@ -186,24 +181,32 @@ export function useTutorSearch() {
   const handleModeChange = (mode: SearchMode) => {
     setSearchMode(mode);
     cachedSearchMode = mode;
-    setCurrentQuery("");
-    cachedCurrentQuery = "";
     setPage(1);
     cachedPage = 1;
   };
 
   const handleFiltersChange = (newFilters: TutorFilters) => {
-    setFilters(newFilters);
-    cachedFilters = newFilters;
+    setFiltersByMode((currentFilters) => ({
+      ...currentFilters,
+      [searchMode]: newFilters,
+    }));
+    cachedFiltersByMode = {
+      ...cachedFiltersByMode,
+      [searchMode]: newFilters,
+    };
     setPage(1);
     cachedPage = 1;
   };
 
   const handleClearFilters = () => {
-    setFilters(DEFAULT_FILTERS);
-    cachedFilters = DEFAULT_FILTERS;
-    setCurrentQuery("");
-    cachedCurrentQuery = "";
+    setFiltersByMode((currentFilters) => ({
+      ...currentFilters,
+      [searchMode]: DEFAULT_FILTERS,
+    }));
+    cachedFiltersByMode = {
+      ...cachedFiltersByMode,
+      [searchMode]: DEFAULT_FILTERS,
+    };
     setPage(1);
     cachedPage = 1;
   };
@@ -219,18 +222,18 @@ export function useTutorSearch() {
   const manualResults = manualResponse?.data?.items || [];
   const displayTutors =
     searchMode === "ai"
-      ? currentQuery.trim()
-        ? applyLocalFiltersToAIResults(aiTutors || [], filters)
+      ? queries.ai.trim()
+        ? applyLocalFiltersToAIResults(aiTutors || [], filtersByMode.ai)
         : []
-      : applyLocalFiltersToAIResults(manualResults, filters); // Áp dụng filter Frontend cho các filter API chưa support (level, minRating)
+      : applyLocalFiltersToAIResults(manualResults, filtersByMode.manual); // Áp dụng filter Frontend cho các filter API chưa support (level, minRating)
 
   const displayIsLoading =
-    searchMode === "ai" ? isAIFetching : isManualFetching;
+    searchMode === "ai" ? isAIRequestFetching : isManualFetching;
   const pagination =
     searchMode === "manual" ? manualResponse?.data?.pagination : undefined;
 
   const aiReason =
-    searchMode === "ai" && displayTutors.length > 0 && currentQuery.trim()
+    searchMode === "ai" && displayTutors.length > 0 && queries.ai.trim()
       ? "Tìm thấy dựa trên môn học, hình thức dạy và mức học phí phù hợp với mô tả của bạn."
       : undefined;
 
@@ -240,7 +243,8 @@ export function useTutorSearch() {
     filters,
     displayTutors,
     displayIsLoading,
-    isAIFetching,
+    isAIFetching: searchMode === "ai" && isAIRequestFetching,
+    isAIBackgroundFetching: searchMode === "manual" && isAIRequestFetching,
     aiReason,
     pagination,
     page,

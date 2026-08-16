@@ -9,11 +9,6 @@ const PRICE_OPTIONS = [
   { label: "Dưới 350.000đ", value: 350000 },
 ] as const;
 
-const RATING_OPTIONS = [
-  { label: "4.5+", value: 4.5 },
-  { label: "4.0+", value: 4.0 },
-] as const;
-
 interface FilterPanelProps {
   filters: TutorFilters;
   onFiltersChange: (filters: TutorFilters) => void;
@@ -186,47 +181,6 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
               style={{ fontFamily: "var(--font-montserrat)" }}
             >
               {opt.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Rating filter */}
-      <div className="flex flex-col gap-2.5">
-        <span
-          className="text-xs font-bold text-[#0c0c0b] uppercase tracking-wide"
-          style={{ fontFamily: "var(--font-montserrat)" }}
-        >
-          Đánh giá tối thiểu
-        </span>
-        <div className="flex flex-col gap-1.5">
-          <button
-            type="button"
-            onClick={() => update("minRating", null)}
-            aria-pressed={filters.minRating === null}
-            className={`rounded-xl px-3 py-2 text-xs font-semibold text-left transition-all duration-150 ${
-              filters.minRating === null
-                ? "bg-[#280f91] text-white"
-                : "bg-transparent text-[#667085] hover:bg-[#f8fafc] border border-[#dce3f0]"
-            }`}
-            style={{ fontFamily: "var(--font-montserrat)" }}
-          >
-            Tất cả
-          </button>
-          {RATING_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => update("minRating", opt.value)}
-              aria-pressed={filters.minRating === opt.value}
-              className={`rounded-xl px-3 py-2 text-xs font-semibold text-left transition-all duration-150 ${
-                filters.minRating === opt.value
-                  ? "bg-[#280f91] text-white"
-                  : "bg-transparent text-[#667085] hover:bg-[#f8fafc] border border-[#dce3f0]"
-              }`}
-              style={{ fontFamily: "var(--font-montserrat)" }}
-            >
-              ★ {opt.label}
             </button>
           ))}
         </div>

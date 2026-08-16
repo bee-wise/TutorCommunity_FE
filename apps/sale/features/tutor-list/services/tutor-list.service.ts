@@ -3,9 +3,10 @@ import { ApiResponse } from "@workspace/core/types/api-response.type";
 import { AISearchQuery, ApiTutorProfile } from "../data/types";
 
 export const tutorListService = {
-  searchAI: async (params: AISearchQuery): Promise<ApiResponse<{ items: ApiTutorProfile[] }>> => {
+  searchAI: async (params: AISearchQuery, signal?: AbortSignal): Promise<ApiResponse<{ items: ApiTutorProfile[] }>> => {
     const res = await apiClient.get("/ai/search-ai", {
       params,
+      signal,
     });
     return res as unknown as ApiResponse<{ items: ApiTutorProfile[] }>;
   },
