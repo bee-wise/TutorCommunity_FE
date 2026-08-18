@@ -168,7 +168,7 @@ function StudentBillingCard() {
         </span>
         <span
           className="text-sm font-bold text-[#280f91]"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           18 buổi
         </span>
@@ -344,7 +344,7 @@ function TutorIncomeCard() {
         </span>
         <span
           className="text-sm font-bold text-[#447353]"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           18 buổi
         </span>
@@ -436,7 +436,7 @@ export function DualRoleFeatureGrid() {
         >
           <h2
             className="text-3xl md:text-4xl lg:text-[44px] leading-tight tracking-tight text-[#0c0c0b] mb-4"
-            style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+            style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
           >
             <span className="text-[#280f91]">Mang lại giá trị riêng cho</span>
             <br />
@@ -539,7 +539,7 @@ export function DualRoleFeatureGrid() {
                     <div>
                       <h3
                         className="text-sm font-bold text-[#0c0c0b]"
-                        style={{ fontFamily: "var(--font-montserrat)" }}
+                        style={{ fontFamily: "var(--font-nunito-family)" }}
                       >
                         {card.title}
                       </h3>

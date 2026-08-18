@@ -84,7 +84,7 @@ export function TutorListController({
               <div>
                 <h1
                   className="text-2xl uppercase md:text-3xl font-extrabold text-[#0c0c0b] tracking-tight leading-tight"
-                  style={{ fontFamily: "var(--font-google-sans)" }}
+                  style={{ fontFamily: "var(--font-nunito-family)" }}
                 >
                   Tìm Kiếm Gia Sư
                 </h1>
@@ -147,7 +147,7 @@ export function TutorListController({
                 <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#dce3f0] bg-white px-4 py-3 shadow-sm">
                   <p
                     className="text-base font-extrabold text-[#0c0c0b]"
-                    style={{ fontFamily: "var(--font-montserrat)" }}
+                    style={{ fontFamily: "var(--font-nunito-family)" }}
                   >
                     {searchMode === "manual" && pagination
                       ? `${pagination.totalItems} gia sư`

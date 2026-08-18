@@ -57,7 +57,7 @@ export function LmsHeader() {
               <span
                 className="text-[#280f91] text-sm leading-none uppercase hidden sm:block"
                 style={{
-                  fontFamily: "var(--font-montserrat)",
+                  fontFamily: "var(--font-nunito-family)",
                   fontWeight: 800,
                 }}
               >
@@ -87,7 +87,7 @@ export function LmsHeader() {
             <Link
               href="/login"
               className="hidden md:inline-flex h-9 items-center justify-center rounded-xl bg-[#ffc500] px-5 text-sm font-bold text-primary hover:bg-[#ffcc1a] active:scale-[0.97] transition-all duration-200 shadow-sm shadow-[#ffc500]/30"
-              style={{ fontFamily: "var(--font-montserrat)" }}
+              style={{ fontFamily: "var(--font-nunito-family)" }}
             >
               Đăng Nhập Hệ Thống
             </Link>
@@ -134,7 +134,7 @@ export function LmsHeader() {
                 <Link
                   href="/login"
                   className="inline-flex h-10 items-center justify-center rounded-xl bg-[#ffc500] px-5 text-sm font-bold text-[#0c0c0b]"
-                  style={{ fontFamily: "var(--font-montserrat)" }}
+                  style={{ fontFamily: "var(--font-nunito-family)" }}
                 >
                   Đăng Nhập Hệ Thống
                 </Link>

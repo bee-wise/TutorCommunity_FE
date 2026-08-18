@@ -145,7 +145,7 @@ export function TutorOnboardingShell({
                 <p className="text-xs font-bold uppercase tracking-wide text-[#280f91]">
                   Tutor Onboarding
                 </p>
-                <h1 className="mt-1 text-2xl leading-tight text-[#0c0c0b] md:text-3xl">
+                <h1 className="font-nunito mt-1 text-2xl leading-tight text-[#0c0c0b] md:text-3xl">
                   {view.title}
                 </h1>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-[#3f3b55]">

@@ -162,7 +162,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
                 </InfoPill>
               </div>
 
-              <h1 className="mt-3 text-center text-3xl font-extrabold leading-tight text-[#0c0c0b] sm:text-left sm:text-4xl xl:text-[44px]">
+              <h1 className="font-nunito mt-3 text-center text-3xl font-extrabold leading-tight text-[#0c0c0b] sm:text-left sm:text-4xl xl:text-[44px]">
                 {tutor.displayName}
               </h1>
               <p className="mt-2 max-w-3xl text-center text-base font-bold leading-7 text-[#280f91] sm:text-left sm:text-lg">

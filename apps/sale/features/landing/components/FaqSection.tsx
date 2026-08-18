@@ -22,7 +22,7 @@ export function FaqSection() {
         <h2
           id="faq-headline"
           className="text-3xl sm:text-4xl tracking-tight text-primary mb-12 text-center"
-          style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+          style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
         >
           Câu Hỏi Thường Gặp
         </h2>
@@ -43,7 +43,7 @@ export function FaqSection() {
                     <span
                       className="text-base sm:text-lg text-foreground group-hover:text-primary transition-colors"
                       style={{
-                        fontFamily: "var(--font-montserrat)",
+                        fontFamily: "var(--font-nunito-family)",
                         fontWeight: 700,
                       }}
                     >

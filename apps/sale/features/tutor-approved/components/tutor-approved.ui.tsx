@@ -156,7 +156,7 @@ function WelcomeBanner() {
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#ffc510]">
             Tutor Home
           </p>
-          <h1 className="text-2xl font-black md:text-4xl">{title}</h1>
+          <h1 className="font-nunito text-2xl font-black md:text-4xl">{title}</h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-white/80 md:text-base">
             {description}
           </p>
@@ -493,7 +493,7 @@ function ProfileScreen({ edit }: { edit: boolean }) {
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
         <p className="text-sm font-bold text-[#280f91]">Hồ sơ gia sư</p>
-        <h1 className="text-3xl font-black">
+        <h1 className="font-nunito text-3xl font-black">
           {edit ? "Chỉnh sửa hồ sơ" : "Hồ sơ của tôi"}
         </h1>
         <p className="mt-2 text-sm text-[#716c83]">
@@ -606,7 +606,7 @@ function NotificationsScreen() {
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-black">Thông báo</h1>
+          <h1 className="font-nunito text-3xl font-black">Thông báo</h1>
           <p className="text-sm text-[#716c83]">
             Theo dõi kết nối, tin nhắn, hồ sơ và gói hiển thị.
           </p>
@@ -688,7 +688,7 @@ function AvailabilityScreen() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-3xl font-black">Lịch rảnh nhận lớp</h1>
+        <h1 className="font-nunito text-3xl font-black">Lịch rảnh nhận lớp</h1>
         <p className="text-sm text-[#716c83]">
           Lịch lớp đã hình thành được quản lý trong Tutor LMS.
         </p>
@@ -791,7 +791,7 @@ function SubscriptionScreen() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
-        <h1 className="text-3xl font-black">Gói hiển thị hồ sơ</h1>
+        <h1 className="font-nunito text-3xl font-black">Gói hiển thị hồ sơ</h1>
         <p className="text-sm text-[#716c83]">
           Duy trì khả năng xuất hiện trong Search, AI Search và nhận kết nối
           mới.

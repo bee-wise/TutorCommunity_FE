@@ -57,7 +57,7 @@ export function SearchBar({
               ? "bg-background text-foreground shadow-sm border border-border"
               : "text-foreground/50 hover:text-foreground/80"
           }`}
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
           aria-selected={!isAI}
           role="tab"
           id="search-mode-manual"
@@ -73,7 +73,7 @@ export function SearchBar({
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-foreground/50 hover:text-foreground/80"
           }`}
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
           aria-selected={isAI}
           role="tab"
           id="search-mode-ai"
@@ -158,7 +158,7 @@ export function SearchBar({
               disabled={!query.trim()}
               id="tutor-search-submit"
               className="shrink-0 inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-primary px-5 text-xs font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              style={{ fontFamily: "var(--font-montserrat)" }}
+              style={{ fontFamily: "var(--font-nunito-family)" }}
               aria-label={isAI ? "Tìm với AI" : "Tìm kiếm"}
             >
               {isLoading && isAI ? (

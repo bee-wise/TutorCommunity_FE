@@ -41,7 +41,7 @@ export default function TutorsListPage() {
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 font-montserrat">Duyệt Hồ Sơ Gia Sư</h1>
+          <h1 className="text-2xl font-bold text-gray-900 font-nunito">Duyệt Hồ Sơ Gia Sư</h1>
           <p className="text-sm text-gray-500 mt-1">
             Danh sách các gia sư đã hoàn thành phỏng vấn và đang chờ xác thực hồ sơ.
           </p>

@@ -156,7 +156,7 @@ export function TutorCarouselSection() {
             <h2
               id="tutor-carousel-headline"
               className="text-2xl sm:text-4xl text-primary leading-tight"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               Kết nối với Gia Sư <span className="text-accent">Nổi Bật</span>
             </h2>
