@@ -39,7 +39,7 @@ export const KpiCard = ({
       </div>
       
       <div className="relative z-10">
-        <h3 className="text-3xl font-extrabold text-[#280F91]  tracking-tight" style={{ fontFamily: "var(--font-montserrat)" }}>
+        <h3 className="text-3xl font-extrabold text-[#280F91]  tracking-tight" style={{ fontFamily: "var(--font-nunito-family)" }}>
           {value}
         </h3>
         

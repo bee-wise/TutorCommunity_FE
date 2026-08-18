@@ -13,7 +13,7 @@ export function FormField({ label, error, children, hint }: FormFieldProps) {
     <div className="flex flex-col gap-1">
       <label
         className="text-xs font-semibold text-foreground/80"
-        style={{ fontFamily: "var(--font-montserrat)" }}
+        style={{ fontFamily: "var(--font-nunito-family)" }}
       >
         {label}
       </label>

@@ -114,7 +114,7 @@ function ToastItem({
       <div className="flex flex-col gap-0.5 flex-1 min-w-0 pt-0.5">
         <p
           className="text-sm font-semibold text-foreground leading-snug"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {toast.title}
         </p>

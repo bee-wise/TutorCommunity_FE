@@ -170,7 +170,7 @@ export function TutorCard({
             {isBestMatch ? (
               <span
                 className="inline-flex items-center gap-1.5 rounded-full bg-[#fff6d6] px-2.5 py-1 text-[11px] font-extrabold text-[#8a5a00]"
-                style={{ fontFamily: "var(--font-montserrat)" }}
+                style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 <SparkleIcon size={13} weight="fill" aria-hidden="true" />
                 Phù hợp nhất
@@ -200,7 +200,7 @@ export function TutorCard({
             <div className="min-w-0 flex-1 pt-0.5">
               <h3
                 className="line-clamp-2 text-lg font-extrabold leading-[1.25] text-[#17131f]"
-                style={{ fontFamily: "var(--font-montserrat)" }}
+                style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 {name}
               </h3>
@@ -297,7 +297,7 @@ export function TutorCard({
               </p>
               <p
                 className="mt-0.5 text-lg font-extrabold tracking-tight text-[#17131f]"
-                style={{ fontFamily: "var(--font-montserrat)" }}
+                style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 {tutor.hourlyRate
                   ? tutor.hourlyRate.toLocaleString("vi-VN")
@@ -363,7 +363,7 @@ export function TutorCard({
                         <h3
                           id={`reason-title-${tutor.profileId}`}
                           className="text-xl font-extrabold leading-tight text-[#17131f] sm:text-2xl"
-                          style={{ fontFamily: "var(--font-montserrat)" }}
+                          style={{ fontFamily: "var(--font-nunito-family)" }}
                         >
                           Vì sao {name} phù hợp với bạn?
                         </h3>

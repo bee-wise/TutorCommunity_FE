@@ -25,7 +25,7 @@ export default function NotFound() {
           <HeroMotion delay={0.1}>
             <h1
               className="text-7xl sm:text-9xl tracking-tighter text-[#280F91] mb-6 leading-none"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               404
             </h1>
@@ -34,7 +34,7 @@ export default function NotFound() {
           <HeroMotion delay={0.2}>
             <h2
               className="text-2xl sm:text-3xl text-[#0C0C0B] mb-4 tracking-tight"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 700 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 700 }}
             >
               Có vẻ bạn đã đi lạc?
             </h2>

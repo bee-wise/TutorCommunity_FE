@@ -59,7 +59,7 @@ export function AILoadingOverlay({ query }: { query: string }) {
               <SparkleIcon size={20} weight="fill" aria-hidden="true" />
             </div>
             <div className="min-w-0">
-              <p className="text-base font-extrabold text-foreground" style={{ fontFamily: "var(--font-montserrat)" }}>
+              <p className="text-base font-extrabold text-foreground" style={{ fontFamily: "var(--font-nunito-family)" }}>
                 {activeStage.title}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-foreground/60">{activeStage.description}</p>

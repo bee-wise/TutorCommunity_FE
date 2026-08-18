@@ -118,7 +118,7 @@ export function LoginForm() {
             flex items-center justify-center gap-2
             hover:bg-[#1f0c73] active:scale-[0.98] transition-all duration-200
             disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-[#280f91]/30"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (
             <span className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />

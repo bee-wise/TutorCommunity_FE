@@ -52,7 +52,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
             </div>
             <span
               className="text-white text-lg leading-none"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               Cộng Đồng Gia Sư
             </span>
@@ -61,7 +61,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
           <div className="text-white/90">
             <blockquote
               className="text-2xl leading-snug mb-4"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               &quot;Gia nhập BeeWise,<br />
               Kiến tạo tương lai.&quot;

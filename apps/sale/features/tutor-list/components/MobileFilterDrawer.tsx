@@ -49,7 +49,7 @@ export function MobileFilterDrawer({
             <div className="flex items-center justify-between p-5 border-b border-border">
               <span
                 className="text-base font-bold text-foreground"
-                style={{ fontFamily: "var(--font-montserrat)" }}
+                style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 Bộ lọc
               </span>
@@ -74,7 +74,7 @@ export function MobileFilterDrawer({
                 onClick={onClose}
                 disabled={isLoading}
                 className="w-full h-11 flex items-center justify-center gap-2 rounded-full bg-primary text-white text-sm font-bold transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
-                style={{ fontFamily: "var(--font-montserrat)" }}
+                style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 {isLoading ? (
                   <>

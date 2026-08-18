@@ -135,10 +135,10 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  --font-montserrat:
-    var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-google-sans:
     var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-nunito:
+    var(--font-nunito-family), ui-sans-serif, system-ui, sans-serif;
 
   --font-sans: var(--font-google-sans);
 
@@ -182,7 +182,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-montserrat);
+    font-family: var(--font-nunito-family);
     font-weight: 800;
   }
 

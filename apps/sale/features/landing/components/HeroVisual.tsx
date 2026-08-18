@@ -201,7 +201,7 @@ function StatBadge({
     >
       <span
         className="text-xl leading-none text-[#FFC500]"
-        style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+        style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
       >
         {value}
       </span>

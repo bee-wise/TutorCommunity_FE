@@ -60,7 +60,7 @@ function AccordionItem({
       >
         <span
           className="text-sm md:text-base font-bold text-[#0c0c0b] pr-4 group-hover:text-[#280f91] transition-colors duration-200"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {item.q}
         </span>
@@ -123,7 +123,7 @@ export function FaqAndCtaSection() {
           >
             <h2
               className="text-3xl md:text-4xl leading-tight tracking-tight text-[#0c0c0b] mb-3"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               Câu hỏi <span className="text-[#280f91]">thường gặp</span>
             </h2>
@@ -166,7 +166,7 @@ export function FaqAndCtaSection() {
           >
             <h2
               className="text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight text-white mb-5"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               Bắt Đầu Quản Lý Lớp Học
             </h2>
@@ -194,7 +194,7 @@ export function FaqAndCtaSection() {
               <Link
                 href="/login"
                 className="inline-flex h-14 items-center justify-center gap-2.5 rounded-xl bg-[#ffc500] px-10 text-base font-bold text-[#0c0c0b] hover:bg-[#ffcc1a] active:scale-[0.97] transition-all duration-200 shadow-xl shadow-[#ffc500]/30"
-                style={{ fontFamily: "var(--font-montserrat)" }}
+                style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 Bắt Đầu Ngay
               </Link>

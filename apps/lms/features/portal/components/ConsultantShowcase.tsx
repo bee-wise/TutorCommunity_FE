@@ -134,7 +134,7 @@ export function ClassActivationShowcase() {
           >
             <h2
               className="text-3xl md:text-4xl lg:text-[44px] leading-tight tracking-tight text-white mb-5"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               Consultant Xác Nhận,{" "}
               <span className="text-[#ffc500]">Hệ Thống Kích Hoạt</span>
@@ -187,7 +187,7 @@ export function ClassActivationShowcase() {
                     <div>
                       <p
                         className="text-sm font-bold text-white mb-0.5"
-                        style={{ fontFamily: "var(--font-montserrat)" }}
+                        style={{ fontFamily: "var(--font-nunito-family)" }}
                       >
                         {item.step}
                       </p>
@@ -238,7 +238,7 @@ export function ClassActivationShowcase() {
                   />
                   <span
                     className="text-[9px] font-bold text-[#0c0c0b]"
-                    style={{ fontFamily: "var(--font-montserrat)" }}
+                    style={{ fontFamily: "var(--font-nunito-family)" }}
                   >
                     Kích hoạt tự động
                   </span>

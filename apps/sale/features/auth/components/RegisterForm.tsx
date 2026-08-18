@@ -78,8 +78,7 @@ export function RegisterForm() {
     <div className="mx-auto w-full max-w-[480px]">
       <div className="mb-2">
         <h1
-          className="text-2xl tracking-tight text-foreground mb-1"
-          style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+          className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground"
         >
           Tạo tài khoản BEEWISE
         </h1>
@@ -96,7 +95,7 @@ export function RegisterForm() {
         <div className="flex flex-col gap-1.5">
           <span
             className="text-xs font-semibold text-foreground/80"
-            style={{ fontFamily: "var(--font-montserrat)" }}
+            style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             Bạn muốn trở thành
           </span>
@@ -128,7 +127,7 @@ export function RegisterForm() {
                     />
                     <span
                       className={`text-[10px] font-bold leading-tight ${isSelected ? "text-primary" : "text-foreground/70"}`}
-                      style={{ fontFamily: "var(--font-montserrat)" }}
+                      style={{ fontFamily: "var(--font-nunito-family)" }}
                     >
                       {label}
                     </span>
@@ -307,7 +306,7 @@ export function RegisterForm() {
           className="relative flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-accent text-sm font-bold text-primary
             hover:bg-accent/90 active:scale-[0.98] transition-all duration-200
             disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-accent/25"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (
             <span className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />

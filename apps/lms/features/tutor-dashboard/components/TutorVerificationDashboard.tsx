@@ -67,13 +67,13 @@ export function TutorVerificationDashboard() {
         <div className="flex flex-col gap-1 mb-10 text-center md:text-left">
           <p
             className="text-sm text-muted-foreground"
-            style={{ fontFamily: "var(--font-montserrat)" }}
+            style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             Xin chào,
           </p>
           <h1
             className="text-2xl md:text-3xl text-foreground"
-            style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+            style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
           >
             {user?.fullName ?? "Gia sư"}
           </h1>
@@ -81,7 +81,7 @@ export function TutorVerificationDashboard() {
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             <span
               className="text-xs font-semibold text-amber-600"
-              style={{ fontFamily: "var(--font-montserrat)" }}
+              style={{ fontFamily: "var(--font-nunito-family)" }}
             >
               Tài khoản của bạn chưa được xác minh
             </span>
@@ -140,7 +140,7 @@ export function TutorVerificationDashboard() {
                     className={`text-[10px] font-bold uppercase tracking-wider
                       ${isDone ? "text-[#447353]" : isCurrent ? "text-[#280f91]" : "text-muted-foreground/50"}
                     `}
-                    style={{ fontFamily: "var(--font-montserrat)" }}
+                    style={{ fontFamily: "var(--font-nunito-family)" }}
                   >
                     Bước {step.id}
                   </span>
@@ -148,7 +148,7 @@ export function TutorVerificationDashboard() {
                     className={`text-sm font-bold
                       ${isPending ? "text-muted-foreground/70" : "text-foreground"}
                     `}
-                    style={{ fontFamily: "var(--font-montserrat)" }}
+                    style={{ fontFamily: "var(--font-nunito-family)" }}
                   >
                     {step.title}
                   </h3>
@@ -167,7 +167,7 @@ export function TutorVerificationDashboard() {
                         className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#280f91]
                           text-[#280f91] text-xs font-bold bg-[#280f91]/5
                           hover:bg-[#280f91]/10 active:scale-[0.98] transition-all"
-                        style={{ fontFamily: "var(--font-montserrat)" }}
+                        style={{ fontFamily: "var(--font-nunito-family)" }}
                       >
                         {step.ctaLabel}
                         <ArrowRight size={12} weight="bold" />
