@@ -167,7 +167,7 @@ export function Header({
   };
 
   return (
-    <div className="fixed left-0 right-0 top-0 z-60 flex justify-center pt-0">
+    <div className="font-nunito fixed left-0 right-0 top-0 z-60 flex justify-center pt-0">
       <motion.header
         layout
         transition={{ duration: isReady ? 0.4 : 0, ease: [0.22, 1, 0.36, 1] }}
@@ -208,10 +208,7 @@ export function Header({
                 priority
               />
             </div>
-            <span
-              className="hidden text-xs uppercase leading-none text-white md:block md:text-base"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
-            >
+            <span className="hidden text-xs font-black uppercase leading-none text-white md:block md:text-base">
               Cộng Đồng Gia Sư Beewise
             </span>
           </Link>
@@ -233,7 +230,7 @@ export function Header({
                   <Link
                     key={`${link.label}-${link.href}`}
                     href={link.href}
-                    className={`inline-flex uppercase items-center text-sm font-bold font-google-sans transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[16px] ${
+                    className={`inline-flex items-center text-sm font-extrabold uppercase transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[16px] ${
                       isActive
                         ? "text-accent"
                         : "text-primary-foreground hover:text-accent"

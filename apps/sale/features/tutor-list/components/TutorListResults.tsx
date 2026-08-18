@@ -61,7 +61,7 @@ function ResultLabel({
           </div>
           <span
             className="text-sm font-bold text-[#280f91]"
-            style={{ fontFamily: "var(--font-montserrat)" }}
+            style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             AI tìm được {count} gia sư phù hợp
           </span>
@@ -137,7 +137,7 @@ function EmptyState({
       <div className="flex flex-col gap-2 max-w-[32ch]">
         <p
           className="text-base font-bold text-[#0c0c0b]"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isAIPrompt
             ? "Tìm kiếm gia sư với Beewise AI"

@@ -107,7 +107,7 @@ export function SessionDetailSheet({
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 {/* Subject title */}
-                <SheetTitle className="text-xl font-extrabold font-montserrat text-foreground leading-tight">
+                <SheetTitle className="text-xl font-extrabold font-nunito text-foreground leading-tight">
                   {session.subject} {session.subjectLevel}
                 </SheetTitle>
                 {/* Student name */}
@@ -171,7 +171,7 @@ export function SessionDetailSheet({
 
             {/* Fee */}
             <InfoRow icon={Banknote} label="Học phí / buổi">
-              <span className="text-base font-extrabold font-montserrat text-[#280f91]">
+              <span className="text-base font-extrabold font-nunito text-[#280f91]">
                 {formatFee(session.feeVnd)}
               </span>
             </InfoRow>

@@ -71,7 +71,7 @@ export const LessonDetailCard = ({
               <h1
                 className="text-xl md:text-2xl font-extrabold text-[#280F91] mb-2"
                 style={{
-                  fontFamily: "var(--font-montserrat, Montserrat), sans-serif",
+                  fontFamily: "var(--font-nunito-family), sans-serif",
                 }}
               >
                 Chi tiết buổi học

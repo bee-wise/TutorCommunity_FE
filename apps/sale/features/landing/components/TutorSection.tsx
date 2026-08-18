@@ -36,7 +36,7 @@ export function TutorSection() {
                 id="tutor-headline"
                 className="flex flex-col text-3xl sm:text-3xl tracking-tight mb-3 text-primary"
                 style={{
-                  fontFamily: "var(--font-montserrat)",
+                  fontFamily: "var(--font-nunito-family)",
                   fontWeight: 800,
                 }}
               >

@@ -71,7 +71,7 @@ export function CalendarView({ sessions, onSessionClick }: CalendarViewProps) {
     <div className="rounded-2xl border border-border/60 bg-white shadow-sm overflow-hidden">
       {/* Calendar Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
-        <h2 className="text-base font-bold font-montserrat text-foreground">
+        <h2 className="text-base font-bold font-nunito text-foreground">
           {MONTH_NAMES[viewMonth]}, {viewYear}
         </h2>
         <div className="flex items-center gap-1">

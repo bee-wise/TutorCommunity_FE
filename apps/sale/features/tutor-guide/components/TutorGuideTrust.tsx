@@ -42,7 +42,7 @@ export function TutorGuideTrust() {
                 id="trust-heading"
                 className="tracking-tight leading-tight text-foreground"
                 style={{
-                  fontFamily: "var(--font-montserrat)",
+                  fontFamily: "var(--font-nunito-family)",
                   fontWeight: 800,
                   fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
                 }}

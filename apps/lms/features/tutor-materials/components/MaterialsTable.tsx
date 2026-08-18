@@ -38,7 +38,7 @@ export const MaterialsTable = () => {
           <h1
             className="text-2xl font-extrabold text-[#280F91]"
             style={{
-              fontFamily: "var(--font-montserrat, Montserrat), sans-serif",
+              fontFamily: "var(--font-nunito-family), sans-serif",
             }}
           >
             Quản lý tài liệu

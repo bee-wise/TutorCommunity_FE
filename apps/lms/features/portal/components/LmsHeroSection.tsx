@@ -58,7 +58,7 @@ function ScheduleGrid() {
       <div className="flex items-center justify-between mb-3">
         <p
           className="text-xs font-bold text-[#0c0c0b]"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           Lịch Học Tuần Này
         </p>
@@ -192,7 +192,7 @@ export function LmsHeroSection() {
 
             <h1
               className="text-[25px] sm:text-4xl  leading-[1.1] tracking-tight text-[#0c0c0b] mb-5"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               Quản Lý Lớp Học Sau Kết Nối
               <br />
@@ -210,7 +210,7 @@ export function LmsHeroSection() {
               <Link
                 href="/login"
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#ffc500] px-7 text-sm font-bold text-primary hover:bg-[#ffcc1a] active:scale-[0.97] transition-all duration-200 shadow-lg shadow-[#ffc500]/30"
-                style={{ fontFamily: "var(--font-montserrat)" }}
+                style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 Bắt Đầu Ngay
               </Link>
@@ -252,7 +252,7 @@ export function LmsHeroSection() {
                     <div>
                       <p
                         className="text-sm font-bold text-[#0c0c0b] leading-none"
-                        style={{ fontFamily: "var(--font-montserrat)" }}
+                        style={{ fontFamily: "var(--font-nunito-family)" }}
                       >
                         {stat.value}
                       </p>
@@ -289,7 +289,7 @@ export function LmsHeroSection() {
                 <ShieldCheck size={12} weight="fill" />
                 <span
                   className="text-[9px] font-bold"
-                  style={{ fontFamily: "var(--font-montserrat)" }}
+                  style={{ fontFamily: "var(--font-nunito-family)" }}
                 >
                   Hệ thống xác thực
                 </span>

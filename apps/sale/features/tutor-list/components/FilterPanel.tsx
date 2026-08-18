@@ -45,7 +45,7 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
           <FunnelIcon size={16} className="text-[#280f91]" aria-hidden="true" />
           <span
             className="text-sm font-extrabold text-[#0c0c0b]"
-            style={{ fontFamily: "var(--font-montserrat)" }}
+            style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             Bộ lọc
           </span>
@@ -72,7 +72,7 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
       <div className="flex flex-col gap-2.5">
         <span
           className="text-xs font-bold text-[#0c0c0b] uppercase tracking-wide"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           Hình thức dạy
         </span>
@@ -98,7 +98,7 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
                   ? "bg-[#280f91] text-white"
                   : "bg-transparent text-[#667085] hover:bg-[#f8fafc] border border-[#dce3f0]"
               }`}
-              style={{ fontFamily: "var(--font-montserrat)" }}
+              style={{ fontFamily: "var(--font-nunito-family)" }}
             >
               {opt.label}
             </button>
@@ -110,7 +110,7 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
       <div className="flex flex-col gap-2.5">
         <span
           className="text-xs font-bold text-[#0c0c0b] uppercase tracking-wide"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           Gia sư
         </span>
@@ -137,7 +137,7 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
                   ? "bg-[#280f91] text-white"
                   : "bg-transparent text-[#667085] hover:bg-[#f8fafc] border border-[#dce3f0]"
               }`}
-              style={{ fontFamily: "var(--font-montserrat)" }}
+              style={{ fontFamily: "var(--font-nunito-family)" }}
             >
               {opt.label}
             </button>
@@ -149,7 +149,7 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
       <div className="flex flex-col gap-2.5">
         <span
           className="text-xs font-bold text-[#0c0c0b] uppercase tracking-wide"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           Học phí tối đa
         </span>
@@ -163,7 +163,7 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
                 ? "bg-[#280f91] text-white"
                 : "bg-transparent text-[#667085] hover:bg-[#f8fafc] border border-[#dce3f0]"
             }`}
-            style={{ fontFamily: "var(--font-montserrat)" }}
+            style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             Không giới hạn
           </button>
@@ -178,7 +178,7 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
                   ? "bg-[#280f91] text-white"
                   : "bg-transparent text-[#667085] hover:bg-[#f8fafc] border border-[#dce3f0]"
               }`}
-              style={{ fontFamily: "var(--font-montserrat)" }}
+              style={{ fontFamily: "var(--font-nunito-family)" }}
             >
               {opt.label}
             </button>

@@ -70,7 +70,7 @@ export function OverviewCards({
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   {card.label}
                 </p>
-                <p className="text-4xl font-extrabold leading-none font-montserrat text-foreground">
+                <p className="text-4xl font-extrabold leading-none font-nunito text-foreground">
                   {card.value}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1.5">

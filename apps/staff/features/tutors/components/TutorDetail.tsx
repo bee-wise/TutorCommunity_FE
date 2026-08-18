@@ -90,7 +90,7 @@ export function TutorDetail({ tutorId }: { tutorId: string }) {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3 font-montserrat">
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3 font-nunito">
               Hồ sơ gia sư
               {getStatusBadge(tutor.status)}
             </h1>

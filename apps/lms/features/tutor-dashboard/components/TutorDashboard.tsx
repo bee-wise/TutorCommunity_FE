@@ -79,7 +79,7 @@ export function TutorDashboard() {
         </p>
         <h1
           className="text-3xl md:text-4xl text-[#280F91] "
-          style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+          style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
         >
           Chào buổi sáng, {user?.fullName?.split(" ").pop() || "Gia sư"}!
         </h1>
@@ -131,7 +131,7 @@ export function TutorDashboard() {
               <h2
                 className="text-xl text-gray-900 "
                 style={{
-                  fontFamily: "var(--font-montserrat)",
+                  fontFamily: "var(--font-nunito-family)",
                   fontWeight: 800,
                 }}
               >
@@ -189,7 +189,7 @@ export function TutorDashboard() {
           <div className="bg-[#CFE1FA]/20  rounded-2xl border border-[#CFE1FA] p-6">
             <h2
               className="text-xl text-[#280F91]  mb-4"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               Thao tác nhanh
             </h2>
@@ -238,7 +238,7 @@ export function TutorDashboard() {
               <h2
                 className="text-xl text-gray-900  flex items-center gap-2"
                 style={{
-                  fontFamily: "var(--font-montserrat)",
+                  fontFamily: "var(--font-nunito-family)",
                   fontWeight: 800,
                 }}
               >

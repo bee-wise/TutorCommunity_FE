@@ -52,7 +52,7 @@ export function HowItWorksSection() {
         <h2
           id="how-headline"
           className="text-3xl sm:text-4xl tracking-tight text-accent mb-16 text-center"
-          style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+          style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
         >
           Chỉ 3 Bước Để Bắt Đầu
         </h2>
@@ -99,7 +99,7 @@ export function HowItWorksSection() {
                 <span
                   className="text-2xl text-primary-foreground leading-none"
                   style={{
-                    fontFamily: "var(--font-montserrat)",
+                    fontFamily: "var(--font-nunito-family)",
                     fontWeight: 800,
                   }}
                 >
@@ -111,7 +111,7 @@ export function HowItWorksSection() {
                 <h3
                   className="text-lg text-foreground"
                   style={{
-                    fontFamily: "var(--font-montserrat)",
+                    fontFamily: "var(--font-nunito-family)",
                     fontWeight: 700,
                   }}
                 >

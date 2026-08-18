@@ -29,7 +29,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           <ArrowLeft weight="bold" className="w-4 h-4" />
           <span
             className="font-semibold text-sm"
-            style={{ fontFamily: "var(--font-montserrat)" }}
+            style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             Quay lại
           </span>

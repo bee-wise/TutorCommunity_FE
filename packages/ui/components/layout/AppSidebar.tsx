@@ -54,7 +54,7 @@ export function AppSidebar() {
             />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-bold text-primary font-montserrat">
+            <span className="truncate font-bold text-primary font-nunito">
               BeeWise
             </span>
             <span className="truncate text-xs text-muted-foreground font-medium">

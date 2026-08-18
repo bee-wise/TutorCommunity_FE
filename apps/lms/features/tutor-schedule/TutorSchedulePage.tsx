@@ -43,7 +43,7 @@ export function TutorSchedulePage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <h1 className="text-2xl font-extrabold font-montserrat text-foreground leading-tight">
+              <h1 className="text-2xl font-extrabold font-nunito text-foreground leading-tight">
                 Lịch Dạy
               </h1>
             </div>

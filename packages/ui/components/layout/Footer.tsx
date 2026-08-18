@@ -24,7 +24,7 @@ export function Footer() {
               <span
                 className="text-primary-foreground text-lg leading-none"
                 style={{
-                  fontFamily: "var(--font-montserrat)",
+                  fontFamily: "var(--font-nunito-family)",
                   fontWeight: 800,
                 }}
               >

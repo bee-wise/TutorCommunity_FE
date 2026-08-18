@@ -37,17 +37,17 @@ export function HeroSection() {
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-8 lg:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <HeroMotion>
-            <div className="flex flex-col gap-7">
+            <div className="flex flex-col gap-5">
               <h4 className="text-accent italic font-sans">
-                BeeWise: &quot;Find your tutor, fuel your future&quot;
+                &quot;Gia sư BeeWise, kiến tạo tương lai&quot;
               </h4>
               <h1
                 id="hero-headline"
-                className="font-montserrat text-[2rem] sm:text-5xl lg:text-[3.5rem] leading-[1.08] tracking-normal text-primary"
-                style={{ fontWeight: 800 }}
+                className="font-nunito uppercase text-[2rem] sm:text-5xl lg:text-[3.2rem] leading-[1.18] tracking-normal text-primary"
+                style={{ fontWeight: 900 }}
               >
                 Tìm Gia Sư Phù Hợp{" "}
-                <span className="text-accent">Trong 30 Giây</span>
+                <span className="text-accent">Với Beewise AI</span>
               </h1>
 
               <p className="text-base sm:text-lg text-foreground/60 leading-relaxed max-w-[50ch]">

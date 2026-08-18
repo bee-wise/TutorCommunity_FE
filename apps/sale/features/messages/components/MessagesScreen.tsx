@@ -22,7 +22,7 @@ export function MessagesScreen() {
             </div>
             <span
               className="text-xl tracking-tight text-[#280f91]"
-              style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               CỘNG ĐỒNG GIA SƯ
             </span>

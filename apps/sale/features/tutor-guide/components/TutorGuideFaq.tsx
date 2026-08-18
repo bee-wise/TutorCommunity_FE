@@ -54,8 +54,8 @@ function FaqItem({
         className="w-full flex items-center justify-between gap-4 py-5 text-left group"
       >
         <span
-          className="text-sm sm:text-base text-foreground font-semibold leading-snug group-hover:text-primary transition-colors"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          className="text-sm sm:text-base text-foreground font-bold leading-snug group-hover:text-primary transition-colors"
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {question}
         </span>
@@ -75,7 +75,7 @@ function FaqItem({
         className="overflow-hidden transition-all duration-300"
         style={{ maxHeight: isOpen ? "200px" : "0px", opacity: isOpen ? 1 : 0 }}
       >
-        <p className="pb-5 text-sm text-foreground/65 leading-relaxed max-w-[60ch]">
+        <p className="pb-5 font-medium text-sm text-foreground/55 leading-relaxed max-w-[60ch]">
           {answer}
         </p>
       </div>
@@ -91,25 +91,25 @@ export function TutorGuideFaq() {
       className="py-20 sm:py-24 bg-background"
       aria-labelledby="faq-heading"
     >
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-3 mb-12 text-center">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="gap-5 mb-12 text-center">
           <h2
             id="faq-heading"
-            className="tracking-tight leading-tight text-foreground"
+            className="tracking-tight uppercase leading-tight text-foreground"
             style={{
-              fontFamily: "var(--font-montserrat)",
+              fontFamily: "var(--font-google-sans)",
               fontWeight: 800,
               fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)",
             }}
           >
             Câu hỏi thường gặp
           </h2>
-          <p className="text-foreground/55 text-sm sm:text-base mx-auto max-w-[42ch]">
+          <p className="text-foreground/55 font-medium text-sm sm:text-base mx-auto">
             Những thắc mắc phổ biến nhất từ gia sư khi đăng ký tham gia BeeWise.
           </p>
         </div>
 
-        <div className="rounded-3xl border border-border px-6 sm:px-8 divide-y-0">
+        <div className="max-w-3xl mx-auto rounded-3xl border border-border px-6 sm:px-8 divide-y-0">
           {FAQS.map((faq) => (
             <FaqItem
               key={faq.id}

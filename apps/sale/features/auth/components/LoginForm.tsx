@@ -49,8 +49,7 @@ export function LoginForm() {
     <div className="w-full max-w-[420px] mx-auto">
       <div className="mb-6">
         <h1
-          className="text-2xl tracking-tight text-foreground mb-1"
-          style={{ fontFamily: "var(--font-montserrat)", fontWeight: 800 }}
+          className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground"
         >
           Chào mừng trở lại
         </h1>
@@ -116,7 +115,7 @@ export function LoginForm() {
             flex items-center justify-center gap-2
             hover:bg-accent/90 active:scale-[0.98] transition-all duration-200
             disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-accent/25"
-          style={{ fontFamily: "var(--font-montserrat)" }}
+          style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (
             <span className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
