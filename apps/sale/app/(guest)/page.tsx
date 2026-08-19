@@ -9,6 +9,7 @@ import { HowItWorksSection } from "@/features/landing/components/HowItWorksSecti
 import { TutorSection } from "@/features/landing/components/TutorSection";
 import { TutorCarouselSection } from "@/features/landing/components/TutorCarouselSection";
 import { FeedbackSection } from "@/features/landing/components/FeedbackSection";
+import { SponsorSection } from "@/features/landing/components/SponsorSection";
 import { FaqSection } from "@/features/landing/components/FaqSection";
 
 import { TutorGuideTrust } from "@/features/tutor-guide/components/TutorGuideTrust";
@@ -58,6 +59,7 @@ export default function LandingPage() {
         <TutorCarouselSection />
         <TutorSection />
         <FeedbackSection />
+        <SponsorSection />
         <FaqSection />
       </main>
       <Footer />

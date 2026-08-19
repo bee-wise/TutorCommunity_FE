@@ -44,8 +44,8 @@ export function TutorGuideSteps() {
         <div className="relative">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-2 text-sm font-bold text-primary shadow-sm">
-                Lộ trình dành cho gia sư mới
+              <div className="mb-4 italic inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-2 text-sm font-bold text-primary shadow-sm">
+                Hướng dẫn cho "new Bee"
               </div>
               <h2
                 id="steps-heading"
