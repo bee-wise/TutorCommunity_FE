@@ -37,17 +37,17 @@ export function TutorGuideFeatures() {
               id="features-heading"
               className="font-nunito uppercase font-black leading-[1.12] tracking-tight text-foreground"
             >
-              <span className="block text-3xl sm:text-4xl">
+              <span className="block text-3xl sm:text-4xl text-primary">
                 Một hồ sơ có chiều sâu,
               </span>
-              <span className="mt-2 block text-2xl text-primary sm:text-[2rem]">
+              <span className="mt-2 block text-2xl text-accent sm:text-[2rem]">
                 không chỉ là vài dòng giới thiệu
               </span>
             </h2>
             <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-foreground/65">
               Môn dạy, kinh nghiệm, bằng cấp, lịch trống và phương pháp giảng
               dạy được trình bày trong cùng một hồ sơ để học viên hiểu rõ bạn
-              trước khi kết nối.
+              trước khi công khai.
             </p>
             <div className="relative mt-9 aspect-[16/10] overflow-hidden rounded-[2rem] bg-muted">
               <Image

@@ -21,8 +21,8 @@ export function FaqSection() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2
           id="faq-headline"
-          className="text-3xl sm:text-4xl tracking-tight text-primary mb-12 text-center"
-          style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
+          className="text-3xl sm:text-4xl uppercase tracking-tight text-primary mb-12 text-center"
+          style={{ fontFamily: "var(--font-google-sans)", fontWeight: 800 }}
         >
           Câu Hỏi Thường Gặp
         </h2>
