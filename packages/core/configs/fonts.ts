@@ -13,6 +13,8 @@ export const googleSans = localFont({
       style: "italic",
     },
   ],
+  display: "swap",
+  preload: false,
   variable: "--font-google-sans",
 });
 
@@ -29,5 +31,7 @@ export const nunito = localFont({
       style: "italic",
     },
   ],
+  display: "swap",
+  preload: false,
   variable: "--font-nunito-family",
 });

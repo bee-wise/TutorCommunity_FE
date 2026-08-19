@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Header } from '@workspace/ui/components/layout/Header';
-import { Footer } from '@workspace/ui/components/layout/Footer';
-import { HeroSection } from '@/features/landing/components/HeroSection';
-import { PainPointSection } from '@/features/landing/components/PainPointSection';
-import { PosterSection } from '@/features/landing/components/PosterSection';
-import { SolutionSection } from '@/features/landing/components/SolutionSection';
-import { HowItWorksSection } from '@/features/landing/components/HowItWorksSection';
-import { TutorSection } from '@/features/landing/components/TutorSection';
-import { TutorCarouselSection } from '@/features/landing/components/TutorCarouselSection';
-import { FaqSection } from '@/features/landing/components/FaqSection';
-import { TutorPainpointSection } from '@/features/landing/components/TutorPainpointSection';
-import { TutorGuideTrust } from '@/features/tutor-guide/components/TutorGuideTrust';
+import { Header } from "@workspace/ui/components/layout/Header";
+import { Footer } from "@workspace/ui/components/layout/Footer";
+import { HeroSection } from "@/features/landing/components/HeroSection";
+import { AIFeaturesSection } from "@/features/landing/components/AIFeaturesSection";
+import { VideoIntroSection } from "@/features/landing/components/VideoIntroSection";
+import { FeatureShowcaseSection } from "@/features/landing/components/FeatureShowcaseSection";
+import { HowItWorksSection } from "@/features/landing/components/HowItWorksSection";
+import { TutorSection } from "@/features/landing/components/TutorSection";
+import { TutorCarouselSection } from "@/features/landing/components/TutorCarouselSection";
+import { FeedbackSection } from "@/features/landing/components/FeedbackSection";
+import { FaqSection } from "@/features/landing/components/FaqSection";
+
+import { TutorGuideTrust } from "@/features/tutor-guide/components/TutorGuideTrust";
 
 export const metadata: Metadata = {
   title: "Cộng Đồng Gia Sư - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
@@ -49,19 +50,17 @@ export default function LandingPage() {
       <Header />
       <main id="main-content">
         <HeroSection />
-        <PosterSection />
-        <PainPointSection />
-        <TutorPainpointSection />
-        <SolutionSection />
+        <VideoIntroSection />
+        <AIFeaturesSection />
+        <FeatureShowcaseSection />
         <TutorGuideTrust />
         <HowItWorksSection />
         <TutorCarouselSection />
         <TutorSection />
+        <FeedbackSection />
         <FaqSection />
       </main>
       <Footer />
     </>
   );
 }
-
-
