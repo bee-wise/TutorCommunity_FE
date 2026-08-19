@@ -95,7 +95,7 @@ export function TutorGuideFaq() {
         <div className="gap-5 mb-12 text-center">
           <h2
             id="faq-heading"
-            className="tracking-tight uppercase leading-tight text-foreground"
+            className="tracking-tight uppercase leading-tight text-primary"
             style={{
               fontFamily: "var(--font-google-sans)",
               fontWeight: 800,
