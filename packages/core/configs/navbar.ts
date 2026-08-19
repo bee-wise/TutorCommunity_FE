@@ -103,7 +103,6 @@ export function resolveNavbarState({
 
 const guestMenu: NavbarItem[] = [
   { label: "Gia sư", href: "/tutors" },
-  { label: "Cách hoạt động", href: "/#how-it-works" },
   { label: "Trở thành gia sư", href: "/tutor-guide" },
   { label: "Về chúng tôi", href: "/about-us" },
 ];
