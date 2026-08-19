@@ -111,7 +111,7 @@ export function HowItWorksSection() {
                 <h3
                   className="text-lg text-foreground"
                   style={{
-                    fontFamily: "var(--font-nunito-family)",
+                    fontFamily: "var(--font-google-sans)",
                     fontWeight: 700,
                   }}
                 >
