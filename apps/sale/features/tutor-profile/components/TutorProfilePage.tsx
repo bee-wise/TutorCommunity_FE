@@ -15,7 +15,6 @@ import { TutorTeachingMethods } from "./TutorTeachingMethods";
 import { useTutorDetailQuery } from "../hooks/useTutorDetailQuery";
 import { useState, useEffect } from "react";
 import { EmptyState } from "@workspace/ui/components/ui/empty-state";
-import Link from "next/link";
 import LoadingGradient from "@workspace/ui/components/LoadingGradient";
 
 export function TutorProfilePage() {
@@ -102,12 +101,13 @@ export function TutorProfilePage() {
           title="Không tìm thấy hồ sơ gia sư"
           description="Hồ sơ gia sư này không tồn tại hoặc đã bị gỡ. Vui lòng kiểm tra lại đường dẫn."
           action={
-            <Link
-              href="/tutors"
-              className="text-primary hover:underline font-semibold text-sm"
+            <button
+              type="button"
+              onClick={handleBack}
+              className="text-primary hover:underline font-semibold text-sm cursor-pointer"
             >
-              Trở về danh sách gia sư
-            </Link>
+              Trở về trang trước đó
+            </button>
           }
         />
       </div>
