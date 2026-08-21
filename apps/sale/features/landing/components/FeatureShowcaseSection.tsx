@@ -80,80 +80,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     accentBg: "from-emerald-500/10 via-teal-500/5 to-transparent",
     mockupTitle: "Hồ sơ kiểm duyệt • Mã GS: BW-8892",
     renderMockup: () => (
-      <div className="w-full flex flex-col gap-4 p-5 sm:p-7">
-        {/* Tutor Profile Header Card */}
-        <div className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-border shadow-xs">
-          <div className="relative shrink-0">
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black text-lg">
-              QA
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white">
-              <CheckCircle size={13} weight="fill" />
-            </div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h4 className="text-sm font-bold text-foreground truncate">
-                Lê Quỳnh Anh
-              </h4>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold">
-                VERIFIED
-              </span>
-            </div>
-            <p className="text-xs text-foreground/60 mt-0.5 truncate">
-              Thủ khoa ĐH Ngoại Thương • IELTS 8.0
-            </p>
-            <p className="text-[11px] text-emerald-600 font-semibold mt-1">
-              ✓ Đã qua phỏng vấn chuyên môn bởi BeeWise
-            </p>
-          </div>
-        </div>
-
-        {/* Verification Badges Grid */}
-        <div className="grid grid-cols-2 gap-2.5">
-          {[
-            {
-              label: "Căn cước công dân",
-              status: "Đã xác thực CCCD",
-              icon: CheckCircle,
-            },
-            {
-              label: "Bằng Cử nhân Xuất sắc",
-              status: "Đại học Ngoại Thương",
-              icon: FileText,
-            },
-            {
-              label: "Chứng chỉ Quốc tế",
-              status: "IELTS 8.0 (2024)",
-              icon: Star,
-            },
-            {
-              label: "Phỏng vấn giảng dạy",
-              status: "Đạt chuẩn sư phạm",
-              icon: VideoCamera,
-            },
-          ].map((item, i) => {
-            const ItemIcon = item.icon;
-            return (
-              <div
-                key={i}
-                className="flex items-start gap-2.5 p-3 rounded-xl bg-white border border-border/80 shadow-2xs"
-              >
-                <div className="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0 mt-0.5">
-                  <ItemIcon size={14} weight="fill" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-foreground truncate">
-                    {item.label}
-                  </p>
-                  <p className="text-[11px] text-emerald-600 font-medium truncate mt-0.5">
-                    {item.status}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <div className="w-full p-2 sm:p-4 flex items-center justify-center">
+        <Image
+          src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1787294807/%E1%BA%A2nh_ch%E1%BB%A5p_m%C3%A0n_h%C3%ACnh_2026-08-21_134908.png"
+          alt="Gia sư được xác thực hồ sơ"
+          width={1200}
+          height={800}
+          unoptimized
+          className="w-full h-auto object-contain rounded-xl shadow-xs"
+        />
       </div>
     ),
   },
