@@ -270,7 +270,7 @@ export function Header({
                   className={
                     action.variant === "primary"
                       ? "inline-flex h-8 items-center justify-center whitespace-nowrap rounded-full bg-accent px-4 text-xs font-bold text-accent-foreground transition-all duration-200 hover:bg-highlight active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                      : "hidden text-sm font-bold text-white/70 transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:inline-flex"
+                      : "hidden text-sm font-google-sans font-bold text-white/70 transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:inline-flex"
                   }
                 >
                   {action.label}
