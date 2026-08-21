@@ -5,7 +5,7 @@ import { googleSans, nunito } from "@workspace/core/configs/fonts";
 import { TooltipProvider } from "@workspace/ui/components/ui/tooltip";
 
 export const metadata: Metadata = {
-  title: "BeeWise LMS — Hệ Thống Quản Lý Học Tập Thông Minh",
+  title: "BeeWise LMS | Hệ Thống Quản Lý Học Tập Thông Minh",
 };
 
 export default function RootLayout({
