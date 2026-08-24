@@ -17,6 +17,7 @@ import {
   MonitorPlay,
   Receipt,
   LucideIcon,
+  NotebookPen,
 } from "lucide-react";
 
 export interface NavItem {
@@ -48,6 +49,11 @@ export const navigationConfig: RoleNavigation = {
           title: "Kho Tài Liệu",
           url: "/lms/learner/materials",
           icon: FolderOpen,
+        },
+        {
+          title: "Làm bài tập",
+          url: "/lms/learner/exercises",
+          icon: NotebookPen,
         },
         {
           title: "Tin nhắn với gia sư",

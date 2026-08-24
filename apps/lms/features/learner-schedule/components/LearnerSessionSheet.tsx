@@ -1,6 +1,6 @@
 "use client";
 
-import { VideoCamera, X } from "@phosphor-icons/react";
+import { VideoCamera, Warning, X } from "@phosphor-icons/react";
 import {
   Sheet,
   SheetContent,
@@ -22,9 +22,10 @@ interface LearnerSessionSheetProps {
   session: LearnerSession | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onCancelRequest: (session: LearnerSession) => void;
 }
 
-export function LearnerSessionSheet({ session, open, onOpenChange }: LearnerSessionSheetProps) {
+export function LearnerSessionSheet({ session, open, onOpenChange, onCancelRequest }: LearnerSessionSheetProps) {
   if (!session) return null;
   const isUpcoming = session.status === "UPCOMING";
 
@@ -61,13 +62,29 @@ export function LearnerSessionSheet({ session, open, onOpenChange }: LearnerSess
               <p className="mt-1.5 text-sm leading-6 text-foreground">{session.notes}</p>
             </div>
           )}
+
+          {session.cancellation ? (
+            <div className="mt-5 rounded-xl border border-[#E1ABA7]/60 bg-[#F7E5E3] p-4">
+              <p className="text-xs font-bold text-[#9B3E38]">Lý do học viên hủy lịch</p>
+              <p className="mt-1.5 text-sm leading-6 text-slate-700">{session.cancellation.reasonText}</p>
+            </div>
+          ) : null}
         </div>
 
         <div className="border-t border-border p-5 sm:px-6">
           {isUpcoming ? (
-            <a href={session.classroomLink} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#280F91] text-sm font-bold text-white transition-colors hover:bg-[#280F91]/90 active:scale-[0.98]">
-              <VideoCamera size={18} weight="fill" /> Vào lớp học
-            </a>
+            <div className="space-y-3">
+              <div className="rounded-xl border border-[#FADC76] bg-[#FFF9E8] p-3 text-[#6D4A13]">
+                <div className="flex items-center gap-1.5 text-xs font-extrabold"><Warning size={16} weight="fill" />Lưu ý học phí</div>
+                <p className="mt-1 text-xs leading-5">Tự nguyện hủy lịch có thể làm mất học phí của buổi này. Nếu cần đổi lịch, hãy liên hệ tư vấn viên {session.consultantName}.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => onCancelRequest(session)} className="h-11 rounded-xl border border-[#C97670]/50 text-sm font-bold text-[#9B3E38] hover:bg-[#F7E5E3]">Hủy lịch học</button>
+                <a href={session.classroomLink} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#280F91] text-sm font-bold text-white transition-colors hover:bg-[#280F91]/90 active:scale-[0.98]">
+                  <VideoCamera size={18} weight="fill" /> Vào lớp học
+                </a>
+              </div>
+            </div>
           ) : (
             <p className="rounded-xl bg-muted px-4 py-3 text-center text-sm font-semibold text-muted-foreground">
               {session.status === "COMPLETED" ? "Buổi học đã hoàn thành" : "Buổi học đã được hủy"}
@@ -82,4 +99,3 @@ export function LearnerSessionSheet({ session, open, onOpenChange }: LearnerSess
 function InfoItem({ label, value }: { label: string; value: string }) {
   return <div><dt className="text-xs text-muted-foreground">{label}</dt><dd className="mt-1 text-sm font-bold text-foreground">{value}</dd></div>;
 }
-

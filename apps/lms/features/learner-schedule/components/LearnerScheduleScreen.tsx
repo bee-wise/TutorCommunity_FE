@@ -2,20 +2,37 @@
 
 import { useState } from "react";
 import { useLearnerSchedule } from "../hooks/useLearnerSchedule";
-import type { LearnerSession } from "../types/learner-schedule.types";
+import type { LearnerCancellationRequest, LearnerScheduleView, LearnerSession } from "../types/learner-schedule.types";
+import { CancelLearnerSessionDialog } from "./CancelLearnerSessionDialog";
 import { LearnerCalendar } from "./LearnerCalendar";
+import { LearnerScheduleList } from "./LearnerScheduleList";
 import { LearnerSessionSheet } from "./LearnerSessionSheet";
 import { ScheduleFilters } from "./ScheduleFilters";
 import { UpcomingClassesPanel } from "./UpcomingClassesPanel";
 
 export function LearnerScheduleScreen() {
   const schedule = useLearnerSchedule();
-  const [selectedSession, setSelectedSession] = useState<LearnerSession | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [view, setView] = useState<LearnerScheduleView>("calendar");
+  const selectedSession = schedule.sessions.find((session) => session.id === selectedSessionId) ?? null;
 
   function openSession(session: LearnerSession) {
-    setSelectedSession(session);
+    setSelectedSessionId(session.id);
     setSheetOpen(true);
+  }
+
+  function requestCancellation(session: LearnerSession) {
+    setSelectedSessionId(session.id);
+    setSheetOpen(false);
+    setCancelDialogOpen(true);
+  }
+
+  function confirmCancellation(request: LearnerCancellationRequest) {
+    if (!selectedSessionId) return;
+    schedule.cancelSession(selectedSessionId, request);
+    setCancelDialogOpen(false);
   }
 
   return (
@@ -32,18 +49,21 @@ export function LearnerScheduleScreen() {
         <ScheduleFilters
           filters={schedule.filters}
           subjects={schedule.subjects}
+          view={view}
           onSubjectChange={schedule.setSubject}
           onStatusChange={schedule.setStatus}
+          onViewChange={setView}
         />
 
-        <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
-          <LearnerCalendar sessions={schedule.filteredSessions} onSessionClick={openSession} />
-          <UpcomingClassesPanel sessions={schedule.upcomingSessions} onSelect={openSession} />
-        </div>
+        <UpcomingClassesPanel sessions={schedule.upcomingSessions} onSelect={openSession} />
+
+        {view === "calendar"
+          ? <LearnerCalendar sessions={schedule.filteredSessions} onSessionClick={openSession} />
+          : <LearnerScheduleList sessions={schedule.filteredSessions} onSelect={openSession} />}
       </div>
 
-      <LearnerSessionSheet session={selectedSession} open={sheetOpen} onOpenChange={setSheetOpen} />
+      <LearnerSessionSheet session={selectedSession} open={sheetOpen} onOpenChange={setSheetOpen} onCancelRequest={requestCancellation} />
+      <CancelLearnerSessionDialog session={selectedSession} open={cancelDialogOpen} onOpenChange={setCancelDialogOpen} onConfirm={confirmCancellation} />
     </div>
   );
 }
-
