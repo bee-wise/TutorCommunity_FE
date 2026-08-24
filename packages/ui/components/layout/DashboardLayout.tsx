@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { SidebarProvider } from '@workspace/ui/components/ui/sidebar';
 import { AppSidebar } from "./AppSidebar";
 import { Topbar } from "./Topbar";
@@ -10,6 +11,16 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
+  const pathname = usePathname();
+  const exerciseRoute = pathname.match(/^\/lms\/learner\/exercises\/([^/]+)$/);
+  const isFullscreenExercise = Boolean(exerciseRoute && exerciseRoute[1] !== "classes");
+
+  if (isFullscreenExercise) {
+    return (
+      <main className="min-h-[100dvh] w-full bg-background">{children}</main>
+    );
+  }
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">

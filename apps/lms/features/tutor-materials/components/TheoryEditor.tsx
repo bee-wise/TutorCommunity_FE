@@ -22,7 +22,7 @@ export const TheoryEditor = ({ initialData }: TheoryEditorProps) => {
       const parsed = JSON.parse(tempData);
       setData(parsed);
       setIsEditing(false);
-    } catch (error) {
+    } catch {
       alert("JSON format is invalid. Please check your syntax.");
     }
   };

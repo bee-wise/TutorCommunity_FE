@@ -1,0 +1,95 @@
+import type {
+  LearnerConversation,
+  LearnerMessage,
+} from "../types/learner-messages.types";
+
+export const LEARNER_CONVERSATIONS: LearnerConversation[] = [
+  {
+    id: "conversation-math-10",
+    classId: "class-math-10",
+    className: "Toán 10 - Nền tảng",
+    subject: "Toán",
+    level: "Lớp 10",
+    tutor: { id: "tutor-thu-ha", name: "Cô Nguyễn Thu Hà", initials: "TH", isOnline: true },
+    status: "ACTIVE",
+    lastMessage: "Cô đã gửi phần bài tập ôn tập cho em nhé.",
+    lastMessageAt: "2026-08-24T16:42:00+07:00",
+    unreadCount: 2,
+  },
+  {
+    id: "conversation-physics-10",
+    classId: "class-physics-10",
+    className: "Vật lý 10 - Chuyển động",
+    subject: "Vật lý",
+    level: "Lớp 10",
+    tutor: { id: "tutor-minh-duc", name: "Thầy Lê Minh Đức", initials: "MĐ", isOnline: false },
+    status: "ACTIVE",
+    lastMessage: "Buổi sau mình sẽ chữa phần đồ thị chuyển động.",
+    lastMessageAt: "2026-08-23T20:18:00+07:00",
+    unreadCount: 0,
+  },
+  {
+    id: "conversation-ielts-65",
+    classId: "class-ielts-65",
+    className: "IELTS 6.5 - Writing",
+    subject: "Tiếng Anh",
+    level: "IELTS 6.5",
+    tutor: { id: "tutor-anh-thu", name: "Cô Phạm Anh Thư", initials: "AT", isOnline: true },
+    status: "ACTIVE",
+    lastMessage: "Em đã xem nhận xét bài Writing rồi ạ.",
+    lastMessageAt: "2026-08-22T21:05:00+07:00",
+    unreadCount: 0,
+  },
+  {
+    id: "conversation-chemistry-9",
+    classId: "class-chemistry-9",
+    className: "Hóa học 9 - Luyện thi",
+    subject: "Hóa học",
+    level: "Lớp 9",
+    tutor: { id: "tutor-quoc-bao", name: "Thầy Trần Quốc Bảo", initials: "QB", isOnline: false },
+    status: "CLOSED",
+    closeReason: "CLASS_ENDED",
+    lastMessage: "Chúc em ôn tập tốt và đạt kết quả như mong muốn.",
+    lastMessageAt: "2026-06-28T19:40:00+07:00",
+    unreadCount: 0,
+  },
+  {
+    id: "conversation-literature-10",
+    classId: "class-literature-10",
+    className: "Ngữ văn 10 - Đọc hiểu",
+    subject: "Ngữ văn",
+    level: "Lớp 10",
+    tutor: { id: "tutor-mai-lan", name: "Cô Vũ Mai Lan", initials: "ML", isOnline: false },
+    status: "CLOSED",
+    closeReason: "ENROLLMENT_ENDED",
+    lastMessage: "Các tài liệu cũ vẫn còn trong Kho tài liệu của em.",
+    lastMessageAt: "2026-05-12T18:25:00+07:00",
+    unreadCount: 0,
+  },
+];
+
+export const LEARNER_MESSAGES: Record<string, LearnerMessage[]> = {
+  "conversation-math-10": [
+    { id: "math-message-1", conversationId: "conversation-math-10", sender: "SYSTEM", senderName: "BeeWise", text: "Cuộc trò chuyện của lớp Toán 10 - Nền tảng đã được tạo.", sentAt: "2026-08-20T17:45:00+07:00", isRead: true },
+    { id: "math-message-2", conversationId: "conversation-math-10", sender: "TUTOR", senderName: "Cô Nguyễn Thu Hà", text: "Chào em, phần bất phương trình hôm nay em còn vướng chỗ nào không?", sentAt: "2026-08-24T16:28:00+07:00", isRead: true },
+    { id: "math-message-3", conversationId: "conversation-math-10", sender: "LEARNER", senderName: "Bạn", text: "Em chưa chắc phần lập bảng xét dấu ạ.", sentAt: "2026-08-24T16:31:00+07:00", isRead: true },
+    { id: "math-message-4", conversationId: "conversation-math-10", sender: "TUTOR", senderName: "Cô Nguyễn Thu Hà", text: "Em xem lại ví dụ số 2 trong tài liệu. Mình xác định nghiệm rồi chia trục số thành từng khoảng nhé.", sentAt: "2026-08-24T16:39:00+07:00", isRead: false },
+    { id: "math-message-5", conversationId: "conversation-math-10", sender: "TUTOR", senderName: "Cô Nguyễn Thu Hà", text: "Cô đã gửi phần bài tập ôn tập cho em nhé.", sentAt: "2026-08-24T16:42:00+07:00", isRead: false },
+  ],
+  "conversation-physics-10": [
+    { id: "physics-message-1", conversationId: "conversation-physics-10", sender: "TUTOR", senderName: "Thầy Lê Minh Đức", text: "Thầy đã xem bài của em. Cách chọn hệ quy chiếu đã đúng rồi.", sentAt: "2026-08-23T20:12:00+07:00", isRead: true },
+    { id: "physics-message-2", conversationId: "conversation-physics-10", sender: "TUTOR", senderName: "Thầy Lê Minh Đức", text: "Buổi sau mình sẽ chữa phần đồ thị chuyển động.", sentAt: "2026-08-23T20:18:00+07:00", isRead: true },
+  ],
+  "conversation-ielts-65": [
+    { id: "ielts-message-1", conversationId: "conversation-ielts-65", sender: "TUTOR", senderName: "Cô Phạm Anh Thư", text: "Cô đã ghi chú trực tiếp các lỗi dùng từ trong bài của em.", sentAt: "2026-08-22T20:54:00+07:00", isRead: true },
+    { id: "ielts-message-2", conversationId: "conversation-ielts-65", sender: "LEARNER", senderName: "Bạn", text: "Em đã xem nhận xét bài Writing rồi ạ.", sentAt: "2026-08-22T21:05:00+07:00", isRead: true },
+  ],
+  "conversation-chemistry-9": [
+    { id: "chemistry-message-1", conversationId: "conversation-chemistry-9", sender: "TUTOR", senderName: "Thầy Trần Quốc Bảo", text: "Chúc em ôn tập tốt và đạt kết quả như mong muốn.", sentAt: "2026-06-28T19:40:00+07:00", isRead: true },
+    { id: "chemistry-message-2", conversationId: "conversation-chemistry-9", sender: "SYSTEM", senderName: "BeeWise", text: "Lớp học đã kết thúc. Cuộc trò chuyện được chuyển sang chế độ chỉ đọc.", sentAt: "2026-06-30T08:00:00+07:00", isRead: true },
+  ],
+  "conversation-literature-10": [
+    { id: "literature-message-1", conversationId: "conversation-literature-10", sender: "TUTOR", senderName: "Cô Vũ Mai Lan", text: "Các tài liệu cũ vẫn còn trong Kho tài liệu của em.", sentAt: "2026-05-12T18:25:00+07:00", isRead: true },
+    { id: "literature-message-2", conversationId: "conversation-literature-10", sender: "SYSTEM", senderName: "BeeWise", text: "Bạn không còn tham gia lớp học này. Cuộc trò chuyện được chuyển sang chế độ chỉ đọc.", sentAt: "2026-05-13T08:00:00+07:00", isRead: true },
+  ],
+};

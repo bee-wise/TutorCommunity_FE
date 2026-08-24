@@ -83,10 +83,6 @@ apiClient.interceptors.response.use(
       shouldAttemptRefresh(originalRequest.url) &&
       !(originalRequest as RetriableRequestConfig)._retry
     ) {
-      if (originalRequest.url?.includes("/auth/me")) {
-        return Promise.reject(apiError);
-      }
-
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

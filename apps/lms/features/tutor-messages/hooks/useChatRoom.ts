@@ -54,7 +54,7 @@ export function useChatRoom(roomId: string) {
       await new Promise((r) => setTimeout(r, 350));
       setSending(false);
     },
-    [roomId, isReadOnly]
+    [roomId, isReadOnly, currentUserId, currentUserName, currentUserRole]
   );
 
   const sendFile = useCallback(
@@ -83,7 +83,7 @@ export function useChatRoom(roomId: string) {
       setMessages((prev) => [...prev, newMsg]);
       setUploadingFile(false);
     },
-    [roomId, isReadOnly]
+    [roomId, isReadOnly, currentUserId, currentUserName, currentUserRole]
   );
 
   return {

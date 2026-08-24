@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarDays } from "lucide-react";
 import { useScheduleFilters } from "./hooks/useScheduleFilters";
 import { OverviewCards } from "./components/OverviewCards";
 import { ControlBar } from "./components/ControlBar";

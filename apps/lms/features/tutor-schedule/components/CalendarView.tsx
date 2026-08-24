@@ -21,7 +21,6 @@ const MONTH_NAMES = [
 
 // Reference today
 const TODAY_STR = "2026-07-08";
-const TODAY = new Date(TODAY_STR);
 
 function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();

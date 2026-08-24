@@ -13,27 +13,17 @@ import { TutorMobileCTA } from "./TutorMobileCTA";
 import { TutorTeachingHistory } from "./TutorTeachingHistory";
 import { TutorTeachingMethods } from "./TutorTeachingMethods";
 import { useTutorDetailQuery } from "../hooks/useTutorDetailQuery";
-import { useState, useEffect } from "react";
 import { EmptyState } from "@workspace/ui/components/ui/empty-state";
 import LoadingGradient from "@workspace/ui/components/LoadingGradient";
+import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
 
 export function TutorProfilePage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
   const { data, isLoading, isError } = useTutorDetailQuery(id);
-  const [isSaved, setIsSaved] = useState(false);
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      const saved: string[] = JSON.parse(
-        localStorage.getItem("savedTutors") || "[]",
-      );
-      setIsSaved(saved.includes(id));
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [id]);
+  const { isFavorite, toggleFavorite } = useFavoriteTutors();
+  const isSaved = isFavorite(id);
 
   const handleConnect = () => {
     // TODO: kết nối với luồng gửi yêu cầu kết nối.
@@ -53,18 +43,12 @@ export function TutorProfilePage() {
   };
 
   const handleSave = () => {
-    const saved: string[] = JSON.parse(
-      localStorage.getItem("savedTutors") || "[]",
-    );
-    if (isSaved) {
-      const newSaved = saved.filter((tutorId) => tutorId !== id);
-      localStorage.setItem("savedTutors", JSON.stringify(newSaved));
-      setIsSaved(false);
-    } else {
-      saved.push(id);
-      localStorage.setItem("savedTutors", JSON.stringify(saved));
-      setIsSaved(true);
-    }
+    if (!id) return;
+    toggleFavorite({
+      tutorId: id,
+      tutorName: data?.data?.displayName,
+      isCurrentlySaved: isSaved,
+    });
   };
 
   if (isLoading) {

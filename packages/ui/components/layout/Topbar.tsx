@@ -30,11 +30,17 @@ import {
   AvatarImage,
 } from "@workspace/ui/components/ui/avatar";
 import { useLogout } from "@workspace/core/hooks/useLogout";
+import { useNotificationDrawerStore } from "@workspace/core/store/useNotificationDrawerStore";
+import { cn } from "@workspace/core/helpers/utils";
 
 export function Topbar() {
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
+  const openDrawer = useNotificationDrawerStore((state) => state.openDrawer);
+  const drawerUnreadCount = useNotificationDrawerStore((state) => state.unreadCount);
   const { mutate: logout } = useLogout();
+  
+  const unreadNotificationCount = Math.max(0, drawerUnreadCount || (user?.unreadNotificationCount ?? 0));
 
   // Simple breadcrumb generator based on pathname
   const paths = pathname.split("/").filter(Boolean);
@@ -80,9 +86,14 @@ export function Topbar() {
 
       <div className="ml-auto flex items-center gap-4">
         {/* Notifications Mock */}
-        <button className="relative size-8 flex items-center justify-center rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
-          <Bell className="size-4.5" />
-          <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-destructive border-2 border-background" />
+        <button 
+          onClick={openDrawer}
+          className="relative size-8 flex items-center justify-center rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Bell className={cn("size-4.5", unreadNotificationCount > 0 && "animate-pulse text-accent")} />
+          {unreadNotificationCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-destructive border-2 border-background" />
+          )}
         </button>
 
         <DropdownMenu>

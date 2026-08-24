@@ -9,6 +9,7 @@ import type {
   NavbarAction,
   NavbarItem,
 } from "@workspace/core/configs/navbar";
+import { useNotificationDrawerStore } from "@workspace/core/store/useNotificationDrawerStore";
 
 interface Props {
   links: NavbarItem[];
@@ -34,6 +35,9 @@ export function MobileNav({
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const openDrawer = useNotificationDrawerStore((state) => state.openDrawer);
+  const drawerUnreadCount = useNotificationDrawerStore((state) => state.unreadCount);
+  const actualUnreadCount = Math.max(0, drawerUnreadCount || unreadNotificationCount);
 
   useEffect(() => {
     if (!open) return;
@@ -123,19 +127,21 @@ export function MobileNav({
           })}
 
           {showNotifications && (
-            <Link
-              href={notificationHref}
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 border-t border-border pt-3 text-sm font-medium text-foreground/80 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            <button
+              onClick={() => {
+                setOpen(false);
+                openDrawer();
+              }}
+              className="flex items-center gap-2 border-t border-border pt-3 text-sm font-medium text-foreground/80 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary w-full text-left"
             >
               <Bell size={16} weight="bold" />
               <span>Thông báo</span>
-              {unreadNotificationCount > 0 && (
-                <span className="ml-auto min-w-5 rounded-full bg-accent px-1.5 py-0.5 text-center text-[11px] font-bold text-accent-foreground">
-                  {unreadNotificationCount}
+              {actualUnreadCount > 0 && (
+                <span className="ml-auto min-w-5 rounded-full bg-accent px-1.5 py-0.5 text-center text-[11px] font-bold text-accent-foreground animate-pulse">
+                  {actualUnreadCount}
                 </span>
               )}
-            </Link>
+            </button>
           )}
 
           {accountItems.length > 0 && (
