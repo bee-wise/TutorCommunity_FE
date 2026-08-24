@@ -4,8 +4,10 @@ import "@workspace/ui/globals.css";
 import { Metadata } from "next";
 import { GuestFavoriteModal } from "@/features/favorite-tutors/components/GuestFavoriteModal";
 import { NotificationDrawer } from "@/features/notifications/components/NotificationDrawer";
+import { saleSeoConfig } from "@/configs/seo";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(saleSeoConfig.siteUrl),
   title: "Cộng đồng gia sư",
 };
 

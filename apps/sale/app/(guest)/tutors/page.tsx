@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     "BeeWise",
     "tìm gia sư AI",
   ],
+  alternates: { canonical: "/tutors" },
 };
 
 export default function TutorListPage() {
