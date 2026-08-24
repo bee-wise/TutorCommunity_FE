@@ -4,7 +4,6 @@ import { useState, useRef, type FormEvent, type KeyboardEvent } from "react";
 import {
   Send,
   Paperclip,
-  Zap,
   Image as ImageIcon,
   ArrowLeft,
   Lock,
@@ -15,7 +14,6 @@ import { MessageBubble } from "./MessageBubble";
 import { ConnectionInfoPanel } from "./ConnectionInfoPanel";
 import { useChatRoom } from "../hooks/useChatRoom";
 import { STAGE_LABELS, STAGE_COLORS } from "../constants/messages.utils";
-import type { ChatParticipantRole } from "../types/messages.types";
 import { MessagesScreen } from "./MessagesScreen";
 
 interface ChatRoomPanelProps {

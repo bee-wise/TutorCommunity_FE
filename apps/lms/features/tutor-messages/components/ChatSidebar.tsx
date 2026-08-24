@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Search, MessageCircleIcon, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useMessages } from "../hooks/useMessages";
-import { useAuthStore } from "@workspace/core/store/useAuthStore";
-import type { ChatRoom, ChatParticipantRole } from "../types/messages.types";
+import type { ChatRoom } from "../types/messages.types";
 import {
   STAGE_LABELS,
   STAGE_COLORS,
@@ -19,13 +17,7 @@ const STATUS_ROOM_LABELS: Record<string, string> = {
   CONVERTED_TO_CLASS: "Thành lớp học",
 };
 
-function RoomRow({
-  room,
-  currentUserRole,
-}: {
-  room: ChatRoom;
-  currentUserRole: ChatParticipantRole;
-}) {
+function RoomRow({ room }: { room: ChatRoom }) {
   const isReadOnly = room.status !== "ACTIVE";
 
   const basePath = "/lms/tutor/messages";
@@ -95,8 +87,6 @@ function RoomRow({
 export function ChatSidebar() {
   const { rooms } = useMessages();
   const [query, setQuery] = useState("");
-  const user = useAuthStore((s) => s.user);
-  const currentUserRole = "TUTOR" as ChatParticipantRole;
 
   const filtered = rooms.filter(
     (r) =>
@@ -159,11 +149,7 @@ export function ChatSidebar() {
         ) : (
           <div className="space-y-0.5">
             {filtered.map((room) => (
-              <RoomRow
-                key={room.id}
-                room={room}
-                currentUserRole={currentUserRole}
-              />
+              <RoomRow key={room.id} room={room} />
             ))}
           </div>
         )}

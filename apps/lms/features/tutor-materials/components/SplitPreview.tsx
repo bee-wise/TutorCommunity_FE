@@ -4,15 +4,13 @@ import React, { useState } from "react";
 import { TheoryEditor } from "./TheoryEditor";
 import { QuizPreview } from "./QuizPreview";
 import { AIAnalyzeResponse } from "../types";
-import Link from "next/link";
-import { ArrowLeft, Check, CloudArrowUp } from "@phosphor-icons/react";
+import { Check, CloudArrowUp } from "@phosphor-icons/react";
 
 interface SplitPreviewProps {
   data: AIAnalyzeResponse;
-  lessonId: string;
 }
 
-export const SplitPreview = ({ data, lessonId }: SplitPreviewProps) => {
+export const SplitPreview = ({ data }: SplitPreviewProps) => {
   const [activeTab, setActiveTab] = useState<"theory" | "quiz">("theory");
   const [isPublishing, setIsPublishing] = useState(false);
   const [published, setPublished] = useState(false);
