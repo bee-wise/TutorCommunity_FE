@@ -14,6 +14,8 @@ import {
 } from "@workspace/core/configs/navbar";
 import { useLogout } from "@workspace/core/hooks/useLogout";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import { useNotificationDrawerStore } from "@workspace/core/store/useNotificationDrawerStore";
+import { cn } from "@workspace/core/helpers/utils";
 import type { MeType } from "@workspace/core/types/auth.type";
 import { MobileNav } from "./MobileNav";
 
@@ -60,6 +62,8 @@ export function Header({
   const storeUser = useAuthStore((state) => state.user);
   const storeIsAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const storeIsAuthLoading = useAuthStore((state) => state.isAuthLoading);
+  const openDrawer = useNotificationDrawerStore((state) => state.openDrawer);
+  const drawerUnreadCount = useNotificationDrawerStore((state) => state.unreadCount);
   const { mutate: logout } = useLogout();
   const user = previewUser !== undefined ? previewUser : storeUser;
   const isAuthenticated =
@@ -82,7 +86,7 @@ export function Header({
         : user?.lmsAccessEnabled === true;
   const unreadNotificationCount = Math.max(
     0,
-    user?.unreadNotificationCount ?? 0,
+    drawerUnreadCount || (user?.unreadNotificationCount ?? 0)
   );
   const unreadChatCount = Math.max(0, user?.unreadChatCount ?? 0);
   const displayName = getDisplayName(user);
@@ -248,18 +252,19 @@ export function Header({
             {!isAuthLoading &&
               navbarConfig.showNotifications &&
               navbarState !== "GUEST" && (
-                <Link
-                  href={notificationHref}
+                <button
+                  type="button"
+                  onClick={openDrawer}
                   aria-label="Thông báo"
                   className="relative hidden h-8 w-8 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:inline-flex"
                 >
-                  <Bell className="h-4 w-4" aria-hidden="true" />
+                  <Bell className={cn("h-4 w-4", unreadNotificationCount > 0 && "animate-pulse text-accent")} aria-hidden="true" />
                   {unreadNotificationCount > 0 && (
                     <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-accent px-1 text-center text-[10px] font-bold leading-5 text-accent-foreground">
                       {unreadNotificationCount}
                     </span>
                   )}
-                </Link>
+                </button>
               )}
 
             {!isAuthLoading &&

@@ -24,6 +24,7 @@ export interface NavItem {
   url: string;
   icon: LucideIcon;
   isActive?: boolean;
+  openInNewTab?: boolean;
 }
 
 export interface NavGroup {
@@ -49,7 +50,7 @@ export const navigationConfig: RoleNavigation = {
           icon: FolderOpen,
         },
         {
-          title: "Phòng Chat Hiện Tại",
+          title: "Tin nhắn với gia sư",
           url: "/lms/learner/chat",
           icon: MessageCircle,
         },
@@ -60,8 +61,9 @@ export const navigationConfig: RoleNavigation = {
       items: [
         {
           title: "Tìm gia sư mới",
-          url: "/lms/learner/tutors",
+          url: "https://beewise.vn",
           icon: UserPlusIcon,
+          openInNewTab: true,
         },
       ],
     },
@@ -69,8 +71,8 @@ export const navigationConfig: RoleNavigation = {
       groupName: "Tài Khoản",
       items: [
         {
-          title: "Học Phí & Thanh Toán",
-          url: "/lms/learner/billing",
+          title: "Theo dõi học phí",
+          url: "/lms/learner/tuition-fee",
           icon: CreditCard,
         },
         {

@@ -33,7 +33,9 @@ export function proxy(request: NextRequest) {
     }
 
     const targetUrl =
-      role.toUpperCase() === "TUTOR" ? "/lms/tutor/dashboard" : "/lms/learner";
+      role.toUpperCase() === "TUTOR"
+        ? "/lms/tutor/dashboard"
+        : "/lms/learner/schedule";
     return NextResponse.redirect(new URL(targetUrl, request.url));
   }
 

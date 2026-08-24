@@ -20,6 +20,7 @@ import {
   InfoIcon,
 } from "@phosphor-icons/react";
 import type { ApiTutorProfile } from "../data/types";
+import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
 
 interface TutorCardProps {
   tutor: ApiTutorProfile;
@@ -81,20 +82,9 @@ export function TutorCard({
   isBestMatch = false,
 }: TutorCardProps) {
   const [showReason, setShowReason] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      try {
-        const saved: string[] = JSON.parse(
-          localStorage.getItem("savedTutors") || "[]",
-        );
-        setIsSaved(saved.includes(tutor.profileId || tutor.userId || ""));
-      } catch {}
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [tutor.profileId, tutor.userId]);
+  const { isFavorite, toggleFavorite } = useFavoriteTutors();
+  const tutorId = tutor.profileId || tutor.userId || "";
+  const isSaved = isFavorite(tutorId);
 
   useEffect(() => {
     if (!showReason) return;
@@ -114,24 +104,12 @@ export function TutorCard({
   }, [showReason]);
 
   const handleSave = () => {
-    try {
-      const id = tutor.profileId || tutor.userId || "";
-      if (!id) return;
-      const saved: string[] = JSON.parse(
-        localStorage.getItem("savedTutors") || "[]",
-      );
-      if (isSaved) {
-        const newSaved = saved.filter((tutorId) => tutorId !== id);
-        localStorage.setItem("savedTutors", JSON.stringify(newSaved));
-        setIsSaved(false);
-      } else {
-        if (!saved.includes(id)) {
-          saved.push(id);
-          localStorage.setItem("savedTutors", JSON.stringify(saved));
-        }
-        setIsSaved(true);
-      }
-    } catch {}
+    if (!tutorId) return;
+    toggleFavorite({
+      tutorId,
+      tutorName: tutor.displayName,
+      isCurrentlySaved: isSaved,
+    });
   };
   const modeInfo = getTeachingModeInfo(tutor.teachingModes || []);
   const ModeIcon = modeInfo.icon;
