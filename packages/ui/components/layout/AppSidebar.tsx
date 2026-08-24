@@ -96,8 +96,9 @@ export function AppSidebar() {
                 <SidebarMenu>
                   {group.items.map((item) => {
                     const isActive =
-                      pathname === item.url ||
-                      pathname.startsWith(`${item.url}/`);
+                      !item.openInNewTab &&
+                      (pathname === item.url ||
+                        pathname.startsWith(`${item.url}/`));
 
                     const isTutor = normalizedRole === "TUTOR";
                     const isUnverified =
@@ -131,7 +132,11 @@ export function AppSidebar() {
                               <Lock className="ml-auto size-3 text-muted-foreground/60 shrink-0" />
                             </div>
                           ) : (
-                            <Link href={item.url}>
+                            <Link
+                              href={item.url}
+                              target={item.openInNewTab ? "_blank" : undefined}
+                              rel={item.openInNewTab ? "noopener noreferrer" : undefined}
+                            >
                               <item.icon
                                 className={`size-4 ${isActive ? "text-accent" : ""}`}
                               />

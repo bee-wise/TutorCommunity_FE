@@ -1,4 +1,49 @@
-export type MaterialStatus = 'Not Generated' | 'Drafting' | 'Published';
+export type MaterialStatus = "Not Generated" | "Drafting" | "Published";
+
+export type MaterialSource = "ai" | "upload";
+export type LibraryMaterialStatus = "draft" | "published" | "hidden";
+export type MaterialCoverageFilter = "all" | "missing" | "complete";
+export type MaterialSourceFilter = "all" | MaterialSource;
+export type LibraryMaterialStatusFilter = "all" | LibraryMaterialStatus;
+
+export interface Learner {
+  id: string;
+  fullName: string;
+  initials: string;
+  gradeLevel: string;
+  joinedAt: string;
+}
+
+export interface LearningSession {
+  id: string;
+  learnerId: string;
+  subject: string;
+  topic: string;
+  taughtAt: string;
+  durationMinutes: number;
+  completed: boolean;
+}
+
+export interface TutorMaterial {
+  id: string;
+  learnerId: string;
+  sessionId: string;
+  title: string;
+  source: MaterialSource;
+  status: LibraryMaterialStatus;
+  fileType: "PDF" | "DOCX" | "PPTX" | "BEEWISE";
+  fileSize?: string;
+  updatedAt: string;
+}
+
+export interface LearnerMaterialSummary {
+  learner: Learner;
+  subjects: string[];
+  sessionCount: number;
+  materialCount: number;
+  missingMaterialCount: number;
+  latestSessionAt: string;
+}
 
 export interface AIAnalyzeRequest {
   transcript: string;

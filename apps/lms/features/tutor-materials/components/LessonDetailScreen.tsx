@@ -20,8 +20,7 @@ export const LessonDetailScreen = ({ lessonId }: LessonDetailScreenProps) => {
   const mutation = useAIAnalyzeMutation();
 
   // Tìm lesson dựa vào params, fallback về mock đầu tiên
-  const lesson =
-    MOCK_LESSONS.find((l: any) => l.id === lessonId) || MOCK_LESSONS[0];
+  const lesson = MOCK_LESSONS.find((item) => item.id === lessonId) || MOCK_LESSONS[0];
 
   const handleGenerate = (data: {
     transcript: string;
@@ -52,7 +51,7 @@ export const LessonDetailScreen = ({ lessonId }: LessonDetailScreenProps) => {
 
   // Nếu đã có response, hiển thị màn hình Preview
   if (aiResponse) {
-    return <SplitPreview data={aiResponse} lessonId={lessonId} />;
+    return <SplitPreview data={aiResponse} />;
   }
 
   // Trong lúc đợi gọi API

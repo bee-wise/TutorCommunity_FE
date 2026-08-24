@@ -13,7 +13,6 @@ import {
   Lock,
 } from "lucide-react";
 import type { ChatRoom } from "../types/messages.types";
-import { STAGE_LABELS } from "../constants/messages.utils";
 
 const STAGE_STEPS = [
   { key: "WAITING_FOR_TUTOR", label: "Chờ gia sư phản hồi", icon: Clock },

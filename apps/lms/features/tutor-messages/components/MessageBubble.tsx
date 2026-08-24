@@ -3,7 +3,6 @@
 import {
   Download,
   FileIcon,
-  Image as ImageIcon,
 } from "lucide-react";
 import NextImage from "next/image";
 import {
@@ -99,9 +98,6 @@ interface MessageBubbleProps {
 export function MessageBubble({
   message,
   currentUserId,
-  currentRole,
-  onWidgetAccept,
-  onWidgetDecline,
   isConsecutive = false,
 }: MessageBubbleProps) {
   if (message.type === "SYSTEM") {

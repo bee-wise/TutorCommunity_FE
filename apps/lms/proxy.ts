@@ -27,13 +27,15 @@ export function proxy(request: NextRequest) {
       try {
         const payload = JSON.parse(atob(tokenToParse.split(".")[1]));
         if (payload?.role) role = payload.role;
-      } catch (e) {
+      } catch {
         // ignore parsing error
       }
     }
 
     const targetUrl =
-      role.toUpperCase() === "TUTOR" ? "/lms/tutor/dashboard" : "/lms/learner";
+      role.toUpperCase() === "TUTOR"
+        ? "/lms/tutor/dashboard"
+        : "/lms/learner/schedule";
     return NextResponse.redirect(new URL(targetUrl, request.url));
   }
 
