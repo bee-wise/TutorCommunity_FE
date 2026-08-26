@@ -22,9 +22,12 @@ export function MessagesScreen() {
             </div>
             <span
               className="text-xl tracking-tight text-[#280f91]"
-              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
+              style={{
+                fontFamily: "var(--font-nunito-family)",
+                fontWeight: 800,
+              }}
             >
-              CỘNG ĐỒNG GIA SƯ
+              CỘNG ĐỒNG GIA SƯ BEEWISE
             </span>
           </div>
           <h2 className="mb-2 text-lg font-extrabold text-[#0c0c0b]">

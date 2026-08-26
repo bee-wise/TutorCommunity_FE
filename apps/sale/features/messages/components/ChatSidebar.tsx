@@ -126,7 +126,7 @@ export function ChatSidebar() {
             className="text-sm tracking-tight text-[#280f91]"
             style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
           >
-            CỘNG ĐỒNG GIA SƯ
+            CỘNG ĐỒNG GIA SƯ BEEWISE
           </span>
         </div>
 
