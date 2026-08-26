@@ -24,7 +24,8 @@ export interface TeachingHistoryItem {
 export interface CertificateItem {
   title: string;
   type: string;
-  status: string;
+  imageUrl?: string;
+  status?: string;
   description: string;
 }
 
@@ -32,6 +33,7 @@ export interface TutorProfileData {
   id: string;
   displayName: string;
   avatarUrl: string;
+  videoUrl?: string;
   headline: string;
   shortIntro: string;
   university: string;
@@ -62,6 +64,7 @@ export const mockTutorProfile: TutorProfileData = {
   id: "nguyen-minh-anh",
   displayName: "Nguyễn Minh Anh",
   avatarUrl: "/images/Tutor/1.png",
+  videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   headline: "Gia sư Toán lớp 6-12, tập trung nền tảng và sự tự tin khi làm bài",
   shortIntro:
     "Giúp học sinh hiểu bản chất, sửa lỗi sai thường gặp và có lộ trình ôn tập rõ ràng sau mỗi buổi học.",
@@ -75,7 +78,7 @@ export const mockTutorProfile: TutorProfileData = {
   onlineStatus: "Đang nhận học sinh mới",
   subjects: ["Toán 6-9", "Toán 10-12"],
   specializations: ["Củng cố mất gốc", "Luyện thi vào 10"],
-  teachingModes: ["Online", "Tại nhà"],
+  teachingModes: ["Online & tại nhà"],
   area: "Thủ Đức, TP. Hồ Chí Minh",
   hourlyRate: "120.000đ/giờ",
   availability: [
@@ -134,24 +137,28 @@ export const mockTutorProfile: TutorProfileData = {
     {
       title: "Thông tin sinh viên",
       type: "Xác minh học vấn",
+      imageUrl: "/images/certs/1.png",
       status: "Đã xác minh",
       description: "BeeWise đã kiểm tra trạng thái học tập ở mức công khai.",
     },
     {
       title: "Thành tích Toán học",
       type: "Minh chứng thành tích",
-      status: "Đã duyệt",
+      imageUrl: "/images/certs/2.png",
+      status: "Đã xác minh",
       description: "Tóm tắt thành tích học thuật, không hiển thị tài liệu gốc.",
     },
     {
       title: "Kết quả học tập",
       type: "Tóm tắt học tập",
-      status: "Đã duyệt",
+      imageUrl: "/images/certs/3.png",
+      status: "Đã rà soát",
       description: "Thông tin học tập được trình bày ở dạng an toàn công khai.",
     },
     {
       title: "Kinh nghiệm gia sư",
       type: "Xác nhận hoạt động",
+      imageUrl: "/images/certs/4.png",
       status: "Đã duyệt",
       description: "Hoạt động giảng dạy được rà soát và tóm tắt ngắn gọn.",
     },
