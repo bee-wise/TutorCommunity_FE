@@ -18,6 +18,7 @@ import {
   Receipt,
   LucideIcon,
   NotebookPen,
+  UsersRound,
 } from "lucide-react";
 
 export interface NavItem {
@@ -94,7 +95,7 @@ export const navigationConfig: RoleNavigation = {
       groupName: "Tổng Quan",
       items: [
         {
-          title: "Dashboard",
+          title: "Tổng Quan",
           url: "/lms/tutor/dashboard",
           icon: LayoutDashboard,
         },
@@ -154,6 +155,11 @@ export const navigationConfig: RoleNavigation = {
           title: "Hỗ Trợ Kết Nối (Chat)",
           url: "/consultant/workspace",
           icon: MessageCircle,
+        },
+        {
+          title: "Yêu Cầu Kết Nối",
+          url: "/consultant/connection-requests",
+          icon: UsersRound,
         },
       ],
     },
