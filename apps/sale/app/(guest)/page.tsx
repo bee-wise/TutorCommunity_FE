@@ -39,6 +39,7 @@ export const metadata: Metadata = {
     description:
       "Tìm gia sư phù hợp trong 30 giây với AI. Hồ sơ xác thực, cố vấn đồng hành, miễn phí.",
   },
+  alternates: { canonical: "/" },
   robots: {
     index: true,
     follow: true,
