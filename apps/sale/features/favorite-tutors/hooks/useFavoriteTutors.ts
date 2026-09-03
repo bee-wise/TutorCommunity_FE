@@ -8,6 +8,7 @@ import { useToastStore } from "@workspace/ui/components/ui/bee-toast/useToastSto
 import { useFavoriteAuthModalStore } from "../store/useFavoriteAuthModalStore";
 import type { ApiTutorProfile } from "../../tutor-list/data/types";
 import type { FavoriteTutorsListParams } from "@workspace/core/types/favorite-tutors.type";
+import { parseFavoriteTutorIds } from "../schemas/favorite-tutor-ids.schema";
 
 /**
  * Hook to query all favorite tutor IDs for quick lookup (heart active/inactive state).
@@ -19,17 +20,7 @@ export function useFavoriteTutorIds() {
     queryKey: queryKeys.favoriteTutors.ids,
     queryFn: async (): Promise<string[]> => {
       const response = await favoriteTutorsService.getFavoriteTutorIds();
-      const rawData = response?.data;
-
-      if (Array.isArray(rawData)) {
-        return rawData;
-      }
-
-      if (rawData && typeof rawData === "object" && "ids" in rawData && Array.isArray((rawData as { ids: string[] }).ids)) {
-        return (rawData as { ids: string[] }).ids;
-      }
-
-      return [];
+      return parseFavoriteTutorIds(response?.data);
     },
     enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
@@ -136,6 +127,16 @@ export function useToggleFavoriteTutorMutation() {
       });
     },
     onSuccess: (_data, variables) => {
+      queryClient.setQueryData<string[]>(
+        queryKeys.favoriteTutors.ids,
+        (currentIds = []) =>
+          variables.isCurrentlySaved
+            ? currentIds.filter((id) => id !== variables.tutorId)
+            : currentIds.includes(variables.tutorId)
+              ? currentIds
+              : [...currentIds, variables.tutorId],
+      );
+
       if (variables.isCurrentlySaved) {
         addToast({
           title: "Đã bỏ lưu gia sư",
@@ -155,8 +156,9 @@ export function useToggleFavoriteTutorMutation() {
       }
     },
     onSettled: () => {
-      // Invalidate queries to sync with backend
-      queryClient.invalidateQueries({ queryKey: queryKeys.favoriteTutors.all });
+      queryClient.invalidateQueries({
+        queryKey: [...queryKeys.favoriteTutors.all, "list"],
+      });
     },
   });
 
