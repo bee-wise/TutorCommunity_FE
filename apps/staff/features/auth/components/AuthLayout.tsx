@@ -20,22 +20,6 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         <div className="absolute inset-0 bg-[url('/brand/grid-pattern.svg')] bg-repeat opacity-[0.02] invert" />
       </div>
 
-      <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10">
-        <Button
-          className="flex items-center gap-2 text-[#0c0c0b]/50 hover:text-[#280f91] hover:bg-[#280f91]/5 rounded-full px-4 h-10 transition-colors backdrop-blur-md bg-white border border-[#0c0c0b]/5 shadow-sm"
-          variant="ghost"
-          onClick={() => router.back()}
-        >
-          <ArrowLeft weight="bold" className="w-4 h-4" />
-          <span
-            className="font-semibold text-sm"
-            style={{ fontFamily: "var(--font-nunito-family)" }}
-          >
-            Quay lại
-          </span>
-        </Button>
-      </div>
-
       <div className="w-full max-w-[500px] px-4 z-10">
         <div
           className="w-full rounded-3xl bg-white

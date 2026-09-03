@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     "nền tảng gia sư",
     "BeeWise",
   ],
+  alternates: { canonical: "/tutor-guide" },
 };
 
 export default function TutorGuidePage() {

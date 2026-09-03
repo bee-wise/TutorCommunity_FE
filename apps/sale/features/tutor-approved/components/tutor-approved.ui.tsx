@@ -26,6 +26,8 @@ import { TUTOR_LMS_URL } from "@workspace/core/constants/tutor-links";
 import { useTutorApproved } from "./TutorApprovedProvider";
 import type { TutorApprovedScreen } from "../types";
 import { ChatSummary, MessagesScreen, ChatRoomScreen } from "../../messages";
+import { TutorProfileEditorScreen } from "../../tutor-profile-editor";
+import { TutorOwnProfileScreen } from "../../tutor-profile/components/TutorOwnProfileScreen";
 
 const card =
   "rounded-2xl border border-[#dce7f7] bg-white p-5 shadow-[0_12px_32px_rgba(40,15,145,0.07)]";
@@ -46,6 +48,15 @@ export function TutorApprovedShell({
   screen?: TutorApprovedScreen;
 }) {
   const isChat = screen === "messages" || screen === "chat-room";
+  const isProfileEdit = screen === "profile-edit";
+
+  if (isProfileEdit) {
+    return (
+      <div className="min-h-[100dvh] bg-[#f7f9fd] text-[#17142f]">
+        {children}
+      </div>
+    );
+  }
 
   if (isChat) {
     return (
@@ -84,8 +95,8 @@ export function TutorApprovedScreenView({
   screen?: TutorApprovedScreen;
   chatRoomId?: string;
 }) {
-  if (screen === "profile" || screen === "profile-edit")
-    return <ProfileScreen edit={screen === "profile-edit"} />;
+  if (screen === "profile-edit") return <TutorProfileEditorScreen />;
+  if (screen === "profile") return <TutorOwnProfileScreen />;
   if (screen === "messages") return <MessagesScreen />;
   if (screen === "chat-room") return <ChatRoomScreen chatRoomId={chatRoomId} />;
   if (screen === "notifications") return <NotificationsScreen />;
@@ -475,130 +486,6 @@ function RecentActivity() {
     </section>
   );
 }
-
-function ProfileScreen({ edit }: { edit: boolean }) {
-  const { state, dispatch } = useTutorApproved();
-  const p = edit ? state.draftProfile : state.profile;
-  const fields:
-    | [[keyof typeof p, string, boolean]]
-    | Array<[keyof typeof p, string, boolean]> = [
-    ["title", "Tiêu đề hồ sơ", true],
-    ["introduction", "Giới thiệu ngắn", true],
-    ["description", "Mô tả", true],
-    ["teachingMethod", "Phương pháp giảng dạy", false],
-    ["experience", "Kinh nghiệm", false],
-    ["rate", "Học phí dự kiến", true],
-  ];
-  return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      <div>
-        <p className="text-sm font-bold text-[#280f91]">Hồ sơ gia sư</p>
-        <h1 className="font-nunito text-3xl font-black">
-          {edit ? "Chỉnh sửa hồ sơ" : "Hồ sơ của tôi"}
-        </h1>
-        <p className="mt-2 text-sm text-[#716c83]">
-          Thông tin ngân hàng và giấy tờ xác thực không xuất hiện trong hồ sơ
-          công khai.
-        </p>
-      </div>
-      {state.profileSubmitted && (
-        <div
-          role="status"
-          className="rounded-xl border border-[#ffc510] bg-[#fff8df] p-4 text-sm"
-        >
-          Thay đổi đã được gửi. Hồ sơ công khai hiện tại vẫn được giữ cho đến
-          khi Consultant phê duyệt nội dung mới.
-        </div>
-      )}
-      <section className={card}>
-        <div className="mb-5 flex items-center gap-4">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#cfe1fa] text-xl font-black text-[#280f91]">
-            MA
-          </div>
-          <div>
-            <h2 className="text-xl font-black">{p.fullName}</h2>
-            <span className={`${badge} bg-[#e7f5ec] text-[#297044]`}>
-              <ShieldCheck size={13} /> Đã xác thực
-            </span>
-          </div>
-        </div>
-        {edit ? (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              dispatch({ type: "submit-profile" });
-            }}
-            className="space-y-4"
-          >
-            {fields.map(([field, label, review]) => (
-              <label key={field} className="block text-sm font-bold">
-                {label}
-                {review && (
-                  <span className="ml-2 text-xs font-normal text-[#905b0f]">
-                    Cần xét duyệt lại
-                  </span>
-                )}
-                <textarea
-                  value={String(p[field])}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "update-draft",
-                      field,
-                      value: e.target.value,
-                    })
-                  }
-                  className="mt-1 min-h-20 w-full rounded-xl border border-[#dce7f7] p-3 font-normal outline-none focus:ring-2 focus:ring-[#280f91]"
-                />
-              </label>
-            ))}
-            <div className="flex flex-wrap gap-3">
-              <Button type="button" variant="outline">
-                Lưu bản nháp
-              </Button>
-              <Button type="button" variant="outline">
-                Xem trước
-              </Button>
-              <Button type="submit">Gửi thay đổi</Button>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => dispatch({ type: "reset-draft" })}
-              >
-                Hủy chỉnh sửa
-              </Button>
-            </div>
-          </form>
-        ) : (
-          <div className="space-y-5">
-            <Info label="Giới thiệu" value={p.description} />
-            <Info
-              label="Trường / Chuyên ngành"
-              value={`${p.university} · ${p.major}`}
-            />
-            <Info
-              label="Môn và cấp lớp"
-              value={`${p.subjects.join(", ")} · ${p.gradeLevels.join(", ")}`}
-            />
-            <Info
-              label="Hình thức / Khu vực"
-              value={`${p.teachingMode} · ${p.offlineAreas.join(", ")}`}
-            />
-            <Info label="Phương pháp" value={p.teachingMethod} />
-            <Info label="Kinh nghiệm" value={p.experience} />
-            <Button asChild>
-              <Link href="/tutor/profile/edit">
-                <Pencil />
-                Chỉnh sửa hồ sơ
-              </Link>
-            </Button>
-          </div>
-        )}
-      </section>
-    </div>
-  );
-}
-
-
 
 function NotificationsScreen() {
   const { state, dispatch } = useTutorApproved();
