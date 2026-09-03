@@ -102,15 +102,17 @@ export function resolveNavbarState({
 }
 
 const guestMenu: NavbarItem[] = [
-  { label: "Gia sư", href: "/tutors" },
-  { label: "Cộng đồng", href: "/community" },
+  { label: "Gia sư 1:1", href: "/tutors" },
+  { label: "Tìm lớp", href: "/classes" },
+  // { label: "Cộng đồng", href: "/community" },
   { label: "Trở thành gia sư", href: "/tutor-guide" },
   { label: "Về chúng tôi", href: "/about-us" },
 ];
 
 const learnerMenu: NavbarItem[] = [
   { label: "Tìm gia sư", href: "/tutors" },
-  { label: "Cộng đồng", href: "/community" },
+  { label: "Tìm lớp", href: "/classes" },
+  // { label: "Cộng đồng", href: "/community" },
   { label: "Tin nhắn", href: "/learner/messages", badgeKey: "unreadChatCount" },
   { label: "Lịch sử kết nối", href: "/connections" },
   { label: "Gia sư yêu thích", href: "/favorite-tutors" },
@@ -122,7 +124,7 @@ const tutorOnboardingMenu: NavbarItem[] = [
 
 const tutorApprovedMenu: NavbarItem[] = [
   { label: "Trang chủ", href: "/tutor/home" },
-  { label: "Cộng đồng", href: "/community" },
+  // { label: "Cộng đồng", href: "/community" },
   { label: "Hồ sơ của tôi", href: "/tutor/profile" },
   { label: "Tin nhắn", href: "/tutor/messages", badgeKey: "unreadChatCount" },
   { label: "Lịch rảnh", href: "/tutor/availability" },

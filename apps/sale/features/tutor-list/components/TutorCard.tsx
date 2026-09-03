@@ -43,9 +43,12 @@ const getTeachingModeInfo = (modes: string[]) => {
 function TutorAvatar({ tutor }: { tutor: ApiTutorProfile }) {
   const [failed, setFailed] = useState(false);
   const name = tutor.displayName || "Gia Sư";
+
   return (
     <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-[#dce3f0] bg-[#cfe1fa] sm:h-24 sm:w-24">
-      {failed || !tutor.avatarUrl ? (
+      {failed ||
+      !tutor.avatarUrl ||
+      tutor.avatarUrl.includes("demo.invalid") ? (
         <div
           className="flex h-full w-full items-center justify-center text-2xl font-extrabold text-[#280f91]"
           aria-label={`Ảnh dự phòng của ${name}`}
