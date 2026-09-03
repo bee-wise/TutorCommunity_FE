@@ -105,6 +105,9 @@ function HeroStatCard({
 }
 
 export function TutorHero({ tutor }: TutorHeroProps) {
+  const supportsHomeTeaching = tutor.teachingModes.some((mode) =>
+    mode.toLocaleLowerCase("vi").includes("tại nhà"),
+  );
   const infoCards: CompactInfoCardProps[] = [
     {
       icon: GraduationCap,
@@ -117,12 +120,12 @@ export function TutorHero({ tutor }: TutorHeroProps) {
       title: "Khu vực dạy",
       value: tutor.area,
       tone: "secondary" as const,
-      isHidden: !tutor.teachingModes.includes("Offline"),
+      isHidden: !supportsHomeTeaching,
     },
     {
       icon: Users,
       title: "Hình thức dạy",
-      value: tutor.teachingModes.join(" và "),
+      value: tutor.teachingModes.join(", "),
       tone: "primary" as const,
     },
   ];

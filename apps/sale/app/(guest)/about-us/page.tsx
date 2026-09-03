@@ -27,6 +27,7 @@ export const metadata: Metadata = {
     locale: "vi_VN",
     siteName: "BeeWise",
   },
+  alternates: { canonical: "/about-us" },
 };
 
 export default function AboutPage() {
