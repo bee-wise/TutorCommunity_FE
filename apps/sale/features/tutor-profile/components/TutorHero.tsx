@@ -105,6 +105,9 @@ function HeroStatCard({
 }
 
 export function TutorHero({ tutor }: TutorHeroProps) {
+  const supportsHomeTeaching = tutor.teachingModes.some((mode) =>
+    mode.toLocaleLowerCase("vi").includes("tại nhà"),
+  );
   const infoCards: CompactInfoCardProps[] = [
     {
       icon: GraduationCap,
@@ -117,12 +120,12 @@ export function TutorHero({ tutor }: TutorHeroProps) {
       title: "Khu vực dạy",
       value: tutor.area,
       tone: "secondary" as const,
-      isHidden: !tutor.teachingModes.includes("Offline"),
+      isHidden: !supportsHomeTeaching,
     },
     {
       icon: Users,
       title: "Hình thức dạy",
-      value: tutor.teachingModes.join(" và "),
+      value: tutor.teachingModes.join(", "),
       tone: "primary" as const,
     },
   ];
@@ -134,25 +137,33 @@ export function TutorHero({ tutor }: TutorHeroProps) {
         <div className="grid min-w-0 gap-5">
           <div className="grid min-w-0 gap-5 sm:grid-cols-[156px_minmax(0,1fr)] sm:items-start lg:grid-cols-[172px_minmax(0,1fr)] lg:gap-6">
             <div className="flex justify-center sm:justify-start">
-              <a
-                href={tutor.avatarUrl || "/images/Tutor/1.png"}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Xem ảnh gia sư ${tutor.displayName}`}
-                className="group relative aspect-square h-36 overflow-hidden rounded-[1.75rem] border-4 border-white bg-[#fff3cb] shadow-2xl shadow-[#280f91]/14 outline-none ring-1 ring-[#cfe1fa] transition hover:shadow-[#280f91]/20 focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2 sm:h-40 lg:h-44"
-              >
-                <Image
-                  src={tutor.avatarUrl || "/images/Tutor/1.png"}
-                  alt={`Ảnh đại diện của gia sư ${tutor.displayName}`}
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 176px, (min-width: 640px) 160px, 144px"
-                  className="object-cover object-center transition duration-300 group-hover:scale-[1.03]"
-                />
-                <span className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#447353] text-white shadow-lg">
-                  <BadgeCheck size={15} aria-hidden="true" />
-                </span>
-              </a>
+              {(() => {
+                const avatarSrc =
+                  tutor.avatarUrl && !tutor.avatarUrl.includes("demo.invalid")
+                    ? tutor.avatarUrl
+                    : "/images/Tutor/1.png";
+                return (
+                  <a
+                    href={avatarSrc}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Xem ảnh gia sư ${tutor.displayName}`}
+                    className="group relative aspect-square h-36 overflow-hidden rounded-[1.75rem] border-4 border-white bg-[#fff3cb] shadow-2xl shadow-[#280f91]/14 outline-none ring-1 ring-[#cfe1fa] transition hover:shadow-[#280f91]/20 focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2 sm:h-40 lg:h-44"
+                  >
+                    <Image
+                      src={avatarSrc}
+                      alt={`Ảnh đại diện của gia sư ${tutor.displayName}`}
+                      fill
+                      priority
+                      sizes="(min-width: 1024px) 176px, (min-width: 640px) 160px, 144px"
+                      className="object-cover object-center transition duration-300 group-hover:scale-[1.03]"
+                    />
+                    <span className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#447353] text-white shadow-lg">
+                      <BadgeCheck size={15} aria-hidden="true" />
+                    </span>
+                  </a>
+                );
+              })()}
             </div>
 
             <div className="min-w-0 pt-0 sm:pt-1 lg:pt-2">

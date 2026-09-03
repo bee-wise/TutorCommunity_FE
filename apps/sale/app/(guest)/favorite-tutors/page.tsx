@@ -4,6 +4,7 @@ import { FavoriteTutorsPage } from "../../../features/favorite-tutors/components
 export const metadata: Metadata = {
   title: "Gia sư yêu thích | BeeWise",
   description: "Danh sách các gia sư bạn đã lưu lại trên hệ thống BeeWise.",
+  robots: { index: false, follow: false },
 };
 
 import { Header } from "@workspace/ui/components/layout/Header";
