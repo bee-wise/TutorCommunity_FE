@@ -4,6 +4,7 @@ import "@workspace/ui/globals.css";
 import { Metadata } from "next";
 import { GuestFavoriteModal } from "@/features/favorite-tutors/components/GuestFavoriteModal";
 import { NotificationDrawer } from "@/features/notifications/components/NotificationDrawer";
+import { MessageFAB } from "@/features/messages";
 import { saleSeoConfig } from "@/configs/seo";
 
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ export default function RootLayout({
           {children}
           <GuestFavoriteModal />
           <NotificationDrawer />
+          <MessageFAB />
         </Providers>
       </body>
     </html>
