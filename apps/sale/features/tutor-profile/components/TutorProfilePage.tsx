@@ -2,10 +2,9 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { TutorAchievements } from "./TutorAchievements";
 import { TutorBioSection } from "./TutorBioSection";
-import { TutorCertificates } from "./TutorCertificates";
 import { TutorConnectCard } from "./TutorConnectCard";
-import { TutorEducationAchievements } from "./TutorEducationAchievements";
 import { TutorFeedback } from "./TutorFeedback";
 import { TutorHero } from "./TutorHero";
 import { TutorIntroVideo } from "./TutorIntroVideo";
@@ -120,23 +119,24 @@ export function TutorProfilePage() {
 
         <TutorHero tutor={tutorProfile} />
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:items-start">
-          <div className="space-y-6">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:items-start">
+          <div className="space-y-5">
             <TutorBioSection tutor={tutorProfile} />
             <TutorTeachingMethods tutor={tutorProfile} />
-            <TutorEducationAchievements tutor={tutorProfile} />
-            <TutorIntroVideo />
             <TutorTeachingHistory tutor={tutorProfile} />
-            <TutorCertificates />
+            <TutorAchievements tutor={tutorProfile} />
+            <TutorIntroVideo videoUrl={tutorProfile.videoUrl} />
             <TutorFeedback tutor={tutorProfile} />
           </div>
 
-          <TutorConnectCard
-            tutor={tutorProfile}
-            isSaved={isSaved}
-            onConnect={handleConnect}
-            onSave={handleSave}
-          />
+          <div className="lg:sticky lg:top-6">
+            <TutorConnectCard
+              tutor={tutorProfile}
+              isSaved={isSaved}
+              onConnect={handleConnect}
+              onSave={handleSave}
+            />
+          </div>
         </div>
       </div>
 

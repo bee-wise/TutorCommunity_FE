@@ -22,7 +22,9 @@ export function TutorConnectCard({
             Học phí
           </p>
           <p className="mt-2 text-3xl font-extrabold leading-none">
-            {tutor.hourlyRate}
+            {typeof tutor.hourlyRate === "number"
+              ? `${tutor.hourlyRate.toLocaleString("vi-VN")}đ/giờ`
+              : tutor.hourlyRate}
           </p>
           <p className="mt-3 text-sm leading-6 text-white/76">
             Kết nối qua BeeWise để thống nhất lịch học và mục tiêu.
