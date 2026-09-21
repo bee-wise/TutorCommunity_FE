@@ -33,9 +33,6 @@ export function GuestFavoriteModal() {
           {/* Heart icon with badge */}
           <div className="relative mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 shadow-lg shadow-black/10">
             <Heart className="h-8 w-8 text-[#ffc500] fill-[#ffc500]" />
-            <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#ffc500] text-[#280f91]">
-              <Sparkles className="h-3.5 w-3.5" />
-            </div>
           </div>
 
           <DialogHeader className="space-y-2 text-center sm:text-center">

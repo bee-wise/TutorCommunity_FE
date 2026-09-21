@@ -110,11 +110,9 @@ const guestMenu: NavbarItem[] = [
 ];
 
 const learnerMenu: NavbarItem[] = [
-  { label: "Tìm gia sư", href: "/tutors" },
+  { label: "Gia sư 1:1", href: "/tutors" },
   { label: "Tìm lớp", href: "/classes" },
   // { label: "Cộng đồng", href: "/community" },
-  { label: "Tin nhắn", href: "/learner/messages", badgeKey: "unreadChatCount" },
-  { label: "Lịch sử kết nối", href: "/connections" },
   { label: "Gia sư yêu thích", href: "/favorite-tutors" },
 ];
 
@@ -164,7 +162,7 @@ export function getNavbarConfig({
 }): NavbarConfig {
   if (state === "LEARNER") {
     return {
-      homeHref: "/tutors",
+      homeHref: "/",
       centerItems: learnerMenu,
       rightItems: lmsAccessEnabled
         ? [{ label: "Vào LMS", href: "/lms/learner", variant: "primary" }]

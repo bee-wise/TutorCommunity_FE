@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <title>BeeWise - Demo điều hướng sau đăng nhập</title>
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --primary: #280f91;
+        --primary-strong: #1f0b70;
+        --primary-soft: #eeeafd;
+        --secondary: #447353;
+        --accent: #ffc500;
+        --accent-soft: #fff3cb;
+        --background: #f6f8fc;
+        --surface: #fefeff;
+        --surface-muted: #eef2f8;
+        --text: #17142f;
+        --text-muted: #67637c;
+        --border: #dce4f0;
+        --danger: #b42318;
+        --shadow: 0 22px 65px rgba(40, 15, 145, 0.14);
+        --radius: 20px;
+      }
+
+      [data-theme="dark"] {
+        color-scheme: dark;
+        --primary: #cfe1fa;
+        --primary-strong: #eef5ff;
+        --primary-soft: #25213d;
+        --background: #0f1018;
+        --surface: #181923;
+        --surface-muted: #22232f;
+        --text: #f5f4fa;
+        --text-muted: #aaa6bb;
+        --border: #30313f;
+        --shadow: 0 22px 65px rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-width: 320px;
+        background: var(--background);
+      }
+
+      body {
+        min-height: 100dvh;
+        margin: 0;
+        background:
+          radial-gradient(circle at 8% 5%, rgba(250, 220, 118, 0.2), transparent 26rem),
+          var(--background);
+        color: var(--text);
+        font-family: "Google Sans", "Segoe UI", Arial, sans-serif;
+        transition: background-color 180ms ease, color 180ms ease;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      .app {
+        width: min(1160px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 42px 0 150px;
+      }
+
+      .page-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 24px;
+      }
+
+      .brand-lockup {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 54px;
+        color: var(--primary);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #280f91;
+        font-weight: 900;
+        box-shadow: 0 8px 18px rgba(255, 197, 0, 0.22);
+      }
+
+      .eyebrow {
+        margin: 0 0 9px;
+        color: var(--secondary);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: Montserrat, "Segoe UI", sans-serif;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin-bottom: 10px;
+        color: var(--text);
+        font-size: clamp(31px, 5vw, 52px);
+        line-height: 1.04;
+        letter-spacing: -0.045em;
+      }
+
+      .subtitle {
+        max-width: 620px;
+        margin-bottom: 0;
+        color: var(--text-muted);
+        font-size: 16px;
+        line-height: 1.65;
+      }
+
+      .utilities {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon-button,
+      .avatar-button {
+        position: relative;
+        display: inline-grid;
+        height: 44px;
+        place-items: center;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        box-shadow: 0 8px 22px rgba(40, 15, 145, 0.07);
+        cursor: pointer;
+      }
+
+      .icon-button {
+        width: 44px;
+        border-radius: 50%;
+        font-size: 20px;
+      }
+
+      .avatar-button {
+        min-width: 44px;
+        border-radius: 999px;
+        padding: 0 5px;
+      }
+
+      .avatar {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: #280f91;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .notification-dot {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 9px;
+        height: 9px;
+        border: 2px solid var(--surface);
+        border-radius: 50%;
+        background: var(--danger);
+      }
+
+      .content {
+        margin-top: 48px;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-block: 1px solid var(--border);
+        padding: 22px 0;
+      }
+
+      .metric {
+        padding: 0 26px;
+      }
+
+      .metric:first-child {
+        padding-left: 0;
+      }
+
+      .metric + .metric {
+        border-left: 1px solid var(--border);
+      }
+
+      .metric-label {
+        margin-bottom: 7px;
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .metric-value {
+        margin-bottom: 0;
+        color: var(--primary);
+        font-size: clamp(24px, 4vw, 35px);
+        font-weight: 900;
+        letter-spacing: -0.04em;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.75fr);
+        gap: 24px;
+        margin-top: 34px;
+      }
+
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 14px 38px rgba(40, 15, 145, 0.065);
+      }
+
+      .primary-panel {
+        padding: clamp(24px, 4vw, 38px);
+      }
+
+      .panel-title-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .panel h2 {
+        margin-bottom: 7px;
+        font-size: 21px;
+        letter-spacing: -0.025em;
+      }
+
+      .muted {
+        color: var(--text-muted);
+        line-height: 1.55;
+      }
+
+      .text-button,
+      .primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        border-radius: 999px;
+        padding: 0 17px;
+        font-weight: 800;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .text-button {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--primary);
+      }
+
+      .primary-button {
+        border: 1px solid #280f91;
+        background: #280f91;
+        color: #fefeff;
+      }
+
+      .primary-button:hover {
+        background: #1f0b70;
+      }
+
+      .lesson {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 20px;
+        margin-top: 30px;
+        padding-top: 28px;
+        border-top: 1px solid var(--border);
+      }
+
+      .lesson-time {
+        display: grid;
+        min-height: 72px;
+        place-items: center;
+        border-radius: 16px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-weight: 900;
+      }
+
+      .lesson h3 {
+        margin-bottom: 6px;
+        font-size: 17px;
+      }
+
+      .lesson p {
+        margin-bottom: 0;
+        font-size: 14px;
+      }
+
+      .side-panel {
+        padding: 28px;
+        background: #cfe1fa;
+        color: #17142f;
+      }
+
+      [data-theme="dark"] .side-panel {
+        color: #17142f;
+      }
+
+      .side-panel h2 {
+        color: #17142f;
+      }
+
+      .profile-ring {
+        position: relative;
+        display: grid;
+        width: 112px;
+        height: 112px;
+        margin: 24px auto;
+        place-items: center;
+        border-radius: 50%;
+        background: conic-gradient(#280f91 0 82%, rgba(40, 15, 145, 0.16) 82% 100%);
+      }
+
+      .profile-ring::after {
+        content: "";
+        position: absolute;
+        inset: 9px;
+        border-radius: 50%;
+        background: #cfe1fa;
+      }
+
+      .profile-ring strong {
+        position: relative;
+        z-index: 1;
+        color: #17142f;
+        font-size: 23px;
+      }
+
+      .side-panel .primary-button {
+        width: 100%;
+        border-color: #ffc500;
+        background: #ffc500;
+        color: #280f91;
+      }
+
+      .activity {
+        margin-top: 24px;
+        padding: 28px;
+      }
+
+      .activity-list {
+        display: grid;
+        gap: 0;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .activity-item {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 0;
+      }
+
+      .activity-item + .activity-item {
+        border-top: 1px solid var(--border);
+      }
+
+      .activity-icon {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 14px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 19px;
+      }
+
+      .activity-item strong,
+      .activity-item span {
+        display: block;
+      }
+
+      .activity-item span {
+        margin-top: 4px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .activity-item time {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .dock-wrap {
+        position: fixed;
+        z-index: 50;
+        right: 0;
+        bottom: calc(22px + env(safe-area-inset-bottom));
+        left: 0;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      .dock {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-height: 62px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        padding: 8px;
+        background: #280f91;
+        box-shadow: var(--shadow);
+        pointer-events: auto;
+      }
+
+      .dock-item {
+        position: relative;
+        display: flex;
+        min-width: 62px;
+        height: 46px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 0;
+        border-radius: 999px;
+        padding: 0 14px;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.72);
+        cursor: pointer;
+        transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+      }
+
+      .dock-item:hover {
+        color: #fefeff;
+      }
+
+      .dock-item:active {
+        transform: scale(0.97);
+      }
+
+      .dock-item.active {
+        background: #ffc500;
+        color: #280f91;
+      }
+
+      .dock-item i {
+        font-size: 21px;
+      }
+
+      .dock-label {
+        display: none;
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .dock-item.active .dock-label {
+        display: inline;
+      }
+
+      .dock-badge {
+        position: absolute;
+        top: 3px;
+        right: 5px;
+        min-width: 18px;
+        border: 2px solid #280f91;
+        border-radius: 999px;
+        padding: 1px 4px;
+        background: #ffc500;
+        color: #280f91;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .sheet-backdrop {
+        position: fixed;
+        z-index: 70;
+        inset: 0;
+        display: none;
+        background: rgba(15, 16, 24, 0.34);
+      }
+
+      .sheet-backdrop.open {
+        display: block;
+      }
+
+      .more-sheet {
+        position: fixed;
+        z-index: 80;
+        right: max(20px, calc((100vw - 1160px) / 2));
+        bottom: 108px;
+        width: min(360px, calc(100vw - 32px));
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(14px) scale(0.98);
+        transition: opacity 180ms ease, transform 180ms ease;
+      }
+
+      .more-sheet.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
+      }
+
+      .sheet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 4px 4px 14px;
+      }
+
+      .sheet-header h2 {
+        margin: 0;
+        font-size: 19px;
+      }
+
+      .close-button {
+        display: grid;
+        width: 36px;
+        height: 36px;
+        place-items: center;
+        border: 0;
+        border-radius: 50%;
+        background: var(--surface-muted);
+        cursor: pointer;
+      }
+
+      .sheet-menu {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .sheet-action {
+        display: flex;
+        min-height: 72px;
+        align-items: center;
+        gap: 11px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 12px;
+        background: var(--surface);
+        color: var(--text);
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .sheet-action:hover {
+        border-color: var(--primary);
+        background: var(--primary-soft);
+      }
+
+      .sheet-action i {
+        color: var(--primary);
+        font-size: 20px;
+      }
+
+      .sheet-action span {
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      .sheet-action.danger {
+        color: var(--danger);
+      }
+
+      .sheet-action.danger i {
+        color: var(--danger);
+      }
+
+      .toast {
+        position: fixed;
+        z-index: 90;
+        top: 24px;
+        left: 50%;
+        max-width: calc(100% - 32px);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 11px 18px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        font-size: 13px;
+        font-weight: 750;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -12px);
+        transition: opacity 180ms ease, transform 180ms ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      @media (max-width: 800px) {
+        .app {
+          width: min(100% - 32px, 680px);
+          padding-top: 24px;
+          padding-bottom: 130px;
+        }
+
+        .brand-lockup {
+          margin-bottom: 36px;
+        }
+
+        .page-heading {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .utilities {
+          position: absolute;
+          top: 20px;
+          right: 16px;
+        }
+
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        .side-panel {
+          order: -1;
+        }
+
+        .lesson {
+          grid-template-columns: 70px minmax(0, 1fr);
+        }
+
+        .lesson .text-button {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
+        .dock-wrap {
+          bottom: 0;
+        }
+
+        .dock {
+          width: 100%;
+          min-height: calc(72px + env(safe-area-inset-bottom));
+          justify-content: space-around;
+          border: 0;
+          border-radius: 0;
+          padding: 7px 6px env(safe-area-inset-bottom);
+        }
+
+        .dock-item,
+        .dock-item.active {
+          min-width: 58px;
+          height: 58px;
+          flex: 1;
+          flex-direction: column;
+          gap: 3px;
+          padding: 5px 2px;
+          background: transparent;
+        }
+
+        .dock-item.active {
+          color: #ffc500;
+        }
+
+        .dock-label,
+        .dock-item.active .dock-label {
+          display: block;
+          font-size: 10px;
+        }
+
+        .dock-badge {
+          top: 1px;
+          right: calc(50% - 22px);
+        }
+
+        .more-sheet {
+          right: 0;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          border-width: 1px 0 0;
+          border-radius: var(--radius) var(--radius) 0 0;
+          padding: 18px 18px calc(24px + env(safe-area-inset-bottom));
+          transform: translateY(100%);
+        }
+
+        .more-sheet.open {
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 520px) {
+        .brand-lockup > span:last-child {
+          display: none;
+        }
+
+        h1 {
+          padding-right: 72px;
+        }
+
+        .metrics {
+          grid-template-columns: 1fr 1fr;
+          row-gap: 20px;
+        }
+
+        .metric {
+          padding: 0 16px;
+        }
+
+        .metric:first-child {
+          padding-left: 0;
+        }
+
+        .metric:last-child {
+          grid-column: 1 / -1;
+          padding: 18px 0 0;
+          border-top: 1px solid var(--border);
+          border-left: 0;
+        }
+
+        .activity-item {
+          grid-template-columns: 42px minmax(0, 1fr);
+        }
+
+        .activity-item time {
+          grid-column: 2;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <div class="brand-lockup" aria-label="BeeWise dành cho gia sư">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <span>BeeWise Gia sư</span>
+      </div>
+
+      <section class="page-heading" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow" id="page-context">Không gian làm việc hôm nay</p>
+          <h1 id="page-title">Chào buổi sáng, Minh Anh</h1>
+          <p class="subtitle" id="page-subtitle">
+            Bạn có một buổi học và hai tin nhắn mới cần phản hồi.
+          </p>
+        </div>
+
+        <div class="utilities" aria-label="Tiện ích tài khoản">
+          <button class="icon-button" id="notificationButton" type="button" aria-label="Xem 3 thông báo">
+            <i class="ph ph-bell" aria-hidden="true"></i>
+            <span class="notification-dot" aria-hidden="true"></span>
+          </button>
+          <button class="avatar-button" id="avatarButton" type="button" aria-label="Mở tài khoản Minh Anh">
+            <span class="avatar">MA</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="content" id="pageContent" aria-live="polite">
+        <div class="metrics" aria-label="Tổng quan nhanh">
+          <article class="metric">
+            <p class="metric-label">Buổi học tuần này</p>
+            <p class="metric-value">04</p>
+          </article>
+          <article class="metric">
+            <p class="metric-label">Học viên đang học</p>
+            <p class="metric-value">07</p>
+          </article>
+          <article class="metric">
+            <p class="metric-label">Đánh giá trung bình</p>
+            <p class="metric-value">4.9</p>
+          </article>
+        </div>
+
+        <div class="workspace">
+          <article class="panel primary-panel">
+            <div class="panel-title-row">
+              <div>
+                <h2>Lịch dạy tiếp theo</h2>
+                <p class="muted">Hôm nay, Thứ Năm 11 tháng 9</p>
+              </div>
+              <button class="text-button" type="button" data-demo-action="Mở lịch rảnh">
+                Xem lịch
+              </button>
+            </div>
+
+            <div class="lesson">
+              <div class="lesson-time">19:30</div>
+              <div>
+                <h3>Toán lớp 9 với Nguyễn Gia Huy</h3>
+                <p class="muted">90 phút, học trực tuyến</p>
+              </div>
+              <button class="primary-button" type="button" data-demo-action="Vào phòng học">
+                Vào lớp
+              </button>
+            </div>
+          </article>
+
+          <aside class="panel side-panel" aria-labelledby="profile-status-title">
+            <h2 id="profile-status-title">Hồ sơ của bạn</h2>
+            <p>Thông tin khá đầy đủ. Bổ sung video giới thiệu để hồ sơ nổi bật hơn.</p>
+            <div class="profile-ring" aria-label="Hồ sơ hoàn thiện 82 phần trăm">
+              <strong>82%</strong>
+            </div>
+            <button class="primary-button" type="button" data-demo-action="Chỉnh sửa hồ sơ">
+              Hoàn thiện hồ sơ
+            </button>
+          </aside>
+        </div>
+
+        <section class="panel activity" aria-labelledby="activity-title">
+          <div class="panel-title-row">
+            <div>
+              <h2 id="activity-title">Hoạt động cần chú ý</h2>
+              <p class="muted">Ưu tiên những việc có ảnh hưởng đến học viên.</p>
+            </div>
+          </div>
+          <ul class="activity-list">
+            <li class="activity-item">
+              <span class="activity-icon"><i class="ph ph-chat-circle-text" aria-hidden="true"></i></span>
+              <div>
+                <strong>Nguyễn Gia Huy vừa gửi tin nhắn</strong>
+                <span>Em muốn ôn lại phần phương trình trước buổi học.</span>
+              </div>
+              <time datetime="2026-09-11T08:20">8 phút trước</time>
+            </li>
+            <li class="activity-item">
+              <span class="activity-icon"><i class="ph ph-star" aria-hidden="true"></i></span>
+              <div>
+                <strong>Bạn nhận được một đánh giá mới</strong>
+                <span>Phụ huynh đánh giá 5 sao sau buổi học thử.</span>
+              </div>
+              <time datetime="2026-09-10T21:30">Tối qua</time>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </main>
+
+    <div class="dock-wrap">
+      <nav class="dock" aria-label="Điều hướng chính của gia sư">
+        <button class="dock-item active" type="button" data-page="home" aria-current="page">
+          <i class="ph ph-house" aria-hidden="true"></i>
+          <span class="dock-label">Trang chủ</span>
+        </button>
+        <button class="dock-item" type="button" data-page="profile">
+          <i class="ph ph-user-circle" aria-hidden="true"></i>
+          <span class="dock-label">Hồ sơ</span>
+        </button>
+        <button class="dock-item" type="button" data-page="messages">
+          <i class="ph ph-chat-circle-dots" aria-hidden="true"></i>
+          <span class="dock-label">Tin nhắn</span>
+          <span class="dock-badge" aria-label="2 tin nhắn chưa đọc">2</span>
+        </button>
+        <button class="dock-item" type="button" data-page="schedule">
+          <i class="ph ph-calendar-dots" aria-hidden="true"></i>
+          <span class="dock-label">Lịch rảnh</span>
+        </button>
+        <button class="dock-item" id="moreButton" type="button" aria-haspopup="dialog" aria-expanded="false">
+          <i class="ph ph-dots-three-circle" aria-hidden="true"></i>
+          <span class="dock-label">Thêm</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="sheet-backdrop" id="sheetBackdrop"></div>
+    <section class="more-sheet" id="moreSheet" role="dialog" aria-modal="true" aria-labelledby="more-title">
+      <div class="sheet-header">
+        <h2 id="more-title">Tiện ích khác</h2>
+        <button class="close-button" id="closeSheet" type="button" aria-label="Đóng menu">
+          <i class="ph ph-x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="sheet-menu">
+        <button class="sheet-action" type="button" data-demo-action="Mở thông báo">
+          <i class="ph ph-bell" aria-hidden="true"></i><span>Thông báo</span>
+        </button>
+        <button class="sheet-action" type="button" data-demo-action="Mở gói hiển thị">
+          <i class="ph ph-megaphone-simple" aria-hidden="true"></i><span>Gói hiển thị</span>
+        </button>
+        <button class="sheet-action" type="button" data-demo-action="Vào LMS">
+          <i class="ph ph-monitor-play" aria-hidden="true"></i><span>Vào LMS</span>
+        </button>
+        <button class="sheet-action" type="button" id="themeButton">
+          <i class="ph ph-moon" aria-hidden="true"></i><span>Đổi giao diện</span>
+        </button>
+        <button class="sheet-action" type="button" data-demo-action="Mở hỗ trợ">
+          <i class="ph ph-question" aria-hidden="true"></i><span>Hỗ trợ</span>
+        </button>
+        <button class="sheet-action danger" type="button" data-demo-action="Đăng xuất">
+          <i class="ph ph-sign-out" aria-hidden="true"></i><span>Đăng xuất</span>
+        </button>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script>
+      const pageCopy = {
+        home: {
+          context: "Không gian làm việc hôm nay",
+          title: "Chào buổi sáng, Minh Anh",
+          subtitle: "Bạn có một buổi học và hai tin nhắn mới cần phản hồi.",
+        },
+        profile: {
+          context: "Hồ sơ công khai",
+          title: "Hồ sơ của tôi",
+          subtitle: "Xem cách học viên nhìn thấy bạn và cập nhật từng phần khi cần.",
+        },
+        messages: {
+          context: "Trao đổi với học viên",
+          title: "Tin nhắn",
+          subtitle: "Hai cuộc trò chuyện đang chờ bạn phản hồi.",
+        },
+        schedule: {
+          context: "Thời gian giảng dạy",
+          title: "Lịch rảnh",
+          subtitle: "Điều chỉnh thời gian nhận lớp và theo dõi lịch dạy sắp tới.",
+        },
+      };
+
+      const dockItems = document.querySelectorAll(".dock-item[data-page]");
+      const pageContext = document.getElementById("page-context");
+      const pageTitle = document.getElementById("page-title");
+      const pageSubtitle = document.getElementById("page-subtitle");
+      const moreButton = document.getElementById("moreButton");
+      const moreSheet = document.getElementById("moreSheet");
+      const sheetBackdrop = document.getElementById("sheetBackdrop");
+      const closeSheetButton = document.getElementById("closeSheet");
+      const themeButton = document.getElementById("themeButton");
+      const toast = document.getElementById("toast");
+      let toastTimer;
+
+      function showToast(message) {
+        window.clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add("show");
+        toastTimer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+      }
+
+      function closeSheet() {
+        moreSheet.classList.remove("open");
+        sheetBackdrop.classList.remove("open");
+        moreButton.setAttribute("aria-expanded", "false");
+        moreButton.focus();
+      }
+
+      function openSheet() {
+        moreSheet.classList.add("open");
+        sheetBackdrop.classList.add("open");
+        moreButton.setAttribute("aria-expanded", "true");
+        closeSheetButton.focus();
+      }
+
+      dockItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          const page = item.dataset.page;
+          const copy = pageCopy[page];
+          dockItems.forEach((button) => {
+            const active = button === item;
+            button.classList.toggle("active", active);
+            if (active) button.setAttribute("aria-current", "page");
+            else button.removeAttribute("aria-current");
+          });
+          pageContext.textContent = copy.context;
+          pageTitle.textContent = copy.title;
+          pageSubtitle.textContent = copy.subtitle;
+          showToast(`Đã chuyển sang ${copy.title}`);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+
+      moreButton.addEventListener("click", openSheet);
+      closeSheetButton.addEventListener("click", closeSheet);
+      sheetBackdrop.addEventListener("click", closeSheet);
+
+      themeButton.addEventListener("click", () => {
+        const isDark = document.documentElement.dataset.theme === "dark";
+        document.documentElement.dataset.theme = isDark ? "light" : "dark";
+        showToast(isDark ? "Đã bật giao diện sáng" : "Đã bật giao diện tối");
+        closeSheet();
+      });
+
+      document.querySelectorAll("[data-demo-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          showToast(`${button.dataset.demoAction} trong bản sản phẩm`);
+          if (moreSheet.classList.contains("open")) closeSheet();
+        });
+      });
+
+      document.getElementById("notificationButton").addEventListener("click", () => {
+        showToast("Bạn có 3 thông báo mới");
+      });
+
+      document.getElementById("avatarButton").addEventListener("click", openSheet);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && moreSheet.classList.contains("open")) closeSheet();
+      });
+    </script>
+  </body>
+</html>
