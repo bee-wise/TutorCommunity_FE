@@ -83,7 +83,7 @@ export function TutorListController({
             <div className="flex flex-col gap-4">
               <div>
                 <h1
-                  className="text-2xl uppercase md:text-3xl font-extrabold text-[#0c0c0b] tracking-tight leading-tight"
+                  className="text-2xl uppercase md:text-3xl font-extrabold text-primary tracking-tight leading-tight"
                   style={{ fontFamily: "var(--font-nunito-family)" }}
                 >
                   Tìm Kiếm Gia Sư

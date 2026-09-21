@@ -6,10 +6,12 @@ import Link from "next/link";
 import { HeroMotion } from "@workspace/ui/components/HeroMotion";
 import { HeroCarousel } from "./HeroCarousel";
 import { LightningIcon } from "@phosphor-icons/react";
+import { FunnelIcon } from "lucide-react";
 
 export function HeroSection() {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -69,28 +71,58 @@ export function HeroSection() {
                   }}
                   aria-hidden="true"
                 />
-                <div className="relative z-10 rounded-[14.5px] p-3.5 flex items-center gap-3 bg-card w-full h-full">
-                  <input
-                    type="text"
-                    id="hero-ai-search"
-                    placeholder='Ví dụ: "Gia sư Toán lớp 12, học online, 200.000đ/buổi"'
-                    className="flex-1 bg-transparent text-sm text-foreground placeholder-foreground/35 outline-none min-w-0"
-                    aria-label="Nhập nhu cầu tìm gia sư"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSearch();
-                    }}
-                  />
+                <div className="relative z-10 rounded-[14.5px] p-2.5 sm:p-3.5 flex items-center gap-2 sm:gap-3 bg-card w-full">
+                  <div className="relative flex-1 min-w-0 flex items-center overflow-hidden py-1">
+                    <input
+                      type="text"
+                      id="hero-ai-search"
+                      placeholder='Ví dụ: "Gia sư Toán lớp 12, học online, 200.000đ/buổi"'
+                      className="w-full bg-transparent text-xs sm:text-sm text-foreground outline-none placeholder:text-foreground/35 placeholder:opacity-0 sm:placeholder:opacity-100 min-w-0 relative z-10 leading-normal"
+                      aria-label="Nhập nhu cầu tìm gia sư"
+                      value={query}
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSearch();
+                      }}
+                    />
+
+                    {/* Running placeholder marquee for mobile when input is empty & not focused */}
+                    {!query && !isFocused && (
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-y-0 left-0 right-0 pointer-events-none flex items-center overflow-hidden sm:hidden select-none"
+                        style={{
+                          maskImage:
+                            "linear-gradient(to right, black 75%, transparent 95%)",
+                          WebkitMaskImage:
+                            "linear-gradient(to right, black 75%, transparent 95%)",
+                        }}
+                      >
+                        <div className="animate-marquee-text text-xs text-foreground/35 leading-normal flex items-center flex-nowrap whitespace-nowrap">
+                          <span className="whitespace-nowrap shrink-0 pr-12">
+                            Ví dụ: &quot;Gia sư Toán lớp 12, học online,
+                            200.000đ/buổi&quot;
+                          </span>
+                          <span className="whitespace-nowrap shrink-0 pr-12">
+                            Ví dụ: &quot;Gia sư Toán lớp 12, học online,
+                            200.000đ/buổi&quot;
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <button
                     type="button"
                     onClick={handleSearch}
                     id="hero-cta-primary"
-                    className="shrink-0 inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] whitespace-nowrap shadow-lg shadow-primary/30"
+                    className="shrink-0 inline-flex h-9 items-center justify-center rounded-full bg-primary px-3.5 sm:px-5 text-xs sm:text-sm font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] whitespace-nowrap shadow-lg shadow-primary/30"
                   >
                     <LightningIcon
-                      size={16}
-                      className="mr-2"
+                      size={15}
+                      className="mr-1 sm:mr-2"
                       aria-hidden="true"
                     />
                     Tìm Ngay
@@ -98,14 +130,31 @@ export function HeroSection() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/tutors?mode=manual"
-                  id="hero-cta-secondary"
-                  className="inline-flex h-10 items-center justify-center rounded-full border-2 border-primary px-6 text-sm font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
-                >
-                  Tìm kiếm thủ công
-                </Link>
+              <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4 px-1 text-xs sm:text-sm text-foreground/60">
+                <div className="flex items-center gap-2">
+                  <span className="text-foreground/50">Hoặc:</span>
+                  <Link
+                    href="/tutors?mode=manual"
+                    id="hero-cta-secondary"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-accent/5 px-3.5 py-1 text-xs font-semibold text-accent transition-all duration-200 hover:bg-primary/10 hover:border-primary/40 active:scale-[0.98] group"
+                  >
+                    <span>Xem danh sách gia sư</span>
+                  </Link>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-foreground/45">Gợi ý:</span>
+                  {["Toán 12", "IELTS", "Tiếng Anh"].map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => setQuery(`Gia sư ${tag}`)}
+                      className="rounded-full bg-accent/70 px-2.5 py-0.5 text-xs font-medium text-primary/75 transition-all hover:bg-primary/10 hover:text-primary cursor-pointer active:scale-95"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </HeroMotion>
