@@ -8,19 +8,15 @@ import {
 const STEPS = [
   {
     title: "Hoàn thiện hồ sơ",
-    body: "Chia sẻ môn dạy, kinh nghiệm, khu vực, lịch trống và cách bạn tổ chức một buổi học.",
   },
   {
     title: "Tải lên giấy tờ",
-    body: "Gửi giấy tờ cần thiết để đội ngũ BeeWise kiểm tra và phản hồi nếu cần bổ sung.",
   },
   {
     title: "Phỏng vấn cùng trợ lý Beewise AI",
-    body: "Hoàn thành buổi phỏng vấn ngắn với trợ lý AI để chia sẻ chi tiết về chuyên môn và phong cách giảng dạy.",
   },
   {
     title: "Trở thành Gia sư",
-    body: "Sau khi hồ sơ và phỏng vấn được duyệt, bạn đã có thể nhận các yêu cầu kết nối phù hợp.",
   },
 ];
 
@@ -137,9 +133,6 @@ export function TutorGuideSteps() {
                     <h3 className="font-google-sans text-lg font-extrabold leading-snug text-foreground">
                       {step.title}
                     </h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-foreground/60">
-                      {step.body}
-                    </p>
                   </div>
                 </li>
               ))}

@@ -86,7 +86,7 @@ export function TutorGuideHero() {
         >
           <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-muted shadow-[0_28px_70px_rgba(40,15,145,0.16)]">
             <Image
-              src="/brand/BeeWiseTeam-2.JPG"
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789967862/15.png"
               alt="Đội ngũ BeeWise đồng hành cùng cộng đồng gia sư"
               fill
               priority
