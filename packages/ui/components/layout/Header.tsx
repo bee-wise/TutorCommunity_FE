@@ -172,18 +172,24 @@ export function Header({
     );
   };
 
+  const isScrollActive = scrolled && !isAuthenticated;
+
   return (
     <div className="font-nunito fixed left-0 right-0 top-0 z-60 flex justify-center pt-0">
       <motion.header
-        layout
-        transition={{ duration: isReady ? 0.4 : 0, ease: [0.22, 1, 0.36, 1] }}
+        layout={!isAuthenticated}
+        transition={
+          !isAuthenticated && isReady
+            ? { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
+            : { duration: 0 }
+        }
         className={
-          scrolled
+          isScrollActive
             ? "mt-3 rounded-full border border-white/10 bg-primary shadow-xl shadow-primary/20 supports-backdrop-filter:bg-primary/80"
             : "w-full bg-primary"
         }
         style={
-          scrolled
+          isScrollActive
             ? {
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
@@ -195,9 +201,15 @@ export function Header({
         }
       >
         <div
-          className={`flex h-16 items-center justify-between gap-3 transition-all ${
-            isReady ? "duration-300" : "duration-0"
-          } ${scrolled ? "px-5" : "mx-auto w-full max-w-350 px-4 sm:px-6 lg:px-8"}`}
+          className={cn(
+            "flex h-16 items-center justify-between gap-3",
+            !isAuthenticated && isReady
+              ? "transition-all duration-300"
+              : "duration-0",
+            isScrollActive
+              ? "px-5"
+              : "mx-auto w-full max-w-350 px-4 sm:px-6 lg:px-8",
+          )}
         >
           <Link
             href={navbarConfig.homeHref}
@@ -220,7 +232,7 @@ export function Header({
           </Link>
 
           <nav
-            className="hidden items-center gap-6 md:flex"
+            className="hidden items-center gap-1 md:flex"
             aria-label="Điều hướng chính"
           >
             {isAuthLoading ? (
@@ -228,7 +240,8 @@ export function Header({
                 className="h-4 w-72 rounded-full bg-white/15"
                 aria-label="Đang tải điều hướng"
               />
-            ) : (
+            ) : isAuthenticated ? (
+              /* ── Authenticated: animated pill tabs ── */
               navbarConfig.centerItems.map((link) => {
                 const isActive = isActiveLink(link.href);
 
@@ -236,7 +249,44 @@ export function Header({
                   <Link
                     key={`${link.label}-${link.href}`}
                     href={link.href}
-                    className={`inline-flex items-center text-sm font-extrabold uppercase transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[16px] ${
+                    className="relative inline-flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-extrabold uppercase transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[15px]"
+                    style={{
+                      color: isActive
+                        ? "var(--accent)"
+                        : "rgba(255,255,255,0.85)",
+                    }}
+                  >
+                    {/* Sliding background pill */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-pill"
+                        className="absolute inset-0 rounded-full"
+                        style={{
+                          backgroundColor: "rgba(255,255,255,0.12)",
+                          border: "1px solid rgba(255,255,255,0.18)",
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 380,
+                          damping: 30,
+                        }}
+                      />
+                    )}
+                    <span className="relative z-10">{link.label}</span>
+                    {renderBadge(link)}
+                  </Link>
+                );
+              })
+            ) : (
+              /* ── Guest: original text-only style ── */
+              navbarConfig.centerItems.map((link) => {
+                const isActive = isActiveLink(link.href);
+
+                return (
+                  <Link
+                    key={`${link.label}-${link.href}`}
+                    href={link.href}
+                    className={`inline-flex items-center px-2 text-sm font-extrabold uppercase transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[16px] ${
                       isActive
                         ? "text-accent"
                         : "text-primary-foreground hover:text-accent"
