@@ -46,14 +46,20 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
+    if (!apiBaseUrl) {
+      return [];
+    }
+
+    const formattedBaseUrl = apiBaseUrl.replace(/\/$/, "");
+
     return [
       {
         source: "/api/ai/:path*",
-        destination: `${apiBaseUrl}/api/ai/:path*`,
+        destination: `${formattedBaseUrl}/api/ai/:path*`,
       },
       {
         source: "/api/:path*",
-        destination: `${apiBaseUrl}/:path*`,
+        destination: `${formattedBaseUrl}/:path*`,
       },
     ];
   },
