@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const apiBaseUrl =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://api.beewise.vn";
+  process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL;
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@workspace/ui", "@workspace/core"],
@@ -36,6 +34,14 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "api.dicebear.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.vietqr.io",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.vietqr.io",
       },
     ],
   },

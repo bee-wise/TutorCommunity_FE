@@ -1,4 +1,3 @@
-import { toast } from "@workspace/ui/components/ui/bee-toast";
 import type { MeType } from "../types/auth.type";
 
 export function normalizeAuthRole(role?: string | null) {
