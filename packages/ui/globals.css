@@ -249,3 +249,23 @@
 .katex .msupsub .vlist .mord {
   font-size: 0.75em !important;
 }
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-text {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  width: max-content;
+  align-items: center;
+  animation: marquee-scroll 14s linear infinite;
+  will-change: transform;
+}
+

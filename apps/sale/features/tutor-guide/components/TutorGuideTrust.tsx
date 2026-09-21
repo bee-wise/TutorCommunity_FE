@@ -131,7 +131,7 @@ export function TutorGuideTrust() {
 
           <div className="flex items-center gap-4 shrink-0">
             <Image
-              src="/images/Sticker/E3-1.PNG"
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789966156/11.png"
               alt="BeeWise Sticker"
               width={80}
               height={70}
