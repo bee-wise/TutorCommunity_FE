@@ -41,29 +41,27 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
             className="flex items-center gap-3"
             aria-label="BeeWise - Về trang chủ"
           >
-            <div className="relative w-10 h-10 rounded-full bg-white overflow-hidden shrink-0">
+            <div className="relative w-18 h-18 rounded-full bg-white overflow-hidden shrink-0">
               <Image
-                src="/brand/beewise-logo-nobackground.PNG"
+                src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"
                 alt="BeeWise Logo"
                 fill
                 sizes="40px"
                 className="object-contain p-1"
               />
             </div>
-            <span
-              className="text-white text-lg leading-none"
-              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
-            >
-              Cộng Đồng Gia Sư
-            </span>
           </Link>
 
           <div className="text-white/90">
             <blockquote
               className="text-2xl leading-snug mb-4"
-              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
+              style={{
+                fontFamily: "var(--font-nunito-family)",
+                fontWeight: 800,
+              }}
             >
-              &quot;Gia nhập BeeWise,<br />
+              &quot;Gia nhập BeeWise,
+              <br />
               Kiến tạo tương lai.&quot;
             </blockquote>
             <p className="text-sm text-white/70">

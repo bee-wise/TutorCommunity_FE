@@ -88,7 +88,7 @@ export function MobileNav({
         onClick={() => setOpen((prev) => !prev)}
         aria-label={open ? "Đóng menu" : "Mở menu"}
         aria-expanded={open}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         {open ? (
           <X size={18} weight="bold" />
