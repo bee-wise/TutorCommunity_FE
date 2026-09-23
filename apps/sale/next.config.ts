@@ -43,6 +43,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.vietqr.io",
       },
+      {
+        protocol: "https",
+        hostname: "img.mservice.com.vn",
+      },
+      {
+        protocol: "https",
+        hostname: "img.mservice.io",
+      },
     ],
   },
   async rewrites() {

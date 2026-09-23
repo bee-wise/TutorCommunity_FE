@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import type { CSSProperties } from "react";
 import {
   ArrowRight,
@@ -359,13 +360,14 @@ export function JourneyTimeline() {
 }
 
 export function StepDetailPanel({ step }: { step: TutorOnboardingStep }) {
+  const router = useRouter();
   const { view, dispatchAction } = useTutorOnboardingViewModel();
   const status = view.stepStatuses[step.id];
   const isActionable = status === "CURRENT" || status === "ACTION_REQUIRED";
 
   const handleAction = () => {
     if (step.id === "profile") {
-      dispatchAction("submit-profile");
+      router.push("/tutor/onboarding/profile-register");
     } else if (step.id === "postApproval") {
       dispatchAction("open-post-approval-form");
     } else if (step.id === "interview") {
@@ -523,6 +525,7 @@ export function StatusCard({
 }
 
 export function PrimaryScreenActions() {
+  const router = useRouter();
   const { view, dispatchAction } = useTutorOnboardingViewModel();
   const primaryAction =
     view.currentScreen === "APPROVED"
@@ -538,8 +541,14 @@ export function PrimaryScreenActions() {
       {view.primaryAction && (
         <Button
           type="button"
-          onClick={() => primaryAction && dispatchAction(primaryAction)}
-          disabled={!primaryAction}
+          onClick={() => {
+            if (view.currentScreen === "OVERVIEW") {
+              router.push("/tutor/onboarding/profile-register");
+              return;
+            }
+            if (primaryAction) dispatchAction(primaryAction);
+          }}
+          disabled={!primaryAction && view.currentScreen !== "OVERVIEW"}
           className="rounded-full bg-[#280f91] px-5 text-white hover:bg-[#1f0b70]"
         >
           {view.primaryAction}
