@@ -24,7 +24,7 @@ export function GuestFavoriteModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
-      <DialogContent className="sm:max-w-md overflow-hidden rounded-3xl border border-[#cfe1fa] bg-white p-0 shadow-2xl">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md sm:max-w-md overflow-hidden rounded-3xl border border-[#cfe1fa] bg-white p-0 shadow-2xl">
         {/* Header decoration */}
         <div className="relative overflow-hidden bg-[linear-gradient(135deg,#280f91_0%,#3b18be_60%,#ffc500_150%)] px-6 pt-8 pb-7 text-white text-center">
           <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10 blur-xl" />

@@ -92,7 +92,9 @@ export function PostApprovalScreen() {
               b.shortName.toLowerCase() ===
                 state.bankInfo.bankName.toLowerCase() ||
               b.code.toLowerCase() === state.bankInfo.bankName.toLowerCase() ||
-              b.name.toLowerCase().includes(state.bankInfo.bankName.toLowerCase()),
+              b.name
+                .toLowerCase()
+                .includes(state.bankInfo.bankName.toLowerCase()),
           );
           if (found) setSelectedBank(found);
         }
@@ -241,8 +243,8 @@ export function PostApprovalScreen() {
             </span>
           </div>
           <p className="mt-2 text-sm text-[#5e6688]">
-            Thông tin này được BeeWise dùng để chi trả học phí cho gia sư. Tên chủ
-            tài khoản sẽ được tự động tra cứu từ ngân hàng để tránh sai sót.
+            Thông tin này được BeeWise dùng để chi trả học phí cho gia sư. Tên
+            chủ tài khoản sẽ được tự động tra cứu từ ngân hàng để tránh sai sót.
           </p>
 
           <div className="mt-5 grid gap-4 md:grid-cols-3">
@@ -278,7 +280,9 @@ export function PostApprovalScreen() {
                   </div>
                 ) : (
                   <span className="text-sm text-[#5e6688]">
-                    {isLoadingBanks ? "Đang tải ngân hàng..." : "Chọn ngân hàng"}
+                    {isLoadingBanks
+                      ? "Đang tải ngân hàng..."
+                      : "Chọn ngân hàng"}
                   </span>
                 )}
                 <CaretDown
@@ -375,7 +379,7 @@ export function PostApprovalScreen() {
                   placeholder="Nhập số tài khoản"
                   autoComplete="off"
                   inputMode="numeric"
-                  className="h-10 rounded-xl border-[#cfe1fa] pr-9 font-mono text-sm focus:border-[#280f91]"
+                  className="h-10 rounded-xl border-[#cfe1fa] pr-9 font-google-sans text-sm focus:border-[#280f91]"
                 />
                 <div className="absolute right-2.5 top-2.5">
                   {isLookingUp ? (

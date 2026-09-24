@@ -215,6 +215,7 @@ export function RegisterForm() {
                 onClick={() => setShowPassword((p) => !p)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70 transition-colors"
                 aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                tabIndex={-1}
               >
                 {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
               </button>
@@ -238,6 +239,7 @@ export function RegisterForm() {
                 onClick={() => setShowConfirm((p) => !p)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70 transition-colors"
                 aria-label={showConfirm ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                tabIndex={-1}
               >
                 {showConfirm ? <EyeSlash size={18} /> : <Eye size={18} />}
               </button>
