@@ -1,94 +1,86 @@
 "use client";
+
 import { Button } from "@workspace/ui/components/ui/button";
+import { ArrowLeft } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "@phosphor-icons/react";
+import styles from "./AuthLayout.module.css";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
   variant?: "login" | "register";
 }
 
+const robotImages = {
+  login: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241795/Bee_Robot_3.png",
+  register: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241794/Bee_Robot_2.png",
+} as const;
+
 export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
-  const url =
-    variant === "register"
-      ? "/brand/BeeWiseTeam-2.JPG"
-      : "/brand/BeeWiseTeam.JPG";
   const router = useRouter();
 
-  const handleBack = () => {
-    router.replace("/");
-  };
-
   return (
-    <div className="flex h-dvh overflow-hidden">
-      <div className="relative hidden w-[48%] shrink-0 overflow-hidden lg:flex xl:w-[52%]">
-        <Image
-          src={url}
-          alt="Đội ngũ BeeWise"
-          fill
-          sizes="45vw"
-          className="object-cover object-center"
-          priority
-        />
+    <div className={`${styles.layout} ${variant === "register" ? styles.registerLayout : ""}`}>
+      <aside className={styles.artPanel} aria-label="BeeWise">
+        <Link href="/" className={styles.brand} aria-label="BeeWise - Về trang chủ">
+          <span className={styles.brandMark}>
+            <Image
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"
+              alt=""
+              fill
+              sizes="56px"
+              className="object-contain p-1"
+            />
+          </span>
+          <span className={styles.brandName}>BeeWise</span>
+        </Link>
 
-        <div className="absolute inset-0 flex flex-col justify-between p-10">
-          <Link
-            href="/"
-            className="flex items-center gap-3"
-            aria-label="BeeWise - Về trang chủ"
-          >
-            <div className="relative w-18 h-18 rounded-full bg-white overflow-hidden shrink-0">
-              <Image
-                src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"
-                alt="BeeWise Logo"
-                fill
-                sizes="40px"
-                className="object-contain p-1"
-              />
-            </div>
-          </Link>
-
-          <div className="text-white/90">
-            <blockquote
-              className="text-2xl leading-snug mb-4"
-              style={{
-                fontFamily: "var(--font-nunito-family)",
-                fontWeight: 800,
-              }}
-            >
-              &quot;Gia nhập BeeWise,
-              <br />
-              Kiến tạo tương lai.&quot;
-            </blockquote>
-            <p className="text-sm text-white/70">
-              Hàng nghìn học viên đã tìm được gia sư phù hợp cùng BeeWise.
-            </p>
+        <div className={styles.scene}>
+          <div className={styles.backGlow} aria-hidden="true" />
+          <div className={styles.orbit} aria-hidden="true" />
+          <div className={styles.spark} aria-hidden="true" />
+          <div className={styles.robot}>
+            <Image
+              src={robotImages[variant]}
+              alt={variant === "login" ? "Robot BeeWise chào mừng bạn trở lại" : "Robot BeeWise chào đón thành viên mới"}
+              fill
+              sizes="(max-width: 1023px) 195px, (max-width: 1440px) 38vw, 520px"
+              className="object-contain"
+              preload
+            />
           </div>
+          <div className={styles.floorShadow} aria-hidden="true" />
         </div>
-      </div>
 
-      <div className="relative flex h-dvh min-w-0 flex-1 items-center justify-center overflow-hidden bg-background px-3 pb-3 pt-14 sm:px-5 sm:pb-4 sm:pt-16">
+        <div className={styles.message}>
+          <p>
+            Gia nhập BeeWise,
+            <br />
+            <span>Kiến tạo tương lai.</span>
+          </p>
+          <span className={styles.caption}>
+            Hàng nghìn học viên đã tìm được gia sư phù hợp cùng BeeWise.
+          </span>
+        </div>
+      </aside>
+
+      <main className={styles.formPanel}>
         <Button
-          className="absolute left-3 top-2 z-10 flex h-9 items-center gap-2 rounded-full px-3 text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground sm:left-5 sm:top-3"
+          className={`absolute left-3 z-10 flex items-center gap-2 rounded-full px-3 text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground sm:left-5 ${variant === "register" ? "top-0 h-8 lg:top-5 lg:h-9" : "top-3 h-9 sm:top-5"}`}
           variant="ghost"
-          onClick={handleBack}
+          onClick={() => router.replace("/")}
         >
           <ArrowLeft weight="bold" className="h-4 w-4" />
           <span className="text-sm font-semibold">Quay lại trang chủ</span>
         </Button>
 
-        <div className="flex h-full w-full max-w-[520px] items-center justify-center">
-          <div
-            className={`w-full rounded-2xl border border-border bg-card/60 shadow-xl shadow-primary/5 backdrop-blur-xl ${
-              variant === "register" ? "p-3 sm:p-4" : "p-6 sm:p-8"
-            }`}
-          >
+        <div className={styles.formContainer}>
+          <div className={`${styles.formCard} ${variant === "register" ? styles.registerCard : ""}`}>
             {children}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
