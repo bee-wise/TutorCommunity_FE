@@ -8,8 +8,12 @@ import {
 } from "../types/auth.type";
 
 export const authService = {
-  login: async (req: LoginRequest): Promise<ApiResponse<undefined>> => {
-    return await apiClient.post("/auth/login", req);
+  login: async (
+    req: LoginRequest,
+    app?: "SALE" | "LMS" | "STAFF"
+  ): Promise<ApiResponse<undefined>> => {
+    const endpoint = app ? `/auth/login/${app.toLowerCase()}` : "/auth/login";
+    return await apiClient.post(endpoint, req);
   },
 
   register: async (

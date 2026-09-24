@@ -21,6 +21,8 @@
   --highlight: #fadc76;
   --warning: #905b0f;
   --error: #e1aba7;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
 
   --glass: color-mix(in srgb, #fff3cb 20%, transparent);
 
@@ -119,6 +121,8 @@
   --color-highlight: var(--highlight);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-glass: var(--glass);
 
   --color-card: var(--card);

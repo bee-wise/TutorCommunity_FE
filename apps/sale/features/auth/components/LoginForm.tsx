@@ -92,6 +92,7 @@ export function LoginForm() {
               onClick={() => setShowPassword((p) => !p)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70 transition-colors"
               aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              tabIndex={-1}
             >
               {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
             </button>
@@ -102,6 +103,7 @@ export function LoginForm() {
           <Link
             href="/forgot-password"
             className="text-xs text-primary hover:text-primary/80 font-semibold transition-colors"
+            tabIndex={-1}
           >
             Quên mật khẩu?
           </Link>
