@@ -22,9 +22,6 @@ export const useLogin = ({
   const queryClient = useQueryClient();
   const setAuthLoading = useAuthStore((s) => s.setAuthLoading);
   const setAuthenticatedUser = useAuthStore((s) => s.login);
-  const setIsOpenAccessLMSConfirm = useAuthStore(
-    (s) => s.setIsOpenAccessLMSConfirm,
-  );
   const clearAuth = useAuthStore((s) => s.logout);
 
   const handleUnauthorized = async () => {
@@ -35,6 +32,7 @@ export const useLogin = ({
       await authService.logout();
     } catch {
     } finally {
+      queryClient.clear();
       clearAuth();
     }
   };
@@ -43,10 +41,13 @@ export const useLogin = ({
     mutationKey: ["login"],
     mutationFn: async (req: LoginRequest) => {
       try {
-        await authService.login({
-          email: req.email.trim(),
-          password: req.password,
-        });
+        await authService.login(
+          {
+            email: req.email.trim(),
+            password: req.password,
+          },
+          loginScreen,
+        );
 
         const response = await authService.getMe();
         if (!response.success || !response.data) {
@@ -63,34 +64,6 @@ export const useLogin = ({
       setAuthLoading(true);
     },
     onSuccess: async (user) => {
-      if (loginScreen === "SALE") {
-        setIsOpenAccessLMSConfirm(false);
-        if (user.role !== "TUTOR" && user.role !== "LEARNER") {
-          return handleUnauthorized();
-        }
-      } else if (loginScreen === "LMS") {
-        if (user.role !== "TUTOR" && user.role !== "LEARNER") {
-          return handleUnauthorized();
-        }
-        if (!user.canAccessTutorLms && user.role === "TUTOR") {
-          setIsOpenAccessLMSConfirm(true);
-          await authService.logout();
-          clearAuth();
-          return;
-        }
-        if (!user.canAccessLearnerLms && user.role === "LEARNER") {
-          setIsOpenAccessLMSConfirm(true);
-          await authService.logout();
-          clearAuth();
-          return;
-        }
-      } else if (loginScreen === "STAFF") {
-        if (user.role !== "ADMIN" && user.role !== "CONSULTANT") {
-          return handleUnauthorized();
-        }
-      }
-
-      setIsOpenAccessLMSConfirm(false);
       setAuthenticatedUser(user);
       queryClient.setQueryData([queryKeys.authKey.getMe], user);
       toast.success(AUTH_MESSAGE.SUCCESS, { position: "top-right" });
@@ -107,6 +80,11 @@ export const useLogin = ({
       onSuccess?.();
     },
     onError: (error) => {
+      const apiError = handleApiError(error);
+      if (apiError.statusCode === 403) {
+        return handleUnauthorized();
+      }
+
       clearAuth();
       toast.error(
         getApiErrorMessage(error, AUTH_MESSAGE.ERROR.INTERNAL_SERVER_ERROR),

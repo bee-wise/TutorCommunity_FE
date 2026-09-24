@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "@phosphor-icons/react";
-import { useRouteStore } from "@workspace/core/store/useRouteStore";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -17,10 +16,9 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
       ? "/brand/BeeWiseTeam-2.JPG"
       : "/brand/BeeWiseTeam.JPG";
   const router = useRouter();
-  const lastNonAuthRoute = useRouteStore((state) => state.lastNonAuthRoute);
 
   const handleBack = () => {
-    router.replace(lastNonAuthRoute || "/");
+    router.replace("/");
   };
 
   return (
