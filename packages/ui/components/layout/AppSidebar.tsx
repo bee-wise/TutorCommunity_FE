@@ -54,7 +54,7 @@ export function AppSidebar() {
             <div className="relative w-7 h-7 overflow-hidden shrink-0">
               <Image
                 src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"
-                alt="BeeWise Logo"
+                alt="BeeWise"
                 fill
                 sizes="28px"
                 className="object-contain"
@@ -67,7 +67,7 @@ export function AppSidebar() {
             <div className="relative flex-1 h-16 overflow-hidden">
               <Image
                 src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790065308/Logo_2.png"
-                alt="BeeWise Logo"
+                alt="BeeWise"
                 fill
                 sizes="200px"
                 className="object-contain object-left"

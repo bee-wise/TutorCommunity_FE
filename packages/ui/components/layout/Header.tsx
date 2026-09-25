@@ -224,7 +224,7 @@ export function Header({
               <div className="relative h-6 w-28 sm:h-7 sm:w-32 md:h-7.5 md:w-36">
                 <Image
                   src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
-                  alt="BeeWise Logo"
+                  alt="BeeWise"
                   fill
                   sizes="(max-width: 640px) 112px, (max-width: 768px) 128px, 144px"
                   className="object-contain object-center"
