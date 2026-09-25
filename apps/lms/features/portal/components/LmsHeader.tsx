@@ -28,7 +28,7 @@ export function LmsHeader() {
           <div className="relative h-16 w-32 sm:h-18 sm:w-36">
             <Image
               src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790065308/Logo_2.png"
-              alt="BeeWise LMS Logo"
+              alt="BeeWise LMS"
               fill
               priority
               sizes="(max-width: 640px) 144px, 160px"

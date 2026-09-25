@@ -15,15 +15,16 @@ import { FaqSection } from "@/features/landing/components/FaqSection";
 import { TutorGuideTrust } from "@/features/tutor-guide/components/TutorGuideTrust";
 
 export const metadata: Metadata = {
-  title: "Cộng Đồng Gia Sư - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
+  title: "BeeWise - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
   description:
     "Chỉ mất khoảng 30 giây để tìm gia sư phù hợp cùng BeeWise. Hồ sơ được xác thực, kết nối trực tiếp với gia sư và cố vấn hỗ trợ xuyên suốt. Trải nghiệm miễn phí, không cần đăng nhập.",
   keywords: [
-    "tìm gia sư AI",
+    "tìm gia sư bằng AI",
     "gia sư uy tín",
     "BeeWise",
     "tìm gia sư online",
     "nền tảng kết nối gia sư",
+    "beewise Việt Nam",
   ],
   openGraph: {
     title: "BeeWise - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
