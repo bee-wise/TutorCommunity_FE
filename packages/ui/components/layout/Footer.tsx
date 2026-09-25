@@ -29,7 +29,7 @@ export function Footer() {
                 <div className="relative h-7 w-32 sm:h-8 sm:w-36">
                   <Image
                     src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
-                    alt="BeeWise Logo"
+                    alt="BeeWise"
                     fill
                     sizes="(max-width: 640px) 128px, 144px"
                     className="object-contain object-center"
