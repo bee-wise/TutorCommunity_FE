@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Lock } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 
 import Image from "next/image";
@@ -45,7 +45,7 @@ export function AppSidebar() {
         >
           <div className="relative w-8 h-8 border rounded-lg bg-background overflow-hidden shrink-0 flex items-center justify-center">
             <Image
-              src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"
               alt="BeeWise Logo"
               fill
               sizes="32px"
@@ -95,58 +95,43 @@ export function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {group.items.map((item) => {
+                    const isRootUrl =
+                      item.url === "/admin" || item.url === "/consultant";
                     const isActive =
                       !item.openInNewTab &&
                       (pathname === item.url ||
-                        pathname.startsWith(`${item.url}/`));
-
-                    const isTutor = normalizedRole === "TUTOR";
-                    const isUnverified =
-                      isTutor && user?.status === "UNVERIFIED";
-                    const isDashboard = item.url === "/lms/tutor";
-                    const isLocked = isUnverified && !isDashboard;
+                        (!isRootUrl && pathname.startsWith(`${item.url}/`)));
 
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
-                          asChild={!isLocked}
-                          tooltip={
-                            isLocked
-                              ? "Bạn hãy hoàn thành xác thực tài khoản"
-                              : item.title
-                          }
-                          isActive={isActive && !isLocked}
-                          disabled={isLocked}
+                          asChild
+                          tooltip={item.title}
+                          isActive={isActive}
                           className={`transition-colors font-medium select-none ${
-                            isLocked
-                              ? "opacity-40 cursor-not-allowed text-muted-foreground/70"
-                              : isActive
-                                ? "bg-[#280F91]/10 text-accent hover:bg-[#280F91]/15 hover:text-[#280F91]"
-                                : "text-muted-foreground hover:bg-[#280F91]/5 hover:text-[#280F91]"
+                            isActive
+                              ? "bg-primary/85! text-accent! hover:bg-primary/90! hover:text-accent!"
+                              : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
                           }`}
                         >
-                          {isLocked ? (
-                            <div className="flex items-center gap-2 w-full cursor-not-allowed">
-                              <item.icon className="size-4 text-muted-foreground/60 shrink-0" />
-                              <span className="truncate">{item.title}</span>
-                              <Lock className="ml-auto size-3 text-muted-foreground/60 shrink-0" />
-                            </div>
-                          ) : (
-                            <Link
-                              href={item.url}
-                              target={item.openInNewTab ? "_blank" : undefined}
-                              rel={item.openInNewTab ? "noopener noreferrer" : undefined}
+                          <Link
+                            href={item.url}
+                            target={item.openInNewTab ? "_blank" : undefined}
+                            rel={
+                              item.openInNewTab
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                          >
+                            <item.icon
+                              className={`size-4 ${isActive ? "text-accent" : ""}`}
+                            />
+                            <span
+                              className={` ${isActive ? "text-accent" : ""}`}
                             >
-                              <item.icon
-                                className={`size-4 ${isActive ? "text-accent" : ""}`}
-                              />
-                              <span
-                                className={` ${isActive ? "text-accent" : ""}`}
-                              >
-                                {item.title}
-                              </span>
-                            </Link>
-                          )}
+                              {item.title}
+                            </span>
+                          </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );
