@@ -28,8 +28,8 @@ export function HeroCarousel() {
   }, []);
 
   return (
-    <div className="relative w-full  mx-auto">
-      <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[560px] rounded-4xl overflow-hidden shadow-2xl bg-card border-4 border-white/10">
+    <div className="relative w-full mx-auto">
+      <div className="relative w-full aspect-square rounded-4xl overflow-hidden shadow-2xl bg-card border-4 border-white/10">
         <AnimatePresence>
           <motion.div
             key={activeIndex}
