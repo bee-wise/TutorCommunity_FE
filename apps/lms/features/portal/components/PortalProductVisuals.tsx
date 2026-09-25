@@ -1,4 +1,3 @@
-import Image from "next/image";
 
 type BrowserFrameProps = {
   title: string;
@@ -25,23 +24,6 @@ export function BrowserFrame({
       </div>
       {children}
     </div>
-  );
-}
-
-export function DashboardPreview({ className }: { className?: string }) {
-  return (
-    <BrowserFrame title="Tổng quan gia sư" className={className}>
-      <div className="relative w-full overflow-hidden bg-[#f7f8fc]">
-        <Image
-          src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1787303094/%E1%BA%A2nh_ch%E1%BB%A5p_m%C3%A0n_h%C3%ACnh_2026-08-21_160717.png"
-          alt="Tổng quan gia sư"
-          width={1920}
-          height={1080}
-          className="h-auto w-full object-cover"
-          priority
-        />
-      </div>
-    </BrowserFrame>
   );
 }
 
