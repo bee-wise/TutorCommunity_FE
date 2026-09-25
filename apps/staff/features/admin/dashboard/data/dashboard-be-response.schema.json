@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Admin dashboard response contract",
+  "description": "GET /admin/dashboard?from=<ISO-8601>&to=<ISO-8601>&useMock=false. summary is the existing API payload; activity, financial, previousPeriod and financialSeries are fields requested from BE to replace frontend mock data. All period metrics use the requested range [from, to]; totalUsers and totalTutors are snapshots at to.",
+  "type": "object",
+  "required": ["success", "data"],
+  "properties": {
+    "success": { "const": true },
+    "message": { "type": ["string", "null"] },
+    "data": {
+      "type": "object",
+      "required": [
+        "generatedAt",
+        "range",
+        "granularity",
+        "summary",
+        "activity",
+        "financial",
+        "previousPeriod",
+        "financialSeries"
+      ],
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time when this response was generated."
+        },
+        "range": { "$ref": "#/$defs/range" },
+        "granularity": { "const": "day" },
+        "summary": { "$ref": "#/$defs/existingSummary" },
+        "activity": { "$ref": "#/$defs/activity" },
+        "financial": { "$ref": "#/$defs/financial" },
+        "previousPeriod": {
+          "type": "object",
+          "description": "The immediately preceding period, with the same number of calendar days and the same cutoff time as the requested period.",
+          "required": ["range", "activity", "financial"],
+          "properties": {
+            "range": { "$ref": "#/$defs/range" },
+            "activity": {
+              "type": "object",
+              "required": ["activeUsers", "activeTutors"],
+              "properties": {
+                "activeUsers": { "$ref": "#/$defs/count" },
+                "activeTutors": { "$ref": "#/$defs/count" }
+              }
+            },
+            "financial": { "$ref": "#/$defs/financial" }
+          }
+        },
+        "financialSeries": {
+          "type": "array",
+          "description": "One item per local calendar day in range, sorted ascending. The final day is partial when to is before midnight. Daily sums must reconcile with period totals for additive fields.",
+          "items": { "$ref": "#/$defs/financialDay" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "range": {
+      "type": "object",
+      "required": ["from", "to"],
+      "properties": {
+        "from": { "type": "string", "format": "date-time" },
+        "to": { "type": "string", "format": "date-time" }
+      }
+    },
+    "count": { "type": "integer", "minimum": 0 },
+    "nullableCount": { "type": ["integer", "null"], "minimum": 0 },
+    "money": {
+      "type": "number",
+      "description": "Amount in VND; no display rounding in the API."
+    },
+    "nonnegativeMoney": {
+      "allOf": [{ "$ref": "#/$defs/money" }, { "minimum": 0 }]
+    },
+    "nullableMoney": {
+      "type": ["number", "null"],
+      "description": "VND; null when the denominator is zero or the metric cannot be calculated."
+    },
+    "rate": {
+      "type": ["number", "null"],
+      "description": "Percentage, e.g. 12.5 means 12.5%; null when the denominator is zero."
+    },
+    "existingMetric": {
+      "type": "object",
+      "required": ["value", "isMock"],
+      "properties": {
+        "value": { "type": "number" },
+        "isMock": {
+          "type": "boolean",
+          "description": "false for values calculated from production data."
+        },
+        "source": { "type": ["string", "null"] }
+      }
+    },
+    "existingSummary": {
+      "type": "object",
+      "description": "Existing fields and metric shape already returned by GET /admin/dashboard.",
+      "required": [
+        "totalUsers",
+        "totalTutors",
+        "approvedTutors",
+        "pendingReviewProfiles",
+        "rejectedProfiles",
+        "onlineTutors",
+        "totalSearches",
+        "totalAiSearches",
+        "totalConnectRequests",
+        "totalChatRooms",
+        "averageResponseTimeSeconds",
+        "recentAuditCount"
+      ],
+      "properties": {
+        "totalUsers": { "$ref": "#/$defs/existingMetric" },
+        "totalTutors": { "$ref": "#/$defs/existingMetric" },
+        "approvedTutors": { "$ref": "#/$defs/existingMetric" },
+        "pendingReviewProfiles": { "$ref": "#/$defs/existingMetric" },
+        "rejectedProfiles": { "$ref": "#/$defs/existingMetric" },
+        "onlineTutors": { "$ref": "#/$defs/existingMetric" },
+        "totalSearches": { "$ref": "#/$defs/existingMetric" },
+        "totalAiSearches": { "$ref": "#/$defs/existingMetric" },
+        "totalConnectRequests": { "$ref": "#/$defs/existingMetric" },
+        "totalChatRooms": { "$ref": "#/$defs/existingMetric" },
+        "averageResponseTimeSeconds": { "$ref": "#/$defs/existingMetric" },
+        "recentAuditCount": { "$ref": "#/$defs/existingMetric" }
+      }
+    },
+    "activity": {
+      "type": "object",
+      "required": [
+        "activeUsers",
+        "newUsers",
+        "uniqueSearchingUsers",
+        "activeTutors",
+        "tutorsWithAvailability",
+        "tutorsWithZeroConnectRequests",
+        "zeroResultSearches",
+        "zeroResultRate",
+        "searchConnectRate",
+        "connectChatRate",
+        "aiConnectRequests",
+        "aiSearchConnectRate",
+        "medianResponseTimeSeconds",
+        "responseRate",
+        "unansweredConnectRequests"
+      ],
+      "properties": {
+        "activeUsers": {
+          "$ref": "#/$defs/count",
+          "description": "Distinct users active during the period."
+        },
+        "newUsers": {
+          "$ref": "#/$defs/count",
+          "description": "Users registered during the period."
+        },
+        "uniqueSearchingUsers": {
+          "$ref": "#/$defs/count",
+          "description": "Distinct users who performed at least one search."
+        },
+        "activeTutors": {
+          "$ref": "#/$defs/count",
+          "description": "Distinct tutors active during the period."
+        },
+        "tutorsWithAvailability": {
+          "$ref": "#/$defs/count",
+          "description": "Approved tutors with at least one available teaching slot at period end."
+        },
+        "tutorsWithZeroConnectRequests": {
+          "$ref": "#/$defs/count",
+          "description": "Approved tutors receiving no connection requests during the period."
+        },
+        "zeroResultSearches": {
+          "$ref": "#/$defs/nullableCount",
+          "description": "Searches returning zero tutor results; null if search-result logging is unavailable."
+        },
+        "zeroResultRate": {
+          "$ref": "#/$defs/rate",
+          "description": "zeroResultSearches / summary.totalSearches.value × 100."
+        },
+        "searchConnectRate": {
+          "$ref": "#/$defs/rate",
+          "description": "summary.totalConnectRequests.value / summary.totalSearches.value × 100."
+        },
+        "connectChatRate": {
+          "$ref": "#/$defs/rate",
+          "description": "summary.totalChatRooms.value / summary.totalConnectRequests.value × 100."
+        },
+        "aiConnectRequests": {
+          "$ref": "#/$defs/nullableCount",
+          "description": "Connection requests attributed to AI search; null if attribution is unavailable."
+        },
+        "aiSearchConnectRate": {
+          "$ref": "#/$defs/rate",
+          "description": "aiConnectRequests / summary.totalAiSearches.value × 100."
+        },
+        "medianResponseTimeSeconds": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Median tutor first-response time in seconds; null if there are no responses."
+        },
+        "responseRate": {
+          "$ref": "#/$defs/rate",
+          "description": "Responded connection requests / summary.totalConnectRequests.value × 100."
+        },
+        "unansweredConnectRequests": {
+          "$ref": "#/$defs/nullableCount",
+          "description": "Connection requests without a tutor response during the period."
+        }
+      }
+    },
+    "financial": {
+      "type": "object",
+      "description": "Period totals. Monetary values are in VND. Refund and payment fee amounts are nonnegative deductions.",
+      "required": [
+        "gmv",
+        "grossRevenue",
+        "tutorPayouts",
+        "refunds",
+        "paymentFees",
+        "netRevenue",
+        "operatingCosts",
+        "profit",
+        "successfulPayments",
+        "failedPayments",
+        "payingUsers",
+        "takeRate",
+        "profitMargin",
+        "refundRate",
+        "arppu",
+        "averageTransactionValue"
+      ],
+      "properties": {
+        "gmv": {
+          "$ref": "#/$defs/nonnegativeMoney",
+          "description": "Total successfully paid lesson value before platform deductions; gmv = tutorPayouts + grossRevenue."
+        },
+        "grossRevenue": {
+          "$ref": "#/$defs/nonnegativeMoney",
+          "description": "Platform share of GMV before refunds and payment fees."
+        },
+        "tutorPayouts": {
+          "$ref": "#/$defs/nonnegativeMoney",
+          "description": "Tutor share of GMV before refunds."
+        },
+        "refunds": { "$ref": "#/$defs/nonnegativeMoney" },
+        "paymentFees": { "$ref": "#/$defs/nonnegativeMoney" },
+        "netRevenue": {
+          "$ref": "#/$defs/money",
+          "description": "grossRevenue - refunds - paymentFees."
+        },
+        "operatingCosts": { "$ref": "#/$defs/nonnegativeMoney" },
+        "profit": {
+          "$ref": "#/$defs/money",
+          "description": "netRevenue - operatingCosts."
+        },
+        "successfulPayments": { "$ref": "#/$defs/count" },
+        "failedPayments": { "$ref": "#/$defs/count" },
+        "payingUsers": {
+          "$ref": "#/$defs/count",
+          "description": "Distinct users with at least one successful payment in the period."
+        },
+        "takeRate": {
+          "$ref": "#/$defs/rate",
+          "description": "grossRevenue / gmv × 100."
+        },
+        "profitMargin": {
+          "$ref": "#/$defs/rate",
+          "description": "profit / netRevenue × 100; may be negative."
+        },
+        "refundRate": {
+          "$ref": "#/$defs/rate",
+          "description": "refunds / gmv × 100."
+        },
+        "arppu": {
+          "$ref": "#/$defs/nullableMoney",
+          "description": "grossRevenue / payingUsers; VND per paying user."
+        },
+        "averageTransactionValue": {
+          "$ref": "#/$defs/nullableMoney",
+          "description": "gmv / successfulPayments; VND per successful payment."
+        }
+      }
+    },
+    "financialDay": {
+      "type": "object",
+      "required": [
+        "date",
+        "gmv",
+        "grossRevenue",
+        "tutorPayouts",
+        "refunds",
+        "paymentFees",
+        "netRevenue",
+        "operatingCosts",
+        "profit",
+        "successfulPayments",
+        "failedPayments",
+        "newUsers"
+      ],
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "YYYY-MM-DD in the dashboard business timezone (Asia/Ho_Chi_Minh)."
+        },
+        "gmv": { "$ref": "#/$defs/nonnegativeMoney" },
+        "grossRevenue": { "$ref": "#/$defs/nonnegativeMoney" },
+        "tutorPayouts": { "$ref": "#/$defs/nonnegativeMoney" },
+        "refunds": { "$ref": "#/$defs/nonnegativeMoney" },
+        "paymentFees": { "$ref": "#/$defs/nonnegativeMoney" },
+        "netRevenue": { "$ref": "#/$defs/money" },
+        "operatingCosts": { "$ref": "#/$defs/nonnegativeMoney" },
+        "profit": { "$ref": "#/$defs/money" },
+        "successfulPayments": { "$ref": "#/$defs/count" },
+        "failedPayments": { "$ref": "#/$defs/count" },
+        "newUsers": { "$ref": "#/$defs/count" }
+      }
+    }
+  }
+}
