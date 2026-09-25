@@ -24,7 +24,7 @@ export function GuestFavoriteModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
-      <DialogContent className="sm:max-w-md overflow-hidden rounded-3xl border border-[#cfe1fa] bg-white p-0 shadow-2xl">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md sm:max-w-md overflow-hidden rounded-3xl border border-[#cfe1fa] bg-white p-0 shadow-2xl">
         {/* Header decoration */}
         <div className="relative overflow-hidden bg-[linear-gradient(135deg,#280f91_0%,#3b18be_60%,#ffc500_150%)] px-6 pt-8 pb-7 text-white text-center">
           <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10 blur-xl" />
@@ -33,9 +33,6 @@ export function GuestFavoriteModal() {
           {/* Heart icon with badge */}
           <div className="relative mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 shadow-lg shadow-black/10">
             <Heart className="h-8 w-8 text-[#ffc500] fill-[#ffc500]" />
-            <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#ffc500] text-[#280f91]">
-              <Sparkles className="h-3.5 w-3.5" />
-            </div>
           </div>
 
           <DialogHeader className="space-y-2 text-center sm:text-center">

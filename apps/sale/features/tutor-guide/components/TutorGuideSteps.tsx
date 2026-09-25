@@ -1,26 +1,25 @@
 import {
   CheckCircleIcon,
   PlayIcon,
-  SparkleIcon,
   VideoCameraIcon,
 } from "@phosphor-icons/react/dist/ssr";
 
 const STEPS = [
   {
     title: "Hoàn thiện hồ sơ",
-    body: "Chia sẻ môn dạy, kinh nghiệm, khu vực, lịch trống và cách bạn tổ chức một buổi học.",
+    description: "Bổ sung chuyên môn, kinh nghiệm và lịch có thể nhận lớp.",
   },
   {
     title: "Tải lên giấy tờ",
-    body: "Gửi giấy tờ cần thiết để đội ngũ BeeWise kiểm tra và phản hồi nếu cần bổ sung.",
+    description: "Xác thực danh tính, bằng cấp và chứng chỉ liên quan.",
   },
   {
-    title: "Phỏng vấn cùng trợ lý Beewise AI",
-    body: "Hoàn thành buổi phỏng vấn ngắn với trợ lý AI để chia sẻ chi tiết về chuyên môn và phong cách giảng dạy.",
+    title: "Phỏng vấn cùng trợ lý BeeWise AI",
+    description: "Trao đổi ngắn để BeeWise hiểu cách bạn giảng dạy.",
   },
   {
     title: "Trở thành Gia sư",
-    body: "Sau khi hồ sơ và phỏng vấn được duyệt, bạn đã có thể nhận các yêu cầu kết nối phù hợp.",
+    description: "Hoàn tất xét duyệt và sẵn sàng nhận lớp phù hợp.",
   },
 ];
 
@@ -44,8 +43,8 @@ export function TutorGuideSteps() {
         <div className="relative">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-4 italic inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-2 text-sm font-bold text-primary shadow-sm">
-                Hướng dẫn cho "new Bee"
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-2 text-sm font-bold text-primary shadow-sm">
+                Hướng dẫn dành cho gia sư mới
               </div>
               <h2
                 id="steps-heading"
@@ -57,11 +56,6 @@ export function TutorGuideSteps() {
                 Bốn bước rõ ràng, có hướng dẫn ở từng chặng để bạn tự tin bắt
                 đầu hành trình cùng BeeWise.
               </p>
-            </div>
-
-            <div className="inline-flex w-fit items-center gap-2 rounded-full bg-[#e7f1ea] px-4 py-2 text-sm font-semibold text-secondary">
-              <CheckCircleIcon size={18} weight="fill" aria-hidden="true" />
-              Đăng ký miễn phí · Có đội ngũ đồng hành
             </div>
           </div>
 
@@ -122,23 +116,31 @@ export function TutorGuideSteps() {
             </div>
 
             <ol
-              className="rounded-[2.5rem] border border-primary/10 bg-white px-5 py-3 shadow-[0_20px_60px_rgba(40,15,145,0.08)] sm:px-7 sm:py-4"
+              className="rounded-[2.5rem] border border-primary/10 bg-white p-4 shadow-[0_20px_60px_rgba(40,15,145,0.08)] sm:p-5"
               aria-label="Quy trình đăng ký gia sư"
             >
               {STEPS.map((step, index) => (
                 <li
                   key={step.title}
-                  className="group relative grid grid-cols-[auto_1fr] gap-4 border-b border-primary/10 py-5 last:border-b-0 sm:gap-5 sm:py-6"
+                  className="group relative grid grid-cols-[3rem_minmax(0,1fr)] gap-3 rounded-[1.5rem] px-2 py-4 transition-colors duration-200 hover:bg-[#f8f7ff] sm:grid-cols-[3.25rem_minmax(0,1fr)] sm:gap-4 sm:px-3"
                 >
-                  <div className="relative z-10 flex h-11 w-11 items-center justify-center rounded-full bg-[#f0edff] font-nunito text-sm font-black text-primary transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
-                    0{index + 1}
+                  <div className="relative flex justify-center self-stretch">
+                    <span className="relative z-10 flex h-11 w-11 items-center justify-center rounded-full border-2 border-primary/10 bg-[#f0edff] font-nunito text-sm font-black text-primary transition-colors duration-200 group-hover:border-primary group-hover:bg-primary group-hover:text-white">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    {index < STEPS.length - 1 && (
+                      <span
+                        className="absolute bottom-[-1rem] top-11 w-px bg-primary/15 transition-colors duration-200 group-hover:bg-primary/35"
+                        aria-hidden="true"
+                      />
+                    )}
                   </div>
-                  <div>
-                    <h3 className="font-google-sans text-lg font-extrabold leading-snug text-foreground">
+                  <div className="min-w-0 pt-0.5">
+                    <h3 className="font-nunito text-base font-extrabold leading-snug text-foreground sm:text-lg">
                       {step.title}
                     </h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-foreground/60">
-                      {step.body}
+                    <p className="mt-1 max-w-[32ch] text-sm leading-5 text-foreground/58">
+                      {step.description}
                     </p>
                   </div>
                 </li>

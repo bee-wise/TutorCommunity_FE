@@ -4,7 +4,6 @@ export const tutorOnboardingScenarios = [
   "journey",
   "overview",
   "profile-draft",
-  "listing-waived",
   "interview",
   "pending-review",
   "rejected",
@@ -20,7 +19,6 @@ export type TutorOnboardingScreen =
   | "JOURNEY"
   | "OVERVIEW"
   | "PROFILE_DRAFT"
-  | "LISTING_WAIVED"
   | "INTERVIEW"
   | "PENDING_REVIEW"
   | "REJECTED"
@@ -32,7 +30,6 @@ export type TutorOnboardingScreen =
 export type TutorOnboardingStepId =
   | "account"
   | "profile"
-  | "listing"
   | "interview"
   | "verification"
   | "postApproval"
@@ -53,7 +50,6 @@ export type TutorOnboardingActionId =
   | "save-draft"
   | "preview-profile"
   | "submit-profile"
-  | "continue-to-interview"
   | "join-mock-interview"
   | "request-mock-reschedule"
   | "complete-mock-interview"
@@ -101,24 +97,37 @@ export type TutorProfileDraft = {
   documents: string[];
 };
 
-export type AvailabilitySlot = {
-  id: string;
-  day: string;
-  startTime: string;
-  endTime: string;
-  mode: "Online" | "Offline" | "Online và Offline";
+export type AvailabilityDay =
+  | "mon"
+  | "tue"
+  | "wed"
+  | "thu"
+  | "fri"
+  | "sat"
+  | "sun";
+
+export type AvailabilityTimeSlot = "morning" | "afternoon" | "evening";
+
+export type AvailabilityMode = "Online" | "Offline" | "Online và Offline";
+
+export type WeeklyAvailability = Partial<
+  Record<AvailabilityDay, AvailabilityTimeSlot[]>
+>;
+
+export type BankInfo = {
+  bankName: string;
+  bankBin?: string;
+  bankLogo?: string;
+  accountNumber: string;
+  accountHolder: string;
 };
 
 export type TutorOnboardingMockState = {
   scenario: TutorOnboardingScenario | "unknown";
   selectedStepId: TutorOnboardingStepId;
   profile: TutorProfileDraft;
-  availabilitySlots: AvailabilitySlot[];
-  bankInfo: {
-    bankName: string;
-    accountNumber: string;
-    accountHolder: string;
-  };
+  weeklyAvailability: WeeklyAvailability;
+  bankInfo: BankInfo;
   lastActionMessage?: string;
 };
 

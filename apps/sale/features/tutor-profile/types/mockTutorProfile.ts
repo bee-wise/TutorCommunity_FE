@@ -1,68 +1,23 @@
-export interface TutorReviewItem {
-  author: string;
-  relationship: string;
-  rating: number;
-  quote: string;
-}
+export type {
+  TutorReviewItem,
+  TutorAvailabilitySlot,
+  TeachingMethod,
+  TeachingHistoryItem,
+  TutorAchievementItem,
+  TutorProfileData,
+} from "./tutor.type";
 
-export interface TutorAvailabilitySlot {
-  day: string;
-  time: string;
-}
+import type { TutorAchievementItem, TutorProfileData } from "./tutor.type";
 
-export interface TeachingMethod {
-  title: string;
-  description: string;
-}
-
-export interface TeachingHistoryItem {
-  title: string;
-  detail: string;
-  outcome: string;
-}
-
-export interface CertificateItem {
-  title: string;
-  type: string;
-  imageUrl?: string;
-  status?: string;
-  description: string;
-}
-
-export interface TutorProfileData {
-  id: string;
-  displayName: string;
-  avatarUrl: string;
-  videoUrl?: string;
-  headline: string;
-  shortIntro: string;
-  university: string;
-  major: string;
-  studentYear: string;
-  rating: number;
-  reviewCount: number;
-  responseTime: string;
-  teachingHours: string;
-  onlineStatus: string;
-  subjects: string[];
-  specializations: string[];
-  teachingModes: string[];
-  area: string;
-  hourlyRate: string;
-  availability: TutorAvailabilitySlot[];
-  experienceYears: string;
-  achievements: string[];
-  introduction: string[];
-  teachingMethods: TeachingMethod[];
-  education: string[];
-  teachingHistory: TeachingHistoryItem[];
-  certificates: CertificateItem[];
-  reviews: TutorReviewItem[];
-}
+export type CertificateItem = TutorAchievementItem;
 
 export const mockTutorProfile: TutorProfileData = {
   id: "nguyen-minh-anh",
   displayName: "Nguyễn Minh Anh",
+  dateOfBirth: "2003-05-15",
+  gender: "female",
+  introduction:
+    "Minh Anh phù hợp với học sinh mất gốc hoặc thiếu tự tin với môn Toán. Buổi học đi từ kiểm tra nhanh, giải thích trọng tâm đến luyện bài theo mức độ.\n\nSau mỗi buổi, học sinh có phần cần ôn lại và phụ huynh nắm được tiến độ chính.",
   avatarUrl: "/images/Tutor/1.png",
   videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   headline: "Gia sư Toán lớp 6-12, tập trung nền tảng và sự tự tin khi làm bài",
@@ -75,25 +30,45 @@ export const mockTutorProfile: TutorProfileData = {
   reviewCount: 24,
   responseTime: "Thường phản hồi trong 15 phút",
   teachingHours: "350+ giờ dạy đã duyệt",
-  onlineStatus: "Đang nhận học sinh mới",
   subjects: ["Toán 6-9", "Toán 10-12"],
   specializations: ["Củng cố mất gốc", "Luyện thi vào 10"],
   teachingModes: ["Online & tại nhà"],
   area: "Thủ Đức, TP. Hồ Chí Minh",
-  hourlyRate: "120.000đ/giờ",
+  hourlyRate: 120000,
   availability: [
     { day: "Thứ 2, 4, 6", time: "19:00 - 21:00" },
     { day: "Chủ nhật", time: "08:00 - 11:00" },
   ],
   experienceYears: "3 năm",
   achievements: [
-    "Điểm thi THPT Quốc gia môn Toán: 9.2",
-    "Giải Ba học sinh giỏi Toán cấp tỉnh",
-    "GPA hiện tại: 3.4/4.0",
-  ],
-  introduction: [
-    "Minh Anh phù hợp với học sinh mất gốc hoặc thiếu tự tin với môn Toán. Buổi học đi từ kiểm tra nhanh, giải thích trọng tâm đến luyện bài theo mức độ.",
-    "Sau mỗi buổi, học sinh có phần cần ôn lại và phụ huynh nắm được tiến độ chính.",
+    {
+      title: "Giải Ba học sinh giỏi Toán cấp tỉnh",
+      type: "Minh chứng thành tích",
+      imageUrl: "/images/certs/2.png",
+      status: "Đã xác minh",
+      description: "Tóm tắt thành tích học thuật, không hiển thị tài liệu gốc.",
+    },
+    {
+      title: "Thông tin sinh viên FPT",
+      type: "Xác minh học vấn",
+      imageUrl: "/images/certs/1.png",
+      status: "Đã xác minh",
+      description: "BeeWise đã kiểm tra trạng thái học tập ở mức công khai.",
+    },
+    {
+      title: "Kết quả học tập GPA 3.4/4.0",
+      type: "Tóm tắt học tập",
+      imageUrl: "/images/certs/3.png",
+      status: "Đã rà soát",
+      description: "Thông tin học tập được trình bày ở dạng an toàn công khai.",
+    },
+    {
+      title: "Điểm thi THPT Quốc gia môn Toán: 9.2",
+      type: "Xác nhận hoạt động",
+      imageUrl: "/images/certs/4.png",
+      status: "Đã duyệt",
+      description: "Hoạt động giảng dạy được rà soát và tóm tắt ngắn gọn.",
+    },
   ],
   teachingMethods: [
     {
@@ -112,10 +87,6 @@ export const mockTutorProfile: TutorProfileData = {
         "Theo dõi lỗi sai và tăng dần độ khó để học sinh thấy tiến bộ rõ ràng.",
     },
   ],
-  education: [
-    "Ngành Kỹ thuật phần mềm, Đại học FPT",
-    "Nền tảng tốt về Toán học, tư duy logic và giải quyết vấn đề",
-  ],
   teachingHistory: [
     {
       title: "Củng cố nền tảng lớp 9",
@@ -131,36 +102,6 @@ export const mockTutorProfile: TutorProfileData = {
       title: "Ôn tập kiểm tra học kỳ",
       detail: "Chuẩn bị bài tập theo chuyên đề và kiểm tra ngắn định kỳ.",
       outcome: "Đã xác minh",
-    },
-  ],
-  certificates: [
-    {
-      title: "Thông tin sinh viên",
-      type: "Xác minh học vấn",
-      imageUrl: "/images/certs/1.png",
-      status: "Đã xác minh",
-      description: "BeeWise đã kiểm tra trạng thái học tập ở mức công khai.",
-    },
-    {
-      title: "Thành tích Toán học",
-      type: "Minh chứng thành tích",
-      imageUrl: "/images/certs/2.png",
-      status: "Đã xác minh",
-      description: "Tóm tắt thành tích học thuật, không hiển thị tài liệu gốc.",
-    },
-    {
-      title: "Kết quả học tập",
-      type: "Tóm tắt học tập",
-      imageUrl: "/images/certs/3.png",
-      status: "Đã rà soát",
-      description: "Thông tin học tập được trình bày ở dạng an toàn công khai.",
-    },
-    {
-      title: "Kinh nghiệm gia sư",
-      type: "Xác nhận hoạt động",
-      imageUrl: "/images/certs/4.png",
-      status: "Đã duyệt",
-      description: "Hoạt động giảng dạy được rà soát và tóm tắt ngắn gọn.",
     },
   ],
   reviews: [

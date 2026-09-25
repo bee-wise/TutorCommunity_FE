@@ -69,7 +69,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     title: "Gia Sư Được Xác Thực",
     subtitle: "Hồ sơ minh bạch, uy tín tuyệt đối",
     description:
-      "Mọi gia sư trên BeeWise đều phải hoàn thành quy trình xác thực đa tầng gồm kiểm tra thông tin, bằng cấp chuyên môn, chứng chỉ quốc tế và phỏng vấn trực tiếp trước khi nhận lớp.",
+      "Mọi gia sư trên BeeWise đều phải hoàn thành quy trình xác thực đa tầng gồm kiểm tra thông tin, bằng cấp chuyên môn, chứng chỉ quốc tế và phỏng vấn trước khi nhận lớp.",
     benefits: [
       "100% hồ sơ được kiểm duyệt thực tế",
       "Bằng cấp, chứng chỉ rõ ràng, công khai",
@@ -247,7 +247,7 @@ export function FeatureShowcaseSection() {
             id="features-showcase-headline"
             className="text-3xl sm:text-4xl lg:text-[2.6rem] font-black uppercase text-primary leading-tight font-nunito"
           >
-            BeeWise cung cấp các tính năng giúp bạn <br />
+            BeeWise cung cấp các tính năng <br />
             <span className="text-accent">kết nối & học tập</span>
           </h2>
 

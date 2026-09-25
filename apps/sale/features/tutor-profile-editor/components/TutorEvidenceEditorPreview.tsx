@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { BadgeCheck } from "lucide-react";
 import type { CertificateItem } from "../../tutor-profile/types/mockTutorProfile";
 import { SectionShell } from "../../tutor-profile/components/TutorProfilePrimitives";
 import { isLocalPreviewUrl } from "../utils/file-preview";
 
 export function TutorEvidenceEditorPreview({ certificates }: { certificates: CertificateItem[] }) {
   return (
-    <SectionShell eyebrow="Minh chứng" title="Bằng cấp và thành tích" icon={BadgeCheck}>
+    <SectionShell title="Bằng cấp và thành tích">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {certificates.map((item, index) => (
           <article key={`${item.title}-${index}`} className="overflow-hidden rounded-2xl border border-[#cfe1fa] bg-white">

@@ -1,100 +1,116 @@
 "use client";
 
-import Image from "next/image";
+import { useRef } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "motion/react";
 import {
+  ArrowDownIcon,
   ArrowRightIcon,
   CheckCircleIcon,
-  ShieldCheckIcon,
 } from "@phosphor-icons/react";
+import { TutorGuideHeroVisual } from "./TutorGuideHeroVisual";
+import { useTutorGuideHeroMotion } from "../hooks/useTutorGuideHeroMotion";
 
-const PROOFS = [
-  "Hồ sơ được xác thực trước khi hiển thị",
-  "Chủ động chọn học viên phù hợp",
-  "Có cố vấn hỗ trợ trong quá trình kết nối",
+const TRUST_POINTS = [
+  "Miễn phí tạo hồ sơ",
+  "Xét duyệt minh bạch",
+  "Chủ động lịch dạy",
 ];
 
 export function TutorGuideHero() {
-  const reduceMotion = useReducedMotion();
+  const heroRef = useRef<HTMLElement>(null);
+  useTutorGuideHeroMotion(heroRef);
 
   return (
     <section
-      className="relative min-h-[100dvh] overflow-hidden bg-background pt-24 sm:pt-28"
+      ref={heroRef}
+      className="relative isolate min-h-[100dvh] overflow-hidden bg-background pt-24 sm:pt-28"
       aria-labelledby="tutor-guide-h1"
     >
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(255,197,0,0.18),transparent_30%),radial-gradient(circle_at_8%_88%,rgba(40,15,145,0.08),transparent_34%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(255,197,0,0.20),transparent_26%),radial-gradient(circle_at_8%_88%,rgba(40,15,145,0.10),transparent_32%)]"
         aria-hidden="true"
       />
-      <div className="relative mx-auto grid min-h-[calc(100dvh-7rem)] max-w-7xl grid-cols-1 items-center gap-10 px-4 pb-14 sm:px-6 lg:grid-cols-[1fr_1.08fr] lg:gap-14 lg:px-8">
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-start"
-        >
-          <div className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-secondary">
-            <ShieldCheckIcon size={20} weight="fill" aria-hidden="true" />
-            Cộng đồng gia sư được xác thực
-          </div>
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.045] [background-image:linear-gradient(to_right,#280f91_1px,transparent_1px),linear-gradient(to_bottom,#280f91_1px,transparent_1px)] [background-size:42px_42px]"
+        aria-hidden="true"
+      />
+
+      <div className="relative mx-auto grid min-h-[calc(100dvh-7rem)] max-w-7xl grid-cols-1 items-center gap-y-12 px-4 pb-20 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:grid-rows-[auto_auto] lg:gap-x-16 lg:gap-y-6 lg:px-8 lg:pb-16">
+        <div className="flex min-w-0 flex-col items-start">
+          <p
+            data-hero-eyebrow
+            className="mb-5 flex items-center gap-3 text-sm font-bold text-primary"
+          >
+            Bắt đầu hành trình gia sư
+          </p>
+
           <h1
             id="tutor-guide-h1"
-            className="font-nunito font-extrabold leading-[1.12] tracking-tight text-primary"
+            className="max-w-[12ch] font-nunito text-[2.65rem] font-black leading-[1.02] tracking-[-0.035em] text-primary sm:text-[3.8rem] lg:text-[4.2rem]"
           >
-            <span className="block font-black text-[2.15rem] sm:text-[2.65rem] lg:text-[2.85rem] uppercase">
-              Cẩm nang trở thành
+            <span className="block overflow-hidden pb-1">
+              <span data-hero-line className="block origin-left">
+                Gia sư tại
+              </span>
             </span>
-            <span className="mt-2 font-black block text-[1.85rem] text-accent sm:text-[2.15rem] lg:text-[2.35rem] uppercase">
-              Gia sư tại BeeWise.
+            <span className="block overflow-hidden pb-2">
+              <span data-hero-line className="block origin-left text-accent">
+                BeeWise
+              </span>
             </span>
           </h1>
-          <p className="mt-6 max-w-[56ch] text-base leading-relaxed text-foreground/70 sm:text-lg">
-            BeeWise giúp bạn xây dựng hồ sơ đáng tin cậy, gặp học viên phù hợp
-            và có người đồng hành từ lần trao đổi đầu tiên.
-          </p>
-          <Link
-            href="/register"
-            id="hero-cta-register"
-            className="mt-8 inline-flex min-h-13 items-center justify-center gap-2 rounded-full bg-primary px-7 text-sm font-bold text-primary-foreground shadow-[0_12px_30px_rgba(40,15,145,0.2)] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
+
+          <p
+            data-hero-copy
+            className="mt-5 max-w-[54ch] text-base leading-7 text-foreground/68 sm:text-lg"
           >
-            Tạo hồ sơ gia sư
-            <ArrowRightIcon size={17} weight="bold" aria-hidden="true" />
-          </Link>
-          <ul className="mt-8 grid gap-3" role="list">
-            {PROOFS.map((proof) => (
-              <li
-                key={proof}
-                className="flex items-start gap-2.5 text-sm leading-relaxed text-foreground/65"
-              >
-                <CheckCircleIcon
-                  size={18}
-                  weight="fill"
-                  className="mt-0.5 shrink-0 text-secondary"
-                  aria-hidden="true"
-                />
-                {proof}
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, x: 32 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.75, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative"
-        >
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-muted shadow-[0_28px_70px_rgba(40,15,145,0.16)]">
-            <Image
-              src="/brand/BeeWiseTeam-2.JPG"
-              alt="Đội ngũ BeeWise đồng hành cùng cộng đồng gia sư"
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 58vw"
-              className="object-cover object-center"
-            />
+            Cẩm nang trở thành gia sư tại BeeWise, giúp bạn dễ dàng đăng ký, dạy
+            và quản lý dễ dàng hơn.
+          </p>
+
+          <div
+            data-hero-copy
+            className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row"
+          >
+            <Link
+              href="/register"
+              id="hero-cta-register"
+              className="inline-flex min-h-13 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-primary px-7 text-sm font-bold text-primary-foreground shadow-[0_14px_34px_rgba(40,15,145,0.22)] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              Đăng ký làm gia sư
+              <ArrowRightIcon size={17} weight="bold" aria-hidden="true" />
+            </Link>
+            <a
+              href="#how-to-register"
+              className="inline-flex min-h-13 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-primary/15 bg-white/75 px-6 text-sm font-bold text-primary transition-colors hover:border-primary/30 hover:bg-white"
+            >
+              Xem quy trình
+              <ArrowDownIcon size={16} weight="bold" aria-hidden="true" />
+            </a>
           </div>
-        </motion.div>
+        </div>
+
+        <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <TutorGuideHeroVisual />
+        </div>
+
+        <ul
+          data-hero-copy
+          className="grid w-full gap-3 border-t border-primary/10 pt-5 text-sm text-foreground/62 sm:grid-cols-3 sm:gap-5 lg:col-start-1 lg:row-start-2"
+          aria-label="Lợi ích khi đăng ký gia sư"
+        >
+          {TRUST_POINTS.map((point) => (
+            <li key={point} className="flex items-center gap-2 leading-5">
+              <CheckCircleIcon
+                size={17}
+                weight="fill"
+                className="shrink-0 text-accent"
+                aria-hidden="true"
+              />
+              {point}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

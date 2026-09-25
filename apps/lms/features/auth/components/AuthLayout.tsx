@@ -19,10 +19,6 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   const router = useRouter();
-  const isOpenAccessLMSConfirm = useAuthStore((s) => s.isOpenAccessLMSConfirm);
-  const setIsOpenAccessLMSConfirm = useAuthStore(
-    (s) => s.setIsOpenAccessLMSConfirm,
-  );
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center relative overflow-hidden bg-[#f8f9fc]">
@@ -57,11 +53,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           {children}
         </div>
 
-        <Dialog
-          open={isOpenAccessLMSConfirm}
-          onOpenChange={(open) => {
-            if (!open) setIsOpenAccessLMSConfirm(false);
-          }}
+        {/* <Dialog
         >
           <DialogContent className="w-[90vw] max-w-md rounded-2xl sm:rounded-2xl">
             <DialogHeader>
@@ -87,7 +79,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
 
         <div className="mt-2 text-center">
           <p className="text-xs text-[#0c0c0b]/40">

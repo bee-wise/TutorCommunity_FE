@@ -73,7 +73,7 @@ export function MobileNav({
     if (count <= 0) return null;
 
     return (
-      <span className="ml-auto min-w-5 rounded-full bg-accent px-1.5 py-0.5 text-center text-[11px] font-bold text-accent-foreground">
+      <span className="ml-auto min-w-5 rounded-full bg-primary px-1.5 py-0.5 text-center text-[11px] font-bold text-white">
         {count}
       </span>
     );
@@ -88,7 +88,7 @@ export function MobileNav({
         onClick={() => setOpen((prev) => !prev)}
         aria-label={open ? "Đóng menu" : "Mở menu"}
         aria-expanded={open}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-primary-foreground transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         {open ? (
           <X size={18} weight="bold" />
@@ -137,7 +137,7 @@ export function MobileNav({
               <Bell size={16} weight="bold" />
               <span>Thông báo</span>
               {actualUnreadCount > 0 && (
-                <span className="ml-auto min-w-5 rounded-full bg-accent px-1.5 py-0.5 text-center text-[11px] font-bold text-accent-foreground animate-pulse">
+                <span className="ml-auto min-w-5 rounded-full bg-primary px-1.5 py-0.5 text-center text-[11px] font-bold text-white animate-pulse">
                   {actualUnreadCount}
                 </span>
               )}
