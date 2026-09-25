@@ -41,7 +41,7 @@
 
   --ring: #280f91;
 
-  --sidebar: hsl(0 0% 98%);
+  --sidebar: #ffffff;
 
   --sidebar-foreground: hsl(240 5.3% 26.1%);
 
@@ -272,4 +272,3 @@
   animation: marquee-scroll 14s linear infinite;
   will-change: transform;
 }
-
