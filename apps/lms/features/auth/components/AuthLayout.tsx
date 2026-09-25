@@ -1,8 +1,8 @@
 "use client";
+import { createContext, useContext, useState } from "react";
 import { Button } from "@workspace/ui/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "@phosphor-icons/react";
-import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,19 @@ interface AuthLayoutProps {
   variant?: "login"; // LMS only has login
 }
 
+const LmsAccessActivationContext = createContext<(() => void) | null>(null);
+
+export function useLmsAccessActivation() {
+  const openDialog = useContext(LmsAccessActivationContext);
+  if (!openDialog) {
+    throw new Error("useLmsAccessActivation must be used within AuthLayout");
+  }
+  return openDialog;
+}
+
 export function AuthLayout({ children }: AuthLayoutProps) {
   const router = useRouter();
+  const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center relative overflow-hidden bg-[#f8f9fc]">
@@ -50,36 +61,42 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           className="w-full rounded-3xl bg-white
             shadow-xl shadow-[#280f91]/5 p-6 sm:p-10 relative overflow-hidden"
         >
-          {children}
+          <LmsAccessActivationContext.Provider
+            value={() => setIsAccessDialogOpen(true)}
+          >
+            {children}
+          </LmsAccessActivationContext.Provider>
         </div>
 
-        {/* <Dialog
-        >
-          <DialogContent className="w-[90vw] max-w-md rounded-2xl sm:rounded-2xl">
+        <Dialog open={isAccessDialogOpen} onOpenChange={setIsAccessDialogOpen}>
+          <DialogContent className="w-[calc(100%-2rem)] max-w-md rounded-2xl">
             <DialogHeader>
               <DialogTitle>Tài khoản chưa được kích hoạt LMS</DialogTitle>
               <DialogDescription>
-                Tài khoản của bạn chưa được kích hoạt LMS, vui lòng truy cập
-                beewise.vn để xem thêm.
+                Tài khoản của bạn chưa được kích hoạt quyền truy cập BeeWise
+                LMS. Vui lòng liên hệ BeeWise hoặc truy cập beewise.vn để được
+                hỗ trợ.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="gap-2 sm:gap-0">
               <Button
                 variant="outline"
-                onClick={() => setIsOpenAccessLMSConfirm(false)}
+                onClick={() => setIsAccessDialogOpen(false)}
               >
-                Hủy
+                Đóng
               </Button>
-              <Button
-                onClick={() => {
-                  window.location.href = "https://beewise.vn/tutor/onboarding";
-                }}
-              >
-                Truy cập beewise.vn
+              <Button asChild>
+                <a
+                  href="https://beewise.vn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Truy cập BeeWise
+                </a>
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog> */}
+        </Dialog>
 
         <div className="mt-2 text-center">
           <p className="text-xs text-[#0c0c0b]/40">
