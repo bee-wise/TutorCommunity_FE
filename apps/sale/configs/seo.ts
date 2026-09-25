@@ -1,4 +1,4 @@
-const DEFAULT_SALE_SITE_URL = "https://beewise.vn";
+const DEFAULT_SALE_SITE_URL = "https://www.beewise.vn";
 
 function resolveSiteUrl(value: string | undefined, fallback: string): string {
   if (!value) {
