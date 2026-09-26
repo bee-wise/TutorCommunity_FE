@@ -105,11 +105,6 @@ export function Header({
     tutorOnboardingStatus,
     lmsAccessEnabled,
   });
-  const notificationHref =
-    navbarState === "TUTOR_APPROVED"
-      ? "/tutor/notifications"
-      : "/notifications";
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
 
@@ -235,7 +230,7 @@ export function Header({
           </Link>
 
           <nav
-            className="hidden items-center gap-1 md:flex"
+            className="hidden items-center gap-1 lg:flex"
             aria-label="Điều hướng chính"
           >
             {isAuthLoading ? (
@@ -308,7 +303,7 @@ export function Header({
                   type="button"
                   onClick={openDrawer}
                   aria-label="Thông báo"
-                  className="relative hidden h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:inline-flex"
+                  className="relative hidden h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:inline-flex"
                 >
                   <Bell
                     className={cn(
@@ -341,7 +336,7 @@ export function Header({
               ))}
 
             {!isAuthLoading && navbarConfig.accountItems.length > 0 && (
-              <div ref={accountRef} className="relative hidden md:block">
+              <div ref={accountRef} className="relative hidden lg:block">
                 <button
                   type="button"
                   onClick={() => setAccountOpen((prev) => !prev)}
@@ -416,7 +411,6 @@ export function Header({
               }
               unreadNotificationCount={unreadNotificationCount}
               unreadChatCount={unreadChatCount}
-              notificationHref={notificationHref}
               onLogout={handleLogout}
             />
           </div>

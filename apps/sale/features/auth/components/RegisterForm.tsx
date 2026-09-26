@@ -33,7 +33,7 @@ const ROLES = [
   },
 ];
 
-export function RegisterForm() {
+export function RegisterForm({ authPaused = false }: { authPaused?: boolean }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const searchParams = useSearchParams();
@@ -57,7 +57,7 @@ export function RegisterForm() {
   const agreeTerms = useWatch({ control, name: "agreeTerms" });
 
   const onSubmit = (data: RegisterFormValues) => {
-    if (isPending) return;
+    if (isPending || authPaused) return;
     registerAccount({
       email: data.email,
       password: data.password,
@@ -80,16 +80,19 @@ export function RegisterForm() {
         <h1
           className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground"
         >
-          Tạo tài khoản BEEWISE
+          {authPaused ? "Đăng ký sẽ sớm mở" : "Tạo tài khoản BEEWISE"}
         </h1>
         <p className="text-xs text-foreground/60 leading-relaxed">
-          Tham gia BeeWise - nền tảng kết nối gia sư và học viên thông minh.
+          {authPaused
+            ? "Bạn sẽ có thể tạo tài khoản khi BeeWise chính thức hoạt động."
+            : "Tham gia BeeWise - nền tảng kết nối gia sư và học viên thông minh."}
         </p>
       </div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-2"
+        className={`flex flex-col gap-2 ${authPaused ? "opacity-55" : ""}`}
+        inert={authPaused}
         noValidate
       >
         <div className="flex flex-col gap-1.5">
@@ -106,7 +109,7 @@ export function RegisterForm() {
                 <button
                   key={value}
                   type="button"
-                  disabled={isPending}
+                  disabled={isPending || authPaused}
                   onClick={() =>
                     setValue("role", value, { shouldValidate: true })
                   }
@@ -153,7 +156,7 @@ export function RegisterForm() {
               autoComplete="given-name"
               hasError={!!errors.firstName}
               className="h-7.5"
-              disabled={isPending}
+              disabled={isPending || authPaused}
               {...register("firstName")}
             />
           </FormField>
@@ -165,7 +168,7 @@ export function RegisterForm() {
               autoComplete="family-name"
               hasError={!!errors.lastName}
               className="h-7.5"
-              disabled={isPending}
+              disabled={isPending || authPaused}
               {...register("lastName")}
             />
           </FormField>
@@ -179,7 +182,7 @@ export function RegisterForm() {
             autoComplete="email"
             hasError={!!errors.email}
             className="h-7.5"
-            disabled={isPending}
+            disabled={isPending || authPaused}
             {...register("email")}
           />
         </FormField>
@@ -192,7 +195,7 @@ export function RegisterForm() {
             autoComplete="tel"
             hasError={!!errors.phoneNumber}
             className="h-7.5"
-            disabled={isPending}
+            disabled={isPending || authPaused}
             {...register("phoneNumber")}
           />
         </FormField>
@@ -207,11 +210,12 @@ export function RegisterForm() {
                 autoComplete="new-password"
                 hasError={!!errors.password}
                 className="h-7.5 pr-11"
-                disabled={isPending}
+                disabled={isPending || authPaused}
                 {...register("password")}
               />
               <button
                 type="button"
+                disabled={authPaused}
                 onClick={() => setShowPassword((p) => !p)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70 transition-colors"
                 aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
@@ -231,11 +235,12 @@ export function RegisterForm() {
                 autoComplete="new-password"
                 hasError={!!errors.confirmPassword}
                 className="h-7.5 pr-11"
-                disabled={isPending}
+                disabled={isPending || authPaused}
                 {...register("confirmPassword")}
               />
               <button
                 type="button"
+                disabled={authPaused}
                 onClick={() => setShowConfirm((p) => !p)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70 transition-colors"
                 aria-label={showConfirm ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
@@ -272,7 +277,7 @@ export function RegisterForm() {
             <input
               type="checkbox"
               className="sr-only"
-              disabled={isPending}
+              disabled={isPending || authPaused}
               {...register("agreeTerms")}
             />
             <span className="text-xs text-foreground/60 leading-relaxed">
@@ -304,7 +309,7 @@ export function RegisterForm() {
         <button
           id="register-submit"
           type="submit"
-          disabled={isPending}
+          disabled={isPending || authPaused}
           className="relative flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-accent text-sm font-bold text-primary
             hover:bg-accent/90 active:scale-[0.98] transition-all duration-200
             disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-accent/25"
@@ -330,6 +335,7 @@ export function RegisterForm() {
 
         <button
           type="button"
+          disabled={authPaused}
           className="flex h-9 w-full items-center justify-center gap-2 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted"
         >
           <Image
