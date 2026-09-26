@@ -181,6 +181,9 @@
 }
 
 .formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   width: min(100%, 520px);
   flex: none;
   margin-block: auto;

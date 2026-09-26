@@ -1,8 +1,26 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isPublicAuthPaused } from "./features/auth/lib/public-auth-status";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const isAuthSubmission =
+    pathname === "/api/auth/register" ||
+    pathname === "/api/auth/register/" ||
+    pathname === "/api/auth/login" ||
+    pathname.startsWith("/api/auth/login/");
+
+  if (
+    request.method === "POST" &&
+    isAuthSubmission &&
+    isPublicAuthPaused(request.headers.get("host"), process.env.BEEWISE_AUTH_PAUSED)
+  ) {
+    return NextResponse.json(
+      { message: "BeeWise đang chuẩn bị ra mắt. Đăng nhập và đăng ký sẽ sớm mở." },
+      { status: 503, headers: { "Cache-Control": "no-store" } },
+    );
+  }
 
   const token = request.cookies.get("beewise_access_token")?.value;
   const refreshToken = request.cookies.get("beewise_refresh_token")?.value;
@@ -43,6 +61,8 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/api/auth/login/:path*",
+    "/api/auth/register/:path*",
     /*
      * Match tất cả request paths ngoại trừ:
      * - api (các API route)

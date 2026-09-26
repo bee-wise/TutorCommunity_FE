@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Header } from "@workspace/ui/components/layout/Header";
 import { Footer } from "@workspace/ui/components/layout/Footer";
+import { LaunchNoticeBanner } from "@/features/auth/components/LaunchNoticeBanner";
+import { getPublicAuthStatus } from "@/features/auth/lib/public-auth-status";
 import { HeroSection } from "@/features/landing/components/HeroSection";
 import { AIFeaturesSection } from "@/features/landing/components/AIFeaturesSection";
 import { VideoIntroSection } from "@/features/landing/components/VideoIntroSection";
@@ -47,11 +50,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const authStatus = getPublicAuthStatus((await headers()).get("host"));
+
   return (
     <>
       <Header />
       <main id="main-content">
+        {authStatus.paused && (
+          <LaunchNoticeBanner notice={authStatus.notice} placement="home" />
+        )}
         <HeroSection />
         <VideoIntroSection />
         <AIFeaturesSection />
