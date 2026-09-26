@@ -12,7 +12,7 @@ import { getSafeInternalReturnUrl } from "@workspace/core/utils/auth-redirect";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
 
-export function LoginForm() {
+export function LoginForm({ authPaused = false }: { authPaused?: boolean }) {
   const [showPassword, setShowPassword] = useState(false);
   const searchParams = useSearchParams();
   const returnUrl = getSafeInternalReturnUrl(
@@ -37,7 +37,7 @@ export function LoginForm() {
   });
 
   const onSubmit = (data: LoginFormValues) => {
-    if (isPending) return;
+    if (isPending || authPaused) return;
     login(data);
   };
 
@@ -51,16 +51,19 @@ export function LoginForm() {
         <h1
           className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground"
         >
-          Chào mừng trở lại
+          {authPaused ? "Đăng nhập sẽ sớm mở" : "Chào mừng trở lại"}
         </h1>
         <p className="text-xs text-foreground/60 leading-relaxed">
-          Đăng nhập để tiếp tục hành trình học tập cùng BeeWise.
+          {authPaused
+            ? "BeeWise đang hoàn thiện nền tảng trước ngày ra mắt."
+            : "Đăng nhập để tiếp tục hành trình học tập cùng BeeWise."}
         </p>
       </div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
+        className={`flex flex-col gap-4 ${authPaused ? "opacity-55" : ""}`}
+        inert={authPaused}
         noValidate
       >
         <FormField label="Email" error={errors.email}>
@@ -70,7 +73,7 @@ export function LoginForm() {
             placeholder="you@example.com"
             autoComplete="email"
             hasError={!!errors.email}
-            disabled={isPending}
+            disabled={isPending || authPaused}
             {...register("email")}
           />
         </FormField>
@@ -84,11 +87,12 @@ export function LoginForm() {
               autoComplete="current-password"
               hasError={!!errors.password}
               className="pr-11"
-              disabled={isPending}
+              disabled={isPending || authPaused}
               {...register("password")}
             />
             <button
               type="button"
+              disabled={authPaused}
               onClick={() => setShowPassword((p) => !p)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70 transition-colors"
               aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
@@ -112,7 +116,7 @@ export function LoginForm() {
         <button
           id="login-submit"
           type="submit"
-          disabled={isPending}
+          disabled={isPending || authPaused}
           className="relative w-full h-10 rounded-xl bg-accent text-primary font-bold text-sm
             flex items-center justify-center gap-2
             hover:bg-accent/90 active:scale-[0.98] transition-all duration-200
@@ -139,6 +143,7 @@ export function LoginForm() {
 
         <button
           type="button"
+          disabled={authPaused}
           className="flex items-center justify-center gap-2 h-10 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
         >
           <Image

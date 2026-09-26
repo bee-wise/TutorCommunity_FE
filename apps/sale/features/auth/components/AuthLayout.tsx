@@ -6,18 +6,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./AuthLayout.module.css";
+import { LaunchNoticeBanner } from "./LaunchNoticeBanner";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
   variant?: "login" | "register";
+  authPaused?: boolean;
+  notice?: string;
 }
 
 const robotImages = {
-  login: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241795/Bee_Robot_3.png",
-  register: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241794/Bee_Robot_2.png",
+  login: "https://res.cloudinary.com/xcrm6ykz/image/upload/f_auto,q_auto,w_1200/v1790241795/Bee_Robot_3.png",
+  register: "https://res.cloudinary.com/xcrm6ykz/image/upload/f_auto,q_auto,w_1200/v1790241794/Bee_Robot_2.png",
 } as const;
 
-export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
+export function AuthLayout({
+  children,
+  variant = "login",
+  authPaused = false,
+  notice = "",
+}: AuthLayoutProps) {
   const router = useRouter();
 
   return (
@@ -26,9 +34,10 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
         <Link href="/" className={styles.brand} aria-label="BeeWise - Về trang chủ">
           <span className={styles.brandMark}>
             <Image
-              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/f_auto,q_auto,w_192/v1789964842/Logo_1.png"
               alt=""
               fill
+              unoptimized
               sizes="56px"
               className="object-contain p-1"
             />
@@ -45,6 +54,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
               src={robotImages[variant]}
               alt={variant === "login" ? "Robot BeeWise chào mừng bạn trở lại" : "Robot BeeWise chào đón thành viên mới"}
               fill
+              unoptimized
               sizes="(max-width: 1023px) 195px, (max-width: 1440px) 38vw, 520px"
               className="object-contain"
               preload
@@ -55,12 +65,24 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
 
         <div className={styles.message}>
           <p>
-            Gia nhập BeeWise,
-            <br />
-            <span>Kiến tạo tương lai.</span>
+            {authPaused ? (
+              <>
+                BeeWise đang chuẩn bị,
+                <br />
+                <span>hẹn gặp bạn sớm.</span>
+              </>
+            ) : (
+              <>
+                Gia nhập BeeWise,
+                <br />
+                <span>Kiến tạo tương lai.</span>
+              </>
+            )}
           </p>
           <span className={styles.caption}>
-            Hàng nghìn học viên đã tìm được gia sư phù hợp cùng BeeWise.
+            {authPaused
+              ? "Nền tảng đang được hoàn thiện trước khi chính thức ra mắt."
+              : "Hàng nghìn học viên đã tìm được gia sư phù hợp cùng BeeWise."}
           </span>
         </div>
       </aside>
@@ -76,6 +98,7 @@ export function AuthLayout({ children, variant = "login" }: AuthLayoutProps) {
         </Button>
 
         <div className={styles.formContainer}>
+          {authPaused && <LaunchNoticeBanner notice={notice} />}
           <div className={`${styles.formCard} ${variant === "register" ? styles.registerCard : ""}`}>
             {children}
           </div>
