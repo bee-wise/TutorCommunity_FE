@@ -133,8 +133,8 @@ export function TutorOnboardingShell({
         <section>
           <div className="overflow-hidden rounded-2xl border border-[#cfe1fa] bg-white shadow-[0_18px_45px_rgba(40,15,145,0.10)]">
             <Image
-              src="/images/Banner/onboard-banner.png"
-              alt=""
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790437541/onboarding-banner.png"
+              alt="BeeWise Tutor Onboarding Banner"
               width={1280}
               height={96}
               priority
