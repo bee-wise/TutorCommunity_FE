@@ -108,7 +108,7 @@ const TEAM = [
     id: "tuyet-huong",
     name: "Tuyết Hương",
     role: "Founder Dự Án",
-    image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787291884/1.png",
+    image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790320238/1.png",
     story:
       "“Mình bắt đầu BeeWise từ một trăn trở rất đỗi tự nhiên: Tại sao việc tìm kiếm một người thầy tận tâm và phù hợp lại gian nan đến thế? Mình tin rằng, khi trao đi sự chân thành và giải pháp đủ tốt, việc học sẽ trở thành hành trình tràn đầy cảm hứng.”",
     side: "left",

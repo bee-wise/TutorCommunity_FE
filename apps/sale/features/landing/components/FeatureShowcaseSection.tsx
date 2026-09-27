@@ -247,7 +247,7 @@ export function FeatureShowcaseSection() {
             id="features-showcase-headline"
             className="text-3xl sm:text-4xl lg:text-[2.6rem] font-black uppercase text-primary leading-tight font-nunito"
           >
-            BeeWise cung cấp các tính năng giúp bạn <br />
+            BeeWise cung cấp các tính năng <br />
             <span className="text-accent">kết nối & học tập</span>
           </h2>
 

@@ -34,12 +34,12 @@ export function LoginForm() {
         className="flex flex-col gap-5"
         noValidate
       >
-        <div className="flex justify-center mb-4 bg-accent rounded-full w-fit m-auto">
+        <div className="flex items-center justify-center mb-4 bg-accent rounded-full w-20 h-20 mx-auto">
           <Image
-            src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
+            src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"
             alt="BeeWise Logo"
-            width={64}
-            height={64}
+            width={56}
+            height={56}
             className="object-contain"
             priority
           />

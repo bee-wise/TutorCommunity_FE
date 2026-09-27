@@ -4,6 +4,7 @@ import {
   MagnifyingGlassIcon,
   ShieldWarningIcon,
 } from "@phosphor-icons/react/dist/ssr";
+import Image from "next/image";
 
 const PAIN_POINTS = [
   {
@@ -13,6 +14,8 @@ const PAIN_POINTS = [
     title: "Tìm lớp mất nhiều thời gian",
     text: "Bài đăng trôi nhanh, nhu cầu thiếu rõ ràng và khó biết học viên có thực sự phù hợp hay không.",
     badge: "Tìm kiếm lớp học",
+    image:
+      "https://res.cloudinary.com/xcrm6ykz/image/upload/v1789966155/10.png",
   },
   {
     id: "fee",
@@ -21,6 +24,7 @@ const PAIN_POINTS = [
     title: "Phí nhận lớp thiếu minh bạch",
     text: "Gia sư thường phải trả tiền trước khi có đủ thông tin để đánh giá cơ hội giảng dạy.",
     badge: "Chi phí & Hoa hồng",
+    image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1789966153/8.png",
   },
   {
     id: "trust",
@@ -29,6 +33,8 @@ const PAIN_POINTS = [
     title: "Năng lực khó được ghi nhận",
     text: "Bằng cấp, kinh nghiệm và phương pháp dạy dễ bị thu gọn thành vài dòng giới thiệu chung chung.",
     badge: "Hồ sơ & Uy tín",
+    image:
+      "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241784/Bee_Robot_1.png",
   },
   {
     id: "support",
@@ -37,6 +43,8 @@ const PAIN_POINTS = [
     title: "Thiếu người hỗ trợ khi kết nối",
     text: "Khi lịch học hoặc kỳ vọng thay đổi, gia sư thường phải tự xử lý toàn bộ trao đổi với học viên.",
     badge: "Hỗ trợ & Tư vấn",
+    image:
+      "https://res.cloudinary.com/xcrm6ykz/image/upload/v1789967863/16.png",
   },
 ];
 
@@ -66,7 +74,7 @@ export function TutorGuidePainPoints() {
           </p>
         </div>
 
-        {/* Zigzag Card Layout — image placeholder on alternating sides */}
+        {/* Zigzag Card Layout */}
         <div className="flex flex-col gap-6 lg:gap-8">
           {PAIN_POINTS.map((point, index) => {
             const Icon = point.icon;
@@ -76,24 +84,15 @@ export function TutorGuidePainPoints() {
                 key={point.id}
                 className={`group flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} gap-0 rounded-3xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/8 transition-all duration-300`}
               >
-                {/* Image placeholder — user will add image later */}
-                <div className="relative lg:w-[45%] min-h-52 sm:min-h-64 lg:min-h-72 bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
-                  {/* Placeholder pattern */}
-                  <div
-                    className="absolute inset-0 opacity-20"
-                    style={{
-                      backgroundImage: `radial-gradient(circle, rgba(255,197,0,0.4) 1px, transparent 1px)`,
-                      backgroundSize: "24px 24px",
-                    }}
+                <div className="relative min-h-60 shrink-0 overflow-hidden bg-white/10 sm:min-h-64 lg:min-h-72 lg:w-[45%]">
+                  <Image
+                    src={point.image}
+                    alt={`Minh họa cho ${point.title.toLocaleLowerCase("vi-VN")}`}
+                    fill
+                    unoptimized
+                    sizes="(min-width: 1024px) 520px, 100vw"
+                    className="object-contain p-4 sm:p-6"
                   />
-                  <div className="relative z-10 flex flex-col items-center gap-3 text-primary-foreground/40">
-                    <div className="w-16 h-16 rounded-2xl border-2 border-dashed border-primary-foreground/20 flex items-center justify-center">
-                      <Icon size={28} className="text-primary-foreground/30" />
-                    </div>
-                    <span className="text-xs font-medium tracking-wider uppercase">
-                      Ảnh LMS sẽ hiển thị tại đây
-                    </span>
-                  </div>
                 </div>
 
                 {/* Content */}

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { headers } from "next/headers";
 import { AuthLayout } from '@/features/auth/components/AuthLayout';
 import { RegisterForm } from '@/features/auth/components/RegisterForm';
+import { getPublicAuthStatus } from '@/features/auth/lib/public-auth-status';
 
 export const metadata: Metadata = {
   title: "Đăng ký | BeeWise",
@@ -10,11 +12,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const authStatus = getPublicAuthStatus((await headers()).get("host"));
+
   return (
-    <AuthLayout variant="register">
+    <AuthLayout variant="register" authPaused={authStatus.paused} notice={authStatus.notice}>
       <Suspense fallback={null}>
-        <RegisterForm />
+        <RegisterForm authPaused={authStatus.paused} />
       </Suspense>
     </AuthLayout>
   );

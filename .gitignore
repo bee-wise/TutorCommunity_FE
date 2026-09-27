@@ -46,6 +46,7 @@ next-env.d.ts
 
 # Local Materials
 .agents-feature-md
+.feature-md
 
 # Document
 docs

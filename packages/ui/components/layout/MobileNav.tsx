@@ -18,7 +18,6 @@ interface Props {
   showNotifications: boolean;
   unreadNotificationCount: number;
   unreadChatCount: number;
-  notificationHref: string;
   onLogout: () => void;
 }
 
@@ -29,7 +28,6 @@ export function MobileNav({
   showNotifications,
   unreadNotificationCount,
   unreadChatCount,
-  notificationHref,
   onLogout,
 }: Props) {
   const [open, setOpen] = useState(false);
@@ -82,7 +80,7 @@ export function MobileNav({
   const menuLinks = [...links, ...actions];
 
   return (
-    <div ref={containerRef} className="relative z-70 md:hidden">
+    <div ref={containerRef} className="relative z-70 lg:hidden">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
