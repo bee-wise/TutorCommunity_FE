@@ -27,9 +27,7 @@ export function shouldAttemptRefresh(url?: string): boolean {
 const API_BASE_URL =
   typeof window !== "undefined"
     ? "/api"
-    : process.env.NEXT_PUBLIC_API_BASE_URL ||
-      process.env.NEXT_PUBLIC_API_URL ||
-      "https://api.beewise.vn";
+    : process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL;
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

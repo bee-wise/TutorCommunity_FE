@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Footer } from '@workspace/ui/components/layout/Footer';
-import { Header } from '@workspace/ui/components/layout/Header';
 import { TutorProfilePage } from '@/features/tutor-profile/components/TutorProfilePage';
 
 export const metadata: Metadata = {
@@ -12,11 +11,11 @@ export const metadata: Metadata = {
 export default function TutorProfileRoutePage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
-      <main id="main-content" className="flex-1 pt-16">
+      <main id="main-content" className="flex-1">
         <TutorProfilePage />
       </main>
       <Footer />
     </div>
   );
 }
+

@@ -2,7 +2,7 @@
 
 import { CheckCircleIcon } from "@phosphor-icons/react";
 import { TutorBioSection } from "../../tutor-profile/components/TutorBioSection";
-import { TutorEducationAchievements } from "../../tutor-profile/components/TutorEducationAchievements";
+import { TutorAchievements } from "../../tutor-profile/components/TutorAchievements";
 import { TutorHero } from "../../tutor-profile/components/TutorHero";
 import { TutorTeachingHistory } from "../../tutor-profile/components/TutorTeachingHistory";
 import { TutorTeachingMethods } from "../../tutor-profile/components/TutorTeachingMethods";
@@ -43,8 +43,8 @@ export function TutorProfileEditorScreen() {
             <EditableProfileBlock label="Phương pháp" onEdit={() => editor.openBlock("methods")}>
               <TutorTeachingMethods tutor={editor.tutor} />
             </EditableProfileBlock>
-            <EditableProfileBlock label="Hồ sơ học thuật" onEdit={() => editor.openBlock("academic")}>
-              <TutorEducationAchievements tutor={editor.tutor} />
+            <EditableProfileBlock label="Học vấn & Thành tích" onEdit={() => editor.openBlock("academic")}>
+              <TutorAchievements tutor={editor.tutor} />
             </EditableProfileBlock>
             <EditableProfileBlock label="Video" onEdit={() => editor.openBlock("video")}>
               <TutorVideoEditorPreview src={editor.media.videoUrl} />
@@ -53,7 +53,7 @@ export function TutorProfileEditorScreen() {
               <TutorTeachingHistory tutor={editor.tutor} />
             </EditableProfileBlock>
             <EditableProfileBlock label="Minh chứng" onEdit={() => editor.openBlock("evidence")}>
-              <TutorEvidenceEditorPreview certificates={editor.tutor.certificates} />
+              <TutorEvidenceEditorPreview certificates={editor.tutor.achievements} />
             </EditableProfileBlock>
           </div>
 

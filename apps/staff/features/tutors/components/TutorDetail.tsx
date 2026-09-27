@@ -181,7 +181,7 @@ export function TutorDetail({ tutorId }: { tutorId: string }) {
                 <User className="w-4 h-4" /> Giới thiệu ngắn
               </h3>
               <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg leading-relaxed">
-                "{tutor.bio}"
+                &ldquo;{tutor.bio}&rdquo;
               </p>
             </div>
           </div>
@@ -301,7 +301,7 @@ export function TutorDetail({ tutorId }: { tutorId: string }) {
               <div>
                 <p className="text-xs text-gray-500 mb-2">Đánh giá chung (Notes)</p>
                 <div className="bg-gray-50 border border-gray-200 p-4 rounded-xl text-sm text-gray-700 leading-relaxed italic">
-                  "{tutor.interviewResults.notes}"
+                  &ldquo;{tutor.interviewResults.notes}&rdquo;
                 </div>
               </div>
 

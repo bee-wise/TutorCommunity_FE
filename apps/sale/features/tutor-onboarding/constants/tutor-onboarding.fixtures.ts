@@ -1,10 +1,10 @@
 import type {
-  AvailabilitySlot,
   TutorOnboardingDataSource,
   TutorOnboardingMockState,
   TutorOnboardingScenario,
   TutorOnboardingStep,
   TutorPreviewSession,
+  WeeklyAvailability,
 } from "../types";
 
 export const previewTutorSession: TutorPreviewSession = {
@@ -44,7 +44,7 @@ export const onboardingSteps: TutorOnboardingStep[] = [
     order: 1,
     title: "Tạo tài khoản",
     shortTitle: "Tài khoản",
-    description: "Tài khoản Tutor đã được tạo.",
+    description: "Tài khoản Tutor đã được tạo thành công.",
     statusLabel: "Hoàn tất",
     tasks: ["Xác nhận email", "Hoàn tất thông tin đăng nhập"],
   },
@@ -63,73 +63,61 @@ export const onboardingSteps: TutorOnboardingStep[] = [
     primaryAction: "Hoàn thiện hồ sơ",
   },
   {
-    id: "listing",
-    order: 3,
-    title: "Thanh toán",
-    shortTitle: "Thanh toán",
-    description: "Miễn phí thanh toán trong 6 tháng đầu.",
-    statusLabel: "Miễn phí kỳ đầu",
-    tasks: [
-      "Xác nhận chương trình miễn phí kỳ đầu",
-      "Không cần thực hiện thanh toán trong kỳ đầu",
-    ],
-  },
-  {
     id: "interview",
-    order: 4,
-    title: "Phỏng vấn",
-    shortTitle: "Phỏng vấn",
+    order: 3,
+    title: "Phỏng vấn AI",
+    shortTitle: "Phỏng vấn AI",
     description:
-      "Trao đổi với BeeWise về chuyên môn và phương pháp giảng dạy.",
-    statusLabel: "Đã lên lịch",
+      "Tham gia phỏng vấn tự động cùng trợ lý AI 24/7 để đánh giá chuyên môn và phương pháp giảng dạy.",
+    statusLabel: "Mở 24/7",
     tasks: [
-      "Chuẩn bị giới thiệu ngắn về bản thân",
       "Kiểm tra camera, micro và kết nối Internet",
+      "Trả lời câu hỏi tình huống từ trợ lý AI",
+      "Kết quả phỏng vấn được tự động ghi nhận ngay sau khi hoàn thành",
     ],
-    primaryAction: "Xem lịch phỏng vấn",
+    primaryAction: "Bắt đầu phỏng vấn AI",
   },
   {
     id: "verification",
-    order: 5,
-    title: "Xác thực",
+    order: 4,
+    title: "Xác thực hồ sơ",
     shortTitle: "Xác thực",
-    description: "Consultant kiểm tra hồ sơ và kết quả phỏng vấn.",
+    description:
+      "Hệ thống và đội ngũ BeeWise đánh giá hồ sơ cùng kết quả phỏng vấn AI.",
     statusLabel: "Đang xét duyệt",
-    tasks: ["Hồ sơ đã gửi", "Phỏng vấn đã hoàn tất", "Chờ Consultant xác thực"],
+    tasks: [
+      "Hồ sơ đã gửi thành công",
+      "Phỏng vấn AI đã hoàn tất",
+      "Chờ hệ thống phê duyệt",
+    ],
   },
   {
     id: "postApproval",
-    order: 6,
+    order: 5,
     title: "Thông tin bổ sung",
     shortTitle: "Bổ sung",
-    description: "Thiết lập lịch rảnh và tài khoản nhận thanh toán.",
+    description: "Thiết lập lịch rảnh và tài khoản ngân hàng nhận thanh toán.",
     statusLabel: "Mở sau khi duyệt",
-    tasks: ["Bổ sung tài khoản nhận thanh toán", "Thiết lập lịch rảnh"],
+    tasks: ["Bổ sung tài khoản nhận thanh toán", "Thiết lập lịch rảnh nhận lớp"],
     primaryAction: "Bổ sung thông tin",
   },
   {
     id: "lms",
-    order: 7,
+    order: 6,
     title: "Vào LMS",
     shortTitle: "Hoàn tất",
-    description: "Bắt đầu quản lý lớp học và hoạt động giảng dạy.",
+    description: "Bắt đầu quản lý lớp học và hoạt động giảng dạy trên BeeWise.",
     statusLabel: "Mở khi hoàn tất",
-    tasks: ["Hoàn tất toàn bộ onboarding", "Mở quyền Tutor LMS"],
+    tasks: ["Hoàn tất toàn bộ onboarding", "Mở quyền truy cập Tutor LMS"],
     primaryAction: "Vào LMS",
   },
 ];
 
-export const mockAvailabilitySlots: AvailabilitySlot[] = [
-  { id: "mon", day: "Thứ Hai", startTime: "18:00", endTime: "21:00", mode: "Online" },
-  {
-    id: "wed",
-    day: "Thứ Tư",
-    startTime: "18:00",
-    endTime: "21:00",
-    mode: "Online và Offline",
-  },
-  { id: "sat", day: "Thứ Bảy", startTime: "08:00", endTime: "12:00", mode: "Offline" },
-];
+export const mockWeeklyAvailability: WeeklyAvailability = {
+  mon: ["evening"],
+  wed: ["evening"],
+  sat: ["morning", "afternoon"],
+};
 
 export const createInitialTutorOnboardingState = (
   scenario: TutorOnboardingScenario | "unknown",
@@ -146,9 +134,9 @@ export const createInitialTutorOnboardingState = (
       "Chẩn đoán lỗ hổng kiến thức, cá nhân hóa lộ trình và phản hồi sau mỗi buổi học.",
     documents: ["Thẻ sinh viên", "Bảng điểm học kỳ gần nhất"],
   },
-  availabilitySlots: mockAvailabilitySlots,
+  weeklyAvailability: mockWeeklyAvailability,
   bankInfo: {
-    bankName: "Ngân hàng ABC",
+    bankName: "Vietcombank",
     accountNumber: "0123456789",
     accountHolder: "NGUYEN MINH ANH",
   },
@@ -162,3 +150,4 @@ export const MockTutorOnboardingDataSource: TutorOnboardingDataSource = {
 export class ApiTutorOnboardingDataSource {
   // TODO: Replace the mock data source with real tutor onboarding APIs later.
 }
+

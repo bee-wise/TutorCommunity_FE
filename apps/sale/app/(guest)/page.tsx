@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Header } from "@workspace/ui/components/layout/Header";
 import { Footer } from "@workspace/ui/components/layout/Footer";
+import { LaunchNoticeBanner } from "@/features/auth/components/LaunchNoticeBanner";
+import { getPublicAuthStatus } from "@/features/auth/lib/public-auth-status";
 import { HeroSection } from "@/features/landing/components/HeroSection";
 import { AIFeaturesSection } from "@/features/landing/components/AIFeaturesSection";
 import { VideoIntroSection } from "@/features/landing/components/VideoIntroSection";
@@ -15,15 +18,16 @@ import { FaqSection } from "@/features/landing/components/FaqSection";
 import { TutorGuideTrust } from "@/features/tutor-guide/components/TutorGuideTrust";
 
 export const metadata: Metadata = {
-  title: "Cộng Đồng Gia Sư - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
+  title: "BeeWise - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
   description:
     "Chỉ mất khoảng 30 giây để tìm gia sư phù hợp cùng BeeWise. Hồ sơ được xác thực, kết nối trực tiếp với gia sư và cố vấn hỗ trợ xuyên suốt. Trải nghiệm miễn phí, không cần đăng nhập.",
   keywords: [
-    "tìm gia sư AI",
+    "tìm gia sư bằng AI",
     "gia sư uy tín",
     "BeeWise",
     "tìm gia sư online",
     "nền tảng kết nối gia sư",
+    "beewise Việt Nam",
   ],
   openGraph: {
     title: "BeeWise - Tìm Gia Sư Phù Hợp Nhanh Chóng Với AI",
@@ -46,11 +50,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const authStatus = getPublicAuthStatus((await headers()).get("host"));
+
   return (
     <>
       <Header />
       <main id="main-content">
+        {authStatus.paused && (
+          <LaunchNoticeBanner notice={authStatus.notice} placement="home" />
+        )}
         <HeroSection />
         <VideoIntroSection />
         <AIFeaturesSection />

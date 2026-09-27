@@ -26,7 +26,7 @@ const mapFiltersToManualQuery = (
   const manualQuery: ManualSearchQuery = {
     keyword: query || undefined,
     page,
-    pageSize: 50,
+    pageSize: 6,
   };
 
   if (filters.teachingMode !== "all") {
@@ -134,9 +134,8 @@ export function useTutorSearch() {
   const initialQuery = searchParams.get("q");
 
   const [searchMode, setSearchMode] = useState<SearchMode>(initialMode);
-  const [filtersByMode, setFiltersByMode] = useState<
-    Record<SearchMode, TutorFilters>
-  >(cachedFiltersByMode);
+  const [filtersByMode, setFiltersByMode] =
+    useState<Record<SearchMode, TutorFilters>>(cachedFiltersByMode);
   const [queries, setQueries] = useState<Record<SearchMode, string>>(() =>
     initialQuery === null
       ? cachedQueries

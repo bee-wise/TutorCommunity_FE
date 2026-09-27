@@ -1,4 +1,4 @@
-import { MessageSquareQuote, Star } from "lucide-react";
+import { Quote } from "lucide-react";
 import type { TutorProfileData } from "../types/mockTutorProfile";
 import {
   getInitials,
@@ -11,49 +11,59 @@ interface TutorFeedbackProps {
 }
 
 export function TutorFeedback({ tutor }: TutorFeedbackProps) {
+  const reviews = tutor.reviews || [];
+
   return (
     <SectionShell
-      eyebrow="Phản hồi"
-      title="Đánh giá từ phụ huynh và học sinh"
-      icon={MessageSquareQuote}
+      title="Đánh giá từ học viên & Phụ huynh"
+      description="Những phản hồi thực tế sau quá trình học tập và đồng hành"
+      badge={reviews.length > 0 ? `${reviews.length} đánh giá` : undefined}
     >
-      <div className="grid gap-4 lg:grid-cols-2">
-        {tutor.reviews.map((review) => (
-          <article
-            key={review.author}
-            className="rounded-2xl border border-[#ffc510]/45 bg-[#fff3cb] p-4"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#280f91] to-[#447353] text-sm font-black text-white">
-                  {getInitials(review.author)}
+      {reviews.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {reviews.map((review, index) => (
+            <article
+              key={`${review.author}-${index}`}
+              className="flex flex-col justify-between rounded-2xl border border-[#e8edf5] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-[#280f91]/25 hover:shadow-md hover:shadow-[#280f91]/6"
+            >
+              <div>
+                {/* Author row */}
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#280f91] to-[#447353] text-sm font-black text-white shadow-xs">
+                    {getInitials(review.author)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base font-extrabold text-[#0c0c0b]">
+                      {review.author}
+                    </h3>
+                    <p className="text-xs font-semibold text-[#447353]">
+                      {review.relationship || "Học viên BeeWise"}
+                    </p>
+                  </div>
+                  <RatingStars value={review.rating} size={14} />
                 </div>
-                <div>
-                  <h3 className="text-sm font-black text-[#0c0c0b]">
-                    {review.author}
-                  </h3>
-                  <p className="mt-0.5 text-sm text-[#0c0c0b]/55">
-                    {review.relationship}
-                  </p>
+
+                {/* Quote Body */}
+                <div className="relative mt-4 rounded-xl bg-[#f8faff] p-4 border border-[#e8edf5]/80">
+                  <Quote
+                    size={20}
+                    className="mb-1 text-[#ffc500]/60"
+                    aria-hidden="true"
+                  />
+                  <blockquote className="text-sm leading-relaxed text-[#0c0c0b]/75">
+                    &ldquo;{review.quote}&rdquo;
+                  </blockquote>
                 </div>
               </div>
-              <RatingStars value={review.rating} size={14} />
-            </div>
-
-            <div className="mt-4 rounded-2xl bg-white p-4">
-              <Star
-                size={17}
-                className="text-[#ffc500]"
-                fill="currentColor"
-                aria-hidden="true"
-              />
-              <p className="mt-3 text-sm leading-7 text-[#0c0c0b]/70">
-                &ldquo;{review.quote}&rdquo;
-              </p>
-            </div>
-          </article>
-        ))}
-      </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-[#0c0c0b]/50">
+          Chưa có nhận xét nào từ học viên.
+        </p>
+      )}
     </SectionShell>
   );
 }
+

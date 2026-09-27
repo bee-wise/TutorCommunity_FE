@@ -4,6 +4,7 @@ export * from "./components/ChatRoomScreen";
 export * from "./components/ChatRoomPanel";
 export * from "./components/ChatSidebar";
 export * from "./components/LearnerMessagesRoute";
+export * from "./components/MessageFAB";
 
 export * from "./hooks/useMessages";
 export * from "./hooks/useChatRoom";

@@ -5,26 +5,29 @@ import { authService } from "@workspace/core/services/auth.service";
 import { LoginRequest } from "@workspace/core/types/auth.type";
 import { AUTH_MESSAGE } from "../constants/auth.message";
 import { useAuthStore } from "../store/useAuthStore";
-import { getApiErrorMessage, handleApiError } from "../sys-libs/error-handler";
+import {
+  ApiError,
+  getApiErrorMessage,
+  handleApiError,
+} from "../sys-libs/error-handler";
 import { queryKeys } from "../sys-libs/queryKeys";
 import { getRoleRedirectPath } from "../utils/auth-redirect";
 
 export const useLogin = ({
   redirectUrl,
   onSuccess,
+  onLmsAccessNotActivated,
   loginScreen,
 }: {
   redirectUrl?: string;
   onSuccess?: () => void;
+  onLmsAccessNotActivated?: () => void;
   loginScreen: "SALE" | "LMS" | "STAFF";
 }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const setAuthLoading = useAuthStore((s) => s.setAuthLoading);
   const setAuthenticatedUser = useAuthStore((s) => s.login);
-  const setIsOpenAccessLMSConfirm = useAuthStore(
-    (s) => s.setIsOpenAccessLMSConfirm,
-  );
   const clearAuth = useAuthStore((s) => s.logout);
 
   const handleUnauthorized = async () => {
@@ -35,6 +38,7 @@ export const useLogin = ({
       await authService.logout();
     } catch {
     } finally {
+      queryClient.clear();
       clearAuth();
     }
   };
@@ -43,10 +47,22 @@ export const useLogin = ({
     mutationKey: ["login"],
     mutationFn: async (req: LoginRequest) => {
       try {
-        await authService.login({
-          email: req.email.trim(),
-          password: req.password,
-        });
+        const loginResponse = await authService.login(
+          {
+            email: req.email.trim(),
+            password: req.password,
+          },
+          loginScreen,
+        );
+        if (!loginResponse.success) {
+          throw new ApiError(
+            loginResponse.error?.message ||
+              loginResponse.message ||
+              AUTH_MESSAGE.ERROR.INTERNAL_SERVER_ERROR,
+            loginResponse.error?.code === "LMS_ACCESS_NOT_ACTIVATED" ? 403 : 400,
+            loginResponse.error?.code,
+          );
+        }
 
         const response = await authService.getMe();
         if (!response.success || !response.data) {
@@ -63,34 +79,6 @@ export const useLogin = ({
       setAuthLoading(true);
     },
     onSuccess: async (user) => {
-      if (loginScreen === "SALE") {
-        setIsOpenAccessLMSConfirm(false);
-        if (user.role !== "TUTOR" && user.role !== "LEARNER") {
-          return handleUnauthorized();
-        }
-      } else if (loginScreen === "LMS") {
-        if (user.role !== "TUTOR" && user.role !== "LEARNER") {
-          return handleUnauthorized();
-        }
-        if (!user.canAccessTutorLms && user.role === "TUTOR") {
-          setIsOpenAccessLMSConfirm(true);
-          await authService.logout();
-          clearAuth();
-          return;
-        }
-        if (!user.canAccessLearnerLms && user.role === "LEARNER") {
-          setIsOpenAccessLMSConfirm(true);
-          await authService.logout();
-          clearAuth();
-          return;
-        }
-      } else if (loginScreen === "STAFF") {
-        if (user.role !== "ADMIN" && user.role !== "CONSULTANT") {
-          return handleUnauthorized();
-        }
-      }
-
-      setIsOpenAccessLMSConfirm(false);
       setAuthenticatedUser(user);
       queryClient.setQueryData([queryKeys.authKey.getMe], user);
       toast.success(AUTH_MESSAGE.SUCCESS, { position: "top-right" });
@@ -107,6 +95,20 @@ export const useLogin = ({
       onSuccess?.();
     },
     onError: (error) => {
+      const apiError = handleApiError(error);
+      if (
+        loginScreen === "LMS" &&
+        apiError.code === "LMS_ACCESS_NOT_ACTIVATED"
+      ) {
+        clearAuth();
+        onLmsAccessNotActivated?.();
+        return;
+      }
+
+      if (apiError.statusCode === 403) {
+        return handleUnauthorized();
+      }
+
       clearAuth();
       toast.error(
         getApiErrorMessage(error, AUTH_MESSAGE.ERROR.INTERNAL_SERVER_ERROR),

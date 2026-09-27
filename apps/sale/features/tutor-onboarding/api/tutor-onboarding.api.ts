@@ -16,14 +16,13 @@ export function applyTutorOnboardingAction(
         selectedStepId: payload?.stepId ?? state.selectedStepId,
       };
     case "submit-profile":
+      // Submit goes directly to interview (no listing-waived step)
       return {
         ...state,
-        scenario: "listing-waived",
-        selectedStepId: "listing",
-        lastActionMessage: "Hồ sơ mock đã được gửi.",
+        scenario: "interview",
+        selectedStepId: "interview",
+        lastActionMessage: "Hồ sơ đã được gửi thành công.",
       };
-    case "continue-to-interview":
-      return { ...state, scenario: "interview", selectedStepId: "interview" };
     case "complete-mock-interview":
       return {
         ...state,
@@ -35,7 +34,7 @@ export function applyTutorOnboardingAction(
         ...state,
         scenario: "approved",
         selectedStepId: "postApproval",
-        lastActionMessage: "Hồ sơ mock đã được duyệt.",
+        lastActionMessage: "Hồ sơ đã được phê duyệt.",
       };
     case "edit-rejected-profile":
       return {
@@ -49,7 +48,7 @@ export function applyTutorOnboardingAction(
         ...state,
         scenario: "pending-review",
         selectedStepId: "verification",
-        lastActionMessage: "Hồ sơ mock đã được gửi lại.",
+        lastActionMessage: "Hồ sơ đã được gửi lại thành công.",
       };
     case "open-post-approval-form":
       return {
@@ -68,9 +67,10 @@ export function applyTutorOnboardingAction(
     case "open-lms-preview":
       return {
         ...state,
-        lastActionMessage: "Thao tác preview đã được ghi nhận trong bộ nhớ.",
+        lastActionMessage: "Thao tác đã được ghi nhận.",
       };
     default:
       return state;
   }
 }
+

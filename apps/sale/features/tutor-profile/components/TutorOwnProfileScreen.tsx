@@ -2,9 +2,8 @@ import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { Button } from "@workspace/ui/components/ui/button";
 import { mockTutorProfile } from "../types/mockTutorProfile";
+import { TutorAchievements } from "./TutorAchievements";
 import { TutorBioSection } from "./TutorBioSection";
-import { TutorCertificates } from "./TutorCertificates";
-import { TutorEducationAchievements } from "./TutorEducationAchievements";
 import { TutorFeedback } from "./TutorFeedback";
 import { TutorHero } from "./TutorHero";
 import { TutorIntroVideo } from "./TutorIntroVideo";
@@ -13,7 +12,7 @@ import { TutorTeachingMethods } from "./TutorTeachingMethods";
 
 function TutorOwnProfileSummary() {
   return (
-    <aside className="rounded-3xl border border-[#cfe1fa] bg-white p-5 shadow-[0_18px_48px_-30px_rgba(40,15,145,0.25)] sm:p-6 lg:sticky lg:top-24">
+    <aside className="rounded-2xl border border-[#e8edf5] bg-white p-5 lg:sticky lg:top-6 sm:p-6">
       <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#447353]">
         Trạng thái hồ sơ
       </p>
@@ -26,7 +25,9 @@ function TutorOwnProfileSummary() {
 
       <p className="text-xs font-bold text-[#716c83]">Học phí công khai</p>
       <p className="mt-1 text-2xl font-black text-[#280f91]">
-        {mockTutorProfile.hourlyRate}
+        {typeof mockTutorProfile.hourlyRate === "number"
+          ? `${mockTutorProfile.hourlyRate.toLocaleString("vi-VN")}đ/giờ`
+          : mockTutorProfile.hourlyRate}
       </p>
 
       <h2 className="mt-6 text-sm font-extrabold text-[#17142f]">
@@ -73,14 +74,13 @@ export function TutorOwnProfileScreen() {
 
       <TutorHero tutor={mockTutorProfile} />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(300px,0.75fr)] lg:items-start">
-        <div className="space-y-6">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.65fr)_minmax(300px,0.75fr)] lg:items-start">
+        <div className="space-y-5">
           <TutorBioSection tutor={mockTutorProfile} />
           <TutorTeachingMethods tutor={mockTutorProfile} />
-          <TutorEducationAchievements tutor={mockTutorProfile} />
-          <TutorIntroVideo />
           <TutorTeachingHistory tutor={mockTutorProfile} />
-          <TutorCertificates />
+          <TutorAchievements tutor={mockTutorProfile} />
+          <TutorIntroVideo videoUrl={mockTutorProfile.videoUrl} />
           <TutorFeedback tutor={mockTutorProfile} />
         </div>
 

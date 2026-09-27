@@ -1,6 +1,5 @@
 import Image from "next/image";
 import {
-  ChalkboardTeacherIcon,
   HeadsetIcon,
   MagicWandIcon,
   WalletIcon,
@@ -10,88 +9,92 @@ const SUPPORT_ITEMS = [
   {
     icon: WalletIcon,
     title: "Thu nhập rõ ràng",
-    text: "Mức học phí do bạn đưa ra, Beewise giúp bạn quản lý qua từng buổi học.",
+    text: "Bạn chủ động đề xuất học phí. BeeWise ghi nhận và quản lý thu nhập theo từng buổi.",
   },
   {
     icon: HeadsetIcon,
-    title: "Được hỗ trợ từ Beewise team",
-    text: "Cố vấn hỗ trợ lịch học thử, trao đổi kỳ vọng và các vấn đề phát sinh.",
+    title: "Hỗ trợ khi cần",
+    text: "Cố vấn đồng hành trong buổi học thử, thống nhất kỳ vọng và xử lý tình huống phát sinh.",
   },
   {
     icon: MagicWandIcon,
-    title: "Bạn không có nhiều thời gian tóm tắt bài?",
-    text: "Beewise sẽ giúp bạn tóm tắt buổi học và tạo sinh bài tập",
+    title: "Nhẹ việc sau buổi học",
+    text: "BeeWise hỗ trợ tạo tóm tắt và bài tập để bạn có thêm thời gian chuẩn bị buổi tiếp theo.",
   },
 ];
 
 export function TutorGuideFeatures() {
   return (
     <section
-      className="bg-background py-20 sm:py-28"
+      className="relative overflow-hidden bg-background py-20 sm:py-28"
       aria-labelledby="features-heading"
     >
+      <div
+        className="pointer-events-none absolute -right-28 top-20 h-72 w-72 rounded-full bg-accent/12"
+        aria-hidden="true"
+      />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-16">
-          <div>
-            <h2
-              id="features-heading"
-              className="font-nunito uppercase font-black leading-[1.12] tracking-tight text-foreground"
-            >
-              <span className="block text-3xl sm:text-4xl text-primary">
-                Một hồ sơ có chiều sâu,
-              </span>
-              <span className="mt-2 block text-2xl text-accent sm:text-[2rem]">
-                không chỉ là vài dòng giới thiệu
-              </span>
-            </h2>
-            <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-foreground/65">
-              Môn dạy, kinh nghiệm, bằng cấp, lịch trống và phương pháp giảng
-              dạy được trình bày trong cùng một hồ sơ để học viên hiểu rõ bạn
-              trước khi công khai.
+        <header className="max-w-3xl">
+          <h2
+            id="features-heading"
+            className="font-google-sans text-3xl font-black leading-[1.08] tracking-[-0.025em] text-primary sm:text-4xl lg:text-5xl"
+          >
+            Một hồ sơ có chiều sâu,
+            <span className="mt-1 block text-accent">
+              không chỉ là vài dòng giới thiệu
+            </span>
+          </h2>
+          <p className="mt-5 max-w-[62ch] text-base leading-7 text-foreground/65 sm:text-lg">
+            Môn dạy, kinh nghiệm, bằng cấp, lịch trống và phương pháp được trình
+            bày rõ ràng để học viên hiểu bạn trước khi quyết định kết nối.
+          </p>
+        </header>
+
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 lg:items-center">
+          <figure className="min-w-0 lg:col-start-1 lg:col-end-9 lg:row-start-1">
+            <div className="rounded-[2rem] border border-primary/10 bg-white p-3 shadow-[0_24px_70px_rgba(40,15,145,0.12)] sm:rounded-[2.5rem] sm:p-4">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[1.4rem] bg-muted sm:aspect-[16/10] sm:rounded-[2rem]">
+                <Image
+                  src="/brand/BeeWiseTeam-2.JPG"
+                  alt="Đội ngũ BeeWise đồng hành cùng cộng đồng gia sư"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover object-center"
+                />
+              </div>
+            </div>
+            <figcaption className="mt-4 max-w-[58ch] border-l-4 border-accent pl-4 text-sm leading-6 text-foreground/62">
+              Đội ngũ BeeWise hỗ trợ gia sư từ lúc hoàn thiện hồ sơ đến khi lớp
+              học vận hành ổn định.
+            </figcaption>
+          </figure>
+
+          <aside className="relative mt-7 rounded-[2rem] border border-primary/10 bg-[#f8f7ff] p-5 shadow-[0_22px_65px_rgba(40,15,145,0.14)] sm:p-7 lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-0">
+            <h3 className="font-nunito text-xl font-extrabold leading-snug text-primary sm:text-2xl">
+              Bạn tập trung vào việc dạy
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-foreground/60">
+              BeeWise hỗ trợ những phần việc còn lại trong quá trình vận hành
+              lớp học.
             </p>
-            <div className="relative mt-9 aspect-[16/10] overflow-hidden rounded-[2rem] bg-muted">
-              <Image
-                src="/brand/BeeWiseTeam.JPG"
-                alt="Đội ngũ BeeWise xây dựng nền tảng dành cho gia sư"
-                fill
-                sizes="(max-width: 1024px) 100vw, 58vw"
-                className="object-cover object-center"
-              />
-            </div>
-          </div>
 
-          <div className="lg:pt-18">
-            <div className="rounded-[2rem] bg-accent p-7 text-accent-foreground sm:p-9">
-              <ChalkboardTeacherIcon
-                size={34}
-                weight="duotone"
-                aria-hidden="true"
-              />
-              <h3 className="mt-6 font-google-sans text-2xl font-bold leading-tight">
-                Tập trung vào việc dạy
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-accent-foreground/75">
-                BeeWise lo phần kết nối, xác thực và vận hành để bạn dành nhiều
-                thời gian hơn cho chất lượng buổi học.
-              </p>
-            </div>
-
-            <div className="mt-8 grid gap-7">
+            <div className="mt-5">
               {SUPPORT_ITEMS.map((item) => {
                 const Icon = item.icon;
                 return (
                   <article
                     key={item.title}
-                    className="grid grid-cols-[auto_1fr] gap-4 border-b border-border pb-7 last:border-b-0 last:pb-0"
+                    className="group grid grid-cols-[2.75rem_minmax(0,1fr)] gap-3 border-t border-primary/10 py-5 sm:gap-4"
                   >
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/8 text-primary">
-                      <Icon size={22} weight="duotone" aria-hidden="true" />
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-primary shadow-[0_8px_24px_rgba(40,15,145,0.08)] transition-colors duration-200 group-hover:bg-primary group-hover:text-white">
+                      <Icon size={21} weight="duotone" aria-hidden="true" />
                     </div>
-                    <div>
-                      <h3 className="font-google-sans text-lg font-bold text-foreground">
+                    <div className="min-w-0">
+                      <h4 className="font-nunito text-base font-extrabold leading-snug text-foreground">
                         {item.title}
-                      </h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-foreground/60">
+                      </h4>
+                      <p className="mt-1.5 text-sm leading-5 text-foreground/60">
                         {item.text}
                       </p>
                     </div>
@@ -99,7 +102,7 @@ export function TutorGuideFeatures() {
                 );
               })}
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </section>

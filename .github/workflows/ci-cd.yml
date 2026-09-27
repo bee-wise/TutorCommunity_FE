@@ -2,9 +2,9 @@ name: Next.js CI/CD
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   build-and-test:
@@ -17,13 +17,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Use project npm version
         run: npm install --global npm@11.6.1
 
-      - name: Install dependencies
+      - name: Install dependencies 1
+        run: npm i
+
+      - name: Install dependencies 2
         run: npm ci
 
       - name: Lint

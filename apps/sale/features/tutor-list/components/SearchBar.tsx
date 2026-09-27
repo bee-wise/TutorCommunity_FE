@@ -57,7 +57,7 @@ export function SearchBar({
               ? "bg-background text-foreground shadow-sm border border-border"
               : "text-foreground/50 hover:text-foreground/80"
           }`}
-          style={{ fontFamily: "var(--font-nunito-family)" }}
+          style={{ fontFamily: "var(--font-google-sans)" }}
           aria-selected={!isAI}
           role="tab"
           id="search-mode-manual"
@@ -73,7 +73,7 @@ export function SearchBar({
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-foreground/50 hover:text-foreground/80"
           }`}
-          style={{ fontFamily: "var(--font-nunito-family)" }}
+          style={{ fontFamily: "var(--font-google-sans)" }}
           aria-selected={isAI}
           role="tab"
           id="search-mode-ai"
@@ -162,8 +162,19 @@ export function SearchBar({
               aria-label={isAI ? "Tìm với AI" : "Tìm kiếm"}
             >
               {isLoading && isAI ? (
-                <><CircleNotchIcon className="animate-spin" size={14} aria-hidden="true" />Đang tìm</>
-              ) : isAI ? <>Tìm với AI</> : <>Tìm ngay</>}
+                <>
+                  <CircleNotchIcon
+                    className="animate-spin"
+                    size={14}
+                    aria-hidden="true"
+                  />
+                  Đang tìm
+                </>
+              ) : isAI ? (
+                <>Tìm với AI</>
+              ) : (
+                <>Tìm ngay</>
+              )}
             </button>
           </div>
         </div>

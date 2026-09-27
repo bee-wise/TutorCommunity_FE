@@ -1,20 +1,19 @@
-import type { LucideIcon } from "lucide-react";
 import { Star } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface SectionShellProps {
-  eyebrow?: string;
   title: string;
   description?: string;
-  icon: LucideIcon;
+  badge?: string;
   children: ReactNode;
   className?: string;
+  headerAction?: ReactNode;
 }
 
 interface InfoPillProps {
-  icon?: LucideIcon;
   children: ReactNode;
-  tone?: "primary" | "secondary" | "accent" | "neutral" | "success";
+  tone?: "primary" | "secondary" | "accent" | "neutral" | "success" | "warning";
+  size?: "sm" | "md";
 }
 
 interface RatingStarsProps {
@@ -26,58 +25,56 @@ interface RatingStarsProps {
 const pillToneClassName = {
   primary: "border-[#280f91]/20 bg-[#280f91]/10 text-[#280f91]",
   secondary: "border-[#447353]/30 bg-[#447353]/10 text-[#447353]",
-  accent: "border-[#ffc510] bg-[#fadc78] text-[#905b0f]",
-  neutral: "border-[#cfe1fa] bg-white text-[#0c0c0b]/70",
-  success: "border-[#447353]/30 bg-white text-[#447353]",
+  accent: "border-[#ffc510]/50 bg-[#fff8e6] text-[#905b0f]",
+  neutral: "border-[#e8edf5] bg-[#f8faff] text-[#0c0c0b]/70",
+  success: "border-[#447353]/30 bg-[#447353]/8 text-[#447353]",
+  warning: "border-[#ffc510]/60 bg-[#fff3cb] text-[#905b0f]",
 };
 
 export function SectionShell({
-  eyebrow,
+  title,
   description,
-  icon: Icon,
+  badge,
   children,
   className = "",
+  headerAction,
 }: SectionShellProps) {
   return (
     <section
-      className={`rounded-3xl border border-[#cfe1fa] bg-white p-5 shadow-[0_18px_48px_-30px_rgba(40,15,145,0.22)] sm:p-6 ${className}`}
+      className={`rounded-2xl border border-[#e8edf5] bg-white p-5 sm:p-6 shadow-[0_2px_12px_-4px_rgba(40,15,145,0.04)] ${className}`}
     >
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#280f91]/15 bg-white px-3.5 py-2 text-[#280f91] shadow-sm">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#fff3cb]">
-              <Icon size={15} aria-hidden="true" />
-            </span>
-            {eyebrow ? (
-              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#447353]">
-                {eyebrow}
+      <div className="mb-5 flex flex-col gap-2 border-b border-[#f0f4fa] pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <span className="h-5 w-1.5 rounded-full bg-[#280f91]" aria-hidden="true" />
+            <h2 className="text-lg font-extrabold text-[#0c0c0b] sm:text-xl">{title}</h2>
+            {badge ? (
+              <span className="rounded-full bg-[#280f91]/10 px-2.5 py-0.5 text-xs font-bold text-[#280f91]">
+                {badge}
               </span>
             ) : null}
           </div>
-          <div className="hidden h-px flex-1 bg-[#cfe1fa]/80 sm:block" />
+          {description ? (
+            <p className="mt-1 pl-4 text-xs leading-5 text-[#0c0c0b]/55 sm:text-sm">
+              {description}
+            </p>
+          ) : null}
         </div>
-
-        {description ? (
-          <p className="max-w-xl text-sm leading-6 text-[#0c0c0b]/60">
-            {description}
-          </p>
-        ) : null}
+        {headerAction ? <div>{headerAction}</div> : null}
       </div>
-      <div className="mt-6">{children}</div>
+      {children}
     </section>
   );
 }
 
-export function InfoPill({
-  icon: Icon,
-  children,
-  tone = "neutral",
-}: InfoPillProps) {
+export function InfoPill({ children, tone = "neutral", size = "md" }: InfoPillProps) {
+  const sizeClasses =
+    size === "sm" ? "px-2.5 py-1 text-xs font-semibold" : "px-3 py-1.5 text-xs font-bold";
+
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold shadow-sm ${pillToneClassName[tone]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border shadow-sm ${sizeClasses} ${pillToneClassName[tone]}`}
     >
-      {Icon ? <Icon size={14} aria-hidden="true" /> : null}
       {children}
     </span>
   );
@@ -98,7 +95,7 @@ export function RatingStars({
             key={index}
             size={size}
             className={
-              index < roundedValue ? "text-[#ffc500]" : "text-[#0c0c0b]/20"
+              index < roundedValue ? "text-[#ffc500]" : "text-[#0c0c0b]/15"
             }
             fill={index < roundedValue ? "currentColor" : "none"}
             aria-hidden="true"
@@ -123,3 +120,4 @@ export function getInitials(name: string) {
     .join("")
     .toUpperCase();
 }
+

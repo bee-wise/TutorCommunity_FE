@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { headers } from "next/headers";
 import { AuthLayout } from '@/features/auth/components/AuthLayout';
 import { LoginForm } from '@/features/auth/components/LoginForm';
+import { getPublicAuthStatus } from '@/features/auth/lib/public-auth-status';
 
 export const metadata: Metadata = {
   title: "Đăng nhập | BeeWise",
@@ -9,11 +11,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const authStatus = getPublicAuthStatus((await headers()).get("host"));
+
   return (
-    <AuthLayout variant="login">
+    <AuthLayout variant="login" authPaused={authStatus.paused} notice={authStatus.notice}>
       <Suspense fallback={null}>
-        <LoginForm />
+        <LoginForm authPaused={authStatus.paused} />
       </Suspense>
     </AuthLayout>
   );

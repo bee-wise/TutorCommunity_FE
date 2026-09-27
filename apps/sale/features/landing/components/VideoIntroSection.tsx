@@ -96,7 +96,7 @@ export function VideoIntroSection() {
                     <PlayCircle
                       size={48}
                       weight="fill"
-                      className="text-primary ml-1 sm:ml-2 sm:w-[56px] sm:h-[56px]"
+                      className="text-primary sm:w-[56px] sm:h-[56px]"
                     />
                   </div>
                 </div>
