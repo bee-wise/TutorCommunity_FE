@@ -31,7 +31,7 @@ export function EmptyState({
   title,
   description,
   action,
-  imageSrc = "/images/404Sticker.svg",
+  imageSrc = "https://res.cloudinary.com/xcrm6ykz/image/upload/v1789966153/8.png",
   imageAlt = "Empty state illustration",
   imageWidth = 240,
   imageHeight = 240,

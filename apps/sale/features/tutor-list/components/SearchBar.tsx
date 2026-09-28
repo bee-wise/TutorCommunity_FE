@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   MagnifyingGlassIcon,
   SparkleIcon,
   CircleNotchIcon,
 } from "@phosphor-icons/react";
 import type { SearchMode } from "../data/types";
+import styles from "./SearchBar.module.css";
 
 interface SearchBarProps {
   mode: SearchMode;
@@ -25,6 +26,18 @@ export function SearchBar({
 }: SearchBarProps) {
   const [query, setQuery] = useState(currentQuery);
   const inputRef = useRef<HTMLInputElement>(null);
+  const prevLoadingRef = useRef(isLoading);
+
+  useEffect(() => {
+    // Khi kết quả trả về (isLoading chuyển từ true sang false), dừng focus
+    if (prevLoadingRef.current && !isLoading) {
+      inputRef.current?.blur();
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+    }
+    prevLoadingRef.current = isLoading;
+  }, [isLoading]);
 
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
@@ -115,11 +128,19 @@ export function SearchBar({
 
           <div
             className={`relative z-10 flex h-14 items-center gap-3 px-4 ${
-              isAI ? "rounded-[14.5px] bg-card" : "bg-background rounded-2xl"
+              isAI
+                ? `overflow-hidden rounded-[14.5px] bg-card ${styles.searchBox}`
+                : "bg-background rounded-2xl"
             }`}
           >
+            {isAI && (
+              <span
+                className={`${styles.gradientSweep} ${isLoading ? styles.loading : ""}`}
+                aria-hidden="true"
+              />
+            )}
             {/* Icon prefix */}
-            <div className="shrink-0">
+            <div className="relative z-10 shrink-0">
               {isAI ? (
                 <SparkleIcon
                   size={18}
@@ -147,7 +168,7 @@ export function SearchBar({
                   ? "Ví dụ: Gia sư Toán lớp 10, dạy online vào buổi tối"
                   : "Tìm kiếm theo tên gia sư..."
               }
-              className="flex-1 bg-transparent text-sm text-foreground placeholder-foreground/35 outline-none min-w-0"
+              className="relative z-10 flex-1 bg-transparent text-sm text-foreground placeholder-foreground/35 outline-none min-w-0"
               aria-label={isAI ? "Mô tả gia sư bạn cần" : "Nhập tên gia sư"}
               autoComplete="off"
             />
@@ -157,7 +178,7 @@ export function SearchBar({
               type="submit"
               disabled={!query.trim()}
               id="tutor-search-submit"
-              className="shrink-0 inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-primary px-5 text-xs font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="relative z-10 shrink-0 inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-primary px-5 text-xs font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               style={{ fontFamily: "var(--font-nunito-family)" }}
               aria-label={isAI ? "Tìm với AI" : "Tìm kiếm"}
             >
