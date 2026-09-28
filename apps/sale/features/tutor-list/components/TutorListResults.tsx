@@ -250,6 +250,13 @@ export function TutorListResults({
                   tutor={tutor}
                   isLoggedIn={isLoggedIn}
                   isBestMatch={searchMode === "ai" && index === 0}
+                  alignWithBestMatch={
+                    searchMode === "ai" && index === 1
+                      ? "sm"
+                      : searchMode === "ai" && index === 2
+                        ? "xl"
+                        : undefined
+                  }
                 />
               </motion.div>
             ))}

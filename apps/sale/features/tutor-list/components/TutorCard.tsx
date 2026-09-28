@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
+import { BadgeCheck } from "lucide-react";
 import {
   ArrowsHorizontalIcon,
   ArrowRightIcon,
@@ -26,6 +27,7 @@ interface TutorCardProps {
   tutor: ApiTutorProfile;
   isLoggedIn?: boolean;
   isBestMatch?: boolean;
+  alignWithBestMatch?: "sm" | "xl";
 }
 
 const getLevelLabel = (studentYear: string) => {
@@ -71,10 +73,18 @@ function TutorAvatar({ tutor }: { tutor: ApiTutorProfile }) {
       )}
       {tutor.isOnline && (
         <span
-          className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#447353]"
+          className="absolute right-1 top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#447353]"
           aria-label="Đang trực tuyến"
         />
       )}
+      <span
+        className="absolute bottom-1 right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-[#447353] text-white shadow-md"
+        role="img"
+        aria-label="Hồ sơ đã xác thực"
+        title="Hồ sơ đã xác thực"
+      >
+        <BadgeCheck size={16} aria-hidden="true" />
+      </span>
     </div>
   );
 }
@@ -83,6 +93,7 @@ export function TutorCard({
   tutor,
   isLoggedIn = false,
   isBestMatch = false,
+  alignWithBestMatch,
 }: TutorCardProps) {
   const [showReason, setShowReason] = useState(false);
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
@@ -135,6 +146,13 @@ export function TutorCard({
       : tutor.offlineCity || "Online";
 
   const name = tutor.displayName || "Gia Sư";
+  const nameSpacing = isBestMatch
+    ? ""
+    : alignWithBestMatch === "sm"
+      ? "pr-10 sm:pr-0"
+      : alignWithBestMatch === "xl"
+        ? "pr-10 xl:pr-0"
+        : "pr-10";
 
   return (
     <>
@@ -143,44 +161,44 @@ export function TutorCard({
         aria-label={`Gia sư ${name}`}
       >
         {isBestMatch && (
-          <div className="h-1 w-full bg-[#ffc500]" aria-hidden="true" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-[#ffc500]" aria-hidden="true" />
         )}
 
-        <div className="flex flex-1 flex-col p-4 sm:p-5">
-          <div className="mb-4 flex min-h-8 items-center justify-between gap-3">
-            {isBestMatch ? (
-              <span
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#fff6d6] px-2.5 py-1 text-[11px] font-extrabold text-[#8a5a00]"
-                style={{ fontFamily: "var(--font-nunito-family)" }}
-              >
-                <SparkleIcon size={13} weight="fill" aria-hidden="true" />
-                Phù hợp nhất
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#447353]">
-                <CheckCircleIcon size={15} weight="fill" aria-hidden="true" />
-                Hồ sơ đã xác thực
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={handleSave}
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition ${isSaved ? "border-[#f1b8c0] bg-[#fff1f3] text-[#c52f47]" : "border-[#dce3f0] bg-white text-[#667085] hover:border-[#280f91]/30 hover:bg-[#f7f5ff] hover:text-[#280f91]"}`}
-              aria-label={`${isSaved ? "Bỏ lưu" : "Lưu"} gia sư ${name}`}
+        <div className="relative flex flex-1 flex-col p-4 sm:p-5">
+          {(isBestMatch || alignWithBestMatch) && (
+            <div
+              className={`mb-4 h-9 items-center pr-11 ${isBestMatch ? "flex" : alignWithBestMatch === "sm" ? "hidden sm:flex" : "hidden xl:flex"}`}
+              aria-hidden={!isBestMatch}
             >
-              <HeartIcon
-                size={17}
-                weight={isSaved ? "fill" : "regular"}
-                aria-hidden="true"
-              />
-            </button>
-          </div>
+              {isBestMatch && (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[#fff6d6] px-2.5 py-1 text-[11px] font-extrabold text-[#8a5a00]"
+                  style={{ fontFamily: "var(--font-nunito-family)" }}
+                >
+                  <SparkleIcon size={13} weight="fill" aria-hidden="true" />
+                  Phù hợp nhất
+                </span>
+              )}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleSave}
+            className={`absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border transition sm:right-5 sm:top-5 ${isSaved ? "border-[#f1b8c0] bg-[#fff1f3] text-[#c52f47]" : "border-[#dce3f0] bg-white text-[#667085] hover:border-[#280f91]/30 hover:bg-[#f7f5ff] hover:text-[#280f91]"}`}
+            aria-label={`${isSaved ? "Bỏ lưu" : "Lưu"} gia sư ${name}`}
+          >
+            <HeartIcon
+              size={17}
+              weight={isSaved ? "fill" : "regular"}
+              aria-hidden="true"
+            />
+          </button>
 
           <div className="flex items-start gap-4">
             <TutorAvatar tutor={tutor} />
             <div className="min-w-0 flex-1 pt-0.5">
               <h3
-                className="line-clamp-2 text-lg font-extrabold leading-[1.25] text-[#17131f]"
+                className={`line-clamp-2 text-lg font-extrabold leading-[1.25] text-[#17131f] ${nameSpacing}`}
                 style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 {name}
@@ -240,7 +258,7 @@ export function TutorCard({
             <p className="flex min-w-0 items-center gap-2">
               <ModeIcon
                 size={16}
-                className="shrink-0 text-[#280f91]"
+                className="shrink-0 text-primary"
                 aria-hidden="true"
               />
               <span className="font-semibold">{modeInfo.label}</span>
@@ -248,7 +266,7 @@ export function TutorCard({
             <p className="flex min-w-0 items-start gap-2">
               <MapPinIcon
                 size={16}
-                className="mt-0.5 shrink-0 text-[#280f91]"
+                className="mt-0.5 shrink-0 text-primary"
                 aria-hidden="true"
               />
               <span className="min-w-0 break-words font-semibold leading-5">
@@ -277,7 +295,7 @@ export function TutorCard({
                 Học phí từ
               </p>
               <p
-                className="mt-0.5 text-lg font-extrabold tracking-tight text-[#17131f]"
+                className="mt-0.5 text-lg font-extrabold tracking-tight text-primary"
                 style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 {tutor.hourlyRate
@@ -293,7 +311,7 @@ export function TutorCard({
             <Link
               href={`/tutors/${tutor.profileId}`}
               id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
-              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#280f91] px-4 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
             >
               Xem hồ sơ
               <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />
