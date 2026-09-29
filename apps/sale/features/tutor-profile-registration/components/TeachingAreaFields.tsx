@@ -97,14 +97,14 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
   };
 
   return (
-    <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+    <div className="space-y-3 rounded-2xl border border-border bg-muted/40 p-4">
       <div className="flex items-start gap-3">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#280f91]/8 text-[#280f91]">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <MapPin className="size-5" weight="fill" aria-hidden="true" />
         </span>
         <div>
-          <h3 className="font-bold text-slate-900">Khu vực giảng dạy</h3>
-          <p className="mt-0.5 text-xs leading-5 text-slate-500">
+          <h3 className="font-bold text-foreground">Khu vực giảng dạy</h3>
+          <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
             Dữ liệu hành chính hai cấp sau tháng 07/2025. Có thể chọn toàn tỉnh
             hoặc thu hẹp đến phường, xã.
           </p>
@@ -196,7 +196,7 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
       </div>
 
       {provincesQuery.isError || provinceQuery.isError ? (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-orange-200 bg-orange-50 px-3 py-2.5 text-sm text-orange-800">
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-accent/40 bg-accent/20 px-3 py-2.5 text-sm text-amber-800">
           <span className="flex items-start gap-2">
             <WarningCircle className="mt-0.5 size-4 shrink-0" weight="fill" />
             Chưa tải được dữ liệu khu vực. Vui lòng thử lại.
@@ -216,7 +216,7 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
       ) : null}
 
       {city ? (
-        <p className="rounded-xl bg-[#280f91]/5 px-3 py-2 text-xs leading-5 text-[#280f91]">
+        <p className="rounded-xl bg-primary/10 border border-primary/20 px-3 py-2 text-xs leading-5 text-primary">
           Khu vực hiển thị: <strong>{areaLabel(city, ward)}</strong>
         </p>
       ) : null}

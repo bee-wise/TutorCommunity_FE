@@ -1,0 +1,54 @@
+.calendar:global(.rdp-root) {
+  --rdp-accent-color: var(--primary);
+  --rdp-accent-background-color: var(--muted);
+  --rdp-day-height: 38px;
+  --rdp-day-width: 38px;
+  --rdp-day_button-height: 36px;
+  --rdp-day_button-width: 36px;
+  margin: 0;
+  color: var(--foreground);
+  font-family: inherit;
+}
+
+.calendar :global(.rdp-month_caption) {
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.calendar :global(.rdp-dropdown_root) {
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--card);
+  color: var(--foreground);
+  padding: 0.35rem 0.5rem;
+}
+
+.calendar :global(.rdp-weekday) {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.calendar :global(.rdp-day_button) {
+  font-size: 0.8125rem;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.calendar :global(.rdp-day_button:hover:not(:disabled)) {
+  background: var(--muted);
+  color: var(--primary);
+}
+
+.calendar :global(.rdp-selected .rdp-day_button),
+.calendar :global(.rdp-selected .rdp-day_button:hover) {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.calendar :global(.rdp-day_button:focus-visible),
+.calendar :global(.rdp-dropdown:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+

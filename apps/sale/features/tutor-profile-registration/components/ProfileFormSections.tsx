@@ -13,6 +13,7 @@ import type { TutorProfileFormValues } from "../schemas/profile-registration.sch
 import { CatalogSelect } from "./CatalogSelect";
 import { AvailabilityTimeRangeField } from "./AvailabilityTimeRangeField";
 import { BankInformationField } from "./BankInformationField";
+import { BirthDatePicker } from "./BirthDatePicker";
 import { TeachingModeSelector } from "./TeachingModeSelector";
 import { TeachingAreaFields } from "./TeachingAreaFields";
 import { FileUploadField } from "./FileUploadField";
@@ -30,9 +31,9 @@ function SectionHeading({
   description: string;
 }) {
   return (
-    <div className="border-b border-slate-100 pb-4">
-      <h2 className="text-xl font-extrabold text-slate-950">{title}</h2>
-      <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>
+    <div className="border-b border-border pb-4">
+      <h2 className="text-xl font-extrabold text-foreground">{title}</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p>
     </div>
   );
 }
@@ -61,22 +62,38 @@ export function BasicInformationSection() {
             placeholder="Nguyễn Minh Anh"
           />
         </ProfileField>
-        <ProfileField
-          label="Ngày sinh"
-          required
-          error={errors.dateOfBirth?.message}
-        >
-          <input
-            {...register("dateOfBirth")}
-            type="date"
-            className={profileInputClass}
+        <div className="grid gap-1.5 text-sm font-semibold text-foreground">
+          <label htmlFor="tutor-date-of-birth">
+            Ngày sinh <span className="text-destructive">*</span>
+          </label>
+          <Controller
+            control={control}
+            name="dateOfBirth"
+            render={({ field }) => (
+              <BirthDatePicker
+                id="tutor-date-of-birth"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+                invalid={Boolean(errors.dateOfBirth)}
+              />
+            )}
           />
-        </ProfileField>
+          {errors.dateOfBirth?.message ? (
+            <span id="tutor-date-of-birth-error" className="text-xs font-medium text-destructive">
+              {errors.dateOfBirth.message}
+            </span>
+          ) : null}
+        </div>
         <ProfileField label="Giới tính" required error={errors.gender?.message}>
           <select {...register("gender")} className={profileInputClass}>
-            <option value="MALE">Nam</option>
-            <option value="FEMALE">Nữ</option>
-            <option value="OTHER">Khác</option>
+            <option value="" disabled>
+              Chọn giới tính
+            </option>
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
+            <option value="others">Khác</option>
           </select>
         </ProfileField>
         <ProfileField
@@ -212,7 +229,14 @@ export function TeachingInformationSection() {
       />
       <div className="grid items-start gap-4 lg:grid-cols-2">
         <ProfileField
-          label={<span className="inline-flex flex-wrap items-center gap-2">Môn giảng dạy <span className="text-xs font-normal text-slate-500">Có thể chọn nhiều</span></span>}
+          label={
+            <span className="inline-flex flex-wrap items-center gap-2">
+              Môn giảng dạy{" "}
+              <span className="text-xs font-normal text-muted-foreground">
+                Có thể chọn nhiều
+              </span>
+            </span>
+          }
           required
           error={errors.subjectIds?.message}
         >
@@ -231,7 +255,14 @@ export function TeachingInformationSection() {
           />
         </ProfileField>
         <ProfileField
-          label={<span className="inline-flex flex-wrap items-center gap-2">Cấp học <span className="text-xs font-normal text-slate-500">Có thể chọn nhiều</span></span>}
+          label={
+            <span className="inline-flex flex-wrap items-center gap-2">
+              Cấp học{" "}
+              <span className="text-xs font-normal text-muted-foreground">
+                Có thể chọn nhiều
+              </span>
+            </span>
+          }
           required
           error={errors.gradeLevelIds?.message}
         >
@@ -250,7 +281,16 @@ export function TeachingInformationSection() {
           />
         </ProfileField>
       </div>
-      <ProfileField label={<span className="inline-flex flex-wrap items-center gap-2">Chuyên môn nổi bật <span className="text-xs font-normal text-slate-500">Có thể chọn nhiều</span></span>}>
+      <ProfileField
+        label={
+          <span className="inline-flex flex-wrap items-center gap-2">
+            Chuyên môn nổi bật{" "}
+            <span className="text-xs font-normal text-muted-foreground">
+              Có thể chọn nhiều
+            </span>
+          </span>
+        }
+      >
         <Controller
           control={control}
           name="specializationIds"
@@ -266,7 +306,7 @@ export function TeachingInformationSection() {
         />
       </ProfileField>
       {subjectIds.length ? (
-        <div className="grid items-start gap-3 rounded-xl bg-[#fff3cb]/60 p-4 sm:grid-cols-2">
+        <div className="grid items-start gap-3 rounded-xl border border-accent/30 bg-accent/20 p-4 sm:grid-cols-2">
           {subjectIds.map((subjectId, index) => (
             <ProfileField
               key={subjectId}
@@ -304,7 +344,7 @@ export function TeachingInformationSection() {
           label={
             <span className="inline-flex flex-wrap items-center gap-2">
               Hình thức dạy
-              <span className="text-xs font-normal text-slate-500">
+              <span className="text-xs font-normal text-muted-foreground">
                 Có thể chọn nhiều
               </span>
             </span>
@@ -382,7 +422,7 @@ export function IntroductionSection() {
       </ProfileField>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-slate-900">Phương pháp giảng dạy</h3>
+          <h3 className="font-bold text-foreground">Phương pháp giảng dạy</h3>
           <Button
             type="button"
             variant="outline"
@@ -395,7 +435,7 @@ export function IntroductionSection() {
         {methods.fields.map((item, index) => (
           <div
             key={item.id}
-            className="grid items-start gap-3 rounded-xl border border-slate-200 p-4 sm:grid-cols-[1fr_1.6fr_auto]"
+            className="grid items-start gap-3 rounded-xl border border-border p-4 sm:grid-cols-[1fr_1.6fr_auto]"
           >
             <input
               {...register(`teachingMethods.${index}.title`)}
@@ -420,7 +460,7 @@ export function IntroductionSection() {
           </div>
         ))}
         {errors.teachingMethods?.message ? (
-          <p className="text-xs text-red-600">
+          <p className="text-xs text-destructive">
             {errors.teachingMethods.message}
           </p>
         ) : null}
@@ -466,7 +506,7 @@ export function AvailabilityAndVerificationSection() {
       <TeachingAreaFields required={requiresTeachingArea} />
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-slate-900">Lịch có thể dạy</h3>
+          <h3 className="font-bold text-foreground">Lịch có thể dạy</h3>
           <Button
             type="button"
             variant="outline"
@@ -479,7 +519,7 @@ export function AvailabilityAndVerificationSection() {
           </Button>
         </div>
         {availability.fields.length === 0 ? (
-          <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">
+          <p className="rounded-xl bg-muted p-4 text-sm text-muted-foreground">
             Chưa có lịch dạy. Bạn có thể bổ sung sau.
           </p>
         ) : null}
@@ -526,10 +566,10 @@ export function AvailabilityAndVerificationSection() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-slate-900">
+            <h3 className="font-bold text-foreground">
               Thành tích và chứng chỉ
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               Không bắt buộc, nhưng giúp hồ sơ đáng tin cậy hơn.
             </p>
           </div>
@@ -557,7 +597,7 @@ export function AvailabilityAndVerificationSection() {
         {achievements.fields.map((item, index) => (
           <div
             key={item.id}
-            className="space-y-3 rounded-xl border border-slate-200 p-4"
+            className="space-y-3 rounded-xl border border-border p-4"
           >
             <div className="grid items-start gap-3 sm:grid-cols-2">
               <input
@@ -615,7 +655,7 @@ export function AvailabilityAndVerificationSection() {
               variant="ghost"
               size="sm"
               onClick={() => achievements.remove(index)}
-              className="text-red-600"
+              className="text-destructive"
             >
               <Trash /> Xóa thành tích
             </Button>
@@ -625,8 +665,8 @@ export function AvailabilityAndVerificationSection() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-slate-900">Kinh nghiệm giảng dạy</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="font-bold text-foreground">Kinh nghiệm giảng dạy</h3>
+            <p className="text-xs text-muted-foreground">
               Thêm lớp học, trung tâm hoặc hoạt động kèm học trước đây.
             </p>
           </div>
@@ -653,7 +693,7 @@ export function AvailabilityAndVerificationSection() {
         {teachingHistory.fields.map((item, index) => (
           <div
             key={item.id}
-            className="space-y-3 rounded-xl border border-slate-200 p-4"
+            className="space-y-3 rounded-xl border border-border p-4"
           >
             <div className="grid items-start gap-3 sm:grid-cols-2">
               <input
@@ -700,7 +740,7 @@ export function AvailabilityAndVerificationSection() {
                 variant="ghost"
                 size="sm"
                 onClick={() => teachingHistory.remove(index)}
-                className="text-red-600"
+                className="text-destructive"
               >
                 <Trash /> Xóa
               </Button>
@@ -709,14 +749,17 @@ export function AvailabilityAndVerificationSection() {
         ))}
       </div>
       <div className="grid gap-1.5">
-        <p className="text-sm font-semibold text-slate-700">
+        <p className="text-sm font-semibold text-foreground">
           Thông tin ngân hàng
         </p>
         <Controller
           control={control}
           name="bankInformation"
           render={({ field }) => (
-            <BankInformationField value={field.value} onChange={field.onChange} />
+            <BankInformationField
+              value={field.value}
+              onChange={field.onChange}
+            />
           )}
         />
       </div>

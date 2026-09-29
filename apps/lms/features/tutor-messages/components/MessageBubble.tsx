@@ -14,26 +14,27 @@ import {
 } from "@workspace/ui/components/ui/message";
 import type { ChatMessage, ChatParticipantRole } from "../types/messages.types";
 import { formatMessageTime, formatFileSize } from "../constants/messages.utils";
+import { ChatWidget } from "./ChatWidget";
 
 const ROLE_STYLES: Record<
   ChatParticipantRole,
   { avatar: string; align: "start" | "end" }
 > = {
-  TUTOR:      { avatar: "bg-[#280f91] text-white", align: "end" },
-  LEARNER:    { avatar: "bg-[#cfe1fa] text-[#280f91]", align: "start" },
-  CONSULTANT: { avatar: "bg-[#d4eadf] text-[#447353]", align: "start" },
+  TUTOR:      { avatar: "bg-primary text-primary-foreground", align: "end" },
+  LEARNER:    { avatar: "bg-card text-primary border border-border", align: "start" },
+  CONSULTANT: { avatar: "bg-secondary text-secondary-foreground", align: "start" },
 };
 
 const ROLE_LABELS: Record<ChatParticipantRole, string> = {
   TUTOR: "Gia sư",
   LEARNER: "Học viên",
-  CONSULTANT: "Consultant",
+  CONSULTANT: "Tư vấn viên",
 };
 
 function SystemMessagePill({ text }: { text: string }) {
   return (
     <div className="flex justify-center py-2" role="status">
-      <span className="rounded-full bg-[#fff8df] px-4 py-1 text-center text-xs text-[#905b0f] border border-[#ffc500]/20">
+      <span className="max-w-[min(100%,560px)] rounded-full border border-border bg-card px-4 py-1.5 text-center text-xs leading-5 text-muted-foreground">
         {text}
       </span>
     </div>
@@ -44,10 +45,10 @@ function TextBubble({ text, isMine }: { text: string; isMine: boolean }) {
   return (
     <div
       data-slot="bubble"
-      className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
+      className={`max-w-[min(88%,480px)] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
         isMine
-          ? "bg-[#280f91] text-white rounded-br-sm"
-          : "bg-white text-[#0c0c0b] border border-[#e5eaf5] rounded-bl-sm"
+          ? "rounded-br-md bg-primary text-primary-foreground"
+          : "rounded-bl-md border border-border bg-card text-card-foreground"
       }`}
     >
       {text}
@@ -57,11 +58,11 @@ function TextBubble({ text, isMine }: { text: string; isMine: boolean }) {
 
 function ImageBubble({ url, name }: { url: string; name: string }) {
   return (
-    <div data-slot="bubble" className="overflow-hidden rounded-2xl border border-[#e5eaf5] shadow-sm max-w-[260px]">
-      <div className="relative aspect-[4/3] w-full bg-[#f0f4fd]">
+    <div data-slot="bubble" className="max-w-[260px] overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="relative aspect-[4/3] w-full bg-muted">
         <NextImage src={url} alt={name} fill className="object-cover" sizes="260px" />
       </div>
-      <p className="truncate px-3 py-1.5 text-xs text-[#667085]">{name}</p>
+      <p className="truncate px-3 py-1.5 text-xs text-muted-foreground">{name}</p>
     </div>
   );
 }
@@ -72,16 +73,16 @@ function FileBubble({ name, size, url }: { name: string; size: number; url: stri
       href={url}
       download={name}
       data-slot="bubble"
-      className="flex items-center gap-3 rounded-2xl border border-[#e5eaf5] bg-white p-3 shadow-sm transition hover:border-[#280f91]/30 hover:bg-[#f7f9ff] max-w-[260px]"
+      className="flex max-w-[260px] items-center gap-3 rounded-2xl border border-border bg-card p-3 transition hover:border-primary"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#cfe1fa]">
-        <FileIcon size={18} className="text-[#280f91]" />
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted">
+        <FileIcon size={18} className="text-primary" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-[#0c0c0b]">{name}</p>
-        <p className="text-xs text-[#667085]">{formatFileSize(size)}</p>
+        <p className="truncate text-sm font-semibold text-foreground">{name}</p>
+        <p className="text-xs text-muted-foreground">{formatFileSize(size)}</p>
       </div>
-      <Download size={14} className="shrink-0 text-[#280f91]" />
+      <Download size={14} className="shrink-0 text-primary" />
     </a>
   );
 }
@@ -90,14 +91,13 @@ interface MessageBubbleProps {
   message: ChatMessage;
   currentUserId: string;
   currentRole: ChatParticipantRole;
-  onWidgetAccept?: () => void;
-  onWidgetDecline?: () => void;
   isConsecutive?: boolean;
 }
 
 export function MessageBubble({
   message,
   currentUserId,
+  currentRole,
   isConsecutive = false,
 }: MessageBubbleProps) {
   if (message.type === "SYSTEM") {
@@ -116,21 +116,25 @@ export function MessageBubble({
 
   return (
     <Message align={align} className={isConsecutive ? "mt-0.5" : "mt-3"}>
-      {!isMine && !isConsecutive && (
+      {!isConsecutive && (
         <MessageAvatar className={`h-8 w-8 text-xs font-bold ${roleStyle.avatar}`}>
           {initials}
         </MessageAvatar>
       )}
-      {!isMine && isConsecutive && <div className="w-8 shrink-0" />}
+      {isConsecutive && <div className="w-8 shrink-0" />}
 
-      <MessageContent>
+      <MessageContent className={isMine ? "items-end" : "items-start"}>
         {!isConsecutive && (
           <MessageHeader className="gap-1.5 px-1">
-            <span className={`font-semibold text-xs ${isMine ? "text-[#280f91]" : "text-[#667085]"}`}>
+            <span className={`text-xs font-semibold ${isMine ? "text-primary" : "text-foreground"}`}>
               {isMine ? "Bạn" : message.senderName}
             </span>
-            <span className="text-[#c2c7d6] text-xs">·</span>
-            <span className="text-[#c2c7d6] text-xs">{ROLE_LABELS[message.senderRole]}</span>
+            {message.senderId !== "SYSTEM" && (
+              <>
+                <span className="text-xs text-muted-foreground">·</span>
+                <span className="text-xs text-muted-foreground">{ROLE_LABELS[message.senderRole]}</span>
+              </>
+            )}
           </MessageHeader>
         )}
 
@@ -143,21 +147,23 @@ export function MessageBubble({
         {message.type === "FILE" && message.attachment && (
           <FileBubble url={message.attachment.url} name={message.attachment.name} size={message.attachment.size} />
         )}
-
+        {message.type === "WIDGET" && message.widget && (
+          <div className="mt-1 w-full max-w-[440px]">
+            {message.text && <p className="mb-2 text-xs leading-5 text-muted-foreground">{message.text}</p>}
+            <ChatWidget
+              widget={message.widget}
+              currentRole={currentRole}
+            />
+          </div>
+        )}
 
         <MessageFooter className={isMine ? "justify-end px-1" : "justify-start px-1"}>
-          <time className="text-[10px] text-[#c2c7d6]">
+          <time className="text-[10px] text-muted-foreground">
             {formatMessageTime(message.createdAt)}
           </time>
         </MessageFooter>
       </MessageContent>
 
-      {isMine && !isConsecutive && (
-        <MessageAvatar className={`h-8 w-8 text-xs font-bold ${roleStyle.avatar}`}>
-          {initials}
-        </MessageAvatar>
-      )}
-      {isMine && isConsecutive && <div className="w-8 shrink-0" />}
     </Message>
   );
 }
