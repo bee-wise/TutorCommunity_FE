@@ -8,13 +8,19 @@ import { useAuthStore } from "@workspace/core/store/useAuthStore";
 
 export function useChatRoom(roomId: string) {
   const user = useAuthStore((state) => state.user);
-  const currentUserId = user?.id || "UNKNOWN";
   const currentUserRole = (user?.role?.toUpperCase() || "LEARNER") as ChatParticipantRole;
-  const currentUserName = user?.fullName || "Người dùng ẩn danh";
 
   const [room, setRoom] = useState<ChatRoom | null>(
     mockChatRooms.find((r) => r.id === roomId) ?? null
   );
+  // Fixture participants have local IDs that differ from authenticated API IDs.
+  const mockParticipant = room && {
+    LEARNER: room.learner,
+    TUTOR: room.tutor,
+    CONSULTANT: room.consultant,
+  }[currentUserRole];
+  const currentUserId = mockParticipant?.id ?? user?.id ?? "UNKNOWN";
+  const currentUserName = mockParticipant?.name ?? user?.fullName ?? "Người dùng ẩn danh";
   const [messages, setMessages] = useState<ChatMessage[]>(
     mockMessages[roomId] ?? []
   );
@@ -54,7 +60,7 @@ export function useChatRoom(roomId: string) {
       await new Promise((r) => setTimeout(r, 350));
       setSending(false);
     },
-    [roomId, isReadOnly]
+    [roomId, isReadOnly, currentUserId, currentUserName, currentUserRole]
   );
 
   const sendFile = useCallback(
@@ -83,7 +89,7 @@ export function useChatRoom(roomId: string) {
       setMessages((prev) => [...prev, newMsg]);
       setUploadingFile(false);
     },
-    [roomId, isReadOnly]
+    [roomId, isReadOnly, currentUserId, currentUserName, currentUserRole]
   );
 
   return {

@@ -59,7 +59,9 @@ export const useLogin = ({
             loginResponse.error?.message ||
               loginResponse.message ||
               AUTH_MESSAGE.ERROR.INTERNAL_SERVER_ERROR,
-            loginResponse.error?.code === "LMS_ACCESS_NOT_ACTIVATED" ? 403 : 400,
+            loginResponse.error?.code === "LMS_ACCESS_NOT_ACTIVATED"
+              ? 403
+              : 400,
             loginResponse.error?.code,
           );
         }

@@ -23,6 +23,7 @@ import { Header } from "@workspace/ui/components/layout/Header";
 import { Button } from "@workspace/ui/components/ui/button";
 import { onboardingSteps } from "../constants/tutor-onboarding.fixtures";
 import { useTutorOnboardingViewModel } from "./TutorOnboardingProvider";
+import { OnboardingVideoGuide } from "./OnboardingVideoGuide";
 import type {
   TutorOnboardingScenario,
   TutorOnboardingStep,
@@ -48,36 +49,36 @@ const statusCopy: Record<TutorOnboardingStepStatus, string> = {
 };
 
 const statusClass: Record<TutorOnboardingStepStatus, string> = {
-  COMPLETED: "border-[#447353]/30 bg-[#447353]/10 text-[#447353]",
-  CURRENT: "border-[#280f91]/30 bg-[#280f91]/10 text-[#280f91]",
-  UPCOMING: "border-[#cfe1fa] bg-[#cfe1fa]/45 text-[#280f91]",
-  BLOCKED: "border-[#cfe1fa] bg-white text-[#5e6688]",
-  ACTION_REQUIRED: "border-[#ffc510]/50 bg-[#fff3cb] text-[#905b0f]",
+  COMPLETED: "border-secondary/30 bg-secondary/10 text-secondary",
+  CURRENT: "border-primary/30 bg-primary/10 text-primary",
+  UPCOMING: "border-border bg-muted text-primary",
+  BLOCKED: "border-border bg-card text-muted-foreground",
+  ACTION_REQUIRED: "border-accent/50 bg-accent/20 text-amber-800",
 };
 
 const stepNodeClass: Record<TutorOnboardingStepStatus, string> = {
-  COMPLETED: "border-[#447353] bg-[#447353] text-white shadow-[#447353]/25",
-  CURRENT: "border-[#280f91] bg-[#280f91] text-white shadow-[#280f91]/25",
-  UPCOMING: "border-[#cfe1fa] bg-white text-[#280f91] shadow-[#cfe1fa]/70",
-  BLOCKED: "border-[#cfe1fa] bg-white text-[#5e6688] shadow-[#cfe1fa]/50",
+  COMPLETED: "border-secondary bg-secondary text-secondary-foreground shadow-sm",
+  CURRENT: "border-primary bg-primary text-primary-foreground shadow-sm",
+  UPCOMING: "border-border bg-card text-primary shadow-sm",
+  BLOCKED: "border-border bg-card text-muted-foreground shadow-sm",
   ACTION_REQUIRED:
-    "border-[#ffc510] bg-[#ffc510] text-[#280f91] shadow-[#ffc510]/30",
+    "border-accent bg-accent text-accent-foreground shadow-sm",
 };
 
 const stepTrackClass: Record<TutorOnboardingStepStatus, string> = {
-  COMPLETED: "bg-[#447353]",
-  CURRENT: "bg-[#ffc510]",
-  UPCOMING: "bg-[#cfe1fa]",
-  BLOCKED: "bg-[#cfe1fa]",
-  ACTION_REQUIRED: "bg-[#ffc510]",
+  COMPLETED: "bg-secondary",
+  CURRENT: "bg-accent",
+  UPCOMING: "bg-border",
+  BLOCKED: "bg-border",
+  ACTION_REQUIRED: "bg-accent",
 };
 
 const statusTextClass: Record<TutorOnboardingStepStatus, string> = {
-  COMPLETED: "text-[#447353]",
-  CURRENT: "text-[#280f91]",
-  UPCOMING: "text-[#280f91]",
-  BLOCKED: "text-[#5e6688]",
-  ACTION_REQUIRED: "text-[#905b0f]",
+  COMPLETED: "text-secondary",
+  CURRENT: "text-primary",
+  UPCOMING: "text-primary",
+  BLOCKED: "text-muted-foreground",
+  ACTION_REQUIRED: "text-amber-800",
 };
 
 export function TutorOnboardingShell({
@@ -101,22 +102,7 @@ export function TutorOnboardingShell({
   };
 
   return (
-    <div
-      className="min-h-screen bg-[#fff8df] text-[#0c0c0b]"
-      style={
-        {
-          "--beewise-purple": "#280f91",
-          "--beewise-light-blue": "#cfe1fa",
-          "--beewise-yellow": "#ffc510",
-          "--beewise-cream": "#fff3cb",
-          "--beewise-pastel-yellow": "#fadc78",
-          "--beewise-pastel-pink": "#e1aba7",
-          "--beewise-green": "#447353",
-          "--beewise-brown": "#905b0f",
-          "--beewise-black": "#0c0c0b",
-        } as CSSProperties
-      }
-    >
+    <div className="min-h-screen bg-background text-foreground">
       {useAuthenticatedHeader ? (
         <Header />
       ) : (
@@ -131,7 +117,7 @@ export function TutorOnboardingShell({
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-12 pt-24 sm:px-6 lg:px-8">
         {/* Banner */}
         <section>
-          <div className="overflow-hidden rounded-2xl border border-[#cfe1fa] bg-white shadow-[0_18px_45px_rgba(40,15,145,0.10)]">
+          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <Image
               src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790437541/onboarding-banner.png"
               alt="BeeWise Tutor Onboarding Banner"
@@ -143,27 +129,27 @@ export function TutorOnboardingShell({
             <div className="p-5">
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#280f91]">
+                  <p className="text-xs font-bold uppercase tracking-wide text-primary">
                     Tutor Onboarding
                   </p>
-                  <h1 className="font-nunito mt-1 text-2xl leading-tight text-[#0c0c0b] md:text-3xl">
+                  <h1 className="font-nunito mt-1 text-2xl leading-tight text-foreground md:text-3xl">
                     {view.title}
                   </h1>
-                  <p className="mt-2 max-w-3xl text-sm leading-6 text-[#3f3b55]">
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
                     {view.description}
                   </p>
                 </div>
-                <div className="min-w-40 rounded-xl bg-[#fff3cb] p-3 ring-1 ring-[#ffc510]/40">
-                  <p className="text-xs font-semibold text-[#905b0f]">
+                <div className="min-w-40 rounded-xl bg-accent/20 p-3 ring-1 ring-accent/40">
+                  <p className="text-xs font-semibold text-amber-800">
                     Tiến độ
                   </p>
-                  <div className="mt-2 h-2 rounded-full bg-white">
+                  <div className="mt-2 h-2 rounded-full bg-card">
                     <div
-                      className="h-2 rounded-full bg-[#280f91] transition-all duration-500"
+                      className="h-2 rounded-full bg-primary transition-all duration-500"
                       style={{ width: `${view.progressValue}%` }}
                     />
                   </div>
-                  <p className="mt-2 text-lg font-bold text-[#280f91]">
+                  <p className="mt-2 text-lg font-bold text-primary">
                     {view.progressValue}%
                   </p>
                 </div>
@@ -197,7 +183,7 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
   return (
     <nav
       aria-label="Tiến trình onboarding gia sư"
-      className={`rounded-2xl border border-[#cfe1fa] bg-white shadow-[0_14px_34px_rgba(40,15,145,0.10)] ${
+      className={`rounded-2xl border border-border bg-card shadow-sm ${
         compact ? "p-4" : "px-5 py-6 md:px-6 md:py-7"
       }`}
     >
@@ -227,8 +213,8 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
                   step.order === onboardingSteps.length
                     ? "bg-transparent"
                     : isComplete
-                      ? "bg-[#447353]"
-                      : "bg-[#cfe1fa]"
+                      ? "bg-secondary"
+                      : "bg-border"
                 }`}
               />
               <button
@@ -239,7 +225,7 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
                   })
                 }
                 aria-current={isCurrent ? "step" : undefined}
-                className={`relative z-10 flex w-full flex-col items-center gap-2 rounded-xl px-1 py-1.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91] ${
+                className={`relative z-10 flex w-full flex-col items-center gap-2 rounded-xl px-1 py-1.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   isSelected
                     ? "scale-[1.03]"
                     : "hover:scale-[1.02] hover:opacity-95"
@@ -247,8 +233,8 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
               >
                 <div className="flex items-center justify-center">
                   <span
-                    className={`flex h-12 w-12 items-center justify-center rounded-full border-2 shadow-lg transition-transform ${stepNodeClass[status]} ${
-                      isSelected ? "ring-2 ring-[#ffc510] ring-offset-2" : ""
+                    className={`flex h-12 w-12 items-center justify-center rounded-full border-2 shadow-sm transition-transform ${stepNodeClass[status]} ${
+                      isSelected ? "ring-2 ring-accent ring-offset-2" : ""
                     }`}
                   >
                     {status === "COMPLETED" ? (
@@ -265,7 +251,7 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-extrabold leading-tight text-[#0c0c0b]">
+                  <p className="text-sm font-extrabold leading-tight text-foreground">
                     {step.shortTitle}
                   </p>
                   <p
@@ -290,9 +276,9 @@ export function MobileStepNav() {
   return (
     <nav
       aria-label="Các bước onboarding"
-      className="sticky top-20 flex shrink-0 w-14 sm:w-16 flex-col items-center rounded-2xl border border-[#cfe1fa] bg-white py-3 px-1 shadow-[0_10px_25px_rgba(40,15,145,0.06)] self-start"
+      className="sticky top-20 flex shrink-0 w-14 sm:w-16 flex-col items-center rounded-2xl border border-border bg-card py-3 px-1 shadow-sm self-start"
     >
-      <span className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[#280f91]">
+      <span className="mb-2 text-[10px] font-bold uppercase tracking-wider text-primary">
         Bước
       </span>
       <ol className="flex flex-col items-center gap-0.5">
@@ -314,14 +300,14 @@ export function MobileStepNav() {
                 }
                 title={step.shortTitle}
                 aria-current={isCurrent ? "step" : undefined}
-                className={`relative flex flex-col items-center p-1 rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91] ${
+                className={`relative flex flex-col items-center p-1 rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   isSelected ? "scale-105" : "opacity-85 hover:opacity-100"
                 }`}
               >
                 <span
                   className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs shadow-sm transition-all ${
                     stepNodeClass[status]
-                  } ${isSelected ? "ring-2 ring-[#ffc510] ring-offset-1" : ""}`}
+                  } ${isSelected ? "ring-2 ring-accent ring-offset-1" : ""}`}
                 >
                   {status === "COMPLETED" ? (
                     <Check className="h-4 w-4" weight="bold" />
@@ -331,14 +317,14 @@ export function MobileStepNav() {
                     <Icon className="h-4 w-4" />
                   )}
                 </span>
-                <span className="mt-0.5 text-[9px] font-bold text-[#0c0c0b] text-center leading-tight line-clamp-1 max-w-[48px]">
+                <span className="mt-0.5 text-[9px] font-bold text-foreground text-center leading-tight line-clamp-1 max-w-[48px]">
                   {step.shortTitle}
                 </span>
               </button>
               {i < onboardingSteps.length - 1 && (
                 <div
                   className={`my-0.5 h-2.5 w-0.5 ${
-                    status === "COMPLETED" ? "bg-[#447353]" : "bg-[#cfe1fa]"
+                    status === "COMPLETED" ? "bg-secondary" : "bg-border"
                   }`}
                 />
               )}
@@ -377,52 +363,96 @@ export function StepDetailPanel({ step }: { step: TutorOnboardingStep }) {
     }
   };
 
+  const hasVideoGuide = step.id === "profile" || step.id === "interview";
+  const videoGuideConfig =
+    step.id === "profile"
+      ? {
+          title: "Hướng dẫn hoàn thiện hồ sơ gia sư",
+          duration: "4:32",
+          description:
+            "Xem video hướng dẫn chi tiết cách điền thông tin và tải minh chứng đạt chuẩn xét duyệt.",
+        }
+      : {
+          title: "Hướng dẫn chuẩn bị phỏng vấn",
+          duration: "3:15",
+          description:
+            "Các lưu ý về chuyên môn, thiết bị và tác phong trong buổi phỏng vấn trực tuyến.",
+        };
+
   return (
-    <section className="rounded-2xl border border-[#cfe1fa] bg-white p-5 shadow-[0_14px_34px_rgba(40,15,145,0.08)]">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-[#280f91]">
-            Chi tiết bước
-          </p>
-          <h2 className="mt-1 text-xl font-bold text-[#0c0c0b]">
-            {step.title}
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-[#5e6688]">
-            {step.description}
-          </p>
+    <section className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
+      <div
+        className={`grid gap-6 ${
+          hasVideoGuide ? "lg:grid-cols-[1fr_320px] lg:items-start" : ""
+        }`}
+      >
+        <div className="space-y-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-primary">
+                Chi tiết bước
+              </p>
+              <h2 className="mt-1 text-xl font-bold text-foreground">
+                {step.title}
+              </h2>
+              <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                {step.description}
+              </p>
+            </div>
+            <span
+              className={`shrink-0 rounded-full border px-3 py-1 text-xs font-bold ${statusClass[status]}`}
+            >
+              {statusCopy[status]}
+            </span>
+          </div>
+
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Việc cần làm
+            </p>
+            <ul className="mt-2.5 grid gap-2.5" aria-label="Việc cần làm">
+              {step.tasks.map((task) => (
+                <li
+                  key={task}
+                  className="flex items-start gap-2.5 text-sm text-foreground/90"
+                >
+                  <ClipboardText
+                    className="mt-0.5 h-4 w-4 shrink-0 text-secondary"
+                    aria-hidden="true"
+                  />
+                  <span>{task}</span>
+                </li>
+              ))}
+            </ul>
+
+            {isActionable && step.primaryAction && (
+              <div className="mt-5">
+                <Button
+                  type="button"
+                  onClick={handleAction}
+                  className="rounded-full bg-primary px-6 text-primary-foreground hover:bg-primary/90"
+                >
+                  {step.primaryAction}
+                  <ArrowRight className="ml-1.5 h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-        <span
-          className={`shrink-0 rounded-full border px-3 py-1 text-xs font-bold ${statusClass[status]}`}
-        >
-          {statusCopy[status]}
-        </span>
-      </div>
-      <ul className="mt-5 grid gap-2" aria-label="Việc cần làm">
-        {step.tasks.map((task) => (
-          <li
-            key={task}
-            className="flex items-start gap-2 text-sm text-[#3f3b55]"
-          >
-            <ClipboardText
-              className="mt-0.5 h-4 w-4 shrink-0 text-[#447353]"
-              aria-hidden="true"
+
+        {hasVideoGuide && (
+          <div className="space-y-1.5">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Video hướng dẫn
+            </p>
+            <OnboardingVideoGuide
+              title={videoGuideConfig.title}
+              duration={videoGuideConfig.duration}
+              description={videoGuideConfig.description}
             />
-            {task}
-          </li>
-        ))}
-      </ul>
-      {isActionable && step.primaryAction && (
-        <div className="mt-5">
-          <Button
-            type="button"
-            onClick={handleAction}
-            className="rounded-full bg-[#280f91] px-5 text-white hover:bg-[#1f0b70]"
-          >
-            {step.primaryAction}
-            <ArrowRight className="ml-1.5 h-4 w-4" />
-          </Button>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
@@ -445,10 +475,10 @@ export function PreviewToolbar({
   if (capture) return null;
 
   return (
-    <div className="fixed bottom-4 left-1/2 z-80 w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 rounded-2xl border border-[#280f91]/20 bg-white/95 p-3 shadow-2xl backdrop-blur">
+    <div className="fixed bottom-4 left-1/2 z-80 w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-[#fff3cb] px-3 py-1 text-xs font-bold text-[#280f91]">
+          <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-primary">
             Preview
           </span>
           <label className="text-sm font-semibold" htmlFor="scenario-select">
@@ -460,7 +490,7 @@ export function PreviewToolbar({
             onChange={(event) =>
               onScenarioChange(event.target.value as TutorOnboardingScenario)
             }
-            className="h-9 rounded-md border border-[#cfe1fa] bg-white px-3 text-sm"
+            className="h-9 rounded-md border border-border bg-card px-3 text-sm text-foreground"
           >
             {scenarios.map((item) => (
               <option key={item} value={item}>
@@ -509,17 +539,17 @@ export function StatusCard({
 }) {
   const toneClass =
     tone === "success"
-      ? "border-[#ffc510] bg-[#fadc78]"
+      ? "border-accent bg-accent/20"
       : tone === "warning"
-        ? "border-[#ffc510] bg-[#ffc510]/35"
-        : "border-[#cfe1fa] bg-white";
+        ? "border-accent/40 bg-accent/15"
+        : "border-border bg-card";
 
   return (
     <section
-      className={`rounded-2xl border p-5 shadow-[0_14px_34px_rgba(40,15,145,0.08)] ${toneClass}`}
+      className={`rounded-2xl border p-5 shadow-sm ${toneClass}`}
     >
-      <h2 className="text-lg font-bold text-[#0c0c0b]">{title}</h2>
-      <div className="mt-3 text-sm leading-6 text-[#3f3b55]">{children}</div>
+      <h2 className="text-lg font-bold text-foreground">{title}</h2>
+      <div className="mt-3 text-sm leading-6 text-muted-foreground">{children}</div>
     </section>
   );
 }
@@ -549,7 +579,7 @@ export function PrimaryScreenActions() {
             if (primaryAction) dispatchAction(primaryAction);
           }}
           disabled={!primaryAction && view.currentScreen !== "OVERVIEW"}
-          className="rounded-full bg-[#280f91] px-5 text-white hover:bg-[#1f0b70]"
+          className="rounded-full bg-primary px-5 text-primary-foreground hover:bg-primary/90"
         >
           {view.primaryAction}
         </Button>
@@ -557,7 +587,7 @@ export function PrimaryScreenActions() {
       {view.secondaryAction && (
         <Button
           variant="outline"
-          className="rounded-full border-[#280f91]/25 text-[#280f91]"
+          className="rounded-full border-primary/25 text-primary hover:bg-primary/5"
         >
           {view.secondaryAction}
         </Button>

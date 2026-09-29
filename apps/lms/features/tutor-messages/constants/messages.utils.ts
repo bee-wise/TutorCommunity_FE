@@ -6,10 +6,17 @@ export function formatMessageTime(iso: string): string {
   yesterday.setDate(yesterday.getDate() - 1);
   const isYesterday = date.toDateString() === yesterday.toDateString();
 
-  const hhmm = date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  const hhmm = date.toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   if (isToday) return hhmm;
   if (isYesterday) return `Hôm qua ${hhmm}`;
-  return date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" }) + " " + hhmm;
+  return (
+    date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" }) +
+    " " +
+    hhmm
+  );
 }
 
 export function formatRelativeTime(iso: string): string {
@@ -34,6 +41,7 @@ export const STAGE_LABELS: Record<string, string> = {
   DISCUSSING: "Đang thảo luận",
   TRIAL_SCHEDULED: "Đã lên lịch học thử",
   AWAITING_DECISION: "Chờ quyết định",
+  CONVERTED_TO_CLASS: "Lớp học đã tạo",
 };
 
 export const STAGE_COLORS: Record<string, string> = {
@@ -41,6 +49,7 @@ export const STAGE_COLORS: Record<string, string> = {
   DISCUSSING: "bg-blue-100 text-blue-800 border-blue-200",
   TRIAL_SCHEDULED: "bg-[#447353]/15 text-[#447353] border-[#447353]/30",
   AWAITING_DECISION: "bg-purple-100 text-purple-800 border-purple-200",
+  CONVERTED_TO_CLASS: "bg-secondary text-secondary-foreground border-secondary",
 };
 
 export const CLOSE_REASON_LABELS: Record<string, string> = {

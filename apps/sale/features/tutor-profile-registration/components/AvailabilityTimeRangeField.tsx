@@ -47,7 +47,7 @@ export function AvailabilityTimeRangeField({
   return (
     <div>
       <div className="grid grid-cols-2 items-start gap-2">
-        <label className="grid gap-1 text-xs font-medium text-slate-500">
+        <label className="grid gap-1 text-xs font-medium text-muted-foreground">
           Bắt đầu
           <select
             value={range.start}
@@ -60,7 +60,7 @@ export function AvailabilityTimeRangeField({
             ))}
           </select>
         </label>
-        <label className="grid gap-1 text-xs font-medium text-slate-500">
+        <label className="grid gap-1 text-xs font-medium text-muted-foreground">
           Kết thúc
           <select
             value={range.end}
@@ -74,7 +74,7 @@ export function AvailabilityTimeRangeField({
           </select>
         </label>
       </div>
-      {error ? <p className="mt-1 text-xs font-medium text-red-600">{error}</p> : null}
+      {error ? <p className="mt-1 text-xs font-medium text-destructive">{error}</p> : null}
     </div>
   );
 }

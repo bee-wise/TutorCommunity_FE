@@ -66,11 +66,11 @@ export function TutorProfileRegistrationScreen() {
 
   if (registration.profileQuery.isError) {
     return (
-      <div className="min-h-[100dvh] bg-slate-50">
+      <div className="min-h-[100dvh] bg-background">
         <Header />
         <main className="mx-auto max-w-xl px-4 pt-32 text-center">
-          <h1 className="text-2xl font-extrabold">Không tải được hồ sơ</h1>
-          <p className="mt-2 text-slate-600">
+          <h1 className="text-2xl font-extrabold text-foreground">Không tải được hồ sơ</h1>
+          <p className="mt-2 text-muted-foreground">
             Vui lòng kiểm tra kết nối rồi thử lại.
           </p>
           <Button
@@ -85,11 +85,11 @@ export function TutorProfileRegistrationScreen() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#F8FAFC] text-slate-950">
+    <div className="min-h-[100dvh] bg-background text-foreground">
       <Header />
       <main className="mx-auto w-full max-w-6xl px-4 pb-28 pt-24 sm:px-6 lg:px-8">
-        <section className="overflow-hidden rounded-2xl bg-[#280f91] px-5 py-6 text-white shadow-[0_18px_45px_rgba(40,15,145,0.18)] sm:px-8">
-          <p className="text-sm font-semibold text-[#ffc500]">
+        <section className="overflow-hidden rounded-2xl bg-primary px-5 py-6 text-primary-foreground shadow-sm sm:px-8">
+          <p className="text-sm font-semibold text-accent">
             Hồ sơ gia sư BeeWise
           </p>
           <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -97,12 +97,12 @@ export function TutorProfileRegistrationScreen() {
               <h1 className="text-2xl font-extrabold sm:text-3xl">
                 Xây dựng hồ sơ gia sư chất lượng
               </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-white/75">
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-primary-foreground/80">
                 Bạn có thể lưu nháp bất kỳ lúc nào. Các mục có dấu * cần hoàn
                 tất trước khi gửi xét duyệt.
               </p>
             </div>
-            <span className="shrink-0 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold">
+            <span className="shrink-0 rounded-xl bg-primary-foreground/10 px-4 py-2 text-sm font-semibold">
               Bước {activeStep + 1}/{steps.length}
             </span>
           </div>
@@ -111,7 +111,7 @@ export function TutorProfileRegistrationScreen() {
         <div className="mt-5 grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
           <nav
             aria-label="Các bước hoàn thiện hồ sơ"
-            className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm lg:sticky lg:top-24"
+            className="rounded-2xl border border-border bg-card p-3 shadow-sm lg:sticky lg:top-24"
           >
             <ol className="grid grid-cols-2 items-start gap-2 lg:grid-cols-1">
               {steps.map((step, index) => {
@@ -121,7 +121,7 @@ export function TutorProfileRegistrationScreen() {
                 return (
                   <li
                     key={step.title}
-                    className={`flex min-w-0 items-start rounded-xl transition ${isActive ? "bg-[#fff3cb] text-[#280f91]" : "text-slate-600 hover:bg-slate-50"}`}
+                    className={`flex min-w-0 items-start rounded-xl transition ${isActive ? "bg-accent/20 text-primary font-bold" : "text-muted-foreground hover:bg-muted"}`}
                   >
                     <button
                       type="button"
@@ -129,7 +129,7 @@ export function TutorProfileRegistrationScreen() {
                       className="flex min-w-0 flex-1 items-start gap-3 rounded-xl p-3 text-left"
                     >
                       <span
-                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${isComplete ? "bg-[#447353] text-white" : isActive ? "bg-[#280f91] text-white" : "bg-slate-100"}`}
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${isComplete ? "bg-secondary text-secondary-foreground" : isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
                       >
                         {isComplete ? (
                           <CheckCircle weight="fill" />
@@ -150,7 +150,7 @@ export function TutorProfileRegistrationScreen() {
                       <button
                         type="button"
                         onClick={() => setGuideStep(index)}
-                        className="mr-2 mt-2 flex size-8 shrink-0 items-center justify-center rounded-lg text-orange-500 transition hover:bg-orange-100 hover:text-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                        className="mr-2 mt-2 flex size-8 shrink-0 items-center justify-center rounded-lg text-amber-800 transition hover:bg-accent/20 hover:text-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                         aria-label={`Xem các mục chưa hoàn thành ở bước ${step.title}`}
                       >
                         <Info
@@ -169,14 +169,14 @@ export function TutorProfileRegistrationScreen() {
           <FormProvider {...registration.form}>
             <form
               onSubmit={registration.submit}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+              className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7"
               noValidate
             >
               {activeStep === 0 ? <BasicInformationSection /> : null}
               {activeStep === 1 ? <TeachingInformationSection /> : null}
               {activeStep === 2 ? <IntroductionSection /> : null}
               {activeStep === 3 ? <AvailabilityAndVerificationSection /> : null}
-              <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-5">
+              <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-5">
                 <Button
                   type="button"
                   variant="outline"
@@ -202,7 +202,7 @@ export function TutorProfileRegistrationScreen() {
                         Math.min(steps.length - 1, step + 1),
                       )
                     }
-                    className="ml-auto bg-[#280f91] text-white hover:bg-[#1f0b70]"
+                    className="ml-auto bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     Tiếp tục <ArrowRight />
                   </Button>
@@ -210,7 +210,7 @@ export function TutorProfileRegistrationScreen() {
                   <Button
                     type="submit"
                     disabled={registration.isSubmitting}
-                    className="ml-auto bg-[#ffc500] font-bold text-[#280f91] hover:bg-[#f0b900]"
+                    className="ml-auto bg-accent font-bold text-accent-foreground hover:bg-accent/90"
                   >
                     {registration.isSubmitting
                       ? "Đang gửi..."
@@ -220,7 +220,7 @@ export function TutorProfileRegistrationScreen() {
               </div>
               {Object.keys(registration.form.formState.errors).length > 0 &&
               activeStep === steps.length - 1 ? (
-                <p role="alert" className="mt-3 text-sm text-red-600">
+                <p role="alert" className="mt-3 text-sm text-destructive">
                   Hồ sơ còn thiếu thông tin bắt buộc. Vui lòng kiểm tra lại các
                   bước có lỗi.
                 </p>
