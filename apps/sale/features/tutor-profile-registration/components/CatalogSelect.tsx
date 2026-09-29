@@ -69,23 +69,23 @@ export function CatalogSelect({
   };
 
   return (
-    <div className="h-fit self-start rounded-xl border border-slate-200 bg-white p-2">
+    <div className="h-fit self-start rounded-xl border border-border bg-card p-2">
       {!showPicker ? (
-        <div className="flex min-h-11 items-center justify-between gap-3 rounded-lg bg-[#280f91]/5 px-3 py-2">
+        <div className="flex min-h-11 items-center justify-between gap-3 rounded-lg bg-primary/5 px-3 py-2">
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-[#280f91]">
+            <p className="truncate text-sm font-semibold text-primary">
               {selectedItem?.name ?? (selectedItemQuery.isLoading ? "Đang tải lựa chọn..." : "Đã chọn")}
             </p>
-            {selectedItem && !selectedItem.isApproved ? <p className="text-xs text-[#905b0f]">Đang chờ BeeWise duyệt</p> : null}
+            {selectedItem && !selectedItem.isApproved ? <p className="text-xs text-amber-800">Đang chờ BeeWise duyệt</p> : null}
           </div>
-          <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditing(true)} className="shrink-0 text-[#280f91]">
+          <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditing(true)} className="shrink-0 text-primary">
             <PencilSimple /> Thay đổi
           </Button>
         </div>
       ) : (
         <>
       <div className="relative">
-        <MagnifyingGlass className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" aria-hidden="true" />
+        <MagnifyingGlass className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
@@ -93,14 +93,14 @@ export function CatalogSelect({
           className={`${profileInputClass} pl-9`}
         />
       </div>
-      <div className="mt-2 max-h-44 overflow-y-auto rounded-lg bg-slate-50 p-1">
+      <div className="mt-2 max-h-44 overflow-y-auto rounded-lg bg-muted p-1">
         {catalogQuery.isLoading ? (
           <div className="space-y-2 p-2" aria-label="Đang tải danh mục">
-            <div className="h-8 animate-pulse rounded-lg bg-slate-200" />
-            <div className="h-8 animate-pulse rounded-lg bg-slate-200" />
+            <div className="h-8 animate-pulse rounded-lg bg-card" />
+            <div className="h-8 animate-pulse rounded-lg bg-card" />
           </div>
         ) : catalogQuery.isError ? (
-          <p className="p-3 text-xs text-red-600">Không tải được danh mục. Vui lòng thử lại.</p>
+          <p className="p-3 text-xs text-destructive">Không tải được danh mục. Vui lòng thử lại.</p>
         ) : items.length ? (
           items.map((item) => {
             const isSelected = selected.includes(item.id);
@@ -110,10 +110,10 @@ export function CatalogSelect({
                 type="button"
                 onClick={() => toggle(item.id)}
                 aria-pressed={multiple ? isSelected : undefined}
-                className={`flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition ${multiple ? `gap-2.5 ${isSelected ? "font-semibold text-[#280f91]" : "text-slate-700"} hover:bg-white` : isSelected ? "bg-[#280f91] font-semibold text-white" : "text-slate-700 hover:bg-white"}`}
+                className={`flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition ${multiple ? `gap-2.5 ${isSelected ? "font-semibold text-primary" : "text-foreground"} hover:bg-card` : isSelected ? "bg-primary font-semibold text-primary-foreground" : "text-foreground hover:bg-card"}`}
               >
                 {multiple ? (
-                  <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${isSelected ? "border-[#280f91] bg-[#280f91] text-white" : "border-slate-300 bg-white"}`} aria-hidden="true">
+                  <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`} aria-hidden="true">
                     {isSelected ? <Check className="h-3 w-3" weight="bold" /> : null}
                   </span>
                 ) : null}
@@ -123,7 +123,7 @@ export function CatalogSelect({
             );
           })
         ) : (
-          <p className="p-3 text-xs text-slate-500">Không tìm thấy kết quả phù hợp.</p>
+          <p className="p-3 text-xs text-muted-foreground">Không tìm thấy kết quả phù hợp.</p>
         )}
       </div>
       {search.trim().length >= 2 && !hasExactMatch ? (
@@ -133,13 +133,13 @@ export function CatalogSelect({
           size="sm"
           disabled={proposalMutation.isPending}
           onClick={() => proposalMutation.mutate()}
-          className="mt-1 w-full justify-start text-[#280f91]"
+          className="mt-1 w-full justify-start text-primary hover:bg-primary/5"
         >
           <Plus /> {proposalMutation.isPending ? "Đang đề xuất..." : `Đề xuất “${search.trim()}”`}
         </Button>
       ) : null}
       {proposalMutation.isError ? (
-        <p className="px-2 pt-1 text-xs text-red-600">{getApiErrorMessage(proposalMutation.error)}</p>
+        <p className="px-2 pt-1 text-xs text-destructive">{getApiErrorMessage(proposalMutation.error)}</p>
       ) : null}
         </>
       )}

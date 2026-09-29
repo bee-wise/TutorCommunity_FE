@@ -27,9 +27,9 @@ export function ProfileStepStatusDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl border-slate-200 sm:max-w-lg">
+      <DialogContent className="rounded-2xl border-border sm:max-w-lg">
         <DialogHeader className="pr-7 text-left">
-          <div className="mb-2 flex size-10 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+          <div className="mb-2 flex size-10 items-center justify-center rounded-xl bg-accent/20 text-amber-800">
             <Info className="size-5" weight="fill" aria-hidden="true" />
           </div>
           <DialogTitle>Hoàn thành bước {stepTitle}</DialogTitle>
@@ -43,14 +43,14 @@ export function ProfileStepStatusDialog({
           {issues.map((issue) => (
             <li
               key={issue.key}
-              className="flex items-start gap-3 rounded-xl border border-orange-200/80 bg-orange-50/70 px-3 py-2.5"
+              className="flex items-start gap-3 rounded-xl border border-accent/40 bg-accent/20 px-3 py-2.5"
             >
-              <span className="mt-2 size-1.5 shrink-0 rounded-full bg-orange-500" />
+              <span className="mt-2 size-1.5 shrink-0 rounded-full bg-amber-800" />
               <span className="min-w-0 text-sm leading-5">
-                <strong className="block font-semibold text-slate-800">
+                <strong className="block font-semibold text-foreground">
                   {issue.label}
                 </strong>
-                <span className="text-slate-600">{issue.message}</span>
+                <span className="text-muted-foreground">{issue.message}</span>
               </span>
             </li>
           ))}
@@ -67,7 +67,7 @@ export function ProfileStepStatusDialog({
           </Button>
           <Button
             type="button"
-            className="w-full bg-[#280f91] text-white hover:bg-[#1f0b70] sm:w-auto"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto"
             onClick={onGoToStep}
           >
             Đi đến bước này

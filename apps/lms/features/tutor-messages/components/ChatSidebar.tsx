@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Search, MessageCircleIcon, ArrowLeft } from "lucide-react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { useMessages } from "../hooks/useMessages";
-import type { ChatRoom } from "../types/messages.types";
+import type { ChatRoom, ChatParticipantRole, ChatRoomCategory } from "../types/messages.types";
 import {
   STAGE_LABELS,
   STAGE_COLORS,
@@ -14,53 +16,64 @@ import {
 const STATUS_ROOM_LABELS: Record<string, string> = {
   ACTIVE: "Đang hoạt động",
   CLOSED: "Đã đóng",
-  CONVERTED_TO_CLASS: "Thành lớp học",
+  CONVERTED_TO_CLASS: "Tạo lớp học",
 };
 
-function RoomRow({ room }: { room: ChatRoom }) {
+function RoomRow({
+  room,
+  currentUserRole,
+}: {
+  room: ChatRoom;
+  currentUserRole: ChatParticipantRole;
+}) {
   const isReadOnly = room.status !== "ACTIVE";
+  const peer = room.category === "SUPPORT"
+    ? room.consultant
+    : currentUserRole === "LEARNER" ? room.tutor : room.learner;
+  const pathname = usePathname();
 
   const basePath = "/lms/tutor/messages";
 
   return (
     <Link
       href={`${basePath}/${room.id}`}
-      className="group flex items-start gap-3 rounded-2xl border border-transparent px-3 py-3.5 transition hover:border-[#280f91]/20 hover:bg-[#f7f9ff]"
+      aria-current={pathname === `${basePath}/${room.id}` ? "page" : undefined}
+      className={`group flex items-start gap-3 rounded-xl border px-3 py-3.5 transition ${pathname === `${basePath}/${room.id}` ? "border-primary bg-muted" : "border-transparent hover:border-border hover:bg-muted"}`}
     >
       {/* Avatar */}
       <div className="relative shrink-0">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#cfe1fa] text-sm font-black text-[#280f91]">
-          {room.learner.initials}
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
+          {peer.initials}
         </div>
-        {room.learner.isOnline && !isReadOnly && (
-          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-[#447353]" />
+        {peer.isOnline && !isReadOnly && (
+          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-card bg-secondary" aria-label="Đang trực tuyến" />
         )}
       </div>
 
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-1">
-          <span className="truncate text-sm font-bold text-[#0c0c0b] group-hover:text-[#280f91]">
-            {room.learner.name}
+          <span className="truncate text-sm font-bold text-foreground group-hover:text-primary">
+            {peer.name}
           </span>
           {room.lastMessageAt && (
-            <time className="shrink-0 text-[10px] text-[#c2c7d6]">
+            <time className="shrink-0 text-[10px] text-muted-foreground">
               {formatRelativeTime(room.lastMessageAt)}
             </time>
           )}
         </div>
 
         {/* Subject + Stage */}
-        <p className="mb-0.5 text-[11px] text-[#667085]">
-          {room.subject} {room.gradeLevel}
+        <p className="mb-0.5 text-[11px] text-muted-foreground">
+          {room.category === "CONNECTION" ? `${room.subject} ${room.gradeLevel}` : room.subject}
         </p>
 
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-xs text-[#667085]">
+          <p className="truncate text-xs text-muted-foreground">
             {room.lastMessage ?? "Chưa có tin nhắn"}
           </p>
           {room.unreadCount > 0 && (
-            <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-[#280f91] px-1 text-[9px] font-black text-white">
+            <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-black text-primary-foreground">
               {room.unreadCount}
             </span>
           )}
@@ -69,13 +82,17 @@ function RoomRow({ room }: { room: ChatRoom }) {
         {/* Stage badge */}
         <span
           className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${
-            isReadOnly
+            room.category === "SUPPORT" && !isReadOnly
+              ? "border-secondary/20 bg-secondary/10 text-secondary"
+              : isReadOnly
               ? "border-gray-200 bg-gray-100 text-gray-500"
               : (STAGE_COLORS[room.connectionStage] ??
                 "bg-gray-100 text-gray-600 border-gray-200")
           }`}
         >
-          {isReadOnly
+          {room.category === "SUPPORT" && !isReadOnly
+            ? "Đang hỗ trợ"
+            : isReadOnly
             ? STATUS_ROOM_LABELS[room.status]
             : STAGE_LABELS[room.connectionStage]}
         </span>
@@ -87,48 +104,97 @@ function RoomRow({ room }: { room: ChatRoom }) {
 export function ChatSidebar() {
   const { rooms } = useMessages();
   const [query, setQuery] = useState("");
+  const pathname = usePathname();
+  const currentUserRole: ChatParticipantRole = "TUTOR";
+  const activeRoom = rooms.find((room) => pathname?.endsWith(`/${room.id}`));
+  const [category, setCategory] = useState<ChatRoomCategory>(activeRoom?.category ?? "CONNECTION");
 
-  const filtered = rooms.filter(
+  const availableRooms = rooms.filter(
+    (room) => room.category === "CONNECTION" || room.supportFor === currentUserRole,
+  );
+  const normalizedQuery = query.trim().toLowerCase();
+  const selectCategory = (nextCategory: ChatRoomCategory) => {
+    setCategory(nextCategory);
+    setQuery("");
+  };
+
+  const filtered = availableRooms.filter(
     (r) =>
-      query === "" ||
-      r.learner.name.toLowerCase().includes(query.toLowerCase()) ||
-      r.subject.toLowerCase().includes(query.toLowerCase()),
+      r.category === category && (
+      normalizedQuery === "" ||
+      (r.category === "SUPPORT" ? r.consultant.name : r.learner.name)
+        .toLowerCase()
+        .includes(normalizedQuery) ||
+      r.subject.toLowerCase().includes(normalizedQuery)),
   );
 
   return (
-    <aside className="flex h-full w-72 shrink-0 flex-col overflow-hidden rounded-2xl border border-[#e5eaf5] bg-white shadow-sm">
+    <aside className="flex h-full w-full shrink-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm lg:w-80">
       {/* Header */}
-      <div className="shrink-0 border-b border-[#f0f3f9] px-4 py-4 flex flex-col gap-4">
+      <div className="flex shrink-0 flex-col gap-4 border-b border-border px-4 py-4">
+        {/* Brand */}
+        <Link href="/lms/tutor/dashboard" className="inline-flex w-fit items-center rounded-full bg-white px-3 py-1 shadow-sm ring-1 ring-primary" aria-label="BeeWise - Trang chủ gia sư">
+          <span className="relative block h-6 w-28">
+            <Image
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
+              alt="BeeWise"
+              fill
+              sizes="112px"
+              className="object-contain object-center"
+              priority
+            />
+          </span>
+        </Link>
+
         {/* Back & Title */}
         <div className="flex items-center gap-3">
           <Link
             href="/lms/tutor/dashboard"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#f7f9ff] text-[#280f91] transition hover:bg-[#e6edfa]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition hover:brightness-95"
             aria-label="Quay lại Trang chủ"
           >
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h2 className="text-lg font-extrabold text-[#0c0c0b]">Tin nhắn</h2>
-            <p className="text-xs text-[#667085]">Phòng chat 3 bên</p>
+            <h2 className="font-nunito text-lg font-extrabold text-foreground">Tin nhắn</h2>
+            <p className="text-xs text-muted-foreground">Kết nối cùng học viên và tư vấn viên</p>
           </div>
         </div>
       </div>
 
       {/* Search */}
-      <div className="shrink-0 border-b border-[#f0f3f9] px-3 py-2.5">
+      <div className="shrink-0 border-b border-border px-3 py-2.5">
         <div className="relative">
           <Search
             size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#667085]"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           />
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tìm học viên, môn học..."
-            className="w-full rounded-xl border border-[#e5eaf5] bg-[#f7f9ff] py-2 pl-8 pr-3 text-xs outline-none focus:border-[#280f91] focus:ring-2 focus:ring-[#280f91]/20"
+            placeholder="Tìm học viên, tư vấn viên, môn học..."
+            className="w-full rounded-lg border border-input bg-background py-2 pl-8 pr-3 text-xs outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
+        </div>
+      </div>
+
+      <div className="shrink-0 border-b border-border px-3 py-2.5">
+        <div role="group" aria-label="Loại cuộc trò chuyện" className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1">
+          {(["CONNECTION", "SUPPORT"] as const).map((item) => (
+            <button
+              key={item}
+              type="button"
+              aria-pressed={category === item}
+              onClick={() => selectCategory(item)}
+              className={`flex items-center justify-center gap-2 rounded-lg px-2 py-2 text-xs font-bold transition ${category === item ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {item === "CONNECTION" ? "Kết nối" : "Hỗ trợ"}
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${category === item ? "bg-muted text-primary" : "bg-card text-muted-foreground"}`}>
+                {availableRooms.filter((room) => room.category === item).length}
+              </span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -136,20 +202,26 @@ export function ChatSidebar() {
       <div className="flex-1 overflow-y-auto p-2">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center px-4 py-12 text-center">
-            <MessageCircleIcon size={32} className="mb-3 text-[#c2c7d6]" />
-            <strong className="text-sm text-[#0c0c0b]">
+            <MessageCircleIcon size={32} className="mb-3 text-muted-foreground" />
+            <strong className="text-sm text-foreground">
               {query ? "Không tìm thấy" : "Chưa có cuộc trò chuyện"}
             </strong>
-            <p className="mt-1 text-xs text-[#667085]">
+            <p className="mt-1 text-xs text-muted-foreground">
               {query
                 ? "Thử tìm kiếm khác"
-                : "Khi Learner kết nối với bạn, phòng chat sẽ hiện tại đây."}
+                : category === "SUPPORT"
+                  ? "Tin nhắn với tư vấn viên sẽ hiện tại đây."
+                  : "Các cuộc trò chuyện kết nối sẽ hiện tại đây."}
             </p>
           </div>
         ) : (
           <div className="space-y-0.5">
             {filtered.map((room) => (
-              <RoomRow key={room.id} room={room} />
+              <RoomRow
+                key={room.id}
+                room={room}
+                currentUserRole={currentUserRole}
+              />
             ))}
           </div>
         )}

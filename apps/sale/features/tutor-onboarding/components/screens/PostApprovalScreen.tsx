@@ -227,22 +227,22 @@ export function PostApprovalScreen() {
     <section className="grid gap-5 lg:grid-cols-[1fr_320px]">
       <div className="flex flex-col gap-5">
         {/* VietQR Bank Info Card */}
-        <div className="rounded-2xl border border-[#cfe1fa] bg-white p-6 shadow-[0_14px_34px_rgba(40,15,145,0.08)]">
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-[#280f91]">
+              <p className="text-xs font-bold uppercase tracking-wide text-primary">
                 Tài khoản ngân hàng nhận thanh toán
               </p>
-              <h3 className="mt-1 text-base font-bold text-[#0c0c0b]">
+              <h3 className="mt-1 text-base font-bold text-foreground">
                 Xác thực số tài khoản tự động qua VietQR
               </h3>
             </div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#280f91]/10 px-3 py-1 text-xs font-semibold text-[#280f91]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
               <Sparkle className="h-3.5 w-3.5" />
               VietQR API
             </span>
           </div>
-          <p className="mt-2 text-sm text-[#5e6688]">
+          <p className="mt-2 text-sm text-muted-foreground">
             Thông tin này được BeeWise dùng để chi trả học phí cho gia sư. Tên
             chủ tài khoản sẽ được tự động tra cứu từ ngân hàng để tránh sai sót.
           </p>
@@ -250,13 +250,13 @@ export function PostApprovalScreen() {
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             {/* Bank selector dropdown */}
             <div className="relative" ref={dropdownRef}>
-              <label className="mb-1.5 block text-xs font-bold text-[#3f3b55]">
-                Ngân hàng thụ hưởng <span className="text-red-500">*</span>
+              <label className="mb-1.5 block text-xs font-bold text-foreground">
+                Ngân hàng thụ hưởng <span className="text-destructive">*</span>
               </label>
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
-                className="flex h-10 w-full items-center justify-between rounded-xl border border-[#cfe1fa] bg-white px-3 text-left text-sm transition hover:border-[#280f91] focus:border-[#280f91] focus:outline-none focus:ring-2 focus:ring-[#280f91]/20"
+                className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-card px-3 text-left text-sm transition hover:border-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 {selectedBank ? (
                   <div className="flex items-center gap-2 overflow-hidden">
@@ -272,21 +272,21 @@ export function PostApprovalScreen() {
                         />
                       </div>
                     ) : (
-                      <Bank className="h-4 w-4 text-[#280f91]" />
+                      <Bank className="h-4 w-4 text-primary" />
                     )}
-                    <span className="truncate font-semibold text-[#0c0c0b]">
+                    <span className="truncate font-semibold text-foreground">
                       {selectedBank.shortName}
                     </span>
                   </div>
                 ) : (
-                  <span className="text-sm text-[#5e6688]">
+                  <span className="text-sm text-muted-foreground">
                     {isLoadingBanks
                       ? "Đang tải ngân hàng..."
                       : "Chọn ngân hàng"}
                   </span>
                 )}
                 <CaretDown
-                  className={`h-4 w-4 text-[#5e6688] transition-transform ${
+                  className={`h-4 w-4 text-muted-foreground transition-transform ${
                     isDropdownOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -294,17 +294,17 @@ export function PostApprovalScreen() {
 
               {/* Dropdown Menu */}
               {isDropdownOpen && (
-                <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-hidden rounded-xl border border-[#cfe1fa] bg-white shadow-xl">
+                <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-hidden rounded-xl border border-border bg-card shadow-xl">
                   {/* Search box inside dropdown */}
-                  <div className="border-b border-[#cfe1fa] p-2">
+                  <div className="border-b border-border p-2">
                     <div className="relative flex items-center">
-                      <MagnifyingGlass className="absolute left-2.5 h-4 w-4 text-[#5e6688]" />
+                      <MagnifyingGlass className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
                       <input
                         type="text"
                         value={bankSearch}
                         onChange={(e) => setBankSearch(e.target.value)}
                         placeholder="Tìm tên hoặc mã ngân hàng..."
-                        className="h-8 w-full rounded-lg bg-[#cfe1fa]/20 pl-8 pr-3 text-xs focus:outline-none focus:ring-1 focus:ring-[#280f91]"
+                        className="h-8 w-full rounded-lg bg-muted pl-8 pr-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                         autoFocus
                       />
                     </div>
@@ -313,7 +313,7 @@ export function PostApprovalScreen() {
                   {/* Bank list */}
                   <div className="max-h-56 overflow-y-auto p-1">
                     {filteredBanks.length === 0 ? (
-                      <p className="p-3 text-center text-xs text-[#5e6688]">
+                      <p className="p-3 text-center text-xs text-muted-foreground">
                         Không tìm thấy ngân hàng phù hợp
                       </p>
                     ) : (
@@ -326,10 +326,10 @@ export function PostApprovalScreen() {
                             setIsDropdownOpen(false);
                             setBankSearch("");
                           }}
-                          className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-[#280f91]/10 ${
+                          className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-primary/10 ${
                             selectedBank?.id === b.id
-                              ? "bg-[#280f91]/15 font-bold text-[#280f91]"
-                              : "text-[#0c0c0b]"
+                              ? "bg-primary/15 font-bold text-primary"
+                              : "text-foreground"
                           }`}
                         >
                           <div className="flex items-center gap-2 overflow-hidden">
@@ -345,17 +345,17 @@ export function PostApprovalScreen() {
                                 />
                               </div>
                             ) : (
-                              <Bank className="h-4 w-4 text-[#280f91]" />
+                              <Bank className="h-4 w-4 text-primary" />
                             )}
                             <div className="truncate">
                               <span className="font-bold">{b.shortName}</span>
-                              <span className="ml-1.5 text-[11px] text-[#5e6688]">
+                              <span className="ml-1.5 text-[11px] text-muted-foreground">
                                 {b.name}
                               </span>
                             </div>
                           </div>
                           {selectedBank?.id === b.id && (
-                            <Check className="h-3.5 w-3.5 text-[#280f91]" />
+                            <Check className="h-3.5 w-3.5 text-primary" />
                           )}
                         </button>
                       ))
@@ -367,8 +367,8 @@ export function PostApprovalScreen() {
 
             {/* Account Number Input */}
             <div>
-              <label className="mb-1.5 block text-xs font-bold text-[#3f3b55]">
-                Số tài khoản <span className="text-red-500">*</span>
+              <label className="mb-1.5 block text-xs font-bold text-foreground">
+                Số tài khoản <span className="text-destructive">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -379,14 +379,14 @@ export function PostApprovalScreen() {
                   placeholder="Nhập số tài khoản"
                   autoComplete="off"
                   inputMode="numeric"
-                  className="h-10 rounded-xl border-[#cfe1fa] pr-9 font-google-sans text-sm focus:border-[#280f91]"
+                  className="h-10 rounded-xl border-input pr-9 font-google-sans text-sm focus:border-primary"
                 />
                 <div className="absolute right-2.5 top-2.5">
                   {isLookingUp ? (
-                    <Spinner className="h-5 w-5 animate-spin text-[#280f91]" />
+                    <Spinner className="h-5 w-5 animate-spin text-primary" />
                   ) : lookupStatus === "success" ? (
                     <CheckCircle
-                      className="h-5 w-5 text-[#447353]"
+                      className="h-5 w-5 text-secondary"
                       weight="fill"
                     />
                   ) : null}
@@ -397,11 +397,11 @@ export function PostApprovalScreen() {
             {/* Account Holder Name */}
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="block text-xs font-bold text-[#3f3b55]">
-                  Tên chủ tài khoản <span className="text-red-500">*</span>
+                <label className="block text-xs font-bold text-foreground">
+                  Tên chủ tài khoản <span className="text-destructive">*</span>
                 </label>
                 {lookupStatus === "success" && (
-                  <span className="flex items-center gap-1 text-[10px] font-bold text-[#447353]">
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-secondary">
                     <CheckCircle className="h-3 w-3" weight="fill" />
                     Đã xác thực
                   </span>
@@ -412,8 +412,8 @@ export function PostApprovalScreen() {
                 onChange={(e) => setAccountHolder(e.target.value.toUpperCase())}
                 placeholder="NGUYEN VAN A"
                 autoComplete="name"
-                className={`h-10 rounded-xl border-[#cfe1fa] font-semibold uppercase tracking-wide focus:border-[#280f91] ${
-                  lookupStatus === "success" ? "bg-[#447353]/5" : ""
+                className={`h-10 rounded-xl border-input font-semibold uppercase tracking-wide focus:border-primary ${
+                  lookupStatus === "success" ? "bg-secondary/10" : ""
                 }`}
               />
             </div>
@@ -422,21 +422,21 @@ export function PostApprovalScreen() {
           {/* Lookup feedback message / validation status */}
           <div className="mt-3">
             {isLookingUp && (
-              <p className="flex items-center gap-1.5 text-xs text-[#280f91]">
+              <p className="flex items-center gap-1.5 text-xs text-primary">
                 <Spinner className="h-3.5 w-3.5 animate-spin" />
                 Đang tra cứu tên chủ tài khoản từ ngân hàng...
               </p>
             )}
 
             {lookupStatus === "success" && (
-              <p className="flex items-center gap-1.5 text-xs font-semibold text-[#447353]">
+              <p className="flex items-center gap-1.5 text-xs font-semibold text-secondary">
                 <CheckCircle className="h-4 w-4" weight="fill" />
                 Tài khoản hợp lệ: {lookupMessage}
               </p>
             )}
 
             {lookupStatus === "key_missing" && (
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[#fff3cb] p-2.5 text-xs text-[#905b0f] ring-1 ring-[#ffc510]/40">
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-accent/20 p-2.5 text-xs text-amber-800 ring-1 ring-accent/40">
                 <span className="flex items-center gap-1.5">
                   <Warning className="h-4 w-4 shrink-0" />
                   {lookupMessage}
@@ -448,7 +448,7 @@ export function PostApprovalScreen() {
                     setLookupStatus("success");
                     setLookupMessage("NGUYỄN VĂN AN (Mẫu)");
                   }}
-                  className="rounded bg-white px-2 py-0.5 text-[11px] font-bold text-[#280f91] shadow-sm hover:bg-[#280f91]/10"
+                  className="rounded bg-card px-2 py-0.5 text-[11px] font-bold text-primary shadow-sm hover:bg-primary/10"
                 >
                   Điền mẫu (Preview)
                 </button>
@@ -456,7 +456,7 @@ export function PostApprovalScreen() {
             )}
 
             {lookupStatus === "error" && (
-              <div className="flex items-center justify-between gap-2 text-xs text-red-600">
+              <div className="flex items-center justify-between gap-2 text-xs text-destructive">
                 <span className="flex items-center gap-1.5">
                   <Warning className="h-4 w-4 shrink-0" />
                   {lookupMessage}
@@ -464,7 +464,7 @@ export function PostApprovalScreen() {
                 <button
                   type="button"
                   onClick={handleManualLookup}
-                  className="font-semibold text-[#280f91] underline"
+                  className="font-semibold text-primary underline"
                 >
                   Thử lại
                 </button>
@@ -473,10 +473,10 @@ export function PostApprovalScreen() {
           </div>
 
           {/* Save button */}
-          <div className="mt-5 flex items-center justify-between border-t border-[#cfe1fa]/60 pt-4">
-            <span className="text-xs text-[#5e6688]">
+          <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+            <span className="text-xs text-muted-foreground">
               {isBankSaved ? (
-                <span className="font-bold text-[#447353]">
+                <span className="font-bold text-secondary">
                   ✓ Đã lưu thông tin tài khoản thành công!
                 </span>
               ) : (
@@ -487,7 +487,7 @@ export function PostApprovalScreen() {
               type="button"
               variant="outline"
               onClick={handleSaveBank}
-              className="rounded-full border-[#280f91]/30 text-[#280f91] hover:bg-[#280f91]/5"
+              className="rounded-full border-primary/30 text-primary hover:bg-primary/5"
             >
               Lưu thông tin ngân hàng
             </Button>
@@ -495,19 +495,19 @@ export function PostApprovalScreen() {
         </div>
 
         {/* Weekly availability grid */}
-        <div className="rounded-2xl border border-[#cfe1fa] bg-white p-6 shadow-[0_14px_34px_rgba(40,15,145,0.08)]">
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-[#280f91]">
+              <p className="text-xs font-bold uppercase tracking-wide text-primary">
                 Lịch rảnh có thể nhận lớp
               </p>
-              <p className="mt-1 text-sm text-[#5e6688]">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Chọn các khung giờ bạn có thể dạy. Học viên sẽ đặt lịch trong
                 những khung này.
               </p>
             </div>
             {totalSlots > 0 && (
-              <span className="shrink-0 rounded-full bg-[#280f91]/10 px-3 py-1 text-xs font-bold text-[#280f91]">
+              <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
                 {totalSlots} khung đã chọn
               </span>
             )}
@@ -522,7 +522,7 @@ export function PostApprovalScreen() {
                   {SLOTS.map((slot) => (
                     <th
                       key={slot.id}
-                      className="text-center text-xs font-semibold text-[#5e6688]"
+                      className="text-center text-xs font-semibold text-muted-foreground"
                     >
                       <div>{slot.label}</div>
                       <div className="text-[10px] font-normal">{slot.time}</div>
@@ -533,7 +533,7 @@ export function PostApprovalScreen() {
               <tbody>
                 {DAYS.map((day) => (
                   <tr key={day.id}>
-                    <td className="py-1 pr-2 text-sm font-semibold text-[#3f3b55]">
+                    <td className="py-1 pr-2 text-sm font-semibold text-foreground">
                       <span className="hidden sm:inline">{day.label}</span>
                       <span className="sm:hidden">{day.short}</span>
                     </td>
@@ -548,8 +548,8 @@ export function PostApprovalScreen() {
                             aria-label={`${day.label} – ${slot.label}`}
                             className={`h-9 w-full rounded-lg border-2 text-xs font-semibold transition ${
                               active
-                                ? "border-[#280f91] bg-[#280f91] text-white shadow-sm"
-                                : "border-[#cfe1fa] bg-[#cfe1fa]/30 text-[#5e6688] hover:border-[#280f91]/40 hover:bg-[#280f91]/10 hover:text-[#280f91]"
+                                ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                                : "border-border bg-muted text-muted-foreground hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
                             }`}
                           >
                             {active ? "✓" : "+"}
@@ -568,7 +568,7 @@ export function PostApprovalScreen() {
               type="button"
               variant="outline"
               onClick={() => dispatchAction("save-availability")}
-              className="rounded-full border-[#280f91]/30 text-[#280f91] hover:bg-[#280f91]/5"
+              className="rounded-full border-primary/30 text-primary hover:bg-primary/5"
             >
               Lưu lịch rảnh
             </Button>
@@ -578,8 +578,8 @@ export function PostApprovalScreen() {
 
       {/* Sidebar */}
       <aside className="flex flex-col gap-4">
-        <div className="rounded-2xl border border-[#cfe1fa] bg-white p-5 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-wide text-[#280f91]">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-primary">
             Lưu ý
           </p>
           <ul className="mt-3 grid gap-2">
@@ -592,9 +592,9 @@ export function PostApprovalScreen() {
             ].map((item) => (
               <li
                 key={item}
-                className="flex items-start gap-2 text-sm text-[#3f3b55]"
+                className="flex items-start gap-2 text-sm text-foreground/80"
               >
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#ffc510]" />
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                 {item}
               </li>
             ))}
@@ -605,7 +605,7 @@ export function PostApprovalScreen() {
           type="button"
           disabled={isSaving}
           onClick={handleComplete}
-          className="rounded-full bg-[#280f91] py-3 text-white hover:bg-[#1f0b70] disabled:opacity-60"
+          className="rounded-full bg-primary py-3 text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
         >
           {isSaving ? "Đang xử lý..." : "Hoàn tất onboarding"}
         </Button>

@@ -24,6 +24,6 @@ export interface TutorProfileMutationResult {
   tutorProfileStatus?: string | null;
 }
 
-export interface PendingNavigation {
-  href: string;
-}
+export type PendingNavigation =
+  | { kind: "link"; href: string }
+  | { kind: "history" };
