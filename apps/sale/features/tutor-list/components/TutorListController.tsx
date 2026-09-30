@@ -1,7 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { CircleNotchIcon, SparkleIcon } from "@phosphor-icons/react";
+import { useState, useEffect, useCallback } from "react";
+import {
+  CircleNotchIcon,
+  FunnelIcon,
+  SparkleIcon,
+} from "@phosphor-icons/react";
 import { SearchBar } from "./SearchBar";
 import { FilterPanel } from "./FilterPanel";
 import { TutorListResults } from "./TutorListResults";
@@ -9,11 +13,11 @@ import { AILoadingOverlay } from "./AILoadingOverlay";
 import { MobileFilterDrawer } from "./MobileFilterDrawer";
 import { useTutorSearch } from "../hooks/useTutorSearch";
 import type { TutorFilters } from "../data/types";
+import { countActiveFilters } from "../utils/tutor-filter.utils";
 
 const SORT_OPTIONS = [
   { label: "Phù hợp nhất", value: "best_match" },
   { label: "Đánh giá cao nhất", value: "rating" },
-  { label: "Kinh nghiệm nhiều nhất", value: "experience" },
   { label: "Học phí thấp nhất", value: "price_asc" },
   { label: "Học phí cao nhất", value: "price_desc" },
 ] as const;
@@ -26,6 +30,7 @@ export function TutorListController({
   isLoggedIn = false,
 }: TutorListControllerProps) {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const closeFilterDrawer = useCallback(() => setIsFilterDrawerOpen(false), []);
 
   const {
     searchMode,
@@ -46,6 +51,10 @@ export function TutorListController({
 
   const shouldHideFiltersAndHeader =
     searchMode === "ai" && (!currentQuery.trim() || displayTutors.length === 0);
+  const activeFilterCount = countActiveFilters(
+    filters,
+    searchMode === "manual",
+  );
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -63,7 +72,8 @@ export function TutorListController({
     <>
       <MobileFilterDrawer
         isOpen={isFilterDrawerOpen}
-        onClose={() => setIsFilterDrawerOpen(false)}
+        onClose={closeFilterDrawer}
+        searchMode={searchMode}
         filters={filters}
         onFiltersChange={handleFiltersChange}
         resultCount={
@@ -131,12 +141,15 @@ export function TutorListController({
           <div className="flex gap-6">
             {!shouldHideFiltersAndHeader && (
               <aside className="hidden xl:block w-[270px] shrink-0">
-                <div className="sticky top-24 rounded-2xl border border-[#dce3f0] bg-white shadow-sm overflow-hidden flex flex-col max-h-[calc(100vh-8rem)]">
-                  <div className="p-5 overflow-y-auto flex-1 custom-scrollbar">
-                    <FilterPanel
-                      filters={filters}
-                      onFiltersChange={handleFiltersChange}
-                    />
+                <div className="sticky top-24 flex max-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-1.5">
+                    <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain rounded-xl px-3.5 py-3.5 [&::-webkit-scrollbar-button]:hidden">
+                      <FilterPanel
+                        searchMode={searchMode}
+                        filters={filters}
+                        onFiltersChange={handleFiltersChange}
+                      />
+                    </div>
                   </div>
                 </div>
               </aside>
@@ -150,24 +163,22 @@ export function TutorListController({
                     style={{ fontFamily: "var(--font-nunito-family)" }}
                   >
                     {searchMode === "manual" && pagination
-                      ? `${pagination.totalItems} gia sư`
+                      ? `${pagination.totalItems} gia sư tìm thấy`
                       : `${displayTutors.length} gia sư phù hợp`}
                   </p>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setIsFilterDrawerOpen(true)}
-                      className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground/70 shadow-sm hover:border-primary/30 transition-all xl:hidden"
+                      className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 xl:hidden"
                       id="mobile-filter-trigger"
                     >
                       <span>Bộ lọc</span>
-                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                        {(filters.teachingMode !== "all" ? 1 : 0) +
-                          (filters.level !== "all" ? 1 : 0) +
-                          (filters.maxPricePerSession !== null ? 1 : 0) +
-                          (filters.minRating !== null ? 1 : 0) +
-                          (filters.availableOnly ? 1 : 0) || ""}
-                      </span>
+                      {activeFilterCount > 0 && (
+                        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                          {activeFilterCount}
+                        </span>
+                      )}
                     </button>
                     <label htmlFor="result-sort" className="sr-only">
                       Sắp xếp kết quả
@@ -203,6 +214,9 @@ export function TutorListController({
                   tutors={displayTutors}
                   isLoading={displayIsLoading}
                   searchMode={searchMode}
+                  showBestMatch={
+                    searchMode === "ai" && filters.sortBy === "best_match"
+                  }
                   query={currentQuery}
                   aiReason={aiReason}
                   isLoggedIn={isLoggedIn}

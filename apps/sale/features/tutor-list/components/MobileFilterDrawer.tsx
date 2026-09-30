@@ -1,13 +1,17 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
-import { XIcon } from "@phosphor-icons/react";
+import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { CircleNotchIcon, FunnelIcon, XIcon } from "@phosphor-icons/react";
 import { FilterPanel } from "./FilterPanel";
-import type { TutorFilters } from "../data/types";
+import type { SearchMode, TutorFilters } from "../data/types";
+import { countActiveFilters } from "../utils/tutor-filter.utils";
 
 interface MobileFilterDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  searchMode: SearchMode;
   filters: TutorFilters;
   onFiltersChange: (f: TutorFilters) => void;
   resultCount: number;
@@ -17,71 +21,124 @@ interface MobileFilterDrawerProps {
 export function MobileFilterDrawer({
   isOpen,
   onClose,
+  searchMode,
   filters,
   onFiltersChange,
   resultCount,
   isLoading = false,
 }: MobileFilterDrawerProps) {
-  return (
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const activeFilterCount = countActiveFilters(filters, searchMode === "manual");
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement;
+    document.body.style.overflow = "hidden";
+    const frame = window.requestAnimationFrame(() => closeButtonRef.current?.focus());
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+      const focusable = drawerRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus instanceof HTMLElement) previousFocus.focus();
+    };
+  }, [isOpen, onClose]);
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
           <motion.div
             key="backdrop"
-            initial={{ opacity: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/40"
+            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+            className="fixed inset-0 z-[70] bg-foreground/45"
             onClick={onClose}
             aria-hidden="true"
           />
           <motion.div
+            ref={drawerRef}
             key="drawer"
-            initial={{ x: "-100%" }}
+            initial={shouldReduceMotion ? false : { x: "-100%" }}
             animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 32 }}
-            className="fixed top-0 left-0 z-50 h-full w-[88vw] max-w-sm bg-background shadow-2xl flex flex-col"
+            exit={shouldReduceMotion ? { opacity: 0 } : { x: "-100%" }}
+            transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 300, damping: 32 }}
+            className="fixed left-0 top-0 z-[80] flex h-dvh w-[92vw] max-w-[400px] flex-col border-r border-border bg-background shadow-lg"
             role="dialog"
             aria-label="Bộ lọc gia sư"
             aria-modal="true"
           >
-            <div className="flex items-center justify-between p-5 border-b border-border">
-              <span
-                className="text-base font-bold text-foreground"
-                style={{ fontFamily: "var(--font-nunito-family)" }}
-              >
-                Bộ lọc
-              </span>
+            <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-muted text-primary">
+                  <FunnelIcon size={18} weight="bold" aria-hidden="true" />
+                </span>
+                <span className="font-nunito text-lg font-extrabold text-foreground">Bộ lọc</span>
+                {activeFilterCount > 0 && (
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md bg-primary px-1 text-[11px] font-bold text-primary-foreground">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </div>
               <button
+                ref={closeButtonRef}
                 type="button"
                 onClick={onClose}
-                className="text-foreground/50 hover:text-foreground transition-colors"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 aria-label="Đóng bộ lọc"
               >
                 <XIcon size={20} aria-hidden="true" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-5">
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
               <FilterPanel
+                searchMode={searchMode}
                 filters={filters}
                 onFiltersChange={onFiltersChange}
+                showHeader={false}
               />
             </div>
-            <div className="p-5 border-t border-border">
+            <div className="border-t border-border bg-card px-5 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={isLoading}
-                className="w-full h-11 flex items-center justify-center gap-2 rounded-full bg-primary text-white text-sm font-bold transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
-                style={{ fontFamily: "var(--font-nunito-family)" }}
+                aria-busy={isLoading}
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-wait"
               >
                 {isLoading ? (
                   <>
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <CircleNotchIcon size={18} className="animate-spin" aria-hidden="true" />
                     Đang lọc...
                   </>
                 ) : (
@@ -92,6 +149,7 @@ export function MobileFilterDrawer({
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

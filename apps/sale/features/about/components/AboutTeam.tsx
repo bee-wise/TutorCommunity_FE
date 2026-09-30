@@ -166,7 +166,7 @@ const TEAM = [
     role: "Backend Engineer",
     image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787291883/5.png",
     story:
-      "“Đối với Nhân, công nghệ không chỉ đơn thuần là công cụ mà là nền móng để xây dựng một tương lai học tập mới mẻ và hiện đại hơn. Và đó chính là mục tiêu mà Nhân mong muốn đem đến cho Beewise,  một nền tảng vững mạnh, an toàn, minh bạch để đồng hành cùng gia sư, học viên và cả phụ huynh - không chỉ hôm nay, mà còn cho cả những bước tiếp phía trước.”",
+      "“Đối với Nhân, công nghệ không chỉ đơn thuần là công cụ mà là nền móng để xây dựng một tương lai học tập mới mẻ và hiện đại hơn. Và đó chính là mục tiêu mà Nhân mong muốn đem đến cho BeeWise,  một nền tảng vững mạnh, an toàn, minh bạch để đồng hành cùng gia sư, học viên và cả phụ huynh - không chỉ hôm nay, mà còn cho cả những bước tiếp phía trước.”",
     side: "left",
     number: "05",
     themeColor: "#10b981", // Emerald

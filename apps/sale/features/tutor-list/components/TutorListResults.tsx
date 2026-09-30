@@ -1,11 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import {
-  SparkleIcon,
-  MagnifyingGlassIcon,
-  UserIcon,
-} from "@phosphor-icons/react";
+import Image from "next/image";
+import { MagnifyingGlassIcon, UserIcon } from "@phosphor-icons/react";
 import { TutorCard } from "./TutorCard";
 import { TutorCardSkeleton } from "./TutorCardSkeleton";
 import type { ApiTutorProfile, SearchMode } from "../data/types";
@@ -22,6 +19,7 @@ interface TutorListResultsProps {
   tutors: ApiTutorProfile[];
   isLoading: boolean;
   searchMode: SearchMode;
+  showBestMatch?: boolean;
   query: string;
   aiReason?: string;
   isLoggedIn?: boolean;
@@ -52,10 +50,12 @@ function ResultLabel({
       <div className="flex flex-col gap-1.5 rounded-xl border border-[#dce3f0] bg-[#f8fafc] px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#280f91]">
-            <SparkleIcon
-              size={13}
-              className="text-white"
-              weight="fill"
+            <Image
+              src="/icons/BeeWiseAI-icon.svg"
+              alt=""
+              width={16}
+              height={16}
+              className="shrink-0"
               aria-hidden="true"
             />
           </div>
@@ -122,16 +122,25 @@ function EmptyState({
 
   return (
     <div className="flex flex-col items-center gap-5 py-20 text-center">
-      <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-[#f2f4f7] border border-[#dce3f0]">
+      <div className="relative flex items-center justify-center">
         {isAIPrompt ? (
-          <SparkleIcon
-            size={32}
-            className="text-[#a855f7]"
-            weight="fill"
+          <Image
+            src="/icons/BeeWiseAI-icon.svg"
+            alt="BeeWise AI"
+            width={280}
+            height={84}
+            className="w-[220px] sm:w-[280px] h-auto object-contain shrink-0"
             aria-hidden="true"
           />
         ) : (
-          <UserIcon size={32} className="text-[#667085]" aria-hidden="true" />
+          <Image
+            src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790760176/bee-flower.png"
+            alt="Không tìm thấy gia sư"
+            width={140}
+            height={140}
+            className="shrink-0 object-contain w-32 h-32 sm:w-40 sm:h-40"
+            aria-hidden="true"
+          />
         )}
       </div>
       <div className="flex flex-col gap-2 max-w-[32ch]">
@@ -140,12 +149,12 @@ function EmptyState({
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isAIPrompt
-            ? "Tìm kiếm gia sư với Beewise AI"
+            ? "Tìm kiếm gia sư với BeeWise AI"
             : "Không tìm thấy gia sư phù hợp"}
         </p>
         <p className="text-sm text-[#475467] leading-relaxed">
           {isAIPrompt
-            ? "Hãy mô tả chi tiết nhu cầu học tập của bạn, Beewise AI sẽ phân tích và gợi ý gia sư phù hợp nhất."
+            ? "Hãy mô tả chi tiết nhu cầu học tập của bạn, BeeWise AI sẽ phân tích và gợi ý gia sư phù hợp nhất."
             : mode === "ai"
               ? "Hãy thử mô tả lại nhu cầu theo cách khác, hoặc chuyển sang tìm kiếm thủ công."
               : "Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác."}
@@ -177,6 +186,7 @@ export function TutorListResults({
   tutors,
   isLoading,
   searchMode,
+  showBestMatch = false,
   query,
   aiReason,
   isLoggedIn = false,
@@ -249,11 +259,11 @@ export function TutorListResults({
                 <TutorCard
                   tutor={tutor}
                   isLoggedIn={isLoggedIn}
-                  isBestMatch={searchMode === "ai" && index === 0}
+                  isBestMatch={showBestMatch && index === 0}
                   alignWithBestMatch={
-                    searchMode === "ai" && index === 1
+                    showBestMatch && index === 1
                       ? "sm"
-                      : searchMode === "ai" && index === 2
+                      : showBestMatch && index === 2
                         ? "xl"
                         : undefined
                   }
