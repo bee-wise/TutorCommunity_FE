@@ -1,12 +1,9 @@
 "use client";
 
-import { useState, useRef, type FormEvent, type KeyboardEvent } from "react";
+import { useState, type FormEvent, type KeyboardEvent } from "react";
 import {
   Send,
-  Paperclip,
   Zap,
-  Image as ImageIcon,
-  FileText,
   ArrowLeft,
   Lock,
   MoreVertical,
@@ -18,13 +15,7 @@ import { ConsultantActions } from "./ConsultantActions";
 import { ConnectionInfoPanel } from "./ConnectionInfoPanel";
 import { useChatRoom } from "../hooks/useChatRoom";
 import { STAGE_LABELS, STAGE_COLORS } from "../constants/messages.utils";
-import { MessagesScreen } from "./MessagesScreen";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/ui/dropdown-menu";
+import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 
 interface ChatRoomPanelProps {
   chatRoomId: string;
@@ -35,22 +26,26 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
     room,
     messages,
     sending,
-    uploadingFile,
     isReadOnly,
     currentUserId,
     currentUserRole,
     sendMessage,
-    sendFile,
     messagesEndRef,
+    error,
+    loading,
+    hasOlderMessages,
+    loadingOlderMessages,
+    loadOlderMessages,
   } = useChatRoom(chatRoomId);
 
   const [text, setText] = useState("");
   const [showAutoLib, setShowAutoLib] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
-
-  if (!room) return <MessagesScreen />;
+  if (!room) return (
+    <div className="flex h-full items-center justify-center rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground">
+      {loading ? "Đang tải phòng chat..." : error ? getApiErrorMessage(error) : "Không tìm thấy phòng chat này."}
+    </div>
+  );
   const isSupport = room.category === "SUPPORT";
   const peer = isSupport
     ? room.consultant
@@ -58,23 +53,21 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!text.trim()) return;
-    await sendMessage(text);
-    setText("");
-    setShowAutoLib(false);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      void handleSubmit(e as unknown as FormEvent);
+    if (!text.trim() || sending) return;
+    try {
+      await sendMessage(text);
+      setText("");
+      setShowAutoLib(false);
+    } catch {
+      // The hook exposes the API error below the message list.
     }
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) await sendFile(file);
-    e.target.value = "";
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      void handleSubmit(e as unknown as FormEvent);
+    }
   };
 
   const handleAutoSelect = (msgText: string) => {
@@ -111,7 +104,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
             <p className="truncate text-xs text-muted-foreground">
               {isSupport
                 ? `Tư vấn viên BeeWise · ${room.subject}`
-                : `${room.subject} ${room.gradeLevel} · Chat 3 bên với ${room.consultant.name}`}
+                : `Phòng kết nối · Chat 3 bên với ${room.consultant.name}`}
             </p>
           </div>
 
@@ -147,6 +140,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           <div className="flex shrink-0 items-center gap-2 overflow-x-auto border-b border-border bg-muted px-4 py-2">
             <ConsultantActions
               currentRole={currentUserRole}
+              roomId={room.id}
             />
           </div>
         )}
@@ -164,6 +158,14 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         {/* Messages area */}
         <div className="min-h-0 flex-1 overflow-y-auto bg-muted px-3 py-5 sm:px-6">
           <div className="mx-auto max-w-4xl space-y-1">
+            {hasOlderMessages && (
+              <button type="button" disabled={loadingOlderMessages} onClick={() => void loadOlderMessages()} className="mx-auto mb-3 block rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-primary disabled:opacity-50">
+                {loadingOlderMessages ? "Đang tải..." : "Xem tin nhắn cũ"}
+              </button>
+            )}
+            {loading && <p className="py-8 text-center text-sm text-muted-foreground">Đang tải tin nhắn...</p>}
+            {!loading && messages.length === 0 && !error && <p className="py-8 text-center text-sm text-muted-foreground">Chưa có tin nhắn. Hãy bắt đầu cuộc trò chuyện.</p>}
+            {error && <p role="alert" className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive">{getApiErrorMessage(error)}</p>}
             {messages.map((msg, idx) => {
               const prev = messages[idx - 1];
               const isConsecutive =
@@ -181,7 +183,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                 />
               );
             })}
-            {(sending || uploadingFile) && (
+            {sending && (
               <div className="flex justify-end px-2 py-2">
                 <div className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:0ms]" />
@@ -221,29 +223,13 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                 />
                 <div className="flex items-center justify-between gap-2 border-t border-border/70 pt-2">
                   <div className="flex min-w-0 items-center gap-1">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button type="button" disabled={uploadingFile} className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-muted-foreground transition hover:bg-muted hover:text-primary disabled:opacity-50" aria-label="Đính kèm ảnh hoặc tệp">
-                          <Paperclip size={17} aria-hidden="true" />
-                          <span>Đính kèm</span>
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent side="top" align="start" sideOffset={10} className="w-44 rounded-xl border-border p-1.5">
-                        <DropdownMenuItem onSelect={() => imageInputRef.current?.click()} className="gap-2 rounded-lg px-3 py-2.5">
-                          <ImageIcon size={16} aria-hidden="true" /> Chọn ảnh
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => fileInputRef.current?.click()} className="gap-2 rounded-lg px-3 py-2.5">
-                          <FileText size={16} aria-hidden="true" /> Chọn tệp
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                     {currentUserRole === "CONSULTANT" && (
                       <button type="button" onClick={() => setShowAutoLib((v) => !v)} className={`flex h-9 w-9 items-center justify-center rounded-lg transition ${showAutoLib ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-primary"}`} aria-label="Kho tin nhắn tự động" aria-pressed={showAutoLib}>
                         <Zap size={17} className={showAutoLib ? "fill-current" : ""} />
                       </button>
                     )}
                     <span className="hidden text-[11px] text-muted-foreground sm:inline">
-                      {uploadingFile ? "Đang gửi tệp..." : "Enter để gửi · Shift + Enter xuống dòng"}
+                      Enter để gửi · Shift + Enter xuống dòng
                     </span>
                   </div>
                   <button type="submit" disabled={!text.trim() || sending} aria-label="Gửi tin nhắn" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]">
@@ -253,21 +239,6 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
               </form>
             </div>
 
-            {/* Hidden file inputs */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="hidden"
-              onChange={handleFileChange}
-              accept="*/*"
-            />
-            <input
-              ref={imageInputRef}
-              type="file"
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/*"
-            />
           </div>
         )}
       </div>

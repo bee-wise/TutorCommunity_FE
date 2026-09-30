@@ -6,6 +6,7 @@ import { Search, MessageCircleIcon, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMessages } from "../hooks/useMessages";
+import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import type { ChatRoom, ChatParticipantRole, ChatRoomCategory } from "../types/messages.types";
 import {
   STAGE_LABELS,
@@ -65,12 +66,12 @@ function RoomRow({
 
         {/* Subject + Stage */}
         <p className="mb-0.5 text-[11px] text-muted-foreground">
-          {room.category === "CONNECTION" ? `${room.subject} ${room.gradeLevel}` : room.subject}
+          {room.category === "CONNECTION" ? (room.subject || `Kết nối #${room.connectRequestId.slice(0, 8)}`) : room.subject}
         </p>
 
         <div className="flex items-center justify-between gap-2">
           <p className="truncate text-xs text-muted-foreground">
-            {room.lastMessage ?? "Chưa có tin nhắn"}
+            {room.lastMessage ?? "Mở cuộc trò chuyện"}
           </p>
           {room.unreadCount > 0 && (
             <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-black text-primary-foreground">
@@ -102,7 +103,7 @@ function RoomRow({
 }
 
 export function ChatSidebar() {
-  const { rooms } = useMessages();
+  const { rooms, loading, error, refetch } = useMessages();
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const currentUserRole: ChatParticipantRole = "TUTOR";
@@ -200,7 +201,14 @@ export function ChatSidebar() {
 
       {/* Room list */}
       <div className="flex-1 overflow-y-auto p-2">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <p className="px-4 py-12 text-center text-sm text-muted-foreground">Đang tải cuộc trò chuyện...</p>
+        ) : error ? (
+          <div role="alert" className="px-4 py-12 text-center text-sm text-destructive">
+            <p>{getApiErrorMessage(error)}</p>
+            <button type="button" onClick={() => void refetch()} className="mt-3 font-semibold text-primary underline">Thử lại</button>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center px-4 py-12 text-center">
             <MessageCircleIcon size={32} className="mb-3 text-muted-foreground" />
             <strong className="text-sm text-foreground">
@@ -210,7 +218,7 @@ export function ChatSidebar() {
               {query
                 ? "Thử tìm kiếm khác"
                 : category === "SUPPORT"
-                  ? "Tin nhắn với tư vấn viên sẽ hiện tại đây."
+                  ? "Chưa có cuộc trò chuyện hỗ trợ."
                   : "Các cuộc trò chuyện kết nối sẽ hiện tại đây."}
             </p>
           </div>
