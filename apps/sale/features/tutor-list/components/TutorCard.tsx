@@ -21,6 +21,7 @@ import {
   InfoIcon,
 } from "@phosphor-icons/react";
 import type { ApiTutorProfile } from "../data/types";
+import { getTeachingCapabilities } from "../utils/tutor-filter.utils";
 import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
 
 interface TutorCardProps {
@@ -36,10 +37,12 @@ const getLevelLabel = (studentYear: string) => {
 };
 
 const getTeachingModeInfo = (modes: string[]) => {
-  if (modes.includes("ONLINE") && modes.includes("OFFLINE"))
+  const capabilities = getTeachingCapabilities(modes);
+  if (capabilities.online && capabilities.offline)
     return { label: "Online & Tại nhà", icon: ArrowsHorizontalIcon };
-  if (modes.includes("ONLINE")) return { label: "Online", icon: MonitorIcon };
-  return { label: "Tại nhà", icon: HouseLineIcon };
+  if (capabilities.online) return { label: "Online", icon: MonitorIcon };
+  if (capabilities.offline) return { label: "Tại nhà", icon: HouseLineIcon };
+  return { label: "Chưa cập nhật", icon: HouseLineIcon };
 };
 
 function TutorAvatar({ tutor }: { tutor: ApiTutorProfile }) {
@@ -126,6 +129,7 @@ export function TutorCard({
     });
   };
   const modeInfo = getTeachingModeInfo(tutor.teachingModes || []);
+  const teachingCapabilities = getTeachingCapabilities(tutor.teachingModes || []);
   const ModeIcon = modeInfo.icon;
   const tags = [
     ...(tutor.subjects || []).map((subject) => subject?.name).filter(Boolean),
@@ -143,7 +147,7 @@ export function TutorCard({
   const location =
     tutor.offlineDistrict && tutor.offlineCity
       ? `${tutor.offlineDistrict}, ${tutor.offlineCity}`
-      : tutor.offlineCity || "Online";
+      : tutor.offlineCity || "";
 
   const name = tutor.displayName || "Gia Sư";
   const nameSpacing = isBestMatch
@@ -234,11 +238,11 @@ export function TutorCard({
             </div>
           </div>
 
-          <p className="mt-4 line-clamp-2 min-h-11 text-sm leading-[1.55] text-[#475467]">
+          <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-[1.5] text-[#475467]">
             {tutor.profileHeadline || tutor.bio || "Gia sư chuyên nghiệp"}
           </p>
 
-          <div className="mt-3 flex min-h-7 flex-wrap content-start gap-1.5">
+          <div className="mt-2.5 flex min-h-7 flex-wrap content-start gap-1.5">
             {visibleTags.map((tag, index) => (
               <span
                 key={`${tag}-${index}`}
@@ -254,7 +258,7 @@ export function TutorCard({
             )}
           </div>
 
-          <div className="mt-4 flex flex-col gap-2.5 rounded-xl border border-[#e7eaf2] bg-[#fafbfc] p-3 text-xs text-[#475467]">
+          <div className="mt-3 flex flex-col gap-2 rounded-xl border border-[#e7eaf2] bg-[#fafbfc] p-2.5 text-xs text-[#475467]">
             <p className="flex min-w-0 items-center gap-2">
               <ModeIcon
                 size={16}
@@ -263,16 +267,18 @@ export function TutorCard({
               />
               <span className="font-semibold">{modeInfo.label}</span>
             </p>
-            <p className="flex min-w-0 items-start gap-2">
-              <MapPinIcon
-                size={16}
-                className="mt-0.5 shrink-0 text-primary"
-                aria-hidden="true"
-              />
-              <span className="min-w-0 break-words font-semibold leading-5">
-                {location}
-              </span>
-            </p>
+            {teachingCapabilities.offline && location && (
+              <p className="flex min-w-0 items-start gap-2">
+                <MapPinIcon
+                  size={16}
+                  className="mt-0.5 shrink-0 text-primary"
+                  aria-hidden="true"
+                />
+                <span className="min-w-0 break-words font-semibold leading-5">
+                  {location}
+                </span>
+              </p>
+            )}
           </div>
 
           {tutor.reason && (
@@ -289,29 +295,29 @@ export function TutorCard({
             </button>
           )}
 
-          <div className="mt-auto flex items-end justify-between gap-4 pt-4">
+          <div className="mt-auto flex items-end justify-between gap-2 pt-3">
             <div className="min-w-0">
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#98a2b3]">
                 Học phí từ
               </p>
               <p
-                className="mt-0.5 text-lg font-extrabold tracking-tight text-primary"
+                className="mt-0.5 whitespace-nowrap text-lg font-extrabold tracking-tight text-primary"
                 style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 {tutor.hourlyRate
                   ? tutor.hourlyRate.toLocaleString("vi-VN")
                   : "Liên hệ"}
-                {tutor.hourlyRate ? (
-                  <span className="ml-1 text-[11px] font-semibold tracking-normal text-[#667085]">
-                    VNĐ / 60 phút
-                  </span>
-                ) : null}
               </p>
+              {tutor.hourlyRate ? (
+                <p className="whitespace-nowrap text-[11px] font-semibold text-[#667085]">
+                  VNĐ / 60 phút
+                </p>
+              ) : null}
             </div>
             <Link
               href={`/tutors/${tutor.profileId}`}
               id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
-              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
             >
               Xem hồ sơ
               <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />

@@ -281,10 +281,41 @@ LLMs default to "static successful state only." Always implement full cycles:
 - **NO DUPLICATE CTA INTENT (mandatory):** Two CTAs with the same intent on one page is a Pre-Flight Fail. Examples of same intent: "Get in touch" + "Contact us" + "Let's talk" + "Start a project" + "Start something" + "Reach out" = all "contact" intent → pick ONE label and use it everywhere on the page (nav, hero, footer). Same for "Try free" + "Get started" + "Sign up free" (all "signup" intent) and "View work" + "See selected work" + "Browse projects" (all "portfolio" intent). One label per intent.
 - **FORM CONTRAST CHECK (mandatory, a11y):** Form inputs, placeholder text, focus rings, helper text, and error text all pass WCAG AA contrast against the section background. Light placeholders on a near-white form, white form on white page section, form labels grayer than 4.5:1 contrast → all banned. Audit every form before shipping.
 
-### 4.6 Data & Form Patterns
+### 4.6 Data & Form Patterns & Custom Form Controls
 
-- Label ABOVE input. Helper text optional but present in markup. Error text BELOW input. Standard `gap-2` for input blocks.
-- No placeholder-as-label. Ever.
+- **ZERO BROWSER DEFAULT CONTROLS (Mandatory Ban):**
+  - Raw, unstyled HTML browser controls (`<select>`, `<input type="checkbox">`, `<input type="radio">`, `<input type="range">`, `<input type="file">`) are **STRICTLY BANNED**. Never ship the default operating system controls (blue OS checkbox, gray OS radio circle, native OS dropdown select box).
+  - Every form control MUST be custom-styled to match the project's design system tokens, typography, border-radius scale, and focus states.
+
+- **Custom Select / Dropdown:**
+  - Build using accessible component primitives (Radix UI / custom dropdown / Headless UI) or customized wrapper with `appearance-none`.
+  - Trigger must have tailored padding, crisp border (`border-border`), subtle hover state, and a custom chevron icon (`CaretDown` / `ChevronDown` from the active icon library) that smoothly animates/rotates on open.
+  - The dropdown menu surface must be opaque (`bg-card border border-border shadow-md rounded-lg`), with clear option hover states (`hover:bg-muted text-foreground`), active/selected check indicator, and smooth enter/exit transitions.
+  - If a native `<select>` element is used for mobile/accessibility fallback, apply `appearance-none`, custom `pr-10`, and an absolute-positioned custom SVG chevron inside a relative wrapper.
+
+- **Custom Checkbox:**
+  - Container: Square with consistent corner radius (`rounded-[4px]` or `rounded-md`), 16–20px (`w-4 h-4` or `w-5 h-5`), distinct border (`border-2 border-border` or `border-input`).
+  - Checked state: Smooth transition to brand primary background (`bg-primary border-primary text-primary-foreground`) with an animated/crisp SVG checkmark icon.
+  - Wrapper: Wrap inside `<label className="inline-flex items-center gap-2.5 cursor-pointer select-none text-sm text-foreground">` with keyboard focus ring (`focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`).
+
+- **Custom Radio Buttons (Radio Group):**
+  - Control: Circular indicator (`w-4 h-4 rounded-full border-2 border-border`).
+  - Checked state: Border transitions to primary (`border-primary`), with a centered inner dot indicator (`w-2 h-2 rounded-full bg-primary animate-in zoom-in-50 duration-150`).
+  - **Preferred Modern Alternative:** For 2–4 options, prefer **Segmented Control Pills** (`bg-muted p-1 rounded-lg flex`) or **Selectable Card Tiles** (interactive cards with title, description, and selected border/highlight) over bare radio circles.
+
+- **Custom Switch / Toggle:**
+  - Track: Pill shape (`h-6 w-11 rounded-full bg-muted transition-colors cursor-pointer data-[checked=true]:bg-primary`).
+  - Thumb: Tactile circular knob (`h-5 w-5 rounded-full bg-white shadow-sm transition-transform translate-x-0.5 data-[checked=true]:translate-x-[22px]`).
+
+- **Custom Slider / Range:**
+  - Track: Custom height (`h-2 rounded-full bg-muted relative overflow-hidden`).
+  - Active fill: Brand primary progress bar (`bg-primary h-full`).
+  - Thumb: Custom circular handle with tactile shadow, border, and focus-visible ring.
+
+- **Form Layout & Interactive Hierarchy:**
+  - Label ALWAYS ABOVE input with `text-sm font-medium text-foreground`. Helper text optional but present in markup. Error text ALWAYS BELOW input with `text-xs text-destructive flex items-center gap-1`. Standard `gap-1.5` to `gap-2` for input blocks.
+  - No placeholder-as-label. Ever.
+  - **Full Interaction States:** Every form control must implement `:hover` (border enhancement), `:focus-visible` (`ring-2 ring-ring ring-offset-2`), `:disabled` (`opacity-50 cursor-not-allowed bg-muted/40`), and `:invalid` / error (`border-destructive ring-destructive/20`).
 
 ### 4.7 Layout Discipline (Hard Rules. Failing any of these is shipping broken work)
 

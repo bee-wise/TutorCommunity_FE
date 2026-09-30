@@ -3,17 +3,9 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import {
-  CheckCircleIcon,
   CircleNotchIcon,
-  MagnifyingGlassIcon,
   SparkleIcon,
 } from "@phosphor-icons/react";
-
-const SEARCH_STAGES = [
-  { after: 0, title: "Đang hiểu nhu cầu của bạn", description: "AI đang đọc môn học, lịch học và mong muốn trong mô tả." },
-  { after: 4, title: "Đang đối chiếu hồ sơ gia sư", description: "BeeWise đang so khớp chuyên môn, hình thức học và học phí." },
-  { after: 9, title: "Đang xếp hạng những lựa chọn phù hợp", description: "Sắp xong rồi, AI đang kiểm tra lại các gợi ý tốt nhất." },
-] as const;
 
 export function AILoadingOverlay({ query }: { query: string }) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -27,11 +19,6 @@ export function AILoadingOverlay({ query }: { query: string }) {
     return () => window.clearInterval(timer);
   }, [query]);
 
-  const activeStageIndex = SEARCH_STAGES.reduce(
-    (latestIndex, stage, index) => elapsedSeconds >= stage.after ? index : latestIndex,
-    0,
-  );
-  const activeStage = SEARCH_STAGES[activeStageIndex];
   const isTakingLonger = elapsedSeconds >= 14;
 
   return (
@@ -60,9 +47,11 @@ export function AILoadingOverlay({ query }: { query: string }) {
             </div>
             <div className="min-w-0">
               <p className="text-base font-extrabold text-foreground" style={{ fontFamily: "var(--font-nunito-family)" }}>
-                {activeStage.title}
+                Đang tìm gia sư phù hợp
               </p>
-              <p className="mt-1 text-sm leading-relaxed text-foreground/60">{activeStage.description}</p>
+              <p className="mt-1 text-sm leading-relaxed text-foreground/60">
+                BeeWise đang đối chiếu mô tả của bạn với hồ sơ gia sư.
+              </p>
             </div>
           </div>
 
@@ -70,29 +59,19 @@ export function AILoadingOverlay({ query }: { query: string }) {
             <span className="font-semibold text-foreground/80">Bạn cần: </span>&ldquo;{query}&rdquo;
           </div>
 
-          <ol className="grid gap-2 sm:grid-cols-3" aria-label="Các bước tìm kiếm">
-            {SEARCH_STAGES.map((stage, index) => {
-              const isComplete = index < activeStageIndex;
-              const isActive = index === activeStageIndex;
-              return (
-                <li key={stage.title} className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold ${isActive ? "bg-primary/8 text-primary" : isComplete ? "text-foreground/65" : "text-foreground/35"}`}>
-                  {isComplete ? (
-                    <CheckCircleIcon size={16} weight="fill" aria-hidden="true" />
-                  ) : isActive ? (
-                    <CircleNotchIcon size={16} className={shouldReduceMotion ? "" : "animate-spin"} aria-hidden="true" />
-                  ) : (
-                    <MagnifyingGlassIcon size={16} aria-hidden="true" />
-                  )}
-                  <span>Bước {index + 1}</span>
-                </li>
-              );
-            })}
-          </ol>
+          <div className="flex items-center gap-2 rounded-lg bg-primary/8 px-3 py-2.5 text-xs font-semibold text-primary">
+            <CircleNotchIcon
+              size={16}
+              className={shouldReduceMotion ? "" : "animate-spin"}
+              aria-hidden="true"
+            />
+            Đang chờ kết quả từ hệ thống
+          </div>
 
           <p className="mt-4 text-xs leading-relaxed text-foreground/50">
             {isTakingLonger
-              ? "Lần tìm kiếm này cần thêm thời gian để đối chiếu. Bạn vẫn có thể sửa mô tả hoặc chuyển sang tìm thủ công ở phía trên."
-              : "Thường mất khoảng vài giây. Bạn vẫn có thể điều chỉnh nội dung tìm kiếm trong lúc chờ."}
+              ? "Lần tìm kiếm này mất nhiều thời gian hơn thường lệ. Bạn có thể chỉnh mô tả hoặc chuyển sang tìm thủ công trong lúc chờ."
+              : "Bạn có thể chỉnh mô tả hoặc chuyển sang tìm thủ công trong lúc chờ."}
           </p>
         </div>
 

@@ -26,7 +26,7 @@ interface ShowcaseItem {
 const SHOWCASE_ITEMS: ShowcaseItem[] = [
   {
     id: "ai-search",
-    tag: "Beewise AI",
+    tag: "BeeWise AI",
     tagColor: "bg-purple-500/10 text-purple-600 border-purple-200",
     title: "AI Gợi Ý Gia Sư Phù Hợp",
     subtitle: "Tìm đúng gia sư cho từng mục tiêu học tập",

@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   DEFAULT_FILTERS,
+  DEFAULT_AI_FILTERS,
   type SearchMode,
   type TutorFilters,
   type ApiTutorProfile,
@@ -9,12 +10,13 @@ import {
 } from "../data/types";
 import { useGetTutorByAI } from "./useGetTutorByAI";
 import { useGetTutorsManual } from "./useGetTutorsManual";
+import { getTeachingCapabilities } from "../utils/tutor-filter.utils";
 
 let cachedSearchMode: SearchMode = "manual";
 let cachedQueries: Record<SearchMode, string> = { manual: "", ai: "" };
 let cachedFiltersByMode: Record<SearchMode, TutorFilters> = {
   manual: DEFAULT_FILTERS,
-  ai: DEFAULT_FILTERS,
+  ai: DEFAULT_AI_FILTERS,
 };
 let cachedPage: number = 1;
 
@@ -28,6 +30,10 @@ const mapFiltersToManualQuery = (
     page,
     pageSize: 6,
   };
+
+  if (filters.subjectId) manualQuery.subjectId = filters.subjectId;
+  if (filters.gradeLevelId) manualQuery.gradeLevelId = filters.gradeLevelId;
+  if (filters.city) manualQuery.city = filters.city;
 
   if (filters.teachingMode !== "all") {
     manualQuery.teachingMode = filters.teachingMode.toUpperCase();
@@ -43,7 +49,6 @@ const mapFiltersToManualQuery = (
 
   switch (filters.sortBy) {
     case "rating":
-    case "experience": // Backend currently doesn't support experience, fallback to rating
       manualQuery.sortBy = "rating";
       manualQuery.sortDirection = "desc";
       break;
@@ -67,17 +72,16 @@ const mapFiltersToManualQuery = (
 };
 
 // Filter function for AI mode results (since AI endpoint doesn't accept complex filters)
-function applyLocalFiltersToAIResults(
+function applyLocalFilters(
   tutors: ApiTutorProfile[],
   filters: TutorFilters,
+  mode: SearchMode,
 ) {
-  return tutors
-    .filter((tutor) => {
+  const filtered = tutors.filter((tutor) => {
       if (filters.teachingMode !== "all") {
-        const isOnline = tutor.teachingModes?.includes("ONLINE");
-        const isOffline = tutor.teachingModes?.includes("OFFLINE");
-        if (filters.teachingMode === "online" && !isOnline) return false;
-        if (filters.teachingMode === "offline" && !isOffline) return false;
+        const capabilities = getTeachingCapabilities(tutor.teachingModes || []);
+        if (filters.teachingMode === "online" && !capabilities.online) return false;
+        if (filters.teachingMode === "offline" && !capabilities.offline) return false;
       }
 
       if (filters.level !== "all") {
@@ -106,10 +110,14 @@ function applyLocalFiltersToAIResults(
       if (filters.availableOnly && !tutor.isOnline) return false;
 
       return true;
-    })
-    .sort((a, b) => {
+    });
+
+  // The API already ranks AI matches and sorts manual results. Preserve that order
+  // unless the learner explicitly selects another sort for the AI list.
+  if (mode === "manual" || filters.sortBy === "best_match") return filtered;
+
+  return filtered.sort((a, b) => {
       switch (filters.sortBy) {
-        case "best_match":
         case "rating":
           return (b.ratingAvg || 0) - (a.ratingAvg || 0);
         case "price_asc":
@@ -203,14 +211,13 @@ export function useTutorSearch() {
   };
 
   const handleClearFilters = () => {
+    const nextFilters =
+      searchMode === "ai" ? DEFAULT_AI_FILTERS : DEFAULT_FILTERS;
     setFiltersByMode((currentFilters) => ({
       ...currentFilters,
-      [searchMode]: DEFAULT_FILTERS,
+      [searchMode]: nextFilters,
     }));
-    cachedFiltersByMode = {
-      ...cachedFiltersByMode,
-      [searchMode]: DEFAULT_FILTERS,
-    };
+    cachedFiltersByMode = { ...cachedFiltersByMode, [searchMode]: nextFilters };
     setPage(1);
     cachedPage = 1;
   };
@@ -227,9 +234,9 @@ export function useTutorSearch() {
   const displayTutors =
     searchMode === "ai"
       ? queries.ai.trim()
-        ? applyLocalFiltersToAIResults(aiTutors || [], filtersByMode.ai)
+        ? applyLocalFilters(aiTutors || [], filtersByMode.ai, "ai")
         : []
-      : applyLocalFiltersToAIResults(manualResults, filtersByMode.manual); // Áp dụng filter Frontend cho các filter API chưa support (level, minRating)
+      : applyLocalFilters(manualResults, filtersByMode.manual, "manual"); // Áp dụng filter Frontend cho các filter API chưa support (level, minRating)
 
   const displayIsLoading =
     searchMode === "ai" ? isAIRequestFetching : isManualFetching;
