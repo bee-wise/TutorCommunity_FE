@@ -43,7 +43,7 @@ export function TutorMessagesRoute({
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden bg-[#f7f9fd] text-[#17142f]">
+    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden bg-muted text-foreground">
       <main className="flex-1 overflow-hidden">
         {screen === "messages" ? (
           <MessagesScreen />

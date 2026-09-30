@@ -129,7 +129,7 @@ export function FavoriteTutorsPage() {
               href="/tutors"
               className="mt-4 flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary/90"
             >
-              Khám phá gia sư ngay
+              Tìm kiếm gia sư 1:1 ngay
             </Link>
           }
         />
@@ -186,7 +186,8 @@ export function FavoriteTutorsPage() {
               {Array.from({ length: pagination.totalPages }).map((_, i) => {
                 const pageNum = i + 1;
                 const isNearCurrent = Math.abs(pageNum - page) <= 1;
-                const isEdge = pageNum === 1 || pageNum === pagination.totalPages;
+                const isEdge =
+                  pageNum === 1 || pageNum === pagination.totalPages;
                 if (!isNearCurrent && !isEdge) {
                   if (pageNum === 2 || pageNum === pagination.totalPages - 1) {
                     return (

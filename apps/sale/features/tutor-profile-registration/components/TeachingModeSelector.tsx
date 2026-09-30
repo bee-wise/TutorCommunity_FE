@@ -49,14 +49,14 @@ export function TeachingModeSelector({
             type="button"
             aria-pressed={selected}
             onClick={() => onChange(toggleMode(value, option.value))}
-            className={`flex min-h-16 items-start gap-2 rounded-xl border p-3 text-left transition ${selected ? "border-[#280f91] bg-[#280f91]/5 text-[#280f91] ring-1 ring-[#280f91]/15" : "border-slate-200 bg-white text-slate-700 hover:border-[#280f91]/35"}`}
+            className={`flex min-h-16 items-start gap-2 rounded-xl border p-3 text-left transition ${selected ? "border-primary bg-muted text-primary ring-1 ring-primary/20" : "border-border bg-card text-foreground hover:border-primary/40"}`}
           >
-            <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border ${selected ? "border-[#280f91] bg-[#280f91] text-white" : "border-slate-300 bg-white"}`} aria-hidden="true">
+            <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`} aria-hidden="true">
               {selected ? <Check className="h-3 w-3" weight="bold" /> : null}
             </span>
             <span className="min-w-0">
               <strong className="block text-sm leading-5">{option.label}</strong>
-              <span className="mt-0.5 block text-xs font-normal leading-4 text-slate-500">{option.description}</span>
+              <span className="mt-0.5 block text-xs font-normal leading-4 text-muted-foreground">{option.description}</span>
             </span>
           </button>
         );

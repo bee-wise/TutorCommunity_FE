@@ -35,6 +35,22 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "api.dicebear.com",
       },
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.gstatic.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.dmtexam.space",
+      },
+      {
+        protocol: "https",
+        hostname: "*.dmtexam.space",
+      },
     ],
   },
   async rewrites() {

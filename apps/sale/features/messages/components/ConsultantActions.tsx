@@ -1,60 +1,27 @@
 "use client";
 
-import {
-  CalendarPlus,
-  CheckSquare,
-  XSquare,
-} from "lucide-react";
+import { CalendarPlusIcon, InfoIcon, XCircleIcon } from "@phosphor-icons/react";
 import type { ChatParticipantRole } from "../types/messages.types";
 
-interface ConsultantActionsProps {
-  currentRole: ChatParticipantRole;
-  onSendTrialScheduleWidget: () => void;
-  onSendConfirmWidget: () => void;
-  onSendCloseWidget: () => void;
-}
-
-/** Renders quick-action buttons only when current user is CONSULTANT. */
-export function ConsultantActions({
-  currentRole,
-  onSendTrialScheduleWidget,
-  onSendConfirmWidget,
-  onSendCloseWidget,
-}: ConsultantActionsProps) {
+/** Preview controls; business actions will be wired to the Connection API. */
+export function ConsultantActions({ currentRole }: { currentRole: ChatParticipantRole }) {
   if (currentRole !== "CONSULTANT") return null;
 
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="mr-1 text-[10px] font-bold uppercase tracking-widest text-[#c2c7d6]">
-        Consultant
+    <div className="flex min-w-max items-center gap-2 text-xs">
+      <span className="mr-1 inline-flex items-center gap-1.5 font-bold text-foreground">
+        <InfoIcon size={15} aria-hidden="true" />
+        Công cụ tư vấn
       </span>
-      <button
-        type="button"
-        title="Đề xuất lịch học thử"
-        onClick={onSendTrialScheduleWidget}
-        className="flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs font-bold text-amber-800 transition hover:bg-amber-100 active:scale-[0.97]"
-      >
-        <CalendarPlus size={14} className="fill-amber-200" />
-        Lịch học thử
+      <button type="button" disabled title="Bản xem trước — chờ kết nối API" className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 font-semibold text-muted-foreground disabled:cursor-not-allowed">
+        <CalendarPlusIcon size={15} aria-hidden="true" />
+        Đề xuất học thử
       </button>
-      <button
-        type="button"
-        title="Xác nhận học chính thức"
-        onClick={onSendConfirmWidget}
-        className="flex items-center gap-1.5 rounded-lg border border-green-200 bg-green-50 px-2.5 py-1.5 text-xs font-bold text-green-800 transition hover:bg-green-100 active:scale-[0.97]"
-      >
-        <CheckSquare size={14} className="fill-green-200" />
-        Xác nhận lớp
-      </button>
-      <button
-        type="button"
-        title="Đóng kết nối"
-        onClick={onSendCloseWidget}
-        className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-bold text-red-700 transition hover:bg-red-100 active:scale-[0.97]"
-      >
-        <XSquare size={14} className="fill-red-200" />
+      <button type="button" disabled title="Bản xem trước — chờ kết nối API" className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 font-semibold text-muted-foreground disabled:cursor-not-allowed">
+        <XCircleIcon size={15} aria-hidden="true" />
         Đóng kết nối
       </button>
+      <span className="text-muted-foreground">Bản xem trước</span>
     </div>
   );
 }

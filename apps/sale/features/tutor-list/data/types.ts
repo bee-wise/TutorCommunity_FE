@@ -19,10 +19,12 @@ export type SortOption =
   | "best_match"
   | "rating"
   | "price_asc"
-  | "price_desc"
-  | "experience";
+  | "price_desc";
 
 export interface TutorFilters {
+  subjectId: string | null;
+  gradeLevelId: string | null;
+  city: string;
   teachingMode: TeachingMode | "all";
   level: TutorLevel | "all";
   maxPricePerSession: number | null; // null = no limit
@@ -32,12 +34,20 @@ export interface TutorFilters {
 }
 
 export const DEFAULT_FILTERS: TutorFilters = {
+  subjectId: null,
+  gradeLevelId: null,
+  city: "",
   teachingMode: "all",
   level: "all",
   maxPricePerSession: null,
   minRating: null,
   availableOnly: false,
   sortBy: "rating",
+};
+
+export const DEFAULT_AI_FILTERS: TutorFilters = {
+  ...DEFAULT_FILTERS,
+  sortBy: "best_match",
 };
 
 export type SearchMode = "manual" | "ai";

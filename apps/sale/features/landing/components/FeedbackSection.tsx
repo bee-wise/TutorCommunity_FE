@@ -20,7 +20,7 @@ const FEEDBACK_LIST: FeedbackItem[] = [
     role: "Phụ huynh",
     subject: "Toán lớp 9 ôn thi vào 10",
     avatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+      "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241795/Bee_Robot_3.png",
     rating: 5,
     comment:
       "Nhờ tìm gia sư qua AI mà bé nhà mình tìm được cô giáo rất hợp tính. Sau 2 tháng điểm kiểm tra môn Toán tăng từ 6.5 lên 8.5!",
@@ -31,7 +31,7 @@ const FEEDBACK_LIST: FeedbackItem[] = [
     role: "Học viên",
     subject: "Luyện thi IELTS 7.0",
     avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241795/Bee_Robot_3.png",
     rating: 5,
     comment:
       "Tính năng AI tóm tắt bài học cực kỳ tiện, học xong có ngay tài liệu ôn lại. Thầy giáo nhiệt tình và hướng dẫn phát âm rất chuẩn.",
@@ -42,7 +42,7 @@ const FEEDBACK_LIST: FeedbackItem[] = [
     role: "Phụ huynh",
     subject: "Tiếng Anh lớp 6",
     avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241795/Bee_Robot_3.png",
     rating: 5,
     comment:
       "Giao diện dễ dùng, chỉ mất chưa đầy 1 phút là hệ thống gợi ý đúng gia sư gần nhà. Hồ sơ gia sư minh bạch nên gia đình rất yên tâm.",
@@ -53,7 +53,7 @@ const FEEDBACK_LIST: FeedbackItem[] = [
     role: "Học viên",
     subject: "Hóa học lớp 11",
     avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+      "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790241795/Bee_Robot_3.png",
     rating: 5,
     comment:
       "Trước đây mình sợ môn Hóa lắm, nhờ chị gia sư kiên nhẫn giảng lại từ gốc mà giờ mình tự tin làm hết các bài tập nâng cao trên lớp.",
@@ -121,14 +121,14 @@ export function FeedbackSection() {
 
               {/* User info */}
               <div className="flex items-center gap-3.5 pt-6 mt-4 border-t border-border/60">
-                <div className="relative w-11 h-11 rounded-full overflow-hidden shrink-0 border-2 border-primary/20 group-hover:border-primary transition-colors">
+                <div className="relative w-11 h-11 rounded-full overflow-hidden shrink-0 border-2 border-primary/20 bg-accent/15 group-hover:border-primary transition-colors flex items-center justify-center">
                   <Image
                     src={item.avatar}
                     alt={item.name}
                     fill
                     unoptimized
                     sizes="44px"
-                    className="object-cover"
+                    className="object-contain p-0.5"
                   />
                 </div>
                 <div className="min-w-0">
