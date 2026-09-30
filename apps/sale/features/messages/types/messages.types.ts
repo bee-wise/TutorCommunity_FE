@@ -12,7 +12,7 @@ export type ConnectionStage =
   | "UNKNOWN";
 export type ChatRoomStatus = "ACTIVE" | "CLOSED" | "CONVERTED_TO_CLASS";
 export type ChatRoomCategory = "CONNECTION" | "SUPPORT";
-export type ChatParticipantRole = "LEARNER" | "TUTOR" | "CONSULTANT" | "PARTICIPANT";
+export type ChatParticipantRole = "LEARNER" | "TUTOR" | "CONSULTANT";
 
 export type CloseReason =
   | "LEARNER_NOT_INTERESTED"
@@ -192,7 +192,6 @@ export interface ChatRoom {
   createdAt: string;
   updatedAt: string;
   hasLearningDetails?: boolean;
-  hasParticipantDetails?: boolean;
 }
 
 // ============================================================

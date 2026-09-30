@@ -9,6 +9,16 @@ const paginationSchema = z.object({
   totalPages: z.number().int(),
 });
 
+const connectRequestSchema = z.object({
+  id: uuid,
+  learnerId: uuid,
+  tutorId: uuid,
+  status: z.string().nullable().optional(),
+  chatRoomId: uuid.nullable().optional(),
+  connectionStage: z.string().nullable().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
 const roomSchema = z.object({
   id: uuid,
   connectRequestId: uuid,
@@ -29,8 +39,8 @@ const messageSchema = z.object({
   businessReferenceId: uuid.nullable().optional(),
   businessPayload: z.unknown().optional(),
 });
-const roomListSchema = z.object({
-  items: z.array(roomSchema).nullable(),
+const requestListSchema = z.object({
+  items: z.array(connectRequestSchema).nullable(),
   pagination: paginationSchema,
 });
 const messageListSchema = z.object({
@@ -48,9 +58,11 @@ const centrifugoSubscriptionTokenSchema = z.object({
   expiresAt: z.string(),
 });
 
+export type ConnectRequest = z.infer<typeof connectRequestSchema>;
 export type ChatRoomRecord = z.infer<typeof roomSchema>;
 export type ChatMessageRecord = z.infer<typeof messageSchema>;
 export type ChatMessagePage = z.infer<typeof messageListSchema>;
+export type ConnectionDirection = "outbound" | "inbound" | "consultant";
 
 function dataOf<T extends z.ZodType>(schema: T, value: unknown): z.infer<T> {
   const envelope = z.object({ success: z.literal(true), data: z.unknown() }).safeParse(value);
@@ -73,23 +85,21 @@ export const chatRoomsService = {
     return dataOf(centrifugoSubscriptionTokenSchema, response);
   },
 
-  async listRooms(page = 1, pageSize = 100) {
-    const response: unknown = await apiClient.get("/chat-rooms", {
-      params: { page, pageSize },
+  async listConnections(direction: ConnectionDirection, page = 1, pageSize = 50) {
+    const response: unknown = await apiClient.get("/connect-requests", {
+      params: { direction, page, pageSize },
     });
-    return dataOf(roomListSchema, response);
+    return dataOf(requestListSchema, response);
   },
 
-  async listAllRooms() {
-    const first = await this.listRooms();
+  async listAllConnections(direction: ConnectionDirection) {
+    const first = await this.listConnections(direction);
     const pages = await Promise.all(
       Array.from({ length: Math.max(0, first.pagination.totalPages - 1) }, (_, index) =>
-        this.listRooms(index + 2),
+        this.listConnections(direction, index + 2),
       ),
     );
-    return [...new Map(
-      [first, ...pages].flatMap((page) => page.items ?? []).map((room) => [room.id, room]),
-    ).values()];
+    return [first, ...pages].flatMap((page) => page.items ?? []);
   },
 
   async getRoom(id: string) {

@@ -23,14 +23,12 @@ const ROLE_STYLES: Record<
   TUTOR:      { avatar: "bg-primary text-primary-foreground", align: "end" },
   LEARNER:    { avatar: "bg-card text-primary border border-border", align: "start" },
   CONSULTANT: { avatar: "bg-secondary text-secondary-foreground", align: "start" },
-  PARTICIPANT: { avatar: "bg-card text-primary border border-border", align: "start" },
 };
 
 const ROLE_LABELS: Record<ChatParticipantRole, string> = {
   TUTOR: "Gia sư",
   LEARNER: "Học viên",
   CONSULTANT: "Tư vấn viên",
-  PARTICIPANT: "Người tham gia",
 };
 
 function SystemMessagePill({ text }: { text: string }) {
