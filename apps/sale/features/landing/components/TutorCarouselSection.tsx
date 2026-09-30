@@ -14,7 +14,7 @@ const TUTORS = [
     name: "Tuyết Hương",
     title: "Gia sư Toán – Lý",
     handle: "tuyethuong.gv",
-    status: "Oxford University",
+    status: "Đại học FPT",
     contactText: "Kết Nối",
     behindGlowColor: "rgba(40, 15, 145, 0.55)",
     innerGradient:
@@ -27,7 +27,7 @@ const TUTORS = [
     name: "Huy Đỗ",
     title: "Gia sư Tiếng Anh",
     handle: "huy.do",
-    status: "Trinity CertTESOL",
+    status: "Đại học FPT",
     contactText: "Kết Nối",
     behindGlowColor: "rgba(68, 115, 83, 0.55)",
     innerGradient:
@@ -40,7 +40,7 @@ const TUTORS = [
     name: "Yến Trần",
     title: "Gia sư Hóa – Sinh",
     handle: "yentran.sci",
-    status: "University of Glasgow",
+    status: "Đại học FPT",
     contactText: "Kết Nối",
     behindGlowColor: "rgba(144, 91, 15, 0.45)",
     innerGradient:
@@ -53,7 +53,7 @@ const TUTORS = [
     name: "Vỹ Ngô",
     title: "Gia sư Tiếng Anh",
     handle: "vy.ngo",
-    status: "University of London",
+    status: "Đại học FPT",
     contactText: "Kết Nối",
     behindGlowColor: "rgba(40, 15, 145, 0.50)",
     innerGradient:
@@ -66,7 +66,7 @@ const TUTORS = [
     name: "Huân Nguyễn",
     title: "Gia sư Lập trình",
     handle: "huannguyen.dev",
-    status: "University of California",
+    status: "Đại học FPT",
     contactText: "Kết Nối",
     behindGlowColor: "rgba(68, 115, 83, 0.50)",
     innerGradient:
@@ -79,7 +79,7 @@ const TUTORS = [
     name: "Nhân Huỳnh",
     title: "Gia sư Piano",
     handle: "nhanhuynh.music",
-    status: "Yamaha Music School",
+    status: "Đại học FPT",
     contactText: "Kết Nối",
     behindGlowColor: "rgba(144, 91, 15, 0.40)",
     innerGradient:
@@ -156,7 +156,10 @@ export function TutorCarouselSection() {
             <h2
               id="tutor-carousel-headline"
               className="text-2xl sm:text-4xl text-primary leading-tight"
-              style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
+              style={{
+                fontFamily: "var(--font-nunito-family)",
+                fontWeight: 800,
+              }}
             >
               Kết nối với Gia Sư <span className="text-accent">Nổi Bật</span>
             </h2>

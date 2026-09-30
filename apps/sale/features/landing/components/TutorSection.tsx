@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { TUTOR_BENEFITS } from "../data/landing.data";
 import { useRouter } from "next/navigation";
@@ -68,13 +67,16 @@ export function TutorSection() {
               ))}
             </ul>
 
-            <Link
-              href="/tutor-guide"
+            <button
+              type="button"
               id="tutor-cta"
-              className="self-start inline-flex h-12 items-center justify-center rounded-full bg-accent px-8 text-sm font-semibold text-accent-foreground transition-all duration-200 hover:bg-accent/90 active:scale-[0.98] shadow-lg shadow-accent/25"
+              onClick={() => {
+                window.location.href = "/tutor-guide";
+              }}
+              className="self-start inline-flex h-12 items-center justify-center rounded-full bg-accent px-8 text-sm font-semibold text-accent-foreground transition-all duration-200 hover:bg-accent/90 active:scale-[0.98] shadow-lg shadow-accent/25 cursor-pointer"
             >
               Tìm hiểu ngay
-            </Link>
+            </button>
           </div>
         </div>
       </div>

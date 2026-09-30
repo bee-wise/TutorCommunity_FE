@@ -56,7 +56,18 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/tutor/home", request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  if (tokenToParse) {
+    response.cookies.set("beewise_has_session", "1", {
+      path: "/",
+      sameSite: "lax",
+    });
+  } else if (request.cookies.has("beewise_has_session")) {
+    response.cookies.delete("beewise_has_session");
+  }
+
+  return response;
 }
 
 export const config = {

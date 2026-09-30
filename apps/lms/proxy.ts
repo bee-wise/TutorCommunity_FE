@@ -10,6 +10,7 @@ export function proxy(request: NextRequest) {
   const refreshToken = request.cookies.get("beewise_refresh_token")?.value;
 
   const isPublicPath = publicPaths.includes(pathname);
+  const tokenToParse = token || refreshToken;
 
   if (!isPublicPath && !token && !refreshToken) {
     const loginUrl = new URL("/login", request.url);
@@ -22,7 +23,7 @@ export function proxy(request: NextRequest) {
     let role = "LEARNER";
 
     // Ưu tiên lấy role từ token, nếu không có thì thử lấy từ refreshToken
-    const tokenToParse = token || refreshToken;
+
     if (tokenToParse) {
       try {
         const payload = JSON.parse(atob(tokenToParse.split(".")[1]));
@@ -39,7 +40,18 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(targetUrl, request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  if (tokenToParse) {
+    response.cookies.set("beewise_has_session", "1", {
+      path: "/",
+      sameSite: "lax",
+    });
+  } else if (request.cookies.has("beewise_has_session")) {
+    response.cookies.delete("beewise_has_session");
+  }
+
+  return response;
 }
 
 export const config = {
