@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { HeroMotion } from "@workspace/ui/components/HeroMotion";
 import { HeroCarousel } from "./HeroCarousel";
-import { LightningIcon } from "@phosphor-icons/react";
+import {
+  LightningIcon,
+  MicrophoneIcon,
+  MicrophoneSlashIcon,
+} from "@phosphor-icons/react";
+import { useVoiceRecognition } from "@workspace/core/hooks/useVoiceRecognition";
 import { FunnelIcon } from "lucide-react";
 
 export function HeroSection() {
@@ -13,13 +18,34 @@ export function HeroSection() {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleSearch = () => {
-    if (query.trim()) {
-      router.push(`/tutors?mode=ai&q=${encodeURIComponent(query.trim())}`);
-    } else {
-      router.push("/tutors?mode=ai");
-    }
-  };
+  const handleSearch = useCallback(
+    (textToSearch?: string) => {
+      const q = (
+        typeof textToSearch === "string" ? textToSearch : query
+      ).trim();
+      if (q) {
+        router.push(`/tutors?mode=ai&q=${encodeURIComponent(q)}`);
+      } else {
+        router.push("/tutors?mode=ai");
+      }
+    },
+    [query, router],
+  );
+
+  const { isListening, toggleListening } = useVoiceRecognition({
+    lang: "vi-VN",
+    silenceTimeoutMs: 1200,
+    onResult: (text) => {
+      setQuery(text);
+    },
+    onSpeechEnd: (finalTranscript) => {
+      const trimmed = finalTranscript.trim();
+      if (trimmed) {
+        setQuery(trimmed);
+        handleSearch(trimmed);
+      }
+    },
+  });
 
   return (
     <section
@@ -49,7 +75,7 @@ export function HeroSection() {
                 style={{ fontWeight: 900 }}
               >
                 Tìm Gia Sư Phù Hợp{" "}
-                <span className="text-accent">Với Beewise AI</span>
+                <span className="text-accent">Với BeeWise AI</span>
               </h1>
 
               <p className="text-base sm:text-lg text-foreground/60 leading-relaxed max-w-[50ch]">
@@ -76,7 +102,11 @@ export function HeroSection() {
                     <input
                       type="text"
                       id="hero-ai-search"
-                      placeholder='Ví dụ: "Gia sư Toán lớp 12, học online, 200.000đ/buổi"'
+                      placeholder={
+                        isListening
+                          ? "Đang lắng nghe bạn nói..."
+                          : 'Ví dụ: "Gia sư Toán lớp 12, học online, 200.000đ/buổi"'
+                      }
                       className="w-full bg-transparent text-xs sm:text-sm text-foreground outline-none placeholder:text-foreground/35 placeholder:opacity-0 sm:placeholder:opacity-100 min-w-0 relative z-10 leading-normal"
                       aria-label="Nhập nhu cầu tìm gia sư"
                       value={query}
@@ -89,7 +119,7 @@ export function HeroSection() {
                     />
 
                     {/* Running placeholder marquee for mobile when input is empty & not focused */}
-                    {!query && !isFocused && (
+                    {!query && !isFocused && !isListening && (
                       <div
                         aria-hidden="true"
                         className="absolute inset-y-0 left-0 right-0 pointer-events-none flex items-center overflow-hidden sm:hidden select-none"
@@ -114,9 +144,36 @@ export function HeroSection() {
                     )}
                   </div>
 
+                  {/* Voice search button */}
                   <button
                     type="button"
-                    onClick={handleSearch}
+                    onClick={toggleListening}
+                    className={`shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 ${
+                      isListening
+                        ? "bg-red-500 text-white animate-pulse shadow-md shadow-red-500/30"
+                        : "text-foreground/40 hover:text-primary hover:bg-primary/10 active:scale-95"
+                    }`}
+                    title={
+                      isListening
+                        ? "Đang nghe... Bấm để dừng"
+                        : "Tìm kiếm bằng giọng nói"
+                    }
+                    aria-label={
+                      isListening
+                        ? "Đang nghe giọng nói, bấm để dừng"
+                        : "Tìm kiếm bằng giọng nói"
+                    }
+                  >
+                    {isListening ? (
+                      <MicrophoneSlashIcon size={18} weight="fill" />
+                    ) : (
+                      <MicrophoneIcon size={18} weight="bold" />
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSearch()}
                     id="hero-cta-primary"
                     className="shrink-0 inline-flex h-9 items-center justify-center rounded-full bg-primary px-3.5 sm:px-5 text-xs sm:text-sm font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98] whitespace-nowrap shadow-lg shadow-primary/30"
                   >

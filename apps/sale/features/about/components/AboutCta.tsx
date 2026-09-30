@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 
@@ -21,8 +22,8 @@ export function AboutCta() {
             <span className="text-accent">BeeWise</span>?
           </h2>
           <p className="text-primary-foreground/75 text-base sm:text-lg max-w-[48ch] leading-relaxed">
-            Dù bạn là học viên đang tìm gia sư, hay một giáo viên muốn đưa chuyên
-            môn đến đúng người — BeeWise đang chờ bạn.
+            Dù bạn là học viên đang tìm gia sư, hay một giáo viên muốn đưa
+            chuyên môn đến đúng người — BeeWise đang chờ bạn.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -33,13 +34,13 @@ export function AboutCta() {
               Tìm gia sư ngay
               <ArrowRight size={18} weight="bold" aria-hidden="true" />
             </Link>
-            <Link
-              href="/tutor-guide"
+            <button
+              onClick={() => (window.location.href = "/tutor-guide")}
               id="about-cta-become-tutor"
               className="inline-flex min-h-13 items-center gap-2.5 rounded-full bg-white/15 border border-white/25 px-7 text-base font-bold text-primary-foreground hover:bg-white/25 transition-all duration-200"
             >
               Đăng ký làm gia sư
-            </Link>
+            </button>
           </div>
         </div>
       </div>
