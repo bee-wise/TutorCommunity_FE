@@ -86,7 +86,7 @@ export function TutorListController({
                   className="text-2xl uppercase md:text-3xl font-extrabold text-primary tracking-tight leading-tight"
                   style={{ fontFamily: "var(--font-nunito-family)" }}
                 >
-                  Tìm Kiếm Gia Sư
+                  Tìm Kiếm Gia Sư Dạy 1:1
                 </h1>
               </div>
 

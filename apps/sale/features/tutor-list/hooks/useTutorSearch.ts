@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   DEFAULT_FILTERS,
   type SearchMode,
@@ -124,8 +124,6 @@ function applyLocalFiltersToAIResults(
 
 export function useTutorSearch() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const requestedMode = searchParams.get("mode");
   const initialMode: SearchMode =
     requestedMode === "ai" || requestedMode === "manual"
@@ -145,12 +143,19 @@ export function useTutorSearch() {
   const currentQuery = queries[searchMode];
   const filters = filtersByMode[searchMode];
 
-  // URL params are only an entry point; internal searches remain local afterwards.
+  // URL params are only an entry point; clear them without starting a new route navigation.
   useEffect(() => {
     if (requestedMode !== null || initialQuery !== null) {
-      router.replace(pathname, { scroll: false });
+      const url = new URL(window.location.href);
+      url.searchParams.delete("mode");
+      url.searchParams.delete("q");
+      window.history.replaceState(
+        null,
+        "",
+        `${url.pathname}${url.search}${url.hash}`,
+      );
     }
-  }, [initialQuery, pathname, requestedMode, router]);
+  }, [initialQuery, requestedMode]);
 
   const aiSearchQuery = useMemo(
     () => ({ query: queries.ai, limit: 10, thresold: 0.65 }),

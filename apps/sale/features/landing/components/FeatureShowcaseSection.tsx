@@ -6,14 +6,7 @@ import {
   ShieldCheck,
   ChatCircleDots,
   CalendarCheck,
-  CheckCircle,
-  MagnifyingGlass,
-  PaperPlaneTilt,
-  Clock,
-  Star,
   Check,
-  FileText,
-  VideoCamera,
 } from "@phosphor-icons/react";
 
 interface ShowcaseItem {
@@ -27,7 +20,6 @@ interface ShowcaseItem {
   icon: React.ElementType;
   iconColor: string;
   accentBg: string;
-  mockupTitle: string;
   renderMockup: () => React.ReactNode;
 }
 
@@ -48,7 +40,6 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     icon: Sparkle,
     iconColor: "text-purple-600",
     accentBg: "from-purple-500/10 via-indigo-500/5 to-transparent",
-    mockupTitle: "Tìm kiếm bằng AI",
     renderMockup: () => (
       <div className="w-full p-2 sm:p-4 flex items-center justify-center">
         <Image
@@ -78,7 +69,6 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     icon: ShieldCheck,
     iconColor: "text-emerald-600",
     accentBg: "from-emerald-500/10 via-teal-500/5 to-transparent",
-    mockupTitle: "Hồ sơ kiểm duyệt • Mã GS: BW-8892",
     renderMockup: () => (
       <div className="w-full p-2 sm:p-4 flex items-center justify-center">
         <Image
@@ -108,40 +98,16 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     icon: ChatCircleDots,
     iconColor: "text-amber-600",
     accentBg: "from-amber-500/10 via-orange-500/5 to-transparent",
-    mockupTitle: "Phòng chat • Gia sư & Học viên",
     renderMockup: () => (
-      <div className="w-full flex flex-col gap-3 p-5 sm:p-7">
-        {/* Chat Message 1 (Learner) */}
-        <div className="flex items-end gap-2.5 justify-end">
-          <div className="max-w-[82%] px-4 py-2.5 rounded-2xl rounded-br-xs bg-primary text-primary-foreground text-xs sm:text-sm leading-relaxed shadow-xs">
-            Em chào cô Mai Linh ạ! Em muốn tìm gia sư kèm môn Toán 12 vào tối
-            Thứ 3 và Thứ 6.
-          </div>
-        </div>
-
-        {/* Chat Message 2 (Tutor) */}
-        <div className="flex items-end gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-accent/30 text-primary font-bold text-xs flex items-center justify-center shrink-0 border border-border">
-            ML
-          </div>
-          <div className="max-w-[82%] px-4 py-2.5 rounded-2xl rounded-bl-xs bg-white border border-border text-foreground text-xs sm:text-sm leading-relaxed shadow-xs">
-            Chào em nhé! Lịch tối T3 và T6 cô đang trống. Em muốn tập trung vào
-            phần Hàm số hay Hình học trước để cô chuẩn bị giáo án? 📚
-          </div>
-        </div>
-
-        {/* Chat Input Bar */}
-        <div className="flex items-center gap-2 mt-2 px-3.5 py-2.5 rounded-xl bg-white border border-border shadow-xs">
-          <span className="text-xs text-foreground/45 flex-1">
-            Nhập tin nhắn trao đổi...
-          </span>
-          <button
-            type="button"
-            className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-white shrink-0 hover:bg-primary/90 transition-colors"
-          >
-            <PaperPlaneTilt size={14} weight="fill" />
-          </button>
-        </div>
+      <div className="w-full p-2 sm:p-4 flex items-center justify-center">
+        <Image
+          src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790744032/localhost_3000_learner_messages_ROOM-1234_1.png"
+          alt="Phòng chat hỗ trợ gia sư và học viên"
+          width={1200}
+          height={800}
+          unoptimized
+          className="w-full h-auto object-contain rounded-xl shadow-xs"
+        />
       </div>
     ),
   },
@@ -149,7 +115,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     id: "schedule-management",
     tag: "Linh hoạt",
     tagColor: "bg-blue-500/10 text-blue-600 border-blue-200",
-    title: "Lịch Học & Nhắc Nhở Tự Động",
+    title: "Quản lý học tập qua BeeWise LMS",
     subtitle: "Chủ động thời gian, không bỏ lỡ buổi học",
     description:
       "Dễ dàng xem trước lịch rảnh của gia sư trong tuần, đăng ký buổi học thử và nhận thông báo nhắc nhở tự động trước mỗi ca dạy để việc học luôn đúng lộ trình.",
@@ -161,65 +127,16 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     icon: CalendarCheck,
     iconColor: "text-blue-600",
     accentBg: "from-blue-500/10 via-indigo-500/5 to-transparent",
-    mockupTitle: "Thời khóa biểu • Lịch học tuần này",
     renderMockup: () => (
-      <div className="w-full flex flex-col gap-3.5 p-5 sm:p-7">
-        {/* Upcoming class card */}
-        <div className="p-4 rounded-2xl bg-white border border-border shadow-xs flex flex-col gap-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Buổi học sắp diễn ra
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[11px]">
-              Tối nay
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between pt-1">
-            <div>
-              <p className="text-sm font-bold text-foreground">
-                Toán 12 • Luyện Đề Số 4
-              </p>
-              <div className="flex items-center gap-2 text-xs text-foreground/65 mt-0.5">
-                <Clock size={14} className="text-primary" />
-                <span>19:30 - 21:00 • Với Thầy Hoàng Nam</span>
-              </div>
-            </div>
-            <span className="px-3 py-1 rounded-xl bg-primary/10 text-primary font-bold text-xs">
-              Vào lớp
-            </span>
-          </div>
-        </div>
-
-        {/* Weekly Slot Grid */}
-        <div className="grid grid-cols-4 gap-2 pt-1">
-          {[
-            { day: "Thứ 2", time: "19:00", active: false, label: "Trống" },
-            { day: "Thứ 4", time: "19:30", active: true, label: "Đã đặt" },
-            { day: "Thứ 6", time: "19:30", active: true, label: "Đã đặt" },
-            { day: "Chủ nhật", time: "09:00", active: false, label: "Trống" },
-          ].map((slot, i) => (
-            <div
-              key={i}
-              className={`p-2.5 rounded-xl text-center border transition-all ${
-                slot.active
-                  ? "bg-primary text-primary-foreground border-primary font-bold shadow-xs"
-                  : "bg-white text-foreground/70 border-border hover:border-primary/40"
-              }`}
-            >
-              <div className="text-[11px] uppercase opacity-90">{slot.day}</div>
-              <div className="text-xs font-bold mt-0.5">{slot.time}</div>
-              <div
-                className={`text-[10px] mt-1 font-semibold ${
-                  slot.active ? "text-accent" : "text-foreground/45"
-                }`}
-              >
-                {slot.label}
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="w-full p-2 sm:p-4 flex items-center justify-center">
+        <Image
+          src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790744811/localhost_3001_lms_learner_schedule.png"
+          alt="Quản lý học tập và lịch học trực tuyến"
+          width={1200}
+          height={800}
+          unoptimized
+          className="w-full h-auto object-contain rounded-xl shadow-xs"
+        />
       </div>
     ),
   },
@@ -324,9 +241,6 @@ export function FeatureShowcaseSection() {
                           <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
                           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
                         </div>
-                        <span className="text-[11px] font-medium text-foreground/45 font-mono truncate max-w-[200px] sm:max-w-none">
-                          {item.mockupTitle}
-                        </span>
                       </div>
 
                       {/* Mockup Body Content */}
