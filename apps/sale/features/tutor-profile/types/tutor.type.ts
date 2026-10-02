@@ -33,6 +33,7 @@ export interface TutorReviewItem {
 
 export interface TutorProfileData {
   id: string;
+  userId?: string | null;
   displayName: string; // tên hiển thị
   dateOfBirth: string;
   gender: string; // male, female, others

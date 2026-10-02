@@ -4,12 +4,9 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { mapChatRoom } from "../constants/messages.api-mapper";
 import { chatRoomsService } from "../services/chat-rooms.service";
+import { queryKeys } from "@workspace/core/sys-libs/queryKeys";
 
-export const chatRoomKeys = {
-  list: ["sale", "chat-rooms"] as const,
-  room: (id: string) => ["sale", "chat-rooms", id] as const,
-  messages: (id: string) => ["sale", "chat-rooms", id, "messages"] as const,
-};
+export const chatRoomKeys = queryKeys.saleChatRooms;
 
 export function useMessages() {
   const user = useAuthStore((state) => state.user);

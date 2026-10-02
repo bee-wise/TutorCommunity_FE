@@ -134,11 +134,11 @@ function EmptyState({
           />
         ) : (
           <Image
-            src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790760176/bee-flower.png"
+            src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790929519/NoData-Element.svg"
             alt="Không tìm thấy gia sư"
-            width={140}
-            height={140}
-            className="shrink-0 object-contain w-32 h-32 sm:w-40 sm:h-40"
+            width={300}
+            height={300}
+            className="shrink-0 object-contain w-72 h-56 sm:w-96 sm:h-72"
             aria-hidden="true"
           />
         )}
@@ -148,9 +148,7 @@ function EmptyState({
           className="text-base font-bold text-[#0c0c0b]"
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
-          {isAIPrompt
-            ? "Tìm kiếm gia sư với BeeWise AI"
-            : "Không tìm thấy gia sư phù hợp"}
+          {isAIPrompt ? "Tìm kiếm gia sư với BeeWise AI" : null}
         </p>
         <p className="text-sm text-[#475467] leading-relaxed">
           {isAIPrompt

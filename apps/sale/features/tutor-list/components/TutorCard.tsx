@@ -101,6 +101,7 @@ export function TutorCard({
   const [showReason, setShowReason] = useState(false);
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
   const tutorId = tutor.profileId || tutor.userId || "";
+  const tutorProfileHref = `/tutors/${tutor.profileId}${tutor.userId ? `?tutorUserId=${encodeURIComponent(tutor.userId)}` : ""}`;
   const isSaved = isFavorite(tutorId);
 
   useEffect(() => {
@@ -315,7 +316,7 @@ export function TutorCard({
               ) : null}
             </div>
             <Link
-              href={`/tutors/${tutor.profileId}`}
+              href={tutorProfileHref}
               id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
               className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
             >
@@ -429,7 +430,7 @@ export function TutorCard({
                       Đóng
                     </button>
                     <Link
-                      href={`/tutors/${tutor.profileId}`}
+                      href={tutorProfileHref}
                       className="inline-flex h-11 items-center justify-center rounded-xl bg-[#280f91] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(40,15,145,0.18)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/35 focus-visible:ring-offset-2"
                     >
                       Xem hồ sơ {name}
