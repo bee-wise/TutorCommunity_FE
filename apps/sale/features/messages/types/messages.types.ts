@@ -166,6 +166,8 @@ export type ChatWidget =
 
 export interface ChatRoom {
   id: string;
+  hasConnectionDetails?: boolean;
+  recipientName?: string;
   category: ChatRoomCategory;
   supportFor?: "LEARNER" | "TUTOR";
   connectRequestId: string;

@@ -15,7 +15,6 @@ import { ConsultantActions } from "./ConsultantActions";
 import { ConnectionInfoPanel } from "./ConnectionInfoPanel";
 import { useChatRoom } from "../hooks/useChatRoom";
 import { STAGE_LABELS, STAGE_COLORS } from "../constants/messages.utils";
-import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 
 interface ChatRoomPanelProps {
   chatRoomId: string;
@@ -26,26 +25,24 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
     room,
     messages,
     sending,
+    loading,
+    error,
+    refetch,
     isReadOnly,
     currentUserId,
     currentUserRole,
     sendMessage,
     messagesEndRef,
-    error,
-    loading,
-    hasOlderMessages,
-    loadingOlderMessages,
-    loadOlderMessages,
+    loadOlder,
+    hasOlder,
+    loadingOlder,
   } = useChatRoom(chatRoomId);
 
   const [text, setText] = useState("");
   const [showAutoLib, setShowAutoLib] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  if (!room) return (
-    <div className="flex h-full items-center justify-center rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground">
-      {loading ? "Đang tải phòng chat..." : error ? getApiErrorMessage(error) : "Không tìm thấy phòng chat này."}
-    </div>
-  );
+  if (loading && !room) return <div className="flex h-full items-center justify-center rounded-2xl border border-border bg-card text-sm text-muted-foreground">Đang tải cuộc trò chuyện...</div>;
+  if (!room) return <div className="flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-5 text-center text-sm text-muted-foreground"><p>{error ? "Không tải được cuộc trò chuyện. Vui lòng thử lại." : "Không tìm thấy cuộc trò chuyện."}</p><button type="button" onClick={() => void refetch()} className="rounded-lg bg-primary px-4 py-2 font-semibold text-primary-foreground">Thử lại</button></div>;
   const isSupport = room.category === "SUPPORT";
   const peer = isSupport
     ? room.consultant
@@ -54,12 +51,9 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!text.trim() || sending) return;
-    try {
-      await sendMessage(text);
+    if (await sendMessage(text)) {
       setText("");
       setShowAutoLib(false);
-    } catch {
-      // The hook exposes the API error below the message list.
     }
   };
 
@@ -94,22 +88,20 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           </Link>
 
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
-            {peer.initials}
+            {(room.recipientName || peer.name).split(/\s+/).filter(Boolean).slice(-2).map((part) => part[0]).join("").toUpperCase() || "BW"}
           </div>
 
           <div className="min-w-0 flex-1">
             <h1 className="font-nunito truncate text-base font-extrabold text-foreground">
-              {peer.name}
+              {room.recipientName || peer.name}
             </h1>
             <p className="truncate text-xs text-muted-foreground">
-              {isSupport
-                ? `Tư vấn viên BeeWise · ${room.subject}`
-                : `Phòng kết nối · Chat 3 bên với ${room.consultant.name}`}
+              {isSupport ? "Hỗ trợ BeeWise" : "Cuộc trò chuyện kết nối"}
             </p>
           </div>
 
           {/* Stage badge */}
-          <span
+          {room.hasConnectionDetails && <span
             className={`hidden shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-bold sm:block ${
               isSupport
                 ? "border-secondary/20 bg-secondary/10 text-secondary"
@@ -117,10 +109,10 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
             }`}
           >
             {isSupport ? "Đang hỗ trợ" : STAGE_LABELS[room.connectionStage]}
-          </span>
+          </span>}
 
           {/* Info toggle */}
-          {!isSupport && <button
+          {room.hasConnectionDetails && !isSupport && <button
             type="button"
             onClick={() => setShowInfo((v) => !v)}
             className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition ${
@@ -158,14 +150,9 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         {/* Messages area */}
         <div className="min-h-0 flex-1 overflow-y-auto bg-muted px-3 py-5 sm:px-6">
           <div className="mx-auto max-w-4xl space-y-1">
-            {hasOlderMessages && (
-              <button type="button" disabled={loadingOlderMessages} onClick={() => void loadOlderMessages()} className="mx-auto mb-3 block rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-primary disabled:opacity-50">
-                {loadingOlderMessages ? "Đang tải..." : "Xem tin nhắn cũ"}
-              </button>
-            )}
-            {loading && <p className="py-8 text-center text-sm text-muted-foreground">Đang tải tin nhắn...</p>}
-            {!loading && messages.length === 0 && !error && <p className="py-8 text-center text-sm text-muted-foreground">Chưa có tin nhắn. Hãy bắt đầu cuộc trò chuyện.</p>}
-            {error && <p role="alert" className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive">{getApiErrorMessage(error)}</p>}
+            {hasOlder && <div className="flex justify-center pb-3"><button type="button" disabled={loadingOlder} onClick={() => void loadOlder()} className="rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-primary disabled:opacity-50">{loadingOlder ? "Đang tải..." : "Xem tin nhắn cũ hơn"}</button></div>}
+            {error && <p className="py-3 text-center text-xs text-destructive">Không tải được tin nhắn. <button type="button" onClick={() => void refetch()} className="underline">Thử lại</button></p>}
+            {!loading && !error && messages.length === 0 && <p className="py-10 text-center text-sm text-muted-foreground">Chưa có tin nhắn nào.</p>}
             {messages.map((msg, idx) => {
               const prev = messages[idx - 1];
               const isConsecutive =
@@ -244,7 +231,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
       </div>
 
       {/* ── Info sidebar ───────────────────────────────────── */}
-      {showInfo && !isSupport && (
+      {showInfo && room.hasConnectionDetails && !isSupport && (
         <div className="hidden w-72 shrink-0 overflow-y-auto lg:block">
           <ConnectionInfoPanel room={room} />
         </div>

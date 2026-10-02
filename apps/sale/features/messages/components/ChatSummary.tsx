@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { MessageCircle, ChevronRight } from "lucide-react";
 import { useMessages } from "../hooks/useMessages";
-import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import type { ChatRoom } from "../types/messages.types";
 import { STAGE_LABELS, STAGE_COLORS, formatRelativeTime } from "../constants/messages.utils";
 
@@ -43,14 +42,14 @@ export function ChatRow({ room }: { room: ChatRoom }) {
           )}
         </div>
         <p className="text-xs text-[#716c83]">
-          {room.subject || `Kết nối #${room.connectRequestId.slice(0, 8)}`}
+          {room.hasConnectionDetails ? `${room.subject} ${room.gradeLevel}` : "Cuộc trò chuyện kết nối"}
         </p>
         <p className="mt-1 truncate text-sm text-[#0c0c0b]">
           {room.lastMessage ?? "Mở cuộc trò chuyện"}
         </p>
-        <div className="mt-1.5">
+        {room.hasConnectionDetails && <div className="mt-1.5">
           <StageBadge stage={room.connectionStage} />
-        </div>
+        </div>}
       </div>
       <div className="flex items-center gap-1.5 text-xs text-[#716c83]">
         {room.lastMessageAt ? formatRelativeTime(room.lastMessageAt) : ""}
@@ -61,7 +60,7 @@ export function ChatRow({ room }: { room: ChatRoom }) {
 }
 
 export function ChatSummary() {
-  const { rooms, loading, error } = useMessages();
+  const { rooms, totalUnread, loading, error, refetch } = useMessages();
   const active = rooms.filter((r) => r.status === "ACTIVE").length;
 
   return (
@@ -72,11 +71,12 @@ export function ChatSummary() {
           Xem tất cả
         </Link>
       </div>
-      <div className="mb-5 grid grid-cols-2 gap-3">
+      <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {(
           [
             ["Cuộc trò chuyện", rooms.length],
             ["Đang hoạt động", active],
+            ["Chưa đọc", totalUnread],
           ] as const
         ).map(([label, value]) => (
           <div key={label} className="rounded-xl bg-[#f4f1ff] p-3">
@@ -85,11 +85,7 @@ export function ChatSummary() {
           </div>
         ))}
       </div>
-      {loading ? (
-        <p className="py-8 text-center text-sm text-[#716c83]">Đang tải cuộc trò chuyện...</p>
-      ) : error ? (
-        <p role="alert" className="py-8 text-center text-sm text-destructive">{getApiErrorMessage(error)}</p>
-      ) : rooms.length === 0 ? (
+      {loading ? <p className="py-6 text-center text-sm text-muted-foreground">Đang tải cuộc trò chuyện...</p> : error ? <div className="py-6 text-center text-sm text-muted-foreground">Không tải được cuộc trò chuyện. <button type="button" onClick={() => void refetch()} className="font-semibold text-primary underline">Thử lại</button></div> : rooms.length === 0 ? (
         <div className="flex flex-col items-center rounded-xl border border-dashed border-[#cbd6ea] p-8 text-center">
           <span className="mb-3 text-[#280f91]">
             <MessageCircle />

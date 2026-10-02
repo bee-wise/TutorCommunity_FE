@@ -11,6 +11,7 @@ import {
 } from "@workspace/ui/components/ui/dialog";
 import { CLOSE_REASON_LABELS } from "../constants/messages.utils";
 import type { ChatParticipantRole, CloseReason } from "../types/messages.types";
+import { chatRoomKeys } from "../hooks/useMessages";
 
 export function ConsultantActions({ currentRole, roomId }: { currentRole: ChatParticipantRole; roomId: string }) {
   const queryClient = useQueryClient();
@@ -20,7 +21,10 @@ export function ConsultantActions({ currentRole, roomId }: { currentRole: ChatPa
   const closeRoom = useMutation({
     mutationFn: () => chatRoomsService.closeRoom(roomId, reason, note.trim() || undefined),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["chat-rooms", "list"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: chatRoomKeys.list }),
+        queryClient.invalidateQueries({ queryKey: chatRoomKeys.room(roomId) }),
+      ]);
       setOpen(false);
     },
   });

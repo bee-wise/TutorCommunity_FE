@@ -206,7 +206,7 @@ export function FilterPanel({
               type="button"
               onClick={() => update("teachingMode", opt.value)}
               aria-pressed={filters.teachingMode === opt.value}
-              className={`min-h-11 rounded-lg px-1 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+              className={`min-h-8 rounded-lg px-1 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 filters.teachingMode === opt.value
                   ? "bg-primary text-primary-foreground"
                   : "text-foreground hover:bg-card hover:text-primary"
