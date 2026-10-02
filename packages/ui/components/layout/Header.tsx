@@ -87,7 +87,7 @@ export function Header({
         : user?.lmsAccessEnabled === true;
   const unreadNotificationCount = Math.max(
     0,
-    drawerUnreadCount || (user?.unreadNotificationCount ?? 0),
+    drawerUnreadCount ?? user?.unreadNotificationCount ?? 0,
   );
   const unreadChatCount = Math.max(0, user?.unreadChatCount ?? 0);
   const displayName = getDisplayName(user);
