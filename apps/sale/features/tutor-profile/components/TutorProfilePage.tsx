@@ -1,10 +1,13 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { TutorAchievements } from "./TutorAchievements";
 import { TutorBioSection } from "./TutorBioSection";
 import { TutorConnectCard } from "./TutorConnectCard";
+import { TutorConnectDialog } from "./TutorConnectDialog";
 import { TutorFeedback } from "./TutorFeedback";
 import { TutorHero } from "./TutorHero";
 import { TutorIntroVideo } from "./TutorIntroVideo";
@@ -12,20 +15,26 @@ import { TutorMobileCTA } from "./TutorMobileCTA";
 import { TutorTeachingHistory } from "./TutorTeachingHistory";
 import { TutorTeachingMethods } from "./TutorTeachingMethods";
 import { useTutorDetailQuery } from "../hooks/useTutorDetailQuery";
+import { useTutorConnectFlow } from "../hooks/useTutorConnectFlow";
+import { resolveTutorUserIdFromCache } from "../utils/resolveTutorUserId";
 import { EmptyState } from "@workspace/ui/components/ui/empty-state";
 import LoadingGradient from "@workspace/ui/components/LoadingGradient";
 import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
 
-export function TutorProfilePage() {
+export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?: string }) {
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const id = params.id as string;
   const { data, isLoading, isError } = useTutorDetailQuery(id);
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
   const isSaved = isFavorite(id);
+  const tutorUserId = data?.data?.userId || resolveTutorUserIdFromCache(queryClient, id) ||
+    (z.uuid().safeParse(tutorUserIdFromLink).success ? tutorUserIdFromLink : undefined);
+  const connectFlow = useTutorConnectFlow(tutorUserId ?? undefined);
 
   const handleConnect = () => {
-    // TODO: kết nối với luồng gửi yêu cầu kết nối.
+    connectFlow.setDialogOpen(true);
   };
 
   const handleBack = () => {
@@ -143,6 +152,12 @@ export function TutorProfilePage() {
       <TutorMobileCTA
         onConnect={handleConnect}
         rate={tutorProfile.hourlyRate}
+      />
+      <TutorConnectDialog
+        profileId={id}
+        tutorName={tutorProfile.displayName}
+        tutorUserId={tutorUserId ?? undefined}
+        flow={connectFlow}
       />
       <div className="pb-24 lg:pb-0" />
     </div>
