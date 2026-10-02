@@ -41,7 +41,7 @@ export function LearnerCalendar({ sessions, onSessionClick }: LearnerCalendarPro
     <section className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm" aria-label="Lịch học theo tháng">
       <div className="flex items-center justify-between border-b border-border px-4 py-4 sm:px-5">
         <h2 className="font-nunito text-base font-extrabold capitalize">
-          {new Intl.DateTimeFormat("vi-VN", { month: "long", year: "numeric" }).format(new Date(view.year, view.month, 1))}
+          {`Tháng ${view.month + 1} năm ${view.year}`}
         </h2>
         <div className="flex items-center gap-1">
           <button type="button" onClick={() => changeMonth(-1)} aria-label="Tháng trước" className="grid size-8 place-items-center rounded-lg border border-input text-muted-foreground hover:bg-muted"><CaretLeft size={16} weight="bold" /></button>

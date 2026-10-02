@@ -37,6 +37,7 @@ export function formatFileSize(bytes: number): string {
 }
 
 export const STAGE_LABELS: Record<string, string> = {
+  UNKNOWN: "Đang kết nối",
   WAITING_FOR_TUTOR: "Chờ gia sư phản hồi",
   DISCUSSING: "Đang thảo luận",
   TRIAL_SCHEDULED: "Đã lên lịch học thử",
