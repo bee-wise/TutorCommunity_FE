@@ -16,6 +16,7 @@ import { TutorTeachingHistory } from "./TutorTeachingHistory";
 import { TutorTeachingMethods } from "./TutorTeachingMethods";
 import { useTutorDetailQuery } from "../hooks/useTutorDetailQuery";
 import { useTutorConnectFlow } from "../hooks/useTutorConnectFlow";
+import { useTutorViewTracker } from "../hooks/useTutorViewTracker";
 import { resolveTutorUserIdFromCache } from "../utils/resolveTutorUserId";
 import { EmptyState } from "@workspace/ui/components/ui/empty-state";
 import LoadingGradient from "@workspace/ui/components/LoadingGradient";
@@ -27,6 +28,9 @@ export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?
   const queryClient = useQueryClient();
   const id = params.id as string;
   const { data, isLoading, isError } = useTutorDetailQuery(id);
+  const tutorProfileId = data?.data?.id;
+  useTutorViewTracker(tutorProfileId);
+
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
   const isSaved = isFavorite(id);
   const tutorUserId = [resolveTutorUserIdFromCache(queryClient, id), tutorUserIdFromLink, data?.data?.userId]
@@ -128,17 +132,27 @@ export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?
 
         <TutorHero tutor={tutorProfile} />
 
+        {/* Connect card — shown inline on mobile right after hero, sticky sidebar on desktop */}
+        <div className="lg:hidden">
+          <TutorConnectCard
+            tutor={tutorProfile}
+            isSaved={isSaved}
+            onConnect={handleConnect}
+            onSave={handleSave}
+          />
+        </div>
+
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:items-start">
           <div className="space-y-5">
             <TutorBioSection tutor={tutorProfile} />
+            <TutorAchievements tutor={tutorProfile} />
             <TutorTeachingMethods tutor={tutorProfile} />
             <TutorTeachingHistory tutor={tutorProfile} />
-            <TutorAchievements tutor={tutorProfile} />
             <TutorIntroVideo videoUrl={tutorProfile.videoUrl} />
             <TutorFeedback tutor={tutorProfile} />
           </div>
 
-          <div className="lg:sticky lg:top-6">
+          <div className="hidden lg:block lg:sticky lg:top-6">
             <TutorConnectCard
               tutor={tutorProfile}
               isSaved={isSaved}
@@ -148,6 +162,7 @@ export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?
           </div>
         </div>
       </div>
+
 
       <TutorMobileCTA
         onConnect={handleConnect}

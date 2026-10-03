@@ -1,15 +1,4 @@
-export type Subject =
-  | "Toán"
-  | "Vật Lý"
-  | "Hóa Học"
-  | "Sinh Học"
-  | "Ngữ Văn"
-  | "Tiếng Anh"
-  | "Tiếng Nhật"
-  | "Lịch Sử"
-  | "Địa Lý"
-  | "Tin Học"
-  | "Lập Trình";
+import type { ApiResponse } from "@workspace/core/types/api-response.type";
 
 export type TeachingMode = "online" | "offline" | "both";
 
@@ -52,12 +41,35 @@ export const DEFAULT_AI_FILTERS: TutorFilters = {
 
 export type SearchMode = "manual" | "ai";
 
-export interface SearchResult {
-  tutors: ApiTutorProfile[];
-  mode: SearchMode;
-  query: string;
-  aiReason?: string; // AI-mode: brief explanation of matching logic
-  totalCount: number;
+export interface TutorNamedItem {
+  id: string;
+  name: string;
+  sortOrder?: number;
+}
+
+export interface TutorTeachingOfferingProposal {
+  teachingItemName?: string;
+  contextName?: string;
+  contextType?: string;
+}
+
+export interface TutorTeachingOfferingItem {
+  id: string;
+  programId: string;
+  programVersionId: string;
+  programName: string;
+  teachingItemId?: string | null;
+  teachingItemName?: string | null;
+  contextId?: string | null;
+  contextName?: string | null;
+  contextType?: string | null;
+  teachingMode: string;
+  basePrice: number;
+  status: string;
+  mappingId?: string | null;
+  proposalId?: string | null;
+  rejectionReason?: string | null;
+  proposal?: TutorTeachingOfferingProposal | null;
 }
 
 export interface ApiTutorProfile {
@@ -70,9 +82,9 @@ export interface ApiTutorProfile {
   universityName: string;
   major: string;
   studentYear: string;
-  subjects: { id: string; name: string; sortOrder?: number }[];
-  gradeLevels: { id: string; name: string; sortOrder?: number }[];
-  specializations: { id: string; name: string; sortOrder?: number }[];
+  subjects: TutorNamedItem[];
+  gradeLevels: TutorNamedItem[];
+  specializations: TutorNamedItem[];
   teachingModes: string[];
   offlineCity: string;
   offlineDistrict: string;
@@ -82,8 +94,23 @@ export interface ApiTutorProfile {
   ratingAvg: number;
   isOnline: boolean;
   lastActiveAt: string;
+  teachingOfferings?: TutorTeachingOfferingItem[];
   reason?: string;
 }
+
+export interface TutorPagination {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+export interface TutorSearchResultData {
+  items: ApiTutorProfile[];
+  pagination: TutorPagination;
+}
+
+export type TutorSearchResponse = ApiResponse<TutorSearchResultData>;
 
 export type AISearchQuery = {
   query: string;

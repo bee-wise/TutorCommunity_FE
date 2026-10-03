@@ -2,6 +2,7 @@ import {
   ArrowRight,
   LockKey as LockKeyhole,
   ShieldCheck,
+  Books,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
@@ -14,6 +15,14 @@ const settingsFeatures = [
     icon: ShieldCheck,
     category: "Truy cập & bảo mật",
     details: ["Vai trò", "Định nghĩa quyền", "Ma trận phân quyền"],
+  },
+  {
+    title: "Chương trình & tổ hợp dạy",
+    description: "Thiết lập chương trình, phiên bản, nội dung dạy và các tổ hợp gia sư có thể chọn.",
+    href: "/admin/learning-programs",
+    icon: Books,
+    category: "Danh mục giảng dạy",
+    details: ["Chương trình", "Phiên bản", "Tổ hợp"],
   },
 ] as const;
 

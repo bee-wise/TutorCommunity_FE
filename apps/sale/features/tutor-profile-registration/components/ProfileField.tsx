@@ -6,15 +6,22 @@ export function ProfileField({
   hint,
   required = false,
   children,
+  className,
+  interactive = false,
 }: {
   label: ReactNode;
   error?: string;
   hint?: string;
   required?: boolean;
   children: ReactNode;
+  className?: string;
+  interactive?: boolean;
 }) {
+  const Tag = interactive ? "div" : "label";
   return (
-    <label className="grid gap-1.5 text-sm font-semibold text-foreground">
+    <Tag
+      className={`flex flex-col justify-start gap-1.5 text-sm font-semibold text-foreground ${className ?? ""}`}
+    >
       <span>
         {label}
         {required ? <span className="ml-1 text-destructive">*</span> : null}
@@ -22,7 +29,7 @@ export function ProfileField({
       {children}
       {error ? <span className="text-xs font-medium text-destructive">{error}</span> : null}
       {!error && hint ? <span className="text-xs font-normal leading-5 text-muted-foreground">{hint}</span> : null}
-    </label>
+    </Tag>
   );
 }
 

@@ -24,7 +24,7 @@ export const tutorProfileEditorDefaultValues: TutorProfileEditorValues = {
   university: mockTutorProfile.university,
   major: mockTutorProfile.major,
   studentYear: mockTutorProfile.studentYear,
-  subjects: toListItems(mockTutorProfile.subjects),
+  subjects: toListItems(mockTutorProfile.subjects || []),
   specializations: toListItems(mockTutorProfile.specializations),
   teachingModes: [{ value: normalizeTeachingMode(mockTutorProfile.teachingModes) }],
   area: mockTutorProfile.area,

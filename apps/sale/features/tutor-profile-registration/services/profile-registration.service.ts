@@ -120,7 +120,7 @@ export const tutorProfileRegistrationService = {
     const response = await apiClient.post<
       never,
       ApiResponse<TutorProfileMutationResult>
-    >("/tutors/profile/submit", profile);
+    >("/tutors/profile/submit", buildTutorProfileDraftPayload(profile));
     return response.data ?? {};
   },
 
