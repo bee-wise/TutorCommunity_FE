@@ -8,10 +8,15 @@ import {
   MoreVertical,
 } from "lucide-react";
 import Link from "next/link";
-import { MessageBubble } from "./MessageBubble";
+import { MessageBubble, SessionTimeDivider } from "./MessageBubble";
+import { MessageDetailsDialog } from "./MessageDetailsDialog";
+import { MessageContextMenu } from "./MessageContextMenu";
+import { ConsultantSupportBanner } from "./ConsultantSupportBanner";
 import { ConnectionInfoPanel } from "./ConnectionInfoPanel";
 import { useChatRoom } from "../hooks/useChatRoom";
-import { STAGE_LABELS, STAGE_COLORS } from "../constants/messages.utils";
+import { STAGE_LABELS, STAGE_COLORS, shouldShowSessionDivider } from "../constants/messages.utils";
+import type { ChatMessage } from "../types/messages.types";
+
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 
 interface ChatRoomPanelProps {
@@ -37,6 +42,14 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
 
   const [text, setText] = useState("");
   const [showInfo, setShowInfo] = useState(false);
+  const [selectedMessageForDetails, setSelectedMessageForDetails] = useState<ChatMessage | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [contextMenuState, setContextMenuState] = useState<{
+    message: ChatMessage;
+    position: { x: number; y: number };
+  } | null>(null);
+
+
   if (!room) return (
     <div className="flex h-full items-center justify-center rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground">
       {loading ? "Đang tải phòng chat..." : error ? getApiErrorMessage(error) : "Không tìm thấy phòng chat này."}
@@ -138,24 +151,61 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                 {loadingOlderMessages ? "Đang tải..." : "Xem tin nhắn cũ"}
               </button>
             )}
+            {!hasOlderMessages && (
+              <ConsultantSupportBanner
+                room={room}
+                currentUserRole={currentUserRole}
+              />
+            )}
             {loading && <p className="py-8 text-center text-sm text-muted-foreground">Đang tải tin nhắn...</p>}
             {!loading && messages.length === 0 && !error && <p className="py-8 text-center text-sm text-muted-foreground">Chưa có tin nhắn. Hãy bắt đầu cuộc trò chuyện.</p>}
             {error && <p role="alert" className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive">{getApiErrorMessage(error)}</p>}
             {messages.map((msg, idx) => {
               const prev = messages[idx - 1];
+              const next = messages[idx + 1];
+
+              const isNewSession =
+                !prev ||
+                prev.type === "SYSTEM" ||
+                shouldShowSessionDivider(msg.createdAt, prev.createdAt, 2);
+
               const isConsecutive =
+                !isNewSession &&
                 prev &&
                 prev.senderId === msg.senderId &&
                 prev.type !== "SYSTEM" &&
                 msg.type !== "SYSTEM";
+
+              const isNextNewSession =
+                next &&
+                shouldShowSessionDivider(next.createdAt, msg.createdAt, 2);
+
+              // Chỉ hiển thị thời gian ở bubble cuối cùng trong 1 lượt của 1 người
+              const isLastInTurn =
+                !next ||
+                next.type === "SYSTEM" ||
+                next.senderId !== msg.senderId ||
+                isNextNewSession;
+
               return (
-                <MessageBubble
-                  key={msg.id}
-                  message={msg}
-                  currentUserId={currentUserId}
-                  currentRole={currentUserRole}
-                  isConsecutive={!!isConsecutive}
-                />
+                <div key={msg.id} className="flex flex-col">
+                  {isNewSession && msg.type !== "SYSTEM" && (
+                    <SessionTimeDivider timestamp={msg.createdAt} />
+                  )}
+                  <MessageBubble
+                    message={msg}
+                    currentUserId={currentUserId}
+                    currentRole={currentUserRole}
+                    isConsecutive={!!isConsecutive}
+                    showTime={isLastInTurn}
+                    onContextMenu={(e, message) => {
+                      setContextMenuState({
+                        message,
+                        position: { x: e.clientX, y: e.clientY },
+                      });
+                    }}
+                  />
+                </div>
               );
             })}
             {sending && (
@@ -208,6 +258,25 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           <ConnectionInfoPanel room={room} />
         </div>
       )}
+
+      {/* ── Message Context Menu on Right-Click ─────────────── */}
+      <MessageContextMenu
+        message={contextMenuState?.message ?? null}
+        position={contextMenuState?.position ?? null}
+        onClose={() => setContextMenuState(null)}
+        onViewDetails={(msg) => {
+          setSelectedMessageForDetails(msg);
+          setShowDetailsModal(true);
+        }}
+      />
+
+      {/* ── Message Details Modal ───────────────────────────── */}
+      <MessageDetailsDialog
+        message={selectedMessageForDetails}
+        open={showDetailsModal}
+        onOpenChange={setShowDetailsModal}
+        currentUserId={currentUserId}
+      />
     </div>
   );
 }

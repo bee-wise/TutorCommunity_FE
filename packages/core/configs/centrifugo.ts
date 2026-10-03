@@ -2,12 +2,14 @@ import {
   Centrifuge,
   DisconnectedContext,
   ErrorContext,
+  UnauthorizedError,
 } from "centrifuge";
 import { centrifugoService } from "../services/centrifugo.service";
 import { useCentrifugoStore } from "../store/useCentrifugoStore";
+import { ApiError } from "../sys-libs/error-handler";
 
 export const getCentrifugoUrl = (webSocketUrl?: string | null): string => {
-  const configuredUrl = webSocketUrl?.trim() || process.env.NEXT_PUBLIC_CENTRIFUGO_WS_URL;
+  const configuredUrl = process.env.NEXT_PUBLIC_CENTRIFUGO_WS_URL?.trim() || webSocketUrl?.trim();
   if (configuredUrl) {
     let normalized = configuredUrl.trim();
     if (normalized.startsWith("http://")) {
@@ -41,10 +43,13 @@ export function getCentrifuge(token?: string, webSocketUrl?: string | null): Cen
           if (res.success && res.data?.token) {
             return res.data.token;
           }
-        } catch {
-          // Chưa đăng nhập hoặc không có quyền centrifugo_token.read
+          throw new Error("Máy chủ chưa cấp token kết nối realtime.");
+        } catch (error) {
+          if (error instanceof ApiError && (error.statusCode === 401 || error.statusCode === 403)) {
+            throw new UnauthorizedError("Không có quyền kết nối realtime.");
+          }
+          throw error;
         }
-        return "";
       },
       minReconnectDelay: 1000,
       maxReconnectDelay: 10000,
