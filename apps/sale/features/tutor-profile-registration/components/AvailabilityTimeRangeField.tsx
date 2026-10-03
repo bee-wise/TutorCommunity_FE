@@ -1,6 +1,6 @@
 "use client";
 
-import { profileInputClass } from "./ProfileField";
+import { ProfileSelect } from "./ProfileSelect";
 
 const TIME_OPTIONS = Array.from({ length: 36 }, (_, index) => {
   const totalMinutes = 6 * 60 + index * 30;
@@ -47,32 +47,30 @@ export function AvailabilityTimeRangeField({
   return (
     <div>
       <div className="grid grid-cols-2 items-start gap-2">
-        <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-          Bắt đầu
-          <select
+        <div className="grid gap-1 text-xs font-medium text-muted-foreground">
+          <span>Bắt đầu</span>
+          <ProfileSelect
             value={range.start}
-            onChange={(event) => changeStart(event.target.value)}
-            className={profileInputClass}
-            aria-label="Giờ bắt đầu"
-          >
-            {TIME_OPTIONS.slice(0, -1).map((time) => (
-              <option key={time} value={time}>{time}</option>
-            ))}
-          </select>
-        </label>
-        <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-          Kết thúc
-          <select
+            onChange={changeStart}
+            label="Giờ bắt đầu"
+            placeholder="Chọn giờ"
+            searchable
+            searchPlaceholder="Tìm giờ bắt đầu..."
+            options={TIME_OPTIONS.slice(0, -1).map((time) => ({ value: time, label: time }))}
+          />
+        </div>
+        <div className="grid gap-1 text-xs font-medium text-muted-foreground">
+          <span>Kết thúc</span>
+          <ProfileSelect
             value={range.end}
-            onChange={(event) => onChange(`${range.start}-${event.target.value}`)}
-            className={profileInputClass}
-            aria-label="Giờ kết thúc"
-          >
-            {TIME_OPTIONS.map((time) => (
-              <option key={time} value={time} disabled={toMinutes(time) <= toMinutes(range.start)}>{time}</option>
-            ))}
-          </select>
-        </label>
+            onChange={(end) => onChange(`${range.start}-${end}`)}
+            label="Giờ kết thúc"
+            placeholder="Chọn giờ"
+            searchable
+            searchPlaceholder="Tìm giờ kết thúc..."
+            options={TIME_OPTIONS.map((time) => ({ value: time, label: time, disabled: toMinutes(time) <= toMinutes(range.start) }))}
+          />
+        </div>
       </div>
       {error ? <p className="mt-1 text-xs font-medium text-destructive">{error}</p> : null}
     </div>

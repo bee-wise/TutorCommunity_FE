@@ -1,7 +1,6 @@
-import { use } from "react";
-import { TutorDetail } from "@/features/tutors/components/TutorDetail";
+import { ProfileReviewScreen } from "@/features/consultant-reviews";
 
-export default function TutorDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  return <TutorDetail tutorId={id} />;
+export default async function TutorDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <ProfileReviewScreen key={id} profileId={id} />;
 }

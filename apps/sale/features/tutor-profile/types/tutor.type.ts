@@ -31,6 +31,31 @@ export interface TutorReviewItem {
   quote: string;
 }
 
+export interface TutorTeachingOfferingProposal {
+  teachingItemName?: string;
+  contextName?: string;
+  contextType?: string;
+}
+
+export interface TutorTeachingOfferingItem {
+  id: string;
+  programId?: string;
+  programVersionId?: string;
+  programName?: string;
+  teachingItemId?: string | null;
+  teachingItemName?: string | null;
+  contextId?: string | null;
+  contextName?: string | null;
+  contextType?: string | null;
+  teachingMode?: string;
+  basePrice?: number;
+  status?: string;
+  mappingId?: string | null;
+  proposalId?: string | null;
+  rejectionReason?: string | null;
+  proposal?: TutorTeachingOfferingProposal | null;
+}
+
 export interface TutorProfileData {
   id: string;
   userId?: string | null;
@@ -49,7 +74,8 @@ export interface TutorProfileData {
   reviewCount: number; // số lượt đánh giá
   responseTime: string; // thời gian phản hồi học viên
   teachingHours: string; // số giờ đã dạy
-  subjects: string[]; // môn có thể dạy
+  subjects?: string[]; // môn có thể dạy (legacy/deprecated)
+  teachingOfferings?: TutorTeachingOfferingItem[]; // tổ hợp dạy học
   specializations: string[]; // chuyên môn, VD: dạy kèm 1:1, luyện thi chứng chỉ QT,...
   teachingModes: string[]; // trả về option: online, tại nhà, online và tại nhà
   area: string; // khu vực dạy
