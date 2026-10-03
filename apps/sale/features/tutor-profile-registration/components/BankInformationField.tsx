@@ -42,19 +42,19 @@ export function BankInformationField({
   };
 
   return (
-    <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+    <div className="space-y-4 rounded-2xl border border-border bg-muted/40 p-4">
       <div
         className={`grid items-start gap-4 ${showBankPicker ? "lg:grid-cols-[1.15fr_0.85fr]" : ""}`}
       >
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">
+          <label className="text-sm font-semibold text-foreground">
             {showBankPicker ? "Chọn ngân hàng" : "Ngân hàng nhận thanh toán"}
           </label>
           {showBankPicker ? (
             <>
               <div className="relative">
                 <MagnifyingGlass
-                  className="absolute left-3 top-3.5 h-4 w-4 text-slate-400"
+                  className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground"
                   aria-hidden="true"
                 />
                 <input
@@ -64,7 +64,7 @@ export function BankInformationField({
                   placeholder="Tìm tên, mã ngân hàng hoặc mã Napas..."
                 />
               </div>
-              <div className="max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1">
+              <div className="max-h-56 overflow-y-auto rounded-xl border border-border bg-card p-1">
                 {banks.map((bank) => (
                   <button
                     key={bank.code}
@@ -79,9 +79,9 @@ export function BankInformationField({
                       setSearch("");
                       setIsChangingBank(false);
                     }}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition ${information.bankCode === bank.code ? "bg-[#280f91]/10 text-[#280f91]" : "hover:bg-slate-50"}`}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition ${information.bankCode === bank.code ? "bg-primary/10 text-primary font-bold" : "hover:bg-muted text-foreground"}`}
                   >
-                    <span className="relative h-8 w-12 shrink-0 overflow-hidden rounded-md bg-white">
+                    <span className="relative h-8 w-12 shrink-0 overflow-hidden rounded-md bg-card">
                       <Image
                         src={bank.logoUrl}
                         alt={`Logo ${bank.name}`}
@@ -94,7 +94,7 @@ export function BankInformationField({
                       <strong className="block truncate text-sm">
                         {bank.name}
                       </strong>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-muted-foreground">
                         {bank.code}
                         {bank.napasCode ? ` · ${bank.napasCode}` : ""}
                       </span>
@@ -104,9 +104,9 @@ export function BankInformationField({
               </div>
             </>
           ) : (
-            <div className="flex min-h-20 items-center justify-between gap-3 rounded-xl border border-[#280f91]/15 bg-[#280f91]/5 p-3">
+            <div className="flex min-h-20 items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
               <div className="flex min-w-0 items-center gap-3">
-                <span className="relative h-12 w-20 shrink-0 rounded-lg bg-white">
+                <span className="relative h-12 w-20 shrink-0 rounded-lg bg-card">
                   <Image
                     src={information.bankLogoUrl}
                     alt={`Logo ${information.bankName}`}
@@ -116,10 +116,10 @@ export function BankInformationField({
                   />
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate font-bold text-slate-900">
+                  <p className="truncate font-bold text-foreground">
                     {information.bankName}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     {information.bankCode}
                     {information.napasCode
                       ? ` · Napas ${information.napasCode}`
@@ -130,7 +130,7 @@ export function BankInformationField({
               <button
                 type="button"
                 onClick={() => setIsChangingBank(true)}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-[#280f91] transition hover:bg-white"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-primary transition hover:bg-card"
               >
                 <PencilSimple className="h-4 w-4" /> Thay đổi
               </button>
@@ -148,7 +148,7 @@ export function BankInformationField({
           horizontal
         />
       ) : null}
-      <div className="flex gap-2 rounded-xl border border-[#ffc500]/50 bg-[#fff3cb] p-3 text-sm leading-6 text-[#714b0b]">
+      <div className="flex gap-2 rounded-xl border border-accent/50 bg-accent/20 p-3 text-sm leading-6 text-amber-800">
         <WarningCircle
           className="mt-0.5 h-5 w-5 shrink-0"
           weight="fill"
@@ -177,7 +177,7 @@ function BankAccountFields({
     <div
       className={`grid items-start gap-4 ${horizontal ? "sm:grid-cols-2" : ""}`}
     >
-      <label className="grid gap-1.5 text-sm font-semibold text-slate-700">
+      <label className="grid gap-1.5 text-sm font-semibold text-foreground">
         Số tài khoản
         <input
           value={information.accountNumber}
@@ -190,7 +190,7 @@ function BankAccountFields({
           placeholder="Nhập số tài khoản"
         />
       </label>
-      <label className="grid gap-1.5 text-sm font-semibold text-slate-700">
+      <label className="grid gap-1.5 text-sm font-semibold text-foreground">
         Tên chủ tài khoản
         <input
           value={information.accountHolder}

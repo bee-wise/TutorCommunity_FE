@@ -3,10 +3,8 @@ import {
   BadgeCheck,
   GraduationCap,
   MapPin,
-  Clock,
   BookOpen,
   Award,
-  Sparkles,
   Zap,
 } from "lucide-react";
 import type { TutorProfileData } from "../types/mockTutorProfile";
@@ -76,7 +74,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
 
             {/* Level Label below Avatar */}
             {tutor.studentYear ? (
-              <span className="inline-flex items-center rounded-full border border-[#280f91]/20 bg-[#280f91]/8 px-3 py-1 text-xs font-bold text-[#280f91] shadow-xs">
+              <span className="inline-flex items-center rounded-full border border-primary bg-card px-3 py-1 text-xs font-bold text-primary">
                 {getLevelLabel(tutor.studentYear)}
               </span>
             ) : null}
@@ -90,7 +88,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
                 <InfoPill tone="success">
                   <BadgeCheck
                     size={13}
-                    className="text-[#447353]"
+                    className="text-secondary"
                     aria-hidden="true"
                   />
                   Đã xác minh hồ sơ
@@ -104,7 +102,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
 
               {/* Teaching Modes Badge on Top Right */}
               {tutor.teachingModes && tutor.teachingModes.length > 0 ? (
-                <div className="inline-flex self-center sm:self-auto items-center gap-1.5 rounded-full border border-[#280f91]/25 bg-[#280f91]/8 px-3.5 py-2 text-xs font-bold text-[#280f91] shadow-xs">
+                <div className="inline-flex max-w-full self-center items-center rounded-full border border-primary bg-primary px-3.5 py-2 text-center text-xs font-bold text-primary-foreground sm:self-auto">
                   <span>Hình thức: {tutor.teachingModes.join(", ")}</span>
                 </div>
               ) : null}
@@ -180,7 +178,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
               Thời gian dạy
             </span>
             <p className="mt-1.5 text-xl font-black text-[#280f91] sm:text-2xl">
-              {tutor.teachingHours}
+              {tutor.teachingHours ? tutor.teachingHours : "0"}
             </p>
             <span className="mt-1 text-[11px] font-medium text-[#0c0c0b]/45">
               Giờ giảng dạy tích lũy
@@ -211,7 +209,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
             <div className="mt-1.5 flex items-center justify-center gap-1 sm:justify-start">
               <Zap size={16} className="text-[#447353]" aria-hidden="true" />
               <p className="text-xl font-black text-[#447353] sm:text-2xl">
-                {tutor.responseTime}
+                {tutor.responseTime ? tutor.responseTime : "-"}
               </p>
             </div>
             <span className="mt-1 text-[11px] font-medium text-[#0c0c0b]/45">
@@ -239,7 +237,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
                 {tutor.subjects.map((subject) => (
                   <span
                     key={subject}
-                    className="inline-flex items-center rounded-xl border border-[#280f91]/25 bg-[#280f91]/8 px-3.5 py-1.5 text-xs font-bold text-[#280f91] transition hover:bg-[#280f91]/15"
+                    className="inline-flex items-center rounded-xl border border-primary bg-card px-3.5 py-1.5 text-xs font-bold text-primary"
                   >
                     {subject}
                   </span>

@@ -61,14 +61,14 @@ function OverviewScreen() {
           {onboardingSteps.slice(1).map((step) => (
             <div
               key={step.id}
-              className="flex items-start gap-3 rounded-lg border border-[#cfe1fa] bg-white p-3"
+              className="flex items-start gap-3 rounded-lg border border-border bg-card p-3"
             >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#280f91]/10 text-xs font-bold text-[#280f91]">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                 {step.order}
               </span>
               <div>
-                <p className="text-sm font-bold text-[#0c0c0b]">{step.title}</p>
-                <p className="mt-0.5 text-xs text-[#5e6688]">{step.description}</p>
+                <p className="text-sm font-bold text-foreground">{step.title}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{step.description}</p>
               </div>
             </div>
           ))}
@@ -93,12 +93,12 @@ function RejectedScreen() {
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
       <StatusCard title="Hồ sơ cần cập nhật" tone="warning">
-        <p className="font-semibold text-[#0c0c0b]">
+        <p className="font-semibold text-foreground">
           Một số thông tin trong hồ sơ chưa đáp ứng yêu cầu. Vui lòng xem phản
           hồi bên dưới và gửi lại.
         </p>
-        <div className="mt-4 rounded-lg border border-[#ffc510]/30 bg-white p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-[#905b0f]">
+        <div className="mt-4 rounded-lg border border-accent/30 bg-card p-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-amber-800">
             Mục cần chỉnh sửa
           </p>
           <ul className="mt-2 grid gap-1.5">
@@ -106,8 +106,8 @@ function RejectedScreen() {
               "Ảnh minh chứng chưa rõ thông tin (thẻ sinh viên)",
               "Phần mô tả kinh nghiệm giảng dạy còn quá ngắn",
             ].map((item) => (
-              <li key={item} className="flex items-start gap-2 text-sm text-[#3f3b55]">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#905b0f]" />
+              <li key={item} className="flex items-start gap-2 text-sm text-foreground/80">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-800" />
                 {item}
               </li>
             ))}
@@ -119,18 +119,18 @@ function RejectedScreen() {
         <div className="mt-4 grid gap-3">
           <Button
             onClick={() => dispatchAction("edit-rejected-profile")}
-            className="rounded-full bg-[#280f91] text-white hover:bg-[#1f0b70]"
+            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Chỉnh sửa hồ sơ
           </Button>
           <Button
             variant="outline"
             onClick={() => dispatchAction("resubmit-profile")}
-            className="rounded-full border-[#280f91]/30 text-[#280f91]"
+            className="rounded-full border-primary/30 text-primary hover:bg-primary/5"
           >
             Gửi lại hồ sơ
           </Button>
-          <Button variant="outline" className="rounded-full border-[#cfe1fa] text-[#5e6688]">
+          <Button variant="outline" className="rounded-full border-border text-muted-foreground hover:bg-muted">
             Liên hệ BeeWise
           </Button>
         </div>
@@ -145,7 +145,7 @@ function ApprovedScreen() {
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
       <StatusCard title="Chúc mừng! Hồ sơ đã được phê duyệt" tone="success">
-        <p className="font-semibold text-[#0c0c0b]">
+        <p className="font-semibold text-foreground">
           Hồ sơ gia sư của bạn đã đạt yêu cầu xác thực của BeeWise.
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -157,14 +157,14 @@ function ApprovedScreen() {
       </StatusCard>
       <StatusCard title="Hoàn tất để nhận lớp">
         <ol className="grid gap-2">
-          <li className="flex items-start gap-2 text-sm text-[#3f3b55]">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#280f91]/10 text-[10px] font-bold text-[#280f91]">
+          <li className="flex items-start gap-2 text-sm text-foreground/80">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
               1
             </span>
             Bổ sung tài khoản ngân hàng nhận thanh toán.
           </li>
-          <li className="flex items-start gap-2 text-sm text-[#3f3b55]">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#280f91]/10 text-[10px] font-bold text-[#280f91]">
+          <li className="flex items-start gap-2 text-sm text-foreground/80">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
               2
             </span>
             Thiết lập lịch rảnh có thể nhận lớp.
@@ -173,12 +173,12 @@ function ApprovedScreen() {
         <div className="mt-4">
           <Button
             onClick={() => dispatchAction("open-post-approval-form")}
-            className="w-full rounded-full bg-[#280f91] text-white hover:bg-[#1f0b70]"
+            className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Bổ sung thông tin
           </Button>
         </div>
-        <p className="mt-3 text-xs text-[#5e6688]">
+        <p className="mt-3 text-xs text-muted-foreground">
           Tutor LMS sẽ được mở sau khi hoàn tất bước này.
         </p>
       </StatusCard>
@@ -190,7 +190,7 @@ function UnknownScenarioScreen() {
   return (
     <StatusCard title="Kịch bản không hợp lệ" tone="warning">
       <div className="flex gap-3">
-        <Warning className="h-5 w-5 shrink-0 text-[#905b0f]" aria-hidden="true" />
+        <Warning className="h-5 w-5 shrink-0 text-amber-800" aria-hidden="true" />
         <p>
           Trạng thái tài khoản chưa được xác định. LMS không được mở và Tutor
           chưa được xem là đã xác thực. Vui lòng liên hệ hỗ trợ nếu cần.
@@ -202,9 +202,9 @@ function UnknownScenarioScreen() {
 
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-white p-3">
-      <p className="text-xs font-semibold text-[#5e6688]">{label}</p>
-      <p className="mt-0.5 text-sm font-bold text-[#0c0c0b]">{value}</p>
+    <div className="rounded-lg bg-card p-3 border border-border">
+      <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+      <p className="mt-0.5 text-sm font-bold text-foreground">{value}</p>
     </div>
   );
 }

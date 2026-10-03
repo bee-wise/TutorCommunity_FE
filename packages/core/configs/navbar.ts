@@ -169,7 +169,7 @@ export function getNavbarConfig({
         : [],
       accountItems: [
         { label: "Hồ sơ của tôi", href: "/profile" },
-        { label: "Cài đặt tài khoản", href: "/account/settings" },
+        // { label: "Cài đặt tài khoản", href: "/account/settings" },
         { label: "Đăng xuất", href: "/", action: "logout" },
       ],
       showNotifications: true,
@@ -200,7 +200,7 @@ export function getNavbarConfig({
       accountItems: [
         { label: "Xem hồ sơ công khai", href: "/tutor/profile/public" },
         { label: "Chỉnh sửa hồ sơ", href: "/tutor/profile/edit" },
-        { label: "Cài đặt tài khoản", href: "/account/settings" },
+        // { label: "Cài đặt tài khoản", href: "/account/settings" },
         { label: "Hỗ trợ", href: "/support" },
         { label: "Đăng xuất", href: "/", action: "logout" },
       ],

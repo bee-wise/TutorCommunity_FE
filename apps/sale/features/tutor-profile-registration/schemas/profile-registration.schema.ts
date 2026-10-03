@@ -1,8 +1,21 @@
 import { z } from "zod";
+import { isEligibleBirthDate, MIN_TUTOR_AGE, parseBirthDate } from "../utils/birth-date";
 
 const requiredText = (label: string, minimum = 2) =>
   z.string().trim().min(minimum, `${label} cần ít nhất ${minimum} ký tự.`);
 const optionalUrl = z.string().trim().url("Đường dẫn tệp không hợp lệ.").or(z.literal(""));
+const dateOfBirthSchema = z.string().superRefine((value, context) => {
+  if (!value) {
+    context.addIssue({ code: "custom", message: "Vui lòng chọn ngày sinh." });
+    return;
+  }
+  const date = parseBirthDate(value);
+  if (!date) {
+    context.addIssue({ code: "custom", message: "Ngày sinh không hợp lệ." });
+  } else if (!isEligibleBirthDate(date)) {
+    context.addIssue({ code: "custom", message: `Gia sư cần từ đủ ${MIN_TUTOR_AGE} tuổi.` });
+  }
+});
 const timeRangeSchema = z
   .string()
   .regex(/^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/, "Khung giờ không hợp lệ.")
@@ -19,10 +32,12 @@ export const hourlyRateSchema = z.object({
 export const tutorProfileFormSchema = z
   .object({
     displayName: requiredText("Tên hiển thị"),
-    dateOfBirth: z.string().min(1, "Vui lòng chọn ngày sinh."),
-    gender: z.enum(["MALE", "FEMALE", "OTHER"], {
-      message: "Vui lòng chọn giới tính.",
-    }),
+    dateOfBirth: dateOfBirthSchema,
+    gender: z
+      .enum(["", "male", "female", "others"], {
+        message: "Vui lòng chọn giới tính.",
+      })
+      .refine((value): boolean => value !== "", "Vui lòng chọn giới tính."),
     avatarUrl: optionalUrl,
     headline: requiredText("Tiêu đề hồ sơ", 12).max(120, "Tiêu đề tối đa 120 ký tự."),
     universityId: z.string().uuid("Vui lòng chọn trường đại học."),
@@ -143,8 +158,12 @@ export const tutorProfileDraftResponseSchema = z
     gender: draftText,
     avatarUrl: draftText,
     headline: draftText,
-    universityId: draftText,
-    majorId: draftText,
+    universityId: z.unknown().optional(),
+    university_id: z.unknown().optional(),
+    university: z.unknown().optional(),
+    majorId: z.unknown().optional(),
+    major_id: z.unknown().optional(),
+    major: z.unknown().optional(),
     studentYear: draftText,
     studentCardUrl: draftText,
     hourlyRate: z.array(draftHourlyRateSchema).nullish(),
@@ -169,9 +188,12 @@ export const tutorProfileDraftResponseSchema = z
       .nullish(),
     achievements: z.array(draftAchievementSchema).nullish(),
     teachingHistory: z.array(draftTeachingHistorySchema).nullish(),
-    subjectIds: z.array(z.string()).nullish(),
-    gradeLevelIds: z.array(z.string()).nullish(),
-    specializationIds: z.array(z.string()).nullish(),
+    subjectIds: z.unknown().optional(),
+    subjects: z.unknown().optional(),
+    gradeLevelIds: z.unknown().optional(),
+    gradeLevels: z.unknown().optional(),
+    specializationIds: z.unknown().optional(),
+    specializations: z.unknown().optional(),
     teachingModes: z.array(z.string()).nullish(),
   })
   .passthrough();
@@ -183,7 +205,7 @@ export type TutorProfileDraftResponse = z.infer<
 export const tutorProfileDefaultValues: TutorProfileFormValues = {
   displayName: "",
   dateOfBirth: "",
-  gender: "OTHER",
+  gender: "",
   avatarUrl: "",
   headline: "",
   universityId: "",
@@ -213,11 +235,12 @@ export const tutorProfileDefaultValues: TutorProfileFormValues = {
   teachingModes: ["ONLINE"],
 };
 
-function text(value: string | null | undefined): string {
-  return value?.trim() ?? "";
+function text(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  return String(value).trim();
 }
 
-function date(value: string | null | undefined): string {
+function date(value: unknown): string {
   return text(value).slice(0, 10);
 }
 
@@ -226,10 +249,44 @@ function number(value: number | string | null | undefined): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function normalizeGender(value: unknown): TutorProfileFormValues["gender"] {
+  const normalized = text(value).toLowerCase();
+  if (normalized === "male" || normalized === "female" || normalized === "others") {
+    return normalized;
+  }
+  return normalized === "other" ? "others" : "";
+}
+
+function extractCatalogId(value: unknown): string {
+  if (!value) return "";
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number") return String(value);
+  if (typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    if (obj.id) return String(obj.id).trim();
+    if (obj._id) return String(obj._id).trim();
+    if (obj.value) return String(obj.value).trim();
+    if (obj.universityId) return String(obj.universityId).trim();
+    if (obj.majorId) return String(obj.majorId).trim();
+    if (obj.name && typeof obj.name === "string") return obj.name.trim();
+  }
+  return "";
+}
+
+function extractCatalogIds(value: unknown): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => extractCatalogId(item))
+      .filter((id): id is string => Boolean(id));
+  }
+  const single = extractCatalogId(value);
+  return single ? [single] : [];
+}
+
 export function mapDraftResponseToFormValues(
   draft: TutorProfileDraftResponse,
 ): TutorProfileFormValues {
-  const gender = draft.gender?.trim().toUpperCase();
   const teachingModes = (draft.teachingModes ?? []).filter(
     (mode): mode is "ONLINE" | "OFFLINE" =>
       mode === "ONLINE" || mode === "OFFLINE",
@@ -239,14 +296,17 @@ export function mapDraftResponseToFormValues(
   return {
     displayName: text(draft.displayName),
     dateOfBirth: date(draft.dateOfBirth),
-    gender:
-      gender === "MALE" || gender === "FEMALE" || gender === "OTHER"
-        ? gender
-        : "OTHER",
+    gender: normalizeGender(draft.gender),
     avatarUrl: text(draft.avatarUrl),
     headline: text(draft.headline),
-    universityId: text(draft.universityId),
-    majorId: text(draft.majorId),
+    universityId:
+      extractCatalogId(draft.universityId) ||
+      extractCatalogId(draft.university) ||
+      extractCatalogId(draft.university_id),
+    majorId:
+      extractCatalogId(draft.majorId) ||
+      extractCatalogId(draft.major) ||
+      extractCatalogId(draft.major_id),
     studentYear: text(draft.studentYear),
     studentCardUrl: text(draft.studentCardUrl),
     hourlyRate: rates
@@ -298,9 +358,24 @@ export function mapDraftResponseToFormValues(
       endDate: date(item.endDate),
       isCurrent: item.isCurrent ?? false,
     })),
-    subjectIds: draft.subjectIds ?? [],
-    gradeLevelIds: draft.gradeLevelIds ?? [],
-    specializationIds: draft.specializationIds ?? [],
+    subjectIds: [
+      ...new Set([
+        ...extractCatalogIds(draft.subjectIds),
+        ...extractCatalogIds(draft.subjects),
+      ]),
+    ],
+    gradeLevelIds: [
+      ...new Set([
+        ...extractCatalogIds(draft.gradeLevelIds),
+        ...extractCatalogIds(draft.gradeLevels),
+      ]),
+    ],
+    specializationIds: [
+      ...new Set([
+        ...extractCatalogIds(draft.specializationIds),
+        ...extractCatalogIds(draft.specializations),
+      ]),
+    ],
     teachingModes: teachingModes.length ? teachingModes : ["ONLINE"],
   };
 }

@@ -15,6 +15,12 @@ The production ingress must preserve the original `Host` header so the sale app 
 
 If the backend auth API is directly reachable outside the sale app, enforce the same public launch policy at the backend or ingress as well.
 
+## Chat realtime (Centrifugo)
+
+Set `NEXT_PUBLIC_CENTRIFUGO_WS_URL` in both `apps/sale` and `apps/lms` deployment environments to the **public** WebSocket endpoint, for example `wss://<public-host>/connection/websocket`. Restart or rebuild both apps after changing it. The frontend obtains a short-lived connection token from `GET /realtime/centrifugo/token`, then a room-specific token from `GET /realtime/centrifugo/subscription-token?chatRoomId=...`. The Centrifugo SDK refreshes both tokens when needed and subscribes to `chat:room:{chatRoomId}` while that room is open. It uses API polling when the URL is absent or the WebSocket cannot connect.
+
+The Centrifugo health response on the test API currently reports an internal container hostname; browsers cannot use that hostname. Expose the Centrifugo WebSocket endpoint through a public HTTPS ingress that forwards WebSocket `Upgrade` and `Connection` headers. The subscription token endpoint checks room membership and must remain restricted to authenticated users.
+
 ## Getting Started
 
 First, run the development server:

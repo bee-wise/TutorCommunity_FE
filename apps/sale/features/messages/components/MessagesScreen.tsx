@@ -1,41 +1,21 @@
 "use client";
 
-import Image from "next/image";
+import { ChatsCircleIcon } from "@phosphor-icons/react";
 import { ChatSidebar } from "./ChatSidebar";
 
 export function MessagesScreen() {
   return (
-    <div className="flex h-full gap-4 overflow-hidden p-4">
+    <div className="flex h-full min-h-0 gap-4 overflow-hidden p-3 sm:p-4">
       <ChatSidebar />
 
-      <div className="hidden flex-1 items-center justify-center rounded-2xl border border-dashed border-[#dce7f7] bg-white lg:flex">
-        <div className="text-center">
-          <div className="mx-auto mb-6 flex flex-col items-center justify-center gap-3">
-            <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-[#f0f3f9] overflow-hidden">
-              <Image
-                src="/brand/beewise-logo-nobackground.PNG"
-                alt="BeeWise Logo"
-                fill
-                sizes="80px"
-                className="object-contain p-2"
-              />
-            </div>
-            <span
-              className="text-xl tracking-tight text-[#280f91]"
-              style={{
-                fontFamily: "var(--font-nunito-family)",
-                fontWeight: 800,
-              }}
-            >
-              CỘNG ĐỒNG GIA SƯ BEEWISE
-            </span>
+      <div className="hidden min-w-0 flex-1 items-center justify-center rounded-2xl border border-border bg-card lg:flex">
+        <div className="max-w-sm px-8 text-center">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+            <ChatsCircleIcon size={30} weight="duotone" aria-hidden="true" />
           </div>
-          <h2 className="mb-2 text-lg font-extrabold text-[#0c0c0b]">
-            Chọn cuộc trò chuyện
-          </h2>
-          <p className="max-w-xs text-sm text-[#667085]">
-            Chọn một phòng chat từ danh sách bên trái để bắt đầu trao đổi với
-            học viên và consultant.
+          <h2 className="font-nunito text-xl font-black text-foreground">Chọn cuộc trò chuyện</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Xem lại trao đổi, lịch học thử và các bước xác nhận lớp ngay trong cuộc trò chuyện.
           </p>
         </div>
       </div>
