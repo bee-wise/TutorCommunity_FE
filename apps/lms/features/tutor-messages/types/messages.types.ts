@@ -8,7 +8,8 @@ export type ConnectionStage =
   | "DISCUSSING"
   | "TRIAL_SCHEDULED"
   | "AWAITING_DECISION"
-  | "CONVERTED_TO_CLASS";
+  | "CONVERTED_TO_CLASS"
+  | "UNKNOWN";
 export type ChatRoomStatus = "ACTIVE" | "CLOSED" | "CONVERTED_TO_CLASS";
 export type ChatRoomCategory = "CONNECTION" | "SUPPORT";
 export type ChatParticipantRole = "LEARNER" | "TUTOR" | "CONSULTANT";
@@ -190,6 +191,7 @@ export interface ChatRoom {
 
   createdAt: string;
   updatedAt: string;
+  hasLearningDetails?: boolean;
 }
 
 // ============================================================

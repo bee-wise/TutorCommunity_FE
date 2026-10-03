@@ -15,6 +15,7 @@ import { Button } from "@workspace/ui/components/ui/button";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { useTutorProfileRegistration } from "../hooks/useTutorProfileRegistration";
 import { getProfileStepIssues } from "../utils/profile-step-completion";
+import { AchievementsFields } from "./AchievementsFields";
 import {
   AvailabilityAndVerificationSection,
   BasicInformationSection,
@@ -28,7 +29,7 @@ import { ProfileStepStatusDialog } from "./ProfileStepStatusDialog";
 const steps = [
   { title: "Cá nhân", description: "Danh tính và học vấn" },
   { title: "Chuyên môn", description: "Môn dạy và học phí" },
-  { title: "Giới thiệu", description: "Phương pháp giảng dạy" },
+  { title: "Giới thiệu", description: "Phương pháp và thành tích" },
   { title: "Hoàn tất", description: "Khu vực và xác minh" },
 ] as const;
 
@@ -174,7 +175,12 @@ export function TutorProfileRegistrationScreen() {
             >
               {activeStep === 0 ? <BasicInformationSection /> : null}
               {activeStep === 1 ? <TeachingInformationSection /> : null}
-              {activeStep === 2 ? <IntroductionSection /> : null}
+              {activeStep === 2 ? (
+                <div className="space-y-6">
+                  <IntroductionSection />
+                  <AchievementsFields />
+                </div>
+              ) : null}
               {activeStep === 3 ? <AvailabilityAndVerificationSection /> : null}
               <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-5">
                 <Button

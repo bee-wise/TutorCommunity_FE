@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import {
   Controller,
   useFieldArray,
@@ -10,13 +9,15 @@ import {
 import { Plus, Trash } from "@phosphor-icons/react";
 import { Button } from "@workspace/ui/components/ui/button";
 import type { TutorProfileFormValues } from "../schemas/profile-registration.schema";
+import { STUDENT_YEAR_OPTIONS } from "../constants/student-year.constants";
 import { CatalogSelect } from "./CatalogSelect";
 import { AvailabilityTimeRangeField } from "./AvailabilityTimeRangeField";
 import { BankInformationField } from "./BankInformationField";
 import { BirthDatePicker } from "./BirthDatePicker";
-import { TeachingModeSelector } from "./TeachingModeSelector";
+import { TeachingOfferingsFields } from "./TeachingOfferingsFields";
 import { TeachingAreaFields } from "./TeachingAreaFields";
 import { FileUploadField } from "./FileUploadField";
+import { ProfileSelect } from "./ProfileSelect";
 import {
   ProfileField,
   profileInputClass,
@@ -86,30 +87,47 @@ export function BasicInformationSection() {
             </span>
           ) : null}
         </div>
-        <ProfileField label="Giới tính" required error={errors.gender?.message}>
-          <select {...register("gender")} className={profileInputClass}>
-            <option value="" disabled>
-              Chọn giới tính
-            </option>
-            <option value="male">Nam</option>
-            <option value="female">Nữ</option>
-            <option value="others">Khác</option>
-          </select>
+        <ProfileField label="Giới tính" required error={errors.gender?.message} interactive>
+          <Controller control={control} name="gender" render={({ field }) => (
+            <ProfileSelect
+              label="Giới tính"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              invalid={Boolean(errors.gender)}
+              placeholder="Chọn giới tính"
+              options={[
+                { value: "male", label: "Nam" },
+                { value: "female", label: "Nữ" },
+                { value: "others", label: "Khác" },
+              ]}
+            />
+          )} />
         </ProfileField>
         <ProfileField
           label="Năm học / tình trạng học tập"
           required
           error={errors.studentYear?.message}
+          interactive
         >
-          <input
-            {...register("studentYear")}
-            className={profileInputClass}
-            placeholder="Sinh viên năm 3 / Đã tốt nghiệp"
-          />
+          <Controller control={control} name="studentYear" render={({ field }) => (
+            <ProfileSelect
+              label="Năm học / tình trạng học tập"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              invalid={Boolean(errors.studentYear)}
+              placeholder="Chọn năm học / tình trạng học tập"
+              options={STUDENT_YEAR_OPTIONS}
+            />
+          )} />
         </ProfileField>
       </div>
       <ProfileField
         label="Giấy tờ tùy thân"
+        required
+        interactive
+        error={errors.identityDocumentsUrl?.message}
         hint="Ảnh giấy tờ chỉ dùng để xác minh danh tính."
       >
         <Controller
@@ -126,6 +144,9 @@ export function BasicInformationSection() {
       </ProfileField>
       <ProfileField
         label="Ảnh đại diện"
+        required
+        interactive
+        error={errors.avatarUrl?.message}
         hint="Ảnh vuông, rõ khuôn mặt và có ánh sáng tốt."
       >
         <Controller
@@ -145,6 +166,7 @@ export function BasicInformationSection() {
           label="Trường đại học"
           required
           error={errors.universityId?.message}
+          interactive
         >
           <Controller
             control={control}
@@ -163,6 +185,7 @@ export function BasicInformationSection() {
           label="Chuyên ngành"
           required
           error={errors.majorId?.message}
+          interactive
         >
           <Controller
             control={control}
@@ -180,6 +203,9 @@ export function BasicInformationSection() {
       </div>
       <ProfileField
         label="Thẻ sinh viên / bằng tốt nghiệp"
+        required
+        interactive
+        error={errors.studentCardUrl?.message}
         hint="Tệp chỉ dùng cho mục đích xác minh, không hiển thị công khai."
       >
         <Controller
@@ -202,85 +228,16 @@ export function TeachingInformationSection() {
   const {
     register,
     control,
-    setValue,
-    trigger,
     formState: { errors },
   } = useFormContext<TutorProfileFormValues>();
-  const subjectIds = useWatch({ control, name: "subjectIds" });
-  const hourlyRate = useWatch({ control, name: "hourlyRate" });
-  useEffect(() => {
-    const current = new Map(
-      hourlyRate.map((item) => [item.subjectId, item.price]),
-    );
-    const next = subjectIds.map((subjectId) => ({
-      subjectId,
-      price: current.get(subjectId) ?? 150000,
-    }));
-    if (JSON.stringify(next) !== JSON.stringify(hourlyRate)) {
-      setValue("hourlyRate", next, { shouldDirty: true, shouldValidate: true });
-    }
-  }, [hourlyRate, setValue, subjectIds]);
 
   return (
     <div className="space-y-5">
       <SectionHeading
         title="Chuyên môn và học phí"
-        description="Chọn đúng môn, cấp học và một mức phí cho từng môn."
+        description="Tạo từng tổ hợp chương trình, môn dạy và cấp học với học phí riêng."
       />
-      <div className="grid items-start gap-4 lg:grid-cols-2">
-        <ProfileField
-          label={
-            <span className="inline-flex flex-wrap items-center gap-2">
-              Môn giảng dạy{" "}
-              <span className="text-xs font-normal text-muted-foreground">
-                Có thể chọn nhiều
-              </span>
-            </span>
-          }
-          required
-          error={errors.subjectIds?.message}
-        >
-          <Controller
-            control={control}
-            name="subjectIds"
-            render={({ field }) => (
-              <CatalogSelect
-                resource="subjects"
-                multiple
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Tìm môn dạy..."
-              />
-            )}
-          />
-        </ProfileField>
-        <ProfileField
-          label={
-            <span className="inline-flex flex-wrap items-center gap-2">
-              Cấp học{" "}
-              <span className="text-xs font-normal text-muted-foreground">
-                Có thể chọn nhiều
-              </span>
-            </span>
-          }
-          required
-          error={errors.gradeLevelIds?.message}
-        >
-          <Controller
-            control={control}
-            name="gradeLevelIds"
-            render={({ field }) => (
-              <CatalogSelect
-                resource="grade_levels"
-                multiple
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Tìm cấp học..."
-              />
-            )}
-          />
-        </ProfileField>
-      </div>
+      <TeachingOfferingsFields />
       <ProfileField
         label={
           <span className="inline-flex flex-wrap items-center gap-2">
@@ -290,6 +247,7 @@ export function TeachingInformationSection() {
             </span>
           </span>
         }
+        interactive
       >
         <Controller
           control={control}
@@ -305,71 +263,19 @@ export function TeachingInformationSection() {
           )}
         />
       </ProfileField>
-      {subjectIds.length ? (
-        <div className="grid items-start gap-3 rounded-xl border border-accent/30 bg-accent/20 p-4 sm:grid-cols-2">
-          {subjectIds.map((subjectId, index) => (
-            <ProfileField
-              key={subjectId}
-              label={`Học phí môn ${index + 1} (VNĐ/giờ)`}
-              error={errors.hourlyRate?.[index]?.price?.message}
-            >
-              <input
-                {...register(`hourlyRate.${index}.price`, {
-                  valueAsNumber: true,
-                })}
-                type="number"
-                min={1}
-                step={10000}
-                className={profileInputClass}
-              />
-            </ProfileField>
-          ))}
-        </div>
-      ) : null}
-      <div className="grid items-start gap-4 sm:grid-cols-2">
-        <ProfileField
-          label="Số năm kinh nghiệm"
-          required
-          error={errors.experienceYears?.message}
-        >
-          <input
-            {...register("experienceYears", { valueAsNumber: true })}
-            type="number"
-            min={0}
-            max={99}
-            className={profileInputClass}
-          />
-        </ProfileField>
-        <ProfileField
-          label={
-            <span className="inline-flex flex-wrap items-center gap-2">
-              Hình thức dạy
-              <span className="text-xs font-normal text-muted-foreground">
-                Có thể chọn nhiều
-              </span>
-            </span>
-          }
-          required
-          error={errors.teachingModes?.message}
-        >
-          <Controller
-            control={control}
-            name="teachingModes"
-            render={({ field }) => (
-              <TeachingModeSelector
-                value={field.value}
-                onChange={(next) => {
-                  setValue("teachingModes", next, {
-                    shouldDirty: true,
-                    shouldTouch: true,
-                  });
-                  void trigger(["teachingModes", "offlineCity"]);
-                }}
-              />
-            )}
-          />
-        </ProfileField>
-      </div>
+      <ProfileField
+        label="Số năm kinh nghiệm"
+        required
+        error={errors.experienceYears?.message}
+      >
+        <input
+          {...register("experienceYears", { valueAsNumber: true })}
+          type="number"
+          min={0}
+          max={99}
+          className={profileInputClass}
+        />
+      </ProfileField>
     </div>
   );
 }
@@ -422,7 +328,12 @@ export function IntroductionSection() {
       </ProfileField>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-foreground">Phương pháp giảng dạy</h3>
+          <div>
+            <h3 className="font-bold text-foreground">Phương pháp giảng dạy</h3>
+            <p className="text-xs text-muted-foreground">
+              Không bắt buộc. Bạn có thể thêm các phương pháp giảng dạy đặc trưng của mình.
+            </p>
+          </div>
           <Button
             type="button"
             variant="outline"
@@ -432,33 +343,52 @@ export function IntroductionSection() {
             <Plus /> Thêm
           </Button>
         </div>
-        {methods.fields.map((item, index) => (
-          <div
-            key={item.id}
-            className="grid items-start gap-3 rounded-xl border border-border p-4 sm:grid-cols-[1fr_1.6fr_auto]"
-          >
-            <input
-              {...register(`teachingMethods.${index}.title`)}
-              className={profileInputClass}
-              placeholder="Ví dụ: Học qua tình huống"
-            />
-            <input
-              {...register(`teachingMethods.${index}.description`)}
-              className={profileInputClass}
-              placeholder="Mô tả cách áp dụng..."
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              disabled={methods.fields.length === 1}
-              onClick={() => methods.remove(index)}
-              aria-label="Xóa phương pháp"
-            >
-              <Trash />
-            </Button>
+        {methods.fields.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+            Chưa có phương pháp giảng dạy nào. Nhấn &ldquo;Thêm&rdquo; nếu bạn muốn bổ sung.
           </div>
-        ))}
+        ) : (
+          methods.fields.map((item, index) => (
+            <div
+              key={item.id}
+              className="grid items-start gap-3 rounded-xl border border-border p-4 sm:grid-cols-[1fr_1.6fr_auto]"
+            >
+              <div>
+                <input
+                  {...register(`teachingMethods.${index}.title`)}
+                  className={profileInputClass}
+                  placeholder="Ví dụ: Học qua tình huống"
+                />
+                {errors.teachingMethods?.[index]?.title?.message ? (
+                  <p className="mt-1 text-xs text-destructive">
+                    {errors.teachingMethods[index]?.title?.message}
+                  </p>
+                ) : null}
+              </div>
+              <div>
+                <input
+                  {...register(`teachingMethods.${index}.description`)}
+                  className={profileInputClass}
+                  placeholder="Mô tả cách áp dụng..."
+                />
+                {errors.teachingMethods?.[index]?.description?.message ? (
+                  <p className="mt-1 text-xs text-destructive">
+                    {errors.teachingMethods[index]?.description?.message}
+                  </p>
+                ) : null}
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => methods.remove(index)}
+                aria-label="Xóa phương pháp"
+              >
+                <Trash />
+              </Button>
+            </div>
+          ))
+        )}
         {errors.teachingMethods?.message ? (
           <p className="text-xs text-destructive">
             {errors.teachingMethods.message}
@@ -493,7 +423,6 @@ export function AvailabilityAndVerificationSection() {
     formState: { errors },
   } = useFormContext<TutorProfileFormValues>();
   const availability = useFieldArray({ control, name: "availability" });
-  const achievements = useFieldArray({ control, name: "achievements" });
   const teachingHistory = useFieldArray({ control, name: "teachingHistory" });
   const teachingModes = useWatch({ control, name: "teachingModes" });
   const requiresTeachingArea = teachingModes.includes("OFFLINE");
@@ -528,18 +457,24 @@ export function AvailabilityAndVerificationSection() {
             key={item.id}
             className="grid gap-3 sm:grid-cols-[minmax(160px,0.7fr)_minmax(280px,1.3fr)_auto] sm:items-end"
           >
-            <select
-              {...register(`availability.${index}.day`)}
-              className={profileInputClass}
-            >
-              <option value="MONDAY">Thứ Hai</option>
-              <option value="TUESDAY">Thứ Ba</option>
-              <option value="WEDNESDAY">Thứ Tư</option>
-              <option value="THURSDAY">Thứ Năm</option>
-              <option value="FRIDAY">Thứ Sáu</option>
-              <option value="SATURDAY">Thứ Bảy</option>
-              <option value="SUNDAY">Chủ Nhật</option>
-            </select>
+            <Controller control={control} name={`availability.${index}.day`} render={({ field }) => (
+              <ProfileSelect
+                label={`Thứ trong tuần, khung giờ ${index + 1}`}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                placeholder="Chọn thứ"
+                options={[
+                  { value: "MONDAY", label: "Thứ Hai" },
+                  { value: "TUESDAY", label: "Thứ Ba" },
+                  { value: "WEDNESDAY", label: "Thứ Tư" },
+                  { value: "THURSDAY", label: "Thứ Năm" },
+                  { value: "FRIDAY", label: "Thứ Sáu" },
+                  { value: "SATURDAY", label: "Thứ Bảy" },
+                  { value: "SUNDAY", label: "Chủ Nhật" },
+                ]}
+              />
+            )} />
             <Controller
               control={control}
               name={`availability.${index}.time`}
@@ -559,105 +494,6 @@ export function AvailabilityAndVerificationSection() {
               aria-label="Xóa khung giờ"
             >
               <Trash />
-            </Button>
-          </div>
-        ))}
-      </div>
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-bold text-foreground">
-              Thành tích và chứng chỉ
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Không bắt buộc, nhưng giúp hồ sơ đáng tin cậy hơn.
-            </p>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              achievements.append({
-                id: crypto.randomUUID(),
-                type: "CERTIFICATE",
-                title: "",
-                issuer: "",
-                score: "",
-                startDate: "",
-                endDate: "",
-                imageUrl: "",
-                description: "",
-              })
-            }
-          >
-            <Plus /> Thêm
-          </Button>
-        </div>
-        {achievements.fields.map((item, index) => (
-          <div
-            key={item.id}
-            className="space-y-3 rounded-xl border border-border p-4"
-          >
-            <div className="grid items-start gap-3 sm:grid-cols-2">
-              <input
-                {...register(`achievements.${index}.title`)}
-                className={profileInputClass}
-                placeholder="Tên chứng chỉ / thành tích"
-              />
-              <input
-                {...register(`achievements.${index}.issuer`)}
-                className={profileInputClass}
-                placeholder="Đơn vị cấp"
-              />
-              <input
-                {...register(`achievements.${index}.score`)}
-                className={profileInputClass}
-                placeholder="Điểm / xếp loại"
-              />
-              <select
-                {...register(`achievements.${index}.type`)}
-                className={profileInputClass}
-              >
-                <option value="CERTIFICATE">Chứng chỉ</option>
-                <option value="AWARD">Giải thưởng</option>
-                <option value="ACADEMIC">Học thuật</option>
-              </select>
-              <input
-                {...register(`achievements.${index}.startDate`)}
-                type="date"
-                className={profileInputClass}
-              />
-              <input
-                {...register(`achievements.${index}.endDate`)}
-                type="date"
-                className={profileInputClass}
-              />
-            </div>
-            <textarea
-              {...register(`achievements.${index}.description`)}
-              className={profileTextareaClass}
-              placeholder="Mô tả ngắn về thành tích..."
-            />
-            <Controller
-              control={control}
-              name={`achievements.${index}.imageUrl`}
-              render={({ field }) => (
-                <FileUploadField
-                  value={field.value}
-                  folder="certificates"
-                  onChange={field.onChange}
-                />
-              )}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => achievements.remove(index)}
-              className="text-destructive"
-            >
-              <Trash /> Xóa thành tích
             </Button>
           </div>
         ))}

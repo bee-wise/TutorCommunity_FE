@@ -18,10 +18,8 @@ const FIELD_STEPS: Record<string, ProfileStepIndex> = {
   studentYear: 0,
   studentCardUrl: 0,
   identityDocumentsUrl: 0,
-  hourlyRate: 1,
+  teachingOfferings: 1,
   experienceYears: 1,
-  subjectIds: 1,
-  gradeLevelIds: 1,
   specializationIds: 1,
   teachingModes: 1,
   headline: 2,
@@ -29,6 +27,7 @@ const FIELD_STEPS: Record<string, ProfileStepIndex> = {
   shortIntro: 2,
   videoUrl: 2,
   teachingMethods: 2,
+  achievements: 2,
   area: 3,
   offlineCity: 3,
   offlineDistrict: 3,
@@ -37,7 +36,6 @@ const FIELD_STEPS: Record<string, ProfileStepIndex> = {
   travelRadiusKm: 3,
   bankInformation: 3,
   availability: 3,
-  achievements: 3,
   teachingHistory: 3,
 };
 
@@ -51,10 +49,8 @@ const FIELD_LABELS: Record<string, string> = {
   studentYear: "Năm học / tình trạng học tập",
   studentCardUrl: "Thẻ sinh viên / bằng tốt nghiệp",
   identityDocumentsUrl: "Giấy tờ tùy thân",
-  hourlyRate: "Học phí theo môn",
+  teachingOfferings: "Tổ hợp giảng dạy",
   experienceYears: "Số năm kinh nghiệm",
-  subjectIds: "Môn giảng dạy",
-  gradeLevelIds: "Cấp học",
   specializationIds: "Chuyên môn nổi bật",
   teachingModes: "Hình thức dạy",
   headline: "Tiêu đề hồ sơ",
@@ -80,7 +76,19 @@ function indexedLabel(path: PropertyKey[], fallback: string): string {
   const field = path[2];
 
   if (index === null) return fallback;
-  if (collection === "hourlyRate") return `Học phí môn ${index}`;
+  if (collection === "teachingOfferings") {
+    const labels: Record<string, string> = {
+      programId: "Chương trình",
+      programVersionId: "Phiên bản chương trình",
+      teachingItemId: "Môn giảng dạy",
+      proposedTeachingItemName: "Môn đề xuất",
+      contextSelection: "Cấp học",
+      proposedContextName: "Cấp học đề xuất",
+      teachingMode: "Hình thức dạy",
+      basePrice: "Học phí",
+    };
+    return `${labels[String(field)] ?? "Tổ hợp"} ${index}`;
+  }
   if (collection === "teachingMethods") {
     return field === "description"
       ? `Mô tả phương pháp ${index}`

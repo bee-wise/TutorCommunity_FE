@@ -35,7 +35,7 @@ export function MobileNav({
   const pathname = usePathname();
   const openDrawer = useNotificationDrawerStore((state) => state.openDrawer);
   const drawerUnreadCount = useNotificationDrawerStore((state) => state.unreadCount);
-  const actualUnreadCount = Math.max(0, drawerUnreadCount || unreadNotificationCount);
+  const actualUnreadCount = Math.max(0, drawerUnreadCount ?? unreadNotificationCount);
 
   useEffect(() => {
     if (!open) return;

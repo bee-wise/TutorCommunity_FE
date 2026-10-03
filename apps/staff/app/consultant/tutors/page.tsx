@@ -1,5 +1,5 @@
-import TutorList from "@/features/tutors/components/TutorList";
+import { ConsultantReviewsScreen } from "@/features/consultant-reviews";
 
 export default function TutorsPage() {
-  return <TutorList />;
+  return <ConsultantReviewsScreen />;
 }
