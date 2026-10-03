@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { QueryClient } from "@tanstack/react-query";
 
-const tutorIdentitySchema = z.object({ profileId: z.string(), userId: z.uuid() });
+const tutorIdentitySchema = z.object({ profileId: z.string(), userId: z.guid() });
 
 function extractItems(value: unknown): unknown[] {
   if (Array.isArray(value)) return value;

@@ -50,9 +50,10 @@ export function CentrifugoBootstrap() {
         const credentials = response.success ? response.data : undefined;
         if (!credentials?.token) {
           setConnectionError("Không thể lấy token kết nối realtime.");
+          retryTimer = setTimeout(() => void start(), 10_000);
           return;
         }
-        if (credentials.userId && credentials.userId !== user.id) {
+        if (credentials.userId && credentials.userId.toLowerCase() !== user.id.toLowerCase()) {
           setConnectionError("Token realtime không khớp với tài khoản hiện tại.");
           return;
         }

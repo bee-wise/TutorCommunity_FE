@@ -1,30 +1,30 @@
 import { z } from "zod";
 
 export const createConnectRequestSchema = z.object({
-  tutorId: z.uuid(),
+  tutorId: z.guid(),
 });
 
 export const connectRequestEligibilitySchema = z.object({
   canCreateConnection: z.boolean(),
   blockingReason: z.string().nullable().optional(),
   requiresConsultantSupport: z.boolean().optional(),
-  activeConnectRequestId: z.uuid().nullable().optional(),
-  activeChatRoomId: z.uuid().nullable().optional(),
-  activeTutorId: z.uuid().nullable().optional(),
+  activeConnectRequestId: z.guid().nullable().optional(),
+  activeChatRoomId: z.guid().nullable().optional(),
+  activeTutorId: z.guid().nullable().optional(),
   connectionStatus: z.string().nullable().optional(),
   connectionStage: z.string().nullable().optional(),
 });
 
 export const createdConnectRequestSchema = z.object({
-  connectRequestId: z.uuid().optional(),
-  chatRoomId: z.uuid().optional(),
+  connectRequestId: z.guid().optional(),
+  chatRoomId: z.guid().optional(),
 });
 
 export const outboundConnectRequestPageSchema = z.object({
   items: z.array(z.object({
-    id: z.uuid(),
-    tutorId: z.uuid(),
-    chatRoomId: z.uuid().nullable().optional(),
+    id: z.guid(),
+    tutorId: z.guid(),
+    chatRoomId: z.guid().nullable().optional(),
     status: z.string().nullable().optional(),
     createdAt: z.string().optional(),
   })).nullable(),

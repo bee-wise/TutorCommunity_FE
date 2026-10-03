@@ -28,8 +28,9 @@ export const connectRequestsApi = {
   },
 
   async create(input: CreateConnectRequestInput): Promise<CreatedConnectRequest | null> {
-    const body = createConnectRequestSchema.parse(input);
-    const raw: unknown = await apiClient.post("/connect-requests", body);
+    const body = createConnectRequestSchema.safeParse(input);
+    if (!body.success) throw new Error("Mã tài khoản gia sư không hợp lệ. Vui lòng tải lại hồ sơ và thử lại.");
+    const raw: unknown = await apiClient.post("/connect-requests", body.data);
     // Swagger hiện mô tả 201 không có body. Nếu BE trả body, dùng chatRoomId trực tiếp.
     if (raw == null || raw === "") return null;
     const envelope = raw && typeof raw === "object" && "data" in raw

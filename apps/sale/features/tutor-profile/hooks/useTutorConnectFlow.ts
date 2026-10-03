@@ -198,7 +198,10 @@ export function useTutorConnectFlow(tutorUserId: string | undefined) {
     retryStatus,
     retryRoom: () => tutorUserId ? resolveRoom(tutorUserId, connectRequestId) : undefined,
     retrySubscription: () => roomId ? openChat(roomId) : undefined,
-    openExistingChat: (id: string) => openChat(id),
+    openExistingChat: (id: string) => {
+      setRoomId(id);
+      navigateToRoom(id);
+    },
     continueWithoutRealtime: () => {
       if (!roomId) return;
       navigateToRoom(roomId);

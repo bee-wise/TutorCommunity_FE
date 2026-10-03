@@ -178,7 +178,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
               Thời gian dạy
             </span>
             <p className="mt-1.5 text-xl font-black text-[#280f91] sm:text-2xl">
-              {tutor.teachingHours}
+              {tutor.teachingHours ? tutor.teachingHours : "0"}
             </p>
             <span className="mt-1 text-[11px] font-medium text-[#0c0c0b]/45">
               Giờ giảng dạy tích lũy
@@ -209,7 +209,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
             <div className="mt-1.5 flex items-center justify-center gap-1 sm:justify-start">
               <Zap size={16} className="text-[#447353]" aria-hidden="true" />
               <p className="text-xl font-black text-[#447353] sm:text-2xl">
-                {tutor.responseTime}
+                {tutor.responseTime ? tutor.responseTime : "-"}
               </p>
             </div>
             <span className="mt-1 text-[11px] font-medium text-[#0c0c0b]/45">

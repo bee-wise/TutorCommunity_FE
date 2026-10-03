@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { SubscriptionState } from "centrifuge";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { useCentrifugoSubscription } from "@workspace/core/hooks/useCentrifugo";
@@ -22,6 +23,21 @@ export function useChatRoom(roomId: string) {
     queryFn: () => chatRoomsService.get(roomId),
     enabled: authenticated && !!user && !!roomId,
   });
+  const realtime = useCentrifugoSubscription(`chat:room:${roomId}`, {
+    enabled: authenticated && !!roomQuery.data,
+    chatRoomId: roomId,
+    onPublication: () => {
+      void queryClient.invalidateQueries({ queryKey: chatRoomKeys.messages(roomId) });
+      void queryClient.invalidateQueries({ queryKey: chatRoomKeys.room(roomId) });
+      void queryClient.invalidateQueries({ queryKey: chatRoomKeys.list });
+    },
+  });
+  const isRealtimeSubscribed = realtime.state === SubscriptionState.Subscribed;
+  useEffect(() => {
+    if (!isRealtimeSubscribed) return;
+    void queryClient.invalidateQueries({ queryKey: chatRoomKeys.messages(roomId) });
+    void queryClient.invalidateQueries({ queryKey: chatRoomKeys.list });
+  }, [isRealtimeSubscribed, queryClient, roomId]);
   const messageQuery = useInfiniteQuery({
     queryKey: [...chatRoomKeys.messages(roomId), currentUserId],
     queryFn: ({ pageParam }) => chatRoomsService.messages(roomId, pageParam),
@@ -32,6 +48,7 @@ export function useChatRoom(roomId: string) {
     },
     enabled: authenticated && !!user && !!roomQuery.data,
     staleTime: 10_000,
+    refetchInterval: isRealtimeSubscribed ? false : 5_000,
   });
   const room = roomQuery.data && user
     ? mapChatRoom(roomQuery.data, currentUserId, currentUserRole, user.fullName || user.displayName || "Bạn")
@@ -50,16 +67,6 @@ export function useChatRoom(roomId: string) {
       ]);
     },
     onError: () => toast.error("Không gửi được tin nhắn. Vui lòng thử lại."),
-  });
-
-  useCentrifugoSubscription(`chat:room:${roomId}`, {
-    enabled: authenticated && !!roomQuery.data,
-    chatRoomId: roomId,
-    onPublication: () => {
-      void queryClient.invalidateQueries({ queryKey: chatRoomKeys.messages(roomId) });
-      void queryClient.invalidateQueries({ queryKey: chatRoomKeys.room(roomId) });
-      void queryClient.invalidateQueries({ queryKey: chatRoomKeys.list });
-    },
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -86,6 +93,8 @@ export function useChatRoom(roomId: string) {
     refetch: () => Promise.all([roomQuery.refetch(), messageQuery.refetch()]),
     sending: sendMutation.isPending,
     isReadOnly: room?.status !== "ACTIVE",
+    isRealtimeSubscribed,
+    realtimeError: realtime.error,
     currentUserId,
     currentUserRole,
     sendMessage,

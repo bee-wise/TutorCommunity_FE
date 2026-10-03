@@ -1,5 +1,33 @@
 export function formatMessageTime(iso: string): string {
   const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export function formatFullDateTime(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  const timeStr = date.toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const dateStr = date.toLocaleDateString("vi-VN", {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  return `${timeStr} - ${dateStr}`;
+}
+
+export function formatSessionTime(iso: string): string {
+
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
   const now = new Date();
   const isToday = date.toDateString() === now.toDateString();
   const yesterday = new Date(now);
@@ -10,14 +38,45 @@ export function formatMessageTime(iso: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
-  if (isToday) return hhmm;
-  if (isYesterday) return `Hôm qua ${hhmm}`;
+
+  if (isToday) return `${hhmm} Hôm nay`;
+  if (isYesterday) return `${hhmm} Hôm qua`;
+  const isSameYear = date.getFullYear() === now.getFullYear();
+  const dayMonth = date.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+  if (isSameYear) return `${hhmm} ${dayMonth}`;
+  return `${hhmm} ${dayMonth}/${date.getFullYear()}`;
+}
+
+export function isSameMinute(aIso?: string | null, bIso?: string | null): boolean {
+  if (!aIso || !bIso) return false;
+  const dateA = new Date(aIso);
+  const dateB = new Date(bIso);
+  if (Number.isNaN(dateA.getTime()) || Number.isNaN(dateB.getTime())) return false;
   return (
-    date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" }) +
-    " " +
-    hhmm
+    dateA.getFullYear() === dateB.getFullYear() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getDate() === dateB.getDate() &&
+    dateA.getHours() === dateB.getHours() &&
+    dateA.getMinutes() === dateB.getMinutes()
   );
 }
+
+export function shouldShowSessionDivider(
+  currentCreatedAt: string,
+  prevCreatedAt?: string | null,
+  thresholdHours: number = 2
+): boolean {
+  if (!prevCreatedAt) return true;
+  const curr = new Date(currentCreatedAt).getTime();
+  const prev = new Date(prevCreatedAt).getTime();
+  if (Number.isNaN(curr) || Number.isNaN(prev)) return false;
+  return Math.abs(curr - prev) >= thresholdHours * 60 * 60 * 1000;
+}
+
+
 
 export function formatRelativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();

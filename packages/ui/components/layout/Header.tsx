@@ -127,8 +127,16 @@ export function Header({
       }
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setAccountOpen(false);
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, [accountOpen]);
 
   const isActiveLink = (href: string) => {
@@ -337,7 +345,10 @@ export function Header({
                       onClick={() => setAccountOpen((prev) => !prev)}
                       aria-label="Mở menu tài khoản"
                       aria-expanded={accountOpen}
-                      className="flex h-9 items-center gap-2 rounded-full py-0.5 pl-1 pr-2.5 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      className={cn(
+                        "flex h-9 items-center gap-2 rounded-full py-0.5 pl-1 pr-2.5 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                        accountOpen && "bg-white/15",
+                      )}
                     >
                       <span className="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-white/30 text-xs font-bold text-primary shadow-xs">
                         {user?.avatarUrl ? (
@@ -351,7 +362,7 @@ export function Header({
                           getInitials(displayName)
                         )}
                       </span>
-                      <span className="hidden max-w-28 truncate text-sm font-bold text-white lg:inline">
+                      <span className="hidden max-w-28 truncate text-sm font-extrabold text-white lg:inline">
                         {displayName}
                       </span>
                       <ChevronDown
@@ -364,34 +375,49 @@ export function Header({
                     </button>
 
                     {accountOpen && (
-                      <div
-                        className="absolute right-0 top-11 z-80 flex w-56 flex-col gap-1 rounded-2xl border border-[#eadca8] p-2.5 shadow-2xl shadow-primary/10 backdrop-blur-md"
-                        style={{ backgroundColor: "#fffdf7", color: "#280f91" }}
-                      >
-                        {navbarConfig.accountItems.map((item) =>
-                          item.action === "logout" ? (
-                            <button
-                              key={item.label}
-                              type="button"
-                              onClick={() => {
-                                setAccountOpen(false);
-                                handleLogout();
-                              }}
-                              className="rounded-xl px-3 py-2 text-left text-sm font-bold text-[#b42318] transition-colors hover:bg-[#fee4e2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b42318]"
-                            >
-                              {item.label}
-                            </button>
-                          ) : (
-                            <Link
-                              key={`${item.label}-${item.href}`}
-                              href={item.href}
-                              onClick={() => setAccountOpen(false)}
-                              className="rounded-xl px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-[#fff3cb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                            >
-                              {item.label}
-                            </Link>
-                          ),
-                        )}
+                      <div className="absolute right-0 top-11 z-80 w-72 rounded-2xl border border-border bg-popover p-2 shadow-[0_12px_30px_rgba(12,30,60,0.14)]">
+                        <div className="border-b border-border px-3 pb-3 pt-2">
+                          <p className="font-sans text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                            Tài khoản
+                          </p>
+                          <p className="mt-1 truncate text-sm font-extrabold text-primary" title={displayName}>
+                            {displayName}
+                          </p>
+                          {user?.email && (
+                            <p className="mt-0.5 truncate font-sans text-xs text-muted-foreground" title={user.email}>
+                              {user.email}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-0.5 pt-1.5">
+                          {navbarConfig.accountItems.map((item) =>
+                            item.action === "logout" ? (
+                              <button
+                                key={item.label}
+                                type="button"
+                                onClick={() => {
+                                  setAccountOpen(false);
+                                  handleLogout();
+                                }}
+                                className="mt-1 border-t border-border px-3 pb-2 pt-3 text-left text-sm font-bold text-destructive transition-colors hover:rounded-lg hover:bg-destructive/10 focus-visible:rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
+                              >
+                                {item.label}
+                              </button>
+                            ) : (
+                              <Link
+                                key={`${item.label}-${item.href}`}
+                                href={item.href}
+                                onClick={() => setAccountOpen(false)}
+                                className={cn(
+                                  "rounded-lg px-3 py-2.5 text-sm font-bold text-popover-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                                  isActiveLink(item.href) && "bg-muted text-primary",
+                                )}
+                              >
+                                {item.label}
+                              </Link>
+                            ),
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>

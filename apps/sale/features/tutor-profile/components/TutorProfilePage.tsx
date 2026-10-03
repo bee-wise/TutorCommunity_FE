@@ -29,8 +29,8 @@ export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?
   const { data, isLoading, isError } = useTutorDetailQuery(id);
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
   const isSaved = isFavorite(id);
-  const tutorUserId = data?.data?.userId || resolveTutorUserIdFromCache(queryClient, id) ||
-    (z.uuid().safeParse(tutorUserIdFromLink).success ? tutorUserIdFromLink : undefined);
+  const tutorUserId = [resolveTutorUserIdFromCache(queryClient, id), tutorUserIdFromLink, data?.data?.userId]
+    .find((candidate): candidate is string => z.guid().safeParse(candidate).success);
   const connectFlow = useTutorConnectFlow(tutorUserId ?? undefined);
 
   const handleConnect = () => {
