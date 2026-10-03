@@ -8,11 +8,16 @@ export const metadata: Metadata = {
     "Hồ sơ gia sư BeeWise với phong cách giảng dạy, học vấn, minh chứng đã duyệt và phản hồi thân thiện với phụ huynh.",
 };
 
-export default function TutorProfileRoutePage() {
+export default async function TutorProfileRoutePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tutorUserId?: string | string[] }>;
+}) {
+  const { tutorUserId } = await searchParams;
   return (
     <div className="flex min-h-screen flex-col">
       <main id="main-content" className="flex-1">
-        <TutorProfilePage />
+        <TutorProfilePage tutorUserIdFromLink={typeof tutorUserId === "string" ? tutorUserId : undefined} />
       </main>
       <Footer />
     </div>

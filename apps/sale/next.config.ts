@@ -45,11 +45,27 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.gstatic.com",
+      },
+      {
+        protocol: "https",
         hostname: "img.mservice.com.vn",
       },
       {
         protocol: "https",
         hostname: "img.mservice.io",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.dmtexam.space",
+      },
+      {
+        protocol: "https",
+        hostname: "*.dmtexam.space",
       },
     ],
   },

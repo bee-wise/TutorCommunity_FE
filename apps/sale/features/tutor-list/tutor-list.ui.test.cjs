@@ -10,7 +10,7 @@ const controller = read("components/TutorListController.tsx");
 const results = read("components/TutorListResults.tsx");
 
 test("Tutor Card keeps the public profile route contract", () => {
-  assert.match(card, /href=\{`\/tutors\/\$\{tutor\.id\}`\}/);
+  assert.match(card, /tutorProfileHref\s*=\s*`\/tutors\/\$\{tutor\.profileId\}/);
 });
 
 test("Tutor Card does not render private tutor information", () => {
@@ -26,6 +26,6 @@ test("Tutor Card uses a large image and an inline best-match badge", () => {
 test("Tutor Search UI keeps search local and exposes loading and empty states", () => {
   assert.doesNotMatch(controller, /axios|apiClient|fetch\(/);
   assert.match(results, /TutorCardSkeleton/);
-  assert.match(results, /Chưa tìm thấy gia sư phù hợp|Không tìm thấy gia sư phù hợp/);
+  assert.match(results, /Không tìm thấy gia sư/);
   assert.match(results, /Xóa bộ lọc/);
 });

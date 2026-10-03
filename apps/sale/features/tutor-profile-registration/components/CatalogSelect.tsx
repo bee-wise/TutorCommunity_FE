@@ -1,13 +1,17 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, MagnifyingGlass, PencilSimple, Plus } from "@phosphor-icons/react";
-import { Button } from "@workspace/ui/components/ui/button";
+import { CaretDown, Check, MagnifyingGlass, Plus } from "@phosphor-icons/react";
+import { Popover } from "radix-ui";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import { tutorProfileRegistrationService } from "../services/profile-registration.service";
 import type { CatalogResource } from "../types/profile-registration.types";
-import { profileInputClass } from "./ProfileField";
+import {
+  profileSelectContentClass,
+  profileSelectOptionClass,
+  profileSelectTriggerClass,
+} from "./ProfileSelect";
 
 export function CatalogSelect({
   resource,
@@ -22,127 +26,238 @@ export function CatalogSelect({
   multiple?: boolean;
   placeholder: string;
 }) {
+  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const deferredSearch = useDeferredValue(search.trim());
   const queryClient = useQueryClient();
   const queryKey = ["catalog", resource, deferredSearch] as const;
   const catalogQuery = useQuery({
     queryKey,
-    queryFn: () => tutorProfileRegistrationService.listCatalog(resource, deferredSearch),
+    queryFn: () =>
+      tutorProfileRegistrationService.listCatalog(resource, deferredSearch),
     staleTime: 5 * 60 * 1000,
   });
-  const proposalMutation = useMutation({
-    mutationFn: () => tutorProfileRegistrationService.proposeCatalog(resource, search),
-    onSuccess: (item) => {
-      queryClient.setQueryData(queryKey, [...(catalogQuery.data ?? []), item]);
-      onChange(multiple ? [...(Array.isArray(value) ? value : []), item.id] : item.id);
-      if (!multiple) {
-        setIsEditing(false);
-        setSearch("");
-      }
-    },
-  });
-
   const selected = Array.isArray(value) ? value : value ? [value] : [];
-  const items = catalogQuery.data ?? [];
   const selectedId = !multiple ? selected[0] : undefined;
   const selectedItemQuery = useQuery({
     queryKey: ["catalog", resource, "item", selectedId],
-    queryFn: () => tutorProfileRegistrationService.getCatalogItem(resource, selectedId ?? ""),
+    queryFn: () =>
+      tutorProfileRegistrationService.getCatalogItem(
+        resource,
+        selectedId ?? "",
+      ),
     enabled: Boolean(selectedId) && !multiple,
     staleTime: 5 * 60 * 1000,
   });
+  const items = catalogQuery.data ?? [];
   const selectedItem =
     items.find((item) => item.id === selectedId) ?? selectedItemQuery.data;
-  const showPicker = multiple || !selectedId || isEditing;
-  const hasExactMatch = items.some((item) => item.name.toLocaleLowerCase("vi") === search.trim().toLocaleLowerCase("vi"));
-
-  const toggle = (id: string) => {
-    if (!multiple) {
-      onChange(id);
-      setIsEditing(false);
+  const hasExactMatch = items.some(
+    (item) =>
+      item.name.toLocaleLowerCase("vi") ===
+      search.trim().toLocaleLowerCase("vi"),
+  );
+  const proposalMutation = useMutation({
+    mutationFn: (name: string) =>
+      tutorProfileRegistrationService.proposeCatalog(resource, name),
+    onSuccess: (item, name) => {
+      queryClient.setQueryData(
+        ["catalog", resource, name],
+        (current: typeof items | undefined) => [...(current ?? []), item],
+      );
+      onChange(multiple ? [...selected, item.id] : item.id);
       setSearch("");
+      if (!multiple) setOpen(false);
+    },
+  });
+
+  const choose = (id: string) => {
+    if (multiple) {
+      onChange(
+        selected.includes(id)
+          ? selected.filter((item) => item !== id)
+          : [...selected, id],
+      );
       return;
     }
-    onChange(selected.includes(id) ? selected.filter((item) => item !== id) : [...selected, id]);
+    onChange(id);
+    setOpen(false);
+    setSearch("");
+  };
+
+  const display = multiple
+    ? selected.length
+      ? `Đã chọn ${selected.length} chuyên môn`
+      : placeholder
+    : (selectedItem?.name ??
+      (selectedId
+        ? selectedItemQuery.isPending
+          ? "Đang tải lựa chọn..."
+          : "Đã chọn"
+        : placeholder));
+
+  const focusOption = (index: number) => {
+    optionRefs.current[index]?.focus();
   };
 
   return (
-    <div className="h-fit self-start rounded-xl border border-slate-200 bg-white p-2">
-      {!showPicker ? (
-        <div className="flex min-h-11 items-center justify-between gap-3 rounded-lg bg-[#280f91]/5 px-3 py-2">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-[#280f91]">
-              {selectedItem?.name ?? (selectedItemQuery.isLoading ? "Đang tải lựa chọn..." : "Đã chọn")}
-            </p>
-            {selectedItem && !selectedItem.isApproved ? <p className="text-xs text-[#905b0f]">Đang chờ BeeWise duyệt</p> : null}
-          </div>
-          <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditing(true)} className="shrink-0 text-[#280f91]">
-            <PencilSimple /> Thay đổi
-          </Button>
-        </div>
-      ) : (
-        <>
-      <div className="relative">
-        <MagnifyingGlass className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" aria-hidden="true" />
-        <input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder={placeholder}
-          className={`${profileInputClass} pl-9`}
-        />
-      </div>
-      <div className="mt-2 max-h-44 overflow-y-auto rounded-lg bg-slate-50 p-1">
-        {catalogQuery.isLoading ? (
-          <div className="space-y-2 p-2" aria-label="Đang tải danh mục">
-            <div className="h-8 animate-pulse rounded-lg bg-slate-200" />
-            <div className="h-8 animate-pulse rounded-lg bg-slate-200" />
-          </div>
-        ) : catalogQuery.isError ? (
-          <p className="p-3 text-xs text-red-600">Không tải được danh mục. Vui lòng thử lại.</p>
-        ) : items.length ? (
-          items.map((item) => {
-            const isSelected = selected.includes(item.id);
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => toggle(item.id)}
-                aria-pressed={multiple ? isSelected : undefined}
-                className={`flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition ${multiple ? `gap-2.5 ${isSelected ? "font-semibold text-[#280f91]" : "text-slate-700"} hover:bg-white` : isSelected ? "bg-[#280f91] font-semibold text-white" : "text-slate-700 hover:bg-white"}`}
-              >
-                {multiple ? (
-                  <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${isSelected ? "border-[#280f91] bg-[#280f91] text-white" : "border-slate-300 bg-white"}`} aria-hidden="true">
-                    {isSelected ? <Check className="h-3 w-3" weight="bold" /> : null}
-                  </span>
-                ) : null}
-                <span className="min-w-0 flex-1">{item.name}</span>
-                {!item.isApproved ? <span className="ml-auto text-[10px] opacity-75">Chờ duyệt</span> : null}
-              </button>
-            );
-          })
-        ) : (
-          <p className="p-3 text-xs text-slate-500">Không tìm thấy kết quả phù hợp.</p>
-        )}
-      </div>
-      {search.trim().length >= 2 && !hasExactMatch ? (
-        <Button
+    <Popover.Root
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) setSearch("");
+      }}
+    >
+      <Popover.Trigger asChild>
+        <button
           type="button"
-          variant="ghost"
-          size="sm"
-          disabled={proposalMutation.isPending}
-          onClick={() => proposalMutation.mutate()}
-          className="mt-1 w-full justify-start text-[#280f91]"
+          aria-label={placeholder}
+          className={profileSelectTriggerClass}
         >
-          <Plus /> {proposalMutation.isPending ? "Đang đề xuất..." : `Đề xuất “${search.trim()}”`}
-        </Button>
+          <span
+            className={`min-w-0 truncate ${selected.length ? "" : "text-muted-foreground"}`}
+          >
+            {display}
+          </span>
+          <CaretDown
+            size={16}
+            aria-hidden="true"
+            className={`shrink-0 text-primary transition-transform ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+      </Popover.Trigger>
+      {selectedItem && !selectedItem.isApproved && !multiple ? (
+        <p className="mt-1 text-xs font-medium text-amber-800">
+          Đang chờ BeeWise duyệt
+        </p>
       ) : null}
-      {proposalMutation.isError ? (
-        <p className="px-2 pt-1 text-xs text-red-600">{getApiErrorMessage(proposalMutation.error)}</p>
-      ) : null}
-        </>
-      )}
-    </div>
+      <Popover.Portal>
+        <Popover.Content
+          align="start"
+          sideOffset={6}
+          collisionPadding={12}
+          className={profileSelectContentClass}
+          onOpenAutoFocus={(event) => {
+            event.preventDefault();
+            searchRef.current?.focus();
+          }}
+        >
+          <div className="relative mb-1.5">
+            <MagnifyingGlass
+              size={16}
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <input
+              ref={searchRef}
+              type="search"
+              aria-label={placeholder}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowDown" && items.length) {
+                  event.preventDefault();
+                  focusOption(0);
+                }
+              }}
+              placeholder={placeholder}
+              className="h-10 w-full rounded-xl border border-border bg-muted/50 pl-9 pr-3 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
+            />
+          </div>
+          <div
+            role="listbox"
+            aria-label={placeholder}
+            aria-multiselectable={multiple || undefined}
+            className="max-h-56 overflow-y-auto overscroll-contain"
+          >
+            {catalogQuery.isLoading ? (
+              <div className="space-y-2 p-2" aria-label="Đang tải danh mục">
+                <div className="h-9 animate-pulse rounded-xl bg-muted" />
+                <div className="h-9 animate-pulse rounded-xl bg-muted" />
+              </div>
+            ) : catalogQuery.isError ? (
+              <p className="p-3 text-sm text-destructive">
+                Không tải được danh mục. Vui lòng thử lại.
+              </p>
+            ) : items.length ? (
+              items.map((item, index) => {
+                const isSelected = selected.includes(item.id);
+                return (
+                  <button
+                    key={item.id}
+                    ref={(node) => {
+                      optionRefs.current[index] = node;
+                    }}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => choose(item.id)}
+                    onKeyDown={(event) => {
+                      if (
+                        event.key === "ArrowDown" &&
+                        index < items.length - 1
+                      ) {
+                        event.preventDefault();
+                        focusOption(index + 1);
+                      } else if (event.key === "ArrowUp") {
+                        event.preventDefault();
+                        if (index === 0) searchRef.current?.focus();
+                        else focusOption(index - 1);
+                      } else if (event.key === "Home") {
+                        event.preventDefault();
+                        focusOption(0);
+                      } else if (event.key === "End") {
+                        event.preventDefault();
+                        focusOption(items.length - 1);
+                      }
+                    }}
+                    className={`${profileSelectOptionClass} ${isSelected ? "bg-primary/10 font-semibold text-primary" : "text-foreground"}`}
+                  >
+                    <span className="min-w-0 flex-1">{item.name}</span>
+                    {!item.isApproved ? (
+                      <span className="text-[10px] text-amber-800">
+                        Chờ duyệt
+                      </span>
+                    ) : null}
+                    {isSelected ? (
+                      <Check
+                        size={16}
+                        weight="bold"
+                        aria-hidden="true"
+                        className="shrink-0 text-primary"
+                      />
+                    ) : null}
+                  </button>
+                );
+              })
+            ) : (
+              <p className="p-3 text-sm text-muted-foreground">
+                Không tìm thấy kết quả phù hợp.
+              </p>
+            )}
+          </div>
+          {search.trim().length >= 2 && !hasExactMatch ? (
+            <button
+              type="button"
+              disabled={proposalMutation.isPending}
+              onClick={() => proposalMutation.mutate(search.trim())}
+              className={`${profileSelectOptionClass} mt-1 border-t border-border font-semibold text-primary disabled:opacity-50`}
+            >
+              <Plus size={16} aria-hidden="true" />
+              {proposalMutation.isPending
+                ? "Đang đề xuất..."
+                : `Đề xuất “${search.trim()}”`}
+            </button>
+          ) : null}
+          {proposalMutation.isError ? (
+            <p className="px-2 pt-1 text-xs text-destructive">
+              {getApiErrorMessage(proposalMutation.error)}
+            </p>
+          ) : null}
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }

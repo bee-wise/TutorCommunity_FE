@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { MessageCircle, ChevronRight } from "lucide-react";
 import { useMessages } from "../hooks/useMessages";
+import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import type { ChatRoom } from "../types/messages.types";
 import { STAGE_LABELS, STAGE_COLORS, formatRelativeTime } from "../constants/messages.utils";
 
@@ -42,10 +43,10 @@ export function ChatRow({ room }: { room: ChatRoom }) {
           )}
         </div>
         <p className="text-xs text-[#716c83]">
-          {room.subject} {room.gradeLevel} · {room.teachingMode}
+          {room.subject || `Kết nối #${room.connectRequestId.slice(0, 8)}`}
         </p>
         <p className="mt-1 truncate text-sm text-[#0c0c0b]">
-          {room.lastMessage ?? "Chưa có tin nhắn"}
+          {room.lastMessage ?? "Mở cuộc trò chuyện"}
         </p>
         <div className="mt-1.5">
           <StageBadge stage={room.connectionStage} />
@@ -60,10 +61,8 @@ export function ChatRow({ room }: { room: ChatRoom }) {
 }
 
 export function ChatSummary() {
-  const { rooms } = useMessages();
-  const unread = rooms.reduce((sum, r) => sum + r.unreadCount, 0);
+  const { rooms, loading, error } = useMessages();
   const active = rooms.filter((r) => r.status === "ACTIVE").length;
-  const waiting = rooms.filter((r) => r.unreadCount > 0).length;
 
   return (
     <section className={card}>
@@ -73,13 +72,11 @@ export function ChatSummary() {
           Xem tất cả
         </Link>
       </div>
-      <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mb-5 grid grid-cols-2 gap-3">
         {(
           [
             ["Cuộc trò chuyện", rooms.length],
             ["Đang hoạt động", active],
-            ["Chưa đọc", unread],
-            ["Chờ phản hồi", waiting],
           ] as const
         ).map(([label, value]) => (
           <div key={label} className="rounded-xl bg-[#f4f1ff] p-3">
@@ -88,7 +85,11 @@ export function ChatSummary() {
           </div>
         ))}
       </div>
-      {rooms.length === 0 ? (
+      {loading ? (
+        <p className="py-8 text-center text-sm text-[#716c83]">Đang tải cuộc trò chuyện...</p>
+      ) : error ? (
+        <p role="alert" className="py-8 text-center text-sm text-destructive">{getApiErrorMessage(error)}</p>
+      ) : rooms.length === 0 ? (
         <div className="flex flex-col items-center rounded-xl border border-dashed border-[#cbd6ea] p-8 text-center">
           <span className="mb-3 text-[#280f91]">
             <MessageCircle />

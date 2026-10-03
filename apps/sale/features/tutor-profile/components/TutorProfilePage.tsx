@@ -1,10 +1,13 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { TutorAchievements } from "./TutorAchievements";
 import { TutorBioSection } from "./TutorBioSection";
 import { TutorConnectCard } from "./TutorConnectCard";
+import { TutorConnectDialog } from "./TutorConnectDialog";
 import { TutorFeedback } from "./TutorFeedback";
 import { TutorHero } from "./TutorHero";
 import { TutorIntroVideo } from "./TutorIntroVideo";
@@ -12,20 +15,30 @@ import { TutorMobileCTA } from "./TutorMobileCTA";
 import { TutorTeachingHistory } from "./TutorTeachingHistory";
 import { TutorTeachingMethods } from "./TutorTeachingMethods";
 import { useTutorDetailQuery } from "../hooks/useTutorDetailQuery";
+import { useTutorConnectFlow } from "../hooks/useTutorConnectFlow";
+import { useTutorViewTracker } from "../hooks/useTutorViewTracker";
+import { resolveTutorUserIdFromCache } from "../utils/resolveTutorUserId";
 import { EmptyState } from "@workspace/ui/components/ui/empty-state";
 import LoadingGradient from "@workspace/ui/components/LoadingGradient";
 import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
 
-export function TutorProfilePage() {
+export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?: string }) {
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const id = params.id as string;
   const { data, isLoading, isError } = useTutorDetailQuery(id);
+  const tutorProfileId = data?.data?.id;
+  useTutorViewTracker(tutorProfileId);
+
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
   const isSaved = isFavorite(id);
+  const tutorUserId = [resolveTutorUserIdFromCache(queryClient, id), tutorUserIdFromLink, data?.data?.userId]
+    .find((candidate): candidate is string => z.guid().safeParse(candidate).success);
+  const connectFlow = useTutorConnectFlow(tutorUserId ?? undefined);
 
   const handleConnect = () => {
-    // TODO: kết nối với luồng gửi yêu cầu kết nối.
+    connectFlow.setDialogOpen(true);
   };
 
   const handleBack = () => {
@@ -119,17 +132,27 @@ export function TutorProfilePage() {
 
         <TutorHero tutor={tutorProfile} />
 
+        {/* Connect card — shown inline on mobile right after hero, sticky sidebar on desktop */}
+        <div className="lg:hidden">
+          <TutorConnectCard
+            tutor={tutorProfile}
+            isSaved={isSaved}
+            onConnect={handleConnect}
+            onSave={handleSave}
+          />
+        </div>
+
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:items-start">
           <div className="space-y-5">
             <TutorBioSection tutor={tutorProfile} />
+            <TutorAchievements tutor={tutorProfile} />
             <TutorTeachingMethods tutor={tutorProfile} />
             <TutorTeachingHistory tutor={tutorProfile} />
-            <TutorAchievements tutor={tutorProfile} />
             <TutorIntroVideo videoUrl={tutorProfile.videoUrl} />
             <TutorFeedback tutor={tutorProfile} />
           </div>
 
-          <div className="lg:sticky lg:top-6">
+          <div className="hidden lg:block lg:sticky lg:top-6">
             <TutorConnectCard
               tutor={tutorProfile}
               isSaved={isSaved}
@@ -140,9 +163,16 @@ export function TutorProfilePage() {
         </div>
       </div>
 
+
       <TutorMobileCTA
         onConnect={handleConnect}
         rate={tutorProfile.hourlyRate}
+      />
+      <TutorConnectDialog
+        profileId={id}
+        tutorName={tutorProfile.displayName}
+        tutorUserId={tutorUserId ?? undefined}
+        flow={connectFlow}
       />
       <div className="pb-24 lg:pb-0" />
     </div>

@@ -2,16 +2,16 @@ import { create } from "zustand";
 
 interface NotificationDrawerState {
   isOpen: boolean;
-  unreadCount: number;
+  unreadCount: number | null;
   openDrawer: () => void;
   closeDrawer: () => void;
   toggleDrawer: () => void;
-  setUnreadCount: (count: number) => void;
+  setUnreadCount: (count: number | null) => void;
 }
 
 export const useNotificationDrawerStore = create<NotificationDrawerState>((set) => ({
   isOpen: false,
-  unreadCount: 0,
+  unreadCount: null,
   openDrawer: () => set({ isOpen: true }),
   closeDrawer: () => set({ isOpen: false }),
   toggleDrawer: () => set((state) => ({ isOpen: !state.isOpen })),

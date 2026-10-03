@@ -32,7 +32,7 @@ Example reads:
 - _"Reading this as: B2B SaaS landing for technical buyers, with a Linear-style minimalist language, leaning toward Tailwind utilities + Geist + restrained motion."_
 - _"Reading this as: solo designer portfolio for hiring managers, with an editorial / kinetic-type language, leaning toward native CSS + scroll-driven animation + custom typography."_
 - _"Reading this as: redesign of a public-sector service site, with a trust-first language, leaning toward GOV.UK Frontend or USWDS."_
-- _"Reading this as: **BeeWise** - Vietnamese tutor-learner marketplace for learners, tutors, staff, and admin; 59% Flat UI + 50% scoped Glassmorphism, mobile-first, Montserrat ExtraBold headlines + Google Sans body, deep-indigo primary (#280F91) + forest-green secondary (#447353) + amber accent (#FFC500), VND currency, Vietnamese UX conventions."_
+- _"Reading this as: **BeeWise** - Vietnamese tutor-learner marketplace for learners, tutors, staff, and admin; crisp, flat-first surfaces, mobile-first, Nunito headlines + Google Sans body, solid deep-indigo primary (#280F91), forest-green secondary (#447353), amber accent (#FFC500), VND currency, Vietnamese UX conventions."_
 
 ### 0.C If the brief is ambiguous, ask one question, do not guess
 
@@ -189,7 +189,7 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
   - **Override:** Inter is acceptable when the user explicitly asks for a neutral / standard / Linear-style feel, or when the brief is a public-sector / accessibility-first site.
 - **Pairings to know:** `Geist` + `Geist Mono`, `Satoshi` + `JetBrains Mono`, `Cabinet Grotesk` + `Inter Tight`, `GT America` + `IBM Plex Mono`.
 
-> **BeeWise override:** Use **Montserrat ExtraBold** for all headings and **Montserrat SemiBold** for subheadings. Use **Google Sans** (or `Inter` as fallback if Google Sans is unavailable via next/font) for body text. Hero headline is 60px. Do NOT use Geist or Satoshi for BeeWise screens - Montserrat is the locked brand typeface.
+> **BeeWise override:** Match `apps/sale/app/layout.tsx`, `packages/core/configs/fonts.ts`, and `packages/ui/globals.css`: use local **Nunito** (`font-nunito`, weight 800-900) for headings and local **Google Sans** (`font-sans`) for body and controls. Scale the hero headline to its content and viewport; 60px is not a fixed token. Do not introduce Montserrat, Geist, Satoshi, or Inter as a new BeeWise brand typeface.
 
 - **SERIF DISCIPLINE (VERY DISCOURAGED AS DEFAULT):**
   - Serif is **very discouraged as the default font for any project.** "It feels creative / premium / editorial" is NOT a reason to reach for serif. The agent's default mental model that "creative brief = serif" is the single most-tested AI tell in production rounds.
@@ -205,28 +205,33 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 
 ### 4.2 Color Calibration
 
-- Max 1 accent color. Saturation < 80% by default.
+- Max 1 accent color. Saturation < 80% by default for projects without a locked brand palette; **do not desaturate BeeWise's defined tokens**.
 - **THE LILA RULE:** The "AI Purple / Blue glow" aesthetic is discouraged as a default. No automatic purple button glows, no random neon gradients. Use neutral bases (Zinc / Slate / Stone) with high-contrast singular accents (Emerald, Electric Blue, Deep Rose, Burnt Orange, etc.).
 - **Override:** if the brand or brief explicitly asks for purple / violet / lila, embrace it. But execute with intent: consistent palette, harmonised neutrals, restrained gradients. Not generic AI gradient slop.
 - **One palette per project.** Do not fluctuate between warm and cool grays within the same project.
 - **COLOR CONSISTENCY LOCK (mandatory):** Once an accent color is chosen for a page, it is used on the WHOLE page. A warm-grey site does not suddenly get a blue CTA in section 7. A rose-accented site does not get a teal status badge in the footer. Pick one accent, lock it, audit every component before shipping.
 
-> **BeeWise locked palette (THE LILA RULE override applies - this brand IS intentionally deep indigo):**
-> | Token | Light Mode | Dark Mode | Usage |
-> | ---------------- | ---------- | --------- | ----- |
-> | Primary | `#280f91` | `#cfe1fa` | CTA buttons, active nav, links, primary actions |
-> | Secondary | `#447353` | `#447353` | Success states, tutor badges, "verified" labels |
-> | Accent | `#ffc500` | `#ffc500` | Highlight, star ratings, promo callouts |
-> | Background | `#ffffff` | `#0c0c0b` | Main page background |
-> | Foreground | `#0c0c0b` | `#f8fafc` | Primary text and body |
-> | Highlight | `#fadc76` | `#fadc76` | Inline text highlights, selected state |
-> | Warning | `#905b0f` | `#f59e0b` | Warning toasts, deadline labels |
-> | Error | `#e1aba7` | `#f87171` | Error states, form validation |
-> | Glass surface | `#fff3cb` (20%) | `#fff3cb` (10%) | Glassmorphism panels ONLY |
+> **BeeWise sale token contract (applies to every new `apps/sale` screen, including product screens):** `packages/ui/globals.css` is the source of truth. Read it before designing. The active theme is light; its `.dark` block is currently commented out, so do not assume dark mode is available or invent dark values in a screen. Use semantic Tailwind utilities backed by its CSS variables rather than copying hex values into new components.
 >
-> **System & Structural Colors**: Allowed to use standard Tailwind slate/neutral mappings for components (e.g., `--card`, `--popover`, `--muted`, `--border`, `--input`, `--ring` as defined in `globals.css`).
+> | Purpose | Global token and current light value | Use |
+> | --- | --- | --- |
+> | Brand action | `bg-primary` `#280f91` + `text-primary-foreground` `#ffffff` | Solid primary CTAs, selected controls, active nav |
+> | Brand text / focus | `text-primary`, `border-primary`, `ring-ring` `#280f91` | Headings, links, focus and selected edges |
+> | Success / verification | `secondary` `#447353` + `secondary-foreground` `#ffffff` | Verified and success states; not a second CTA color |
+> | Emphasis | `accent` `#ffc500` + `accent-foreground` `#0c0c0b` | Small highlights, ratings, promo CTA where hierarchy calls for it |
+> | Text highlight | `highlight` `#fadc76` | Small flat highlight behind dark text, not a haze |
+> | Page / card | `background`, `card`, `popover` `#ffffff` | Opaque surfaces |
+> | Text | `foreground` `#0c0c0b`; `muted-foreground` `#5a6a9a` | Primary copy and secondary copy after contrast check |
+> | Quiet structure | `muted` `#f0f4ff`; `border` / `input` `#dce8fb` | Local panels, separators, form edges; never a full-page primary wash |
+> | Feedback | `warning` `#905b0f`; `error` `#e1aba7`; `destructive` `#dc2626` | Semantic feedback; use `destructive` for readable error text on white |
 >
-> These brand tokens and their system structural counterparts are the ONLY colors allowed on any BeeWise screen. Do not introduce additional brand colors. The `#280f91` primary is not an "AI purple" default - it is a deliberate brand decision and the Lila Rule does NOT block it.
+> The global `--glass` token exists for legacy use; its presence is **not** a design instruction. The single-accent rule does not erase the defined roles of green success and amber highlights. Keep the indigo, green, and amber at their global values. Do not add a competing blue, violet, pink, or another brand color. When a visual needs depth, first use hierarchy, an opaque surface, a visible border, and spacing.
+>
+> **Crisp-color rule for future BeeWise screens:** A brand action is solid `bg-primary` with `text-primary-foreground`, not `bg-primary/5`, a radial glow, or a glass layer. Use full-strength `text-primary` for key headings and links. Keep body copy readable; avoid `text-foreground/35`, `/45`, `/60` for essential content. Amber needs dark foreground text; `text-accent` on white is not a readable default. Keep tints (`muted`, low-opacity primary) for small nonessential backgrounds or selected areas only, with full-strength text and a clear border. Check actual rendered contrast in every state.
+>
+> **New-screen recipe:** Page `bg-background text-foreground`; content panels `bg-card border border-border`; main action `bg-primary text-primary-foreground`; secondary action `bg-background text-primary border border-primary`; focus `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`; selected state `border-primary bg-muted text-primary`. Use `bg-accent text-accent-foreground` only for a deliberate second emphasis. Never use opacity to make a primary action look inactive; disabled states must remain recognisable and readable.
+>
+> **Badge and chip rule:** Small metadata labels must not default to `bg-primary/5` or `/8` plus `border-primary/20` and a tinted shadow; that combination looks faded. Give the main label an opaque `bg-primary text-primary-foreground` fill. Give secondary metadata an opaque `bg-card text-primary border-primary` outline. Use `bg-secondary text-secondary-foreground` or `bg-card text-secondary border-secondary` for verified states. Noninteractive chips do not need hover effects. Preserve readable text and let long labels wrap on narrow screens.
 
 - **PREMIUM-CONSUMER PALETTE BAN (mandatory, second-most-recurring AI-tell):**
   - For premium-consumer briefs (cookware, wellness, artisan, luxury, heritage craft, DTC home goods, etc.) the LLM default is **warm beige/cream + brass/clay/oxblood/ochre + espresso/ink dark text**. Concretely banned hex families as default backgrounds and accents:
@@ -253,20 +258,15 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 ### 4.4 Materiality, Shadows, Cards
 
 - Use cards ONLY when elevation communicates real hierarchy. Otherwise group with `border-t`, `divide-y`, or negative space.
-- When a shadow is used, tint it to the background hue. No pure-black drop shadows on light backgrounds.
+- When a shadow is used, tint it to the background hue. No pure-black drop shadows on light backgrounds. **BeeWise exception:** use the neutral, restrained elevation in the BeeWise rule below, not an indigo-tinted halo.
 - For `VISUAL_DENSITY > 7`: generic card containers are banned. Data metrics breathe in plain layout.
 - **SHAPE CONSISTENCY LOCK (mandatory):** Pick ONE corner-radius scale for the page and stick to it. Options: all-sharp (radius 0), all-soft (radius 12-16px), all-pill (full radius for interactive). Mixed systems are allowed only when there is a documented rule (e.g. "buttons are full-pill, cards are 16px, inputs are 8px") and that rule is followed everywhere. Round buttons in a square layout, or square cards on a pill-button page, is broken design.
 
-> **BeeWise Glassmorphism scope (mandatory restriction):** Glassmorphism (`backdrop-filter`, `#fff3cb` at 20% opacity surface in light mode, 10% in dark mode) is ONLY permitted on these four surface types:
+> **BeeWise surface rule for new screens:** Default to opaque `bg-background` / `bg-card` / `bg-popover` and a distinct `border-border` or brand-colored edge. Do not add `backdrop-blur`, `filter: blur(...)`, `--glass`, translucent primary overlays, purple/blue glows, radial or conic primary gradients, or color-mixed drop shadows to hero panels, AI search, cards, nav, modals, drawers, or decorative backgrounds. A modal may dim its backdrop for focus, but its content stays opaque. A media overlay may need a dark scrim for legibility; that is not a glass surface. This rule supersedes the generic glassmorphism suggestions in Sections 2.B, 4.10, 10, and Appendix C for BeeWise.
 >
-> 1. Hero section background panel
-> 2. AI Search input box
-> 3. KPI / stat cards on dashboards
-> 4. Modals and drawers
+> **BeeWise elevation:** Prefer a 1px border and a restrained neutral shadow only where separation is needed. A hover state may move 1-2px and strengthen the border; avoid large floating shadows, indigo shadow halos, and blur-based depth. Use `--radius` (`0.75rem`) as the base radius; reserve full pills for compact actions or tags when consistent with the surrounding UI.
 >
-> All other surfaces (tutor cards, nav, footers, feature sections, tables) use **flat UI only** - solid fills from the BeeWise palette, no blur, no glass. Applying glassmorphism outside these 4 zones is a Pre-Flight Fail.
->
-> **BeeWise Tutor Card rules:** Equal-height cards. Avatar aspect ratio 1:1. Max 2-line title. Aligned CTAs at card bottom. Subtle hover elevation (`translateY(-4px)` + tinted shadow in `#280F91` at 10% opacity). Transition 250ms ease.
+> **BeeWise Tutor Card rules:** Equal-height cards. Avatar aspect ratio 1:1. Max 2-line title. Aligned CTAs at card bottom. Hover with a stronger border and at most `translateY(-2px)`; no primary-colored shadow halo. Transition 200-250ms ease.
 
 ### 4.5 Interactive UI States
 
@@ -281,10 +281,41 @@ LLMs default to "static successful state only." Always implement full cycles:
 - **NO DUPLICATE CTA INTENT (mandatory):** Two CTAs with the same intent on one page is a Pre-Flight Fail. Examples of same intent: "Get in touch" + "Contact us" + "Let's talk" + "Start a project" + "Start something" + "Reach out" = all "contact" intent → pick ONE label and use it everywhere on the page (nav, hero, footer). Same for "Try free" + "Get started" + "Sign up free" (all "signup" intent) and "View work" + "See selected work" + "Browse projects" (all "portfolio" intent). One label per intent.
 - **FORM CONTRAST CHECK (mandatory, a11y):** Form inputs, placeholder text, focus rings, helper text, and error text all pass WCAG AA contrast against the section background. Light placeholders on a near-white form, white form on white page section, form labels grayer than 4.5:1 contrast → all banned. Audit every form before shipping.
 
-### 4.6 Data & Form Patterns
+### 4.6 Data & Form Patterns & Custom Form Controls
 
-- Label ABOVE input. Helper text optional but present in markup. Error text BELOW input. Standard `gap-2` for input blocks.
-- No placeholder-as-label. Ever.
+- **ZERO BROWSER DEFAULT CONTROLS (Mandatory Ban):**
+  - Raw, unstyled HTML browser controls (`<select>`, `<input type="checkbox">`, `<input type="radio">`, `<input type="range">`, `<input type="file">`) are **STRICTLY BANNED**. Never ship the default operating system controls (blue OS checkbox, gray OS radio circle, native OS dropdown select box).
+  - Every form control MUST be custom-styled to match the project's design system tokens, typography, border-radius scale, and focus states.
+
+- **Custom Select / Dropdown:**
+  - **Every select generated from now on must be a custom control.** Reuse the project's shared Select / Combobox component when available; otherwise build a reusable one with accessible primitives such as Radix UI or Headless UI. Styling only the border or trigger of a visible native `<select>` with `appearance-none` does not satisfy this rule because the opened option menu remains browser-default.
+  - Trigger must have tailored padding, crisp border (`border-border`), subtle hover state, and a custom chevron icon (`CaretDown` / `ChevronDown` from the active icon library) that smoothly animates/rotates on open.
+  - The dropdown menu surface must be opaque (`bg-card border border-border shadow-md rounded-lg`), with clear option hover states (`hover:bg-muted text-foreground`), active/selected check indicator, and smooth enter/exit transitions.
+  - Preserve label association, keyboard navigation, focus management, screen-reader semantics, disabled and error states, and form value submission. A hidden native form control used internally by the accessible primitive is acceptable; a visible browser-default select menu is not.
+
+- **Custom Checkbox:**
+  - Container: Square with consistent corner radius (`rounded-[4px]` or `rounded-md`), 16–20px (`w-4 h-4` or `w-5 h-5`), distinct border (`border-2 border-border` or `border-input`).
+  - Checked state: Smooth transition to brand primary background (`bg-primary border-primary text-primary-foreground`) with an animated/crisp SVG checkmark icon.
+  - Wrapper: Wrap inside `<label className="inline-flex items-center gap-2.5 cursor-pointer select-none text-sm text-foreground">` with keyboard focus ring (`focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`).
+
+- **Custom Radio Buttons (Radio Group):**
+  - Control: Circular indicator (`w-4 h-4 rounded-full border-2 border-border`).
+  - Checked state: Border transitions to primary (`border-primary`), with a centered inner dot indicator (`w-2 h-2 rounded-full bg-primary animate-in zoom-in-50 duration-150`).
+  - **Preferred Modern Alternative:** For 2–4 options, prefer **Segmented Control Pills** (`bg-muted p-1 rounded-lg flex`) or **Selectable Card Tiles** (interactive cards with title, description, and selected border/highlight) over bare radio circles.
+
+- **Custom Switch / Toggle:**
+  - Track: Pill shape (`h-6 w-11 rounded-full bg-muted transition-colors cursor-pointer data-[checked=true]:bg-primary`).
+  - Thumb: Tactile circular knob (`h-5 w-5 rounded-full bg-white shadow-sm transition-transform translate-x-0.5 data-[checked=true]:translate-x-[22px]`).
+
+- **Custom Slider / Range:**
+  - Track: Custom height (`h-2 rounded-full bg-muted relative overflow-hidden`).
+  - Active fill: Brand primary progress bar (`bg-primary h-full`).
+  - Thumb: Custom circular handle with tactile shadow, border, and focus-visible ring.
+
+- **Form Layout & Interactive Hierarchy:**
+  - Label ALWAYS ABOVE input with `text-sm font-medium text-foreground`. Helper text optional but present in markup. Error text ALWAYS BELOW input with `text-xs text-destructive flex items-center gap-1`. Standard `gap-1.5` to `gap-2` for input blocks.
+  - No placeholder-as-label. Ever.
+  - **Full Interaction States:** Every form control must implement `:hover` (border enhancement), `:focus-visible` (`ring-2 ring-ring ring-offset-2`), `:disabled` (`opacity-50 cursor-not-allowed bg-muted/40`), and `:invalid` / error (`border-destructive ring-destructive/20`).
 
 ### 4.7 Layout Discipline (Hard Rules. Failing any of these is shipping broken work)
 
@@ -595,6 +626,7 @@ Use this for: feature lists, testimonial grids, logo walls, anything that just n
 - Use Tailwind `dark:` variant OR CSS variables for tokens. Pick one strategy per project.
 - **Do not prescribe specific dark-mode colors here.** The brief decides. Maintain visual hierarchy, brand identity, and WCAG AA contrast (AAA for body) across both modes.
 - Respect `prefers-color-scheme: dark`. Default to system preference unless the brand insists on one mode.
+- **BeeWise sale override:** `packages/ui/globals.css` currently has only an active light theme; the `.dark` token block is commented out. Keep new screens aligned with that active theme. Add dark styling only after the global tokens are enabled and verified, never with one-off dark hex values in a screen.
 
 ### 6.D Core Web Vitals Targets
 
@@ -645,6 +677,7 @@ Dual-mode by default. Never assume light-only unless the brief is print-emulatin
 
 - **Tailwind `dark:` variant** (default for utility-first projects): every color utility paired with its dark variant (`bg-white dark:bg-zinc-950`, `text-gray-900 dark:text-gray-100`).
 - **CSS variables** (for shadcn/ui, Radix Themes, or component libraries with theming): define semantic tokens (`--surface`, `--surface-elevated`, `--text-primary`, `--accent`) and swap values under `[data-theme="dark"]` or `@media (prefers-color-scheme: dark)`.
+- **BeeWise sale:** Reuse the existing semantic variables and Tailwind mappings in `packages/ui/globals.css`. Do not create parallel `--surface`, `--brand-purple`, or per-screen palette values.
 
 ### 8.B Do Not Prescribe Specific Colors Here
 
@@ -653,7 +686,7 @@ The brief and brand decide. This skill enforces only:
 - **Contrast** - WCAG AA minimum for body text, AAA target for hero copy.
 - **Hierarchy parity** - visual hierarchy that works in light must work in dark. If a CTA pops in light, it pops in dark.
 - **Brand fidelity** - primary brand color stays recognisable. Don't desaturate the brand into a dark mode.
-- **No pure `#000000` and no pure `#ffffff`** - use off-black (zinc-950, near-black warm gray) and off-white. Pure values kill depth.
+- **No pure `#000000` and no pure `#ffffff` by default for projects without locked tokens.** BeeWise's active `--background`, `--card`, and `--primary-foreground` are deliberately `#ffffff`; preserve them.
 
 ### 8.C Default Mode
 
@@ -673,7 +706,7 @@ Avoid these signatures unless the brief explicitly asks for them.
 
 - **NO neon / outer glows** by default. Use inner borders or subtle tinted shadows.
 - **NO pure black (`#000000`).** Off-black, zinc-950, or charcoal.
-- **NO oversaturated accents.** Desaturate to blend with neutrals.
+- **NO arbitrary oversaturated accents.** Preserve an existing brand's defined saturation; do not desaturate BeeWise's `--primary` or `--accent`.
 - **NO excessive gradient text** for large headers.
 - **NO custom mouse cursors.** Outdated, accessibility-hostile, perf-hostile.
 
@@ -916,7 +949,7 @@ Apply in order - stop when the brief is satisfied:
 
 1. **Typography refresh** - biggest visual lift per unit of risk.
 2. **Spacing & rhythm** - increase section padding, fix vertical rhythm.
-3. **Color recalibration** - desaturate, unify neutrals, keep brand accent.
+3. **Color recalibration** - unify neutrals and restore the brand token's intended strength; desaturate only if the brand itself calls for it. For BeeWise, remove haze and low-opacity primary decoration instead of changing `globals.css` colors.
 4. **Motion layer** - add `MOTION_INTENSITY`-appropriate micro-interactions to existing components.
 5. **Hero & key-section recomposition** - restructure top-of-funnel using Section 10 vocabulary.
 6. **Full block replacement** - only when the existing block is unsalvageable.
@@ -1017,6 +1050,8 @@ This skill is NOT for:
 
 If the brief is one of the above, **say so explicitly**, point to the right tool, and only apply this skill's marketing-page / about-page / landing-page parts to the surfaces where they apply.
 
+The BeeWise sale token contract in Section 4.2 and surface rule in Section 4.4 still apply to every `apps/sale` screen, including product UI; this scope limit concerns layout recipes, not brand consistency.
+
 ---
 
 ## 14. FINAL PRE-FLIGHT CHECK
@@ -1032,10 +1067,15 @@ Run this matrix before outputting code. This is the last filter.
 - [ ] **ZERO em-dashes (`—`) anywhere on the page.** Headlines, eyebrows, pills, body, quotes, attribution, captions, buttons, alt text. Zero. (Section 9.G - non-negotiable.)
 - [ ] **Page Theme Lock**: ONE theme (light, dark, or auto) for the whole page. No section flips to inverted mode mid-page (Section 4.11)?
 - [ ] **Color Consistency Lock**: one accent color used identically across all sections (Section 4.2)?
+- [ ] **BeeWise token source**: new `apps/sale` UI uses the active semantic tokens in `packages/ui/globals.css`, with Nunito headings and Google Sans body, rather than new hardcoded brand colors or the old Montserrat guidance?
+- [ ] **BeeWise color clarity**: primary actions and key text are full-strength; essential copy and amber labels pass contrast; no decorative primary blur, glow, glass, radial/conic gradient, or indigo shadow halo was introduced?
+- [ ] **BeeWise badge clarity**: important badges use solid brand fill or opaque outlined surfaces, with no `bg-primary/5` or `/8` wash, weak translucent border, or decorative shadow?
+- [ ] **BeeWise surface clarity**: cards, AI search, nav, and dialogs use opaque surfaces and visible borders; a future dark mode was not invented while global `.dark` tokens remain disabled?
 - [ ] **Shape Consistency Lock**: one corner-radius system applied consistently (Section 4.4)?
 - [ ] **Button Contrast Check**: every CTA text is readable against its background (no white-on-white, WCAG AA 4.5:1)?
 - [ ] **CTA Button Wrap**: no CTA label wraps to 2+ lines at desktop?
 - [ ] **Form Contrast Check**: form inputs, placeholders, focus rings, labels all pass WCAG AA against the section background?
+- [ ] **Custom Select Check**: every newly generated select uses a reusable custom trigger and option menu, with keyboard, focus, label, disabled, error, and form behavior verified?
 - [ ] **Serif discipline**: if a serif is used, it is NOT Fraunces or Instrument_Serif (or it is, with explicit brand justification)? Different serif from your previous project?
 - [ ] **Premium-consumer palette check**: if the brief is premium-consumer (cookware / wellness / artisan / luxury), the palette is NOT the AI-default beige+brass+oxblood+espresso family? Different family from your previous premium-consumer project?
 - [ ] **Italic descender clearance**: every italic word with `y g j p q` has `leading-[1.1]` min + `pb-1` reserve?
@@ -1076,7 +1116,7 @@ Run this matrix before outputting code. This is the last filter.
 - [ ] **GSAP sticky-stack / horizontal-pan** implemented per Section 5.A / 5.B canonical skeleton (`start: "top top"`, `pin: true`, correct scrub)?
 - [ ] **No `window.addEventListener('scroll')`** - using Motion `useScroll()` / ScrollTrigger / IntersectionObserver / CSS scroll-driven animations only?
 - [ ] **Reduced motion** wrapped for everything `MOTION_INTENSITY > 3`?
-- [ ] **Dark mode** tokens defined and tested in both modes?
+- [ ] **Dark mode** tokens defined and tested in both modes where dark mode is active? For BeeWise sale, global `.dark` tokens remain commented out, so verify the active light theme and do not fabricate screen-local dark values.
 - [ ] **Mobile collapse** explicit (`w-full`, `px-4`, `max-w-7xl mx-auto`) for high-variance layouts?
 - [ ] **Viewport stability**: `min-h-[100dvh]`, never `h-screen`?
 - [ ] **`useEffect` animations** have strict cleanup functions?

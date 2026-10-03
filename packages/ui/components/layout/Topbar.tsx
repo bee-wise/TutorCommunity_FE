@@ -40,7 +40,7 @@ export function Topbar() {
   const drawerUnreadCount = useNotificationDrawerStore((state) => state.unreadCount);
   const { mutate: logout } = useLogout();
   
-  const unreadNotificationCount = Math.max(0, drawerUnreadCount || (user?.unreadNotificationCount ?? 0));
+  const unreadNotificationCount = Math.max(0, drawerUnreadCount ?? user?.unreadNotificationCount ?? 0);
 
   // Simple breadcrumb generator based on pathname
   const paths = pathname.split("/").filter(Boolean);
@@ -85,7 +85,7 @@ export function Topbar() {
       </Breadcrumb>
 
       <div className="ml-auto flex items-center gap-4">
-        {/* Notifications Mock */}
+        {/* Notifications */}
         <button 
           onClick={openDrawer}
           className="relative size-8 flex items-center justify-center rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"

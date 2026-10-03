@@ -55,7 +55,6 @@ export function Header({
   previewLogout,
 }: HeaderProps = {}) {
   const [scrolled, setScrolled] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -88,7 +87,7 @@ export function Header({
         : user?.lmsAccessEnabled === true;
   const unreadNotificationCount = Math.max(
     0,
-    drawerUnreadCount || (user?.unreadNotificationCount ?? 0),
+    drawerUnreadCount ?? user?.unreadNotificationCount ?? 0,
   );
   const unreadChatCount = Math.max(0, user?.unreadChatCount ?? 0);
   const displayName = getDisplayName(user);
@@ -110,14 +109,9 @@ export function Header({
 
     onScroll();
 
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 50);
-
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      clearTimeout(timer);
     };
   }, []);
 
@@ -133,8 +127,16 @@ export function Header({
       }
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setAccountOpen(false);
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, [accountOpen]);
 
   const isActiveLink = (href: string) => {
@@ -171,18 +173,13 @@ export function Header({
 
   return (
     <div className="font-nunito fixed left-0 right-0 top-0 z-60 flex justify-center pt-0">
-      <motion.header
-        layout={!isAuthenticated}
-        transition={
-          !isAuthenticated && isReady
-            ? { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
-            : { duration: 0 }
-        }
-        className={
+      <header
+        className={cn(
+          "transition-all duration-300",
           isScrollActive
-            ? "mt-3 rounded-full border border-white/15 bg-primary/95 shadow-xl shadow-primary/30 supports-backdrop-filter:bg-primary/90 backdrop-blur-xl transition-all duration-300"
-            : "w-full border-b border-white/10 bg-primary shadow-sm shadow-primary/15 backdrop-blur-md transition-all duration-300"
-        }
+            ? "mt-3 rounded-full border border-white/15 bg-primary/95 shadow-xl shadow-primary/30 supports-backdrop-filter:bg-primary/90 backdrop-blur-xl"
+            : "w-full border-b border-white/10 bg-primary shadow-sm shadow-primary/15 backdrop-blur-md",
+        )}
         style={
           isScrollActive
             ? {
@@ -201,10 +198,7 @@ export function Header({
       >
         <div
           className={cn(
-            "flex h-16 items-center justify-between gap-3",
-            !isAuthenticated && isReady
-              ? "transition-all duration-300"
-              : "duration-0",
+            "flex h-16 items-center justify-between gap-3 transition-all duration-300",
             isScrollActive
               ? "px-5"
               : "mx-auto w-full max-w-350 px-4 sm:px-6 lg:px-8",
@@ -216,7 +210,7 @@ export function Header({
             aria-label="BeeWise Home"
           >
             <div className="flex items-center justify-center rounded-full bg-white px-3 py-1 sm:px-3.5 sm:py-1.5 shadow-sm ring-1 ring-primary">
-              <div className="relative h-6 w-28 sm:h-7 sm:w-32 md:h-7.5 md:w-36">
+              <div className="relative h-6 w-28 sm:h-7 sm:w-32 md:h-7.5 md:w-36 shrink-0">
                 <Image
                   src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
                   alt="BeeWise"
@@ -234,10 +228,13 @@ export function Header({
             aria-label="Điều hướng chính"
           >
             {isAuthLoading ? (
-              <div
-                className="h-5 w-72 rounded-full bg-white/20 animate-pulse"
-                aria-label="Đang tải điều hướng"
-              />
+              /* ── Loading Skeleton: giữ nguyên không gian & layout ── */
+              <div className="flex items-center gap-2" aria-hidden="true">
+                <div className="h-8 w-20 rounded-full bg-white/10 animate-pulse" />
+                <div className="h-8 w-20 rounded-full bg-white/10 animate-pulse" />
+                <div className="h-8 w-28 rounded-full bg-white/10 animate-pulse" />
+                <div className="h-8 w-24 rounded-full bg-white/10 animate-pulse" />
+              </div>
             ) : isAuthenticated ? (
               /* ── Authenticated: animated pill tabs ── */
               navbarConfig.centerItems.map((link) => {
@@ -248,7 +245,7 @@ export function Header({
                     key={`${link.label}-${link.href}`}
                     href={link.href}
                     className={cn(
-                      "relative inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-extrabold uppercase transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[14px]",
+                      "relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-extrabold uppercase transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[14px]",
                       isActive
                         ? "text-accent font-black"
                         : "text-white/80 hover:text-accent hover:bg-white/10",
@@ -281,7 +278,7 @@ export function Header({
                     key={`${link.label}-${link.href}`}
                     href={link.href}
                     className={cn(
-                      "inline-flex items-center rounded-full px-3.5 py-1.5 text-sm font-extrabold uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[15px]",
+                      "inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-extrabold uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:text-[14px]",
                       isActive
                         ? "text-accent bg-white/15 shadow-xs ring-1 ring-white/20 font-black"
                         : "text-accent hover:text-accent hover:bg-white/10",
@@ -296,126 +293,150 @@ export function Header({
           </nav>
 
           <div className="flex items-center gap-3">
-            {!isAuthLoading &&
-              navbarConfig.showNotifications &&
-              navbarState !== "GUEST" && (
-                <button
-                  type="button"
-                  onClick={openDrawer}
-                  aria-label="Thông báo"
-                  className="relative hidden h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:inline-flex"
-                >
-                  <Bell
-                    className={cn(
-                      "h-4.5 w-4.5 transition-transform duration-200 hover:scale-105",
-                      unreadNotificationCount > 0 && "text-accent",
-                    )}
-                    aria-hidden="true"
-                  />
-                  {unreadNotificationCount > 0 && (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground shadow-xs animate-pulse">
-                      {unreadNotificationCount}
-                    </span>
-                  )}
-                </button>
-              )}
-
-            {!isAuthLoading &&
-              navbarConfig.rightItems.map((action) => (
-                <Link
-                  key={`${action.label}-${action.href}`}
-                  href={action.href}
-                  className={
-                    action.variant === "primary"
-                      ? "inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-accent px-5 text-xs font-black uppercase tracking-wider text-accent-foreground shadow-md shadow-accent/25 transition-all duration-200 hover:bg-highlight hover:shadow-lg hover:shadow-accent/35 hover:-translate-y-0.5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                      : "hidden rounded-full px-3.5 py-1.5 text-sm font-extrabold uppercase text-white transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:inline-flex"
-                  }
-                >
-                  {action.label}
-                </Link>
-              ))}
-
-            {!isAuthLoading && navbarConfig.accountItems.length > 0 && (
-              <div ref={accountRef} className="relative hidden lg:block">
-                <button
-                  type="button"
-                  onClick={() => setAccountOpen((prev) => !prev)}
-                  aria-label="Mở menu tài khoản"
-                  aria-expanded={accountOpen}
-                  className="flex h-9 items-center gap-2 rounded-full py-0.5 pl-1 pr-2.5 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                >
-                  <span className="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-white/30 text-xs font-bold text-primary shadow-xs">
-                    {user?.avatarUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={user.avatarUrl}
-                        alt={displayName}
-                        className="h-full w-full object-cover"
+            {isAuthLoading ? (
+              /* ── Loading Skeleton cho cụm bên phải ── */
+              <div className="flex items-center gap-2" aria-hidden="true">
+                <div className="hidden h-8 w-20 rounded-full bg-white/10 animate-pulse md:block" />
+                <div className="h-8 w-24 rounded-full bg-accent/30 animate-pulse" />
+              </div>
+            ) : (
+              <>
+                {navbarConfig.showNotifications &&
+                  navbarState !== "GUEST" && (
+                    <button
+                      type="button"
+                      onClick={openDrawer}
+                      aria-label="Thông báo"
+                      className="relative hidden h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:inline-flex"
+                    >
+                      <Bell
+                        className={cn(
+                          "h-4.5 w-4.5 transition-transform duration-200 hover:scale-105",
+                          unreadNotificationCount > 0 && "text-accent",
+                        )}
+                        aria-hidden="true"
                       />
-                    ) : (
-                      getInitials(displayName)
-                    )}
-                  </span>
-                  <span className="hidden max-w-28 truncate text-sm font-bold text-white lg:inline">
-                    {displayName}
-                  </span>
-                  <ChevronDown
-                    className={cn(
-                      "h-4 w-4 text-white/70 transition-transform duration-200",
-                      accountOpen && "rotate-180",
-                    )}
-                    aria-hidden="true"
-                  />
-                </button>
+                      {unreadNotificationCount > 0 && (
+                        <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground shadow-xs animate-pulse">
+                          {unreadNotificationCount}
+                        </span>
+                      )}
+                    </button>
+                  )}
 
-                {accountOpen && (
-                  <div
-                    className="absolute right-0 top-11 z-80 flex w-56 flex-col gap-1 rounded-2xl border border-[#eadca8] p-2.5 shadow-2xl shadow-primary/10 backdrop-blur-md"
-                    style={{ backgroundColor: "#fffdf7", color: "#280f91" }}
+                {navbarConfig.rightItems.map((action) => (
+                  <Link
+                    key={`${action.label}-${action.href}`}
+                    href={action.href}
+                    className={
+                      action.variant === "primary"
+                        ? "inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-accent px-5 text-xs font-black uppercase tracking-wider text-accent-foreground shadow-md shadow-accent/25 transition-all duration-200 hover:bg-highlight hover:shadow-lg hover:shadow-accent/35 hover:-translate-y-0.5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                        : "hidden rounded-full px-3.5 py-1.5 text-sm font-extrabold uppercase text-white transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:inline-flex"
+                    }
                   >
-                    {navbarConfig.accountItems.map((item) =>
-                      item.action === "logout" ? (
-                        <button
-                          key={item.label}
-                          type="button"
-                          onClick={() => {
-                            setAccountOpen(false);
-                            handleLogout();
-                          }}
-                          className="rounded-xl px-3 py-2 text-left text-sm font-bold text-[#b42318] transition-colors hover:bg-[#fee4e2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b42318]"
-                        >
-                          {item.label}
-                        </button>
-                      ) : (
-                        <Link
-                          key={`${item.label}-${item.href}`}
-                          href={item.href}
-                          onClick={() => setAccountOpen(false)}
-                          className="rounded-xl px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-[#fff3cb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                        >
-                          {item.label}
-                        </Link>
-                      ),
+                    {action.label}
+                  </Link>
+                ))}
+
+                {navbarConfig.accountItems.length > 0 && (
+                  <div ref={accountRef} className="relative hidden lg:block">
+                    <button
+                      type="button"
+                      onClick={() => setAccountOpen((prev) => !prev)}
+                      aria-label="Mở menu tài khoản"
+                      aria-expanded={accountOpen}
+                      className={cn(
+                        "flex h-9 items-center gap-2 rounded-full py-0.5 pl-1 pr-2.5 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                        accountOpen && "bg-white/15",
+                      )}
+                    >
+                      <span className="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-white/30 text-xs font-bold text-primary shadow-xs">
+                        {user?.avatarUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={user.avatarUrl}
+                            alt={displayName}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          getInitials(displayName)
+                        )}
+                      </span>
+                      <span className="hidden max-w-28 truncate text-sm font-extrabold text-white lg:inline">
+                        {displayName}
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 text-white/70 transition-transform duration-200",
+                          accountOpen && "rotate-180",
+                        )}
+                        aria-hidden="true"
+                      />
+                    </button>
+
+                    {accountOpen && (
+                      <div className="absolute right-0 top-11 z-80 w-72 rounded-2xl border border-border bg-popover p-2 shadow-[0_12px_30px_rgba(12,30,60,0.14)]">
+                        <div className="border-b border-border px-3 pb-3 pt-2">
+                          <p className="font-sans text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                            Tài khoản
+                          </p>
+                          <p className="mt-1 truncate text-sm font-extrabold text-primary" title={displayName}>
+                            {displayName}
+                          </p>
+                          {user?.email && (
+                            <p className="mt-0.5 truncate font-sans text-xs text-muted-foreground" title={user.email}>
+                              {user.email}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-0.5 pt-1.5">
+                          {navbarConfig.accountItems.map((item) =>
+                            item.action === "logout" ? (
+                              <button
+                                key={item.label}
+                                type="button"
+                                onClick={() => {
+                                  setAccountOpen(false);
+                                  handleLogout();
+                                }}
+                                className="mt-1 border-t border-border px-3 pb-2 pt-3 text-left text-sm font-bold text-destructive transition-colors hover:rounded-lg hover:bg-destructive/10 focus-visible:rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
+                              >
+                                {item.label}
+                              </button>
+                            ) : (
+                              <Link
+                                key={`${item.label}-${item.href}`}
+                                href={item.href}
+                                onClick={() => setAccountOpen(false)}
+                                className={cn(
+                                  "rounded-lg px-3 py-2.5 text-sm font-bold text-popover-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                                  isActiveLink(item.href) && "bg-muted text-primary",
+                                )}
+                              >
+                                {item.label}
+                              </Link>
+                            ),
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}
-              </div>
+              </>
             )}
 
             <MobileNav
-              links={isAuthLoading ? [] : navbarConfig.centerItems}
-              actions={isAuthLoading ? [] : navbarConfig.rightItems}
-              accountItems={isAuthLoading ? [] : navbarConfig.accountItems}
-              showNotifications={
-                !isAuthLoading && navbarConfig.showNotifications
-              }
+              links={navbarConfig.centerItems}
+              actions={navbarConfig.rightItems}
+              accountItems={isAuthenticated ? navbarConfig.accountItems : []}
+              showNotifications={navbarConfig.showNotifications}
               unreadNotificationCount={unreadNotificationCount}
               unreadChatCount={unreadChatCount}
               onLogout={handleLogout}
             />
           </div>
         </div>
-      </motion.header>
+      </header>
     </div>
   );
 }

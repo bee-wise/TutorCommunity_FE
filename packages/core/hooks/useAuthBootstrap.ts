@@ -7,6 +7,15 @@ import { useAuthStore } from "../store/useAuthStore";
 import { handleApiError } from "../sys-libs/error-handler";
 import { queryKeys } from "../sys-libs/queryKeys";
 
+function hasAuthCookie(): boolean {
+  if (typeof document === "undefined") return false;
+  return (
+    document.cookie.includes("beewise_access_token") ||
+    document.cookie.includes("beewise_refresh_token") ||
+    document.cookie.includes("beewise_has_session")
+  );
+}
+
 export function useAuthBootstrap({ enabled = true }: { enabled?: boolean } = {}) {
   const didRun = useRef(false);
   const queryClient = useQueryClient();
@@ -18,6 +27,12 @@ export function useAuthBootstrap({ enabled = true }: { enabled?: boolean } = {})
     if (!enabled) return;
     if (didRun.current) return;
     didRun.current = true;
+
+    // Nếu không có bất kỳ cookie auth nào trên trình duyệt, kết luận ngay là khách (0ms delay)
+    if (!hasAuthCookie()) {
+      setAuthLoading(false);
+      return;
+    }
 
     let cancelled = false;
 

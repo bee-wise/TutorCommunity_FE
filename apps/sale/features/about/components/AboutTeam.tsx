@@ -110,7 +110,7 @@ const TEAM = [
     role: "Founder Dự Án",
     image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1790320238/1.png",
     story:
-      "“Mình bắt đầu BeeWise từ một trăn trở rất đỗi tự nhiên: Tại sao việc tìm kiếm một người thầy tận tâm và phù hợp lại gian nan đến thế? Mình tin rằng, khi trao đi sự chân thành và giải pháp đủ tốt, việc học sẽ trở thành hành trình tràn đầy cảm hứng.”",
+      "“Một gia sư cần hội tụ ba yếu tố: đạo đức tốt, tri thức vững vàng và sự kiên nhẫn. Đó chính là những giá trị mà BeeWise luôn tìm kiếm ở mỗi gia sư đồng hành, để mỗi học viên được dẫn dắt bằng kiến thức, sự tận tâm và tinh thần trách nhiệm.”",
     side: "left",
     number: "01",
     themeColor: "#f59e0b", // Amber
@@ -124,7 +124,7 @@ const TEAM = [
     role: "Backend Engineer",
     image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787291883/2.png",
     story:
-      "“Mỗi dòng mã và hệ cơ sở dữ liệu không đơn thuần là những thuật toán khô khan. Với mình, backend vững chãi chính là lời cam kết âm thầm cho mọi kết nối của học viên và gia sư được an toàn, liền mạch và tức thì.”",
+      "“Với BeeWise, Huy mong muốn dùng công nghệ để kết nối người học với gia sư phù hợp, mang đến trải nghiệm học tập linh hoạt và hiệu quả hơn. Mình tin rằng những giải pháp mà mình và cả team đang xây dựng sẽ giúp việc học trở nên dễ dàng hơn, để mỗi người có thể chủ động và tự tin theo đuổi mục tiêu của mình.”",
     side: "right",
     number: "02",
     themeColor: "#3b82f6", // Blue
@@ -138,7 +138,7 @@ const TEAM = [
     role: "Marketing Specialist",
     image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787291884/3.png",
     story:
-      "“Kể câu chuyện về giáo dục cần rất nhiều sự thấu cảm. Mình ở đây để lan tỏa những giá trị thật của BeeWise đến từng góc nhỏ nơi các bạn trẻ đang tìm kiếm cơ hội học tập và bứt phá giới hạn bản thân.”",
+      "“Đến với BeeWise không chỉ là “kể câu chuyện thương hiệu” ở vai trò là một marketer mà còn là hành trình lan tỏa niềm tin rằng “sự kết nối phù hợp chính là bước khởi đầu cho những giới hạn được phá vỡ” cho người học.”",
     side: "left",
     number: "03",
     themeColor: "#ec4899", // Pink/Rose
@@ -152,7 +152,7 @@ const TEAM = [
     role: "Frontend Engineer",
     image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787291887/4.png",
     story:
-      "“Giao diện chính là nơi cảm xúc bắt đầu. Từng chuyển động mượt mà, từng điểm chạm tinh tế mà mình tỉ mỉ xây dựng đều hướng tới một mong muốn giản đơn: bạn sẽ luôn cảm thấy thoải mái và tự tin nhất khi đồng hành cùng BeeWise.”",
+      "“Thiết kế một giao diện website thân thiện với người dùng là nhiệm vụ chính của Vỹ tại BeeWise. Với Vỹ, một giao diện mang lại ấn tượng tốt không chỉ nằm ở vẻ bề ngoài, mà còn là sự chọn lọc phong cách phù hợp để mang lại hiệu quả trong quá trình dạy và học. Vỹ mong rằng những cải tiến liên tục của BeeWise sẽ luôn mang đến cho các Bee-ers những trải nghiệm mới mẻ và tốt hơn mỗi ngày.”",
     side: "right",
     number: "04",
     themeColor: "#8b5cf6", // Violet
@@ -166,7 +166,7 @@ const TEAM = [
     role: "Backend Engineer",
     image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787291883/5.png",
     story:
-      "“Sự ổn định và thông minh trong từng luồng nghiệp vụ là ưu tiên cao nhất của mình. Xây dựng logic chặt chẽ để bất kỳ ai, ở bất cứ đâu, cũng đều có thể chạm tới tri thức một cách thuận tiện và minh bạch nhất.”",
+      "“Đối với Nhân, công nghệ không chỉ đơn thuần là công cụ mà là nền móng để xây dựng một tương lai học tập mới mẻ và hiện đại hơn. Và đó chính là mục tiêu mà Nhân mong muốn đem đến cho BeeWise,  một nền tảng vững mạnh, an toàn, minh bạch để đồng hành cùng gia sư, học viên và cả phụ huynh - không chỉ hôm nay, mà còn cho cả những bước tiếp phía trước.”",
     side: "left",
     number: "05",
     themeColor: "#10b981", // Emerald
@@ -180,7 +180,7 @@ const TEAM = [
     role: "DevOps Engineer",
     image: "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787291883/6.png",
     story:
-      "“Hệ thống tựa như một dòng chảy không ngừng nghỉ. Mình giữ cho từng server luôn sống khỏe, pipeline tự động và mượt mà, để nhịp cầu tri thức của BeeWise luôn thông suốt trong từng giây phút.”",
+      "“Tại BeeWise, Huân mong muốn xây dựng một hệ thống học tập toàn diện, nơi gia sư và học sinh có thể kết nối, tương tác và đồng hành hiệu quả trong suốt quá trình học tập. BeeWise không chỉ hỗ trợ việc giảng dạy và tiếp thu kiến thức mà còn hướng đến việc tối ưu hóa các công việc như quản lý lịch học, tài liệu, bài tập và theo dõi tiến độ. Thông qua công nghệ, BeeWise kỳ vọng hỗ trợ gia sư lẫn học viên tiết kiệm thời gian, giảm bớt các thao tác không cần thiết và tập trung nhiều hơn vào chất lượng học tập.”",
     side: "right",
     number: "06",
     themeColor: "#06b6d4", // Cyan

@@ -7,8 +7,11 @@ export type ConnectionStage =
   | "WAITING_FOR_TUTOR"
   | "DISCUSSING"
   | "TRIAL_SCHEDULED"
-  | "AWAITING_DECISION";
+  | "AWAITING_DECISION"
+  | "CONVERTED_TO_CLASS"
+  | "UNKNOWN";
 export type ChatRoomStatus = "ACTIVE" | "CLOSED" | "CONVERTED_TO_CLASS";
+export type ChatRoomCategory = "CONNECTION" | "SUPPORT";
 export type ChatParticipantRole = "LEARNER" | "TUTOR" | "CONSULTANT";
 
 export type CloseReason =
@@ -62,30 +65,87 @@ export interface ChatMessage {
 }
 
 // ============================================================
-// WIDGET TYPES (Consultant-only)
+// WIDGET TYPES — mock contract for the future Connection Chat API
 // ============================================================
 
-export type WidgetType =
-  | "TRIAL_SCHEDULE"
-  | "CONFIRM_CLASS"
-  | "CLOSE_CONNECTION"
-  | "PAYMENT_REQUEST";
-
-export interface TrialScheduleData {
-  proposedDate: string; // e.g. "2026-07-25"
-  proposedTime: string; // e.g. "18:00"
-  durationMinutes: number;
+export interface TrialSession {
+  id: string;
+  connectionId: string;
+  tutorId: string;
+  learnerId: string;
+  startAt: string;
+  endAt: string;
   teachingMode: "ONLINE" | "OFFLINE";
-  note?: string;
+  location?: string | null;
+  meetingInfo?: string | null;
+  status: "PROPOSED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+  proposedBy: string;
+  confirmedByTutorAt?: string | null;
+  confirmedByLearnerAt?: string | null;
 }
 
-export interface ConfirmClassData {
+export interface ClassConfirmation {
+  id: string;
+  connectionId: string;
+  tutorId: string;
+  learnerId: string;
+  tutorOfferingId: string;
   subject: string;
-  gradeLevel: string;
   teachingMode: "ONLINE" | "OFFLINE";
-  sessionsPerWeek: number;
-  feePerSession: number;
-  startDate: string;
+  pricePerSession: number;
+  sessionDurationMinutes: number;
+  numberOfSessions: number;
+  totalAmount: number;
+  proposedSchedule?: string | null;
+  status: "DRAFT" | "WAITING_CONFIRMATION" | "CONFIRMED" | "CANCELLED";
+  learnerConfirmedAt?: string | null;
+  tutorConfirmedAt?: string | null;
+  createdBy: string;
+  classId?: string | null;
+}
+
+export interface PaymentRequest {
+  id: string;
+  classId: string;
+  learnerId: string;
+  orderCode: string;
+  provider: "PAYOS";
+  amount: number;
+  currency: "VND";
+  paymentLinkId?: string | null;
+  checkoutUrl?: string | null;
+  status: "PENDING" | "PAID" | "FAILED" | "EXPIRED" | "CANCELLED";
+  expiredAt: string;
+  paidAt?: string | null;
+  providerTransactionId?: string | null;
+  createdAt: string;
+  tutorName: string;
+  subject: string;
+  numberOfSessions: number;
+}
+
+export interface ClassSession {
+  id: string;
+  classId: string;
+  tutorId: string;
+  learnerId: string;
+  startAt: string;
+  endAt: string;
+  teachingMode: "ONLINE" | "OFFLINE";
+  location?: string | null;
+  meetingInfo?: string | null;
+  status: "SCHEDULED" | "COMPLETED" | "CANCELLED" | "RESCHEDULED";
+  createdBy: string;
+  replacesSessionId?: string | null;
+}
+
+export interface ScheduleClassesData {
+  classId: string;
+  tutorId: string;
+  learnerId: string;
+  numberOfSessions: number;
+  sessions: ClassSession[];
+  status: "AWAITING_TUTOR" | "PARTIALLY_SCHEDULED" | "SCHEDULED";
 }
 
 export interface CloseConnectionData {
@@ -93,21 +153,12 @@ export interface CloseConnectionData {
   note?: string;
 }
 
-export type ChatWidgetData =
-  | TrialScheduleData
-  | ConfirmClassData
-  | CloseConnectionData;
-
-export type WidgetStatus = "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED";
-
-export interface ChatWidget {
-  widgetType: WidgetType;
-  status: WidgetStatus;
-  data: ChatWidgetData;
-  createdBy: string; // consultantId
-  respondedBy?: string;
-  respondedAt?: string;
-}
+export type ChatWidget =
+  | { widgetType: "TRIAL_SESSION"; data: TrialSession }
+  | { widgetType: "CLASS_CONFIRMATION"; data: ClassConfirmation }
+  | { widgetType: "PAYMENT_REQUEST"; data: PaymentRequest }
+  | { widgetType: "SCHEDULE_CLASSES"; data: ScheduleClassesData }
+  | { widgetType: "CLOSE_CONNECTION"; data: CloseConnectionData };
 
 // ============================================================
 // CHAT ROOM
@@ -115,6 +166,8 @@ export interface ChatWidget {
 
 export interface ChatRoom {
   id: string;
+  category: ChatRoomCategory;
+  supportFor?: "LEARNER" | "TUTOR";
   connectRequestId: string;
   status: ChatRoomStatus;
   connectionStage: ConnectionStage;
@@ -138,6 +191,7 @@ export interface ChatRoom {
 
   createdAt: string;
   updatedAt: string;
+  hasLearningDetails?: boolean;
 }
 
 // ============================================================

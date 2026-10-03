@@ -14,6 +14,7 @@ import type {
   VietnamWard,
 } from "../services/vietnam-administrative.service";
 import { ProfileField, profileInputClass } from "./ProfileField";
+import { ProfileSelect } from "./ProfileSelect";
 
 const LEGACY_VALUE = "__legacy_location__";
 
@@ -97,14 +98,14 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
   };
 
   return (
-    <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+    <div className="space-y-3 rounded-2xl border border-border bg-muted/40 p-4">
       <div className="flex items-start gap-3">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#280f91]/8 text-[#280f91]">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <MapPin className="size-5" weight="fill" aria-hidden="true" />
         </span>
         <div>
-          <h3 className="font-bold text-slate-900">Khu vực giảng dạy</h3>
-          <p className="mt-0.5 text-xs leading-5 text-slate-500">
+          <h3 className="font-bold text-foreground">Khu vực giảng dạy</h3>
+          <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
             Dữ liệu hành chính hai cấp sau tháng 07/2025. Có thể chọn toàn tỉnh
             hoặc thu hẹp đến phường, xã.
           </p>
@@ -116,8 +117,9 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
           label="Tỉnh / thành phố"
           required={required}
           error={errors.offlineCity?.message}
+          interactive
         >
-          <select
+          <ProfileSelect
             value={
               selectedProvince
                 ? String(selectedProvince.code)
@@ -125,55 +127,43 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
                   ? LEGACY_VALUE
                   : ""
             }
-            onChange={(event) => selectProvince(event.target.value)}
+            onChange={selectProvince}
             disabled={provincesQuery.isLoading || provincesQuery.isError}
-            className={profileInputClass}
-          >
-            <option value="">
-              {provincesQuery.isLoading
+            label="Tỉnh / thành phố"
+            invalid={Boolean(errors.offlineCity)}
+            searchable
+            searchPlaceholder="Tìm tỉnh / thành phố..."
+            placeholder={provincesQuery.isLoading
                 ? "Đang tải tỉnh / thành phố..."
                 : "Chọn tỉnh / thành phố"}
-            </option>
-            {city && !selectedProvince ? (
-              <option value={LEGACY_VALUE} disabled>
-                {city} (dữ liệu đã lưu)
-              </option>
-            ) : null}
-            {provinces.map((province) => (
-              <option key={province.code} value={province.code}>
-                {province.name}
-              </option>
-            ))}
-          </select>
+            options={[
+              ...(city && !selectedProvince ? [{ value: LEGACY_VALUE, label: `${city} (dữ liệu đã lưu)`, disabled: true }] : []),
+              ...provinces.map((province) => ({ value: String(province.code), label: province.name })),
+            ]}
+          />
         </ProfileField>
 
-        <ProfileField label="Phường / xã / đặc khu">
-          <select
+        <ProfileField label="Phường / xã / đặc khu" interactive>
+          <ProfileSelect
             value={
               selectedWard ? String(selectedWard.code) : ward ? LEGACY_VALUE : ""
             }
-            onChange={(event) => selectWard(event.target.value)}
+            onChange={selectWard}
             disabled={!selectedProvince || provinceQuery.isLoading || provinceQuery.isError}
-            className={profileInputClass}
-          >
-            <option value="">
-              {provinceQuery.isLoading
+            label="Phường / xã / đặc khu"
+            searchable
+            searchPlaceholder="Tìm phường / xã..."
+            placeholder={provinceQuery.isLoading
                 ? "Đang tải phường / xã..."
                 : selectedProvince
                   ? "Toàn tỉnh / thành phố"
                   : "Chọn tỉnh / thành phố trước"}
-            </option>
-            {ward && !selectedWard ? (
-              <option value={LEGACY_VALUE} disabled>
-                {ward} (dữ liệu đã lưu)
-              </option>
-            ) : null}
-            {wards.map((item) => (
-              <option key={item.code} value={item.code}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: "", label: "Toàn tỉnh / thành phố" },
+              ...(ward && !selectedWard ? [{ value: LEGACY_VALUE, label: `${ward} (dữ liệu đã lưu)`, disabled: true }] : []),
+              ...wards.map((item) => ({ value: String(item.code), label: item.name })),
+            ]}
+          />
         </ProfileField>
 
         <ProfileField label="Địa chỉ chi tiết">
@@ -196,7 +186,7 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
       </div>
 
       {provincesQuery.isError || provinceQuery.isError ? (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-orange-200 bg-orange-50 px-3 py-2.5 text-sm text-orange-800">
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-accent/40 bg-accent/20 px-3 py-2.5 text-sm text-amber-800">
           <span className="flex items-start gap-2">
             <WarningCircle className="mt-0.5 size-4 shrink-0" weight="fill" />
             Chưa tải được dữ liệu khu vực. Vui lòng thử lại.
@@ -216,7 +206,7 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
       ) : null}
 
       {city ? (
-        <p className="rounded-xl bg-[#280f91]/5 px-3 py-2 text-xs leading-5 text-[#280f91]">
+        <p className="rounded-xl bg-primary/10 border border-primary/20 px-3 py-2 text-xs leading-5 text-primary">
           Khu vực hiển thị: <strong>{areaLabel(city, ward)}</strong>
         </p>
       ) : null}

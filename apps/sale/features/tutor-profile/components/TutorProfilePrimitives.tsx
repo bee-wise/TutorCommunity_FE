@@ -23,12 +23,12 @@ interface RatingStarsProps {
 }
 
 const pillToneClassName = {
-  primary: "border-[#280f91]/20 bg-[#280f91]/10 text-[#280f91]",
-  secondary: "border-[#447353]/30 bg-[#447353]/10 text-[#447353]",
-  accent: "border-[#ffc510]/50 bg-[#fff8e6] text-[#905b0f]",
-  neutral: "border-[#e8edf5] bg-[#f8faff] text-[#0c0c0b]/70",
-  success: "border-[#447353]/30 bg-[#447353]/8 text-[#447353]",
-  warning: "border-[#ffc510]/60 bg-[#fff3cb] text-[#905b0f]",
+  primary: "border-primary bg-card text-primary",
+  secondary: "border-secondary bg-card text-secondary",
+  accent: "border-accent bg-accent text-accent-foreground",
+  neutral: "border-border bg-card text-foreground",
+  success: "border-secondary bg-card text-secondary",
+  warning: "border-warning bg-card text-warning",
 };
 
 export function SectionShell({
@@ -44,12 +44,14 @@ export function SectionShell({
       className={`rounded-2xl border border-[#e8edf5] bg-white p-5 sm:p-6 shadow-[0_2px_12px_-4px_rgba(40,15,145,0.04)] ${className}`}
     >
       <div className="mb-5 flex flex-col gap-2 border-b border-[#f0f4fa] pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <span className="h-5 w-1.5 rounded-full bg-[#280f91]" aria-hidden="true" />
-            <h2 className="text-lg font-extrabold text-[#0c0c0b] sm:text-xl">{title}</h2>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3 sm:justify-start sm:items-center">
+            <div className="flex min-w-0 items-start gap-2.5">
+              <span className="mt-1 h-5 w-1.5 shrink-0 rounded-full bg-[#280f91]" aria-hidden="true" />
+              <h2 className="text-lg font-extrabold text-[#0c0c0b] sm:text-xl">{title}</h2>
+            </div>
             {badge ? (
-              <span className="rounded-full bg-[#280f91]/10 px-2.5 py-0.5 text-xs font-bold text-[#280f91]">
+              <span className="shrink-0 whitespace-nowrap rounded-full bg-[#280f91]/10 px-2.5 py-0.5 text-xs font-bold text-[#280f91]">
                 {badge}
               </span>
             ) : null}
@@ -60,7 +62,7 @@ export function SectionShell({
             </p>
           ) : null}
         </div>
-        {headerAction ? <div>{headerAction}</div> : null}
+        {headerAction ? <div className="shrink-0">{headerAction}</div> : null}
       </div>
       {children}
     </section>
@@ -73,7 +75,7 @@ export function InfoPill({ children, tone = "neutral", size = "md" }: InfoPillPr
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border shadow-sm ${sizeClasses} ${pillToneClassName[tone]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border ${sizeClasses} ${pillToneClassName[tone]}`}
     >
       {children}
     </span>

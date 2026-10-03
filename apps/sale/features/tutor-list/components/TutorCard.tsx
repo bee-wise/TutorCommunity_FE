@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
+import { BadgeCheck, Eye } from "lucide-react";
 import {
   ArrowsHorizontalIcon,
   ArrowRightIcon,
@@ -20,12 +21,15 @@ import {
   InfoIcon,
 } from "@phosphor-icons/react";
 import type { ApiTutorProfile } from "../data/types";
+import { getTeachingCapabilities } from "../utils/tutor-filter.utils";
 import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
+import { useTutorViewsQuery } from "../../tutor-profile/hooks/useTutorViewsQuery";
 
 interface TutorCardProps {
   tutor: ApiTutorProfile;
   isLoggedIn?: boolean;
   isBestMatch?: boolean;
+  alignWithBestMatch?: "sm" | "xl";
 }
 
 const getLevelLabel = (studentYear: string) => {
@@ -34,10 +38,12 @@ const getLevelLabel = (studentYear: string) => {
 };
 
 const getTeachingModeInfo = (modes: string[]) => {
-  if (modes.includes("ONLINE") && modes.includes("OFFLINE"))
+  const capabilities = getTeachingCapabilities(modes);
+  if (capabilities.online && capabilities.offline)
     return { label: "Online & Tại nhà", icon: ArrowsHorizontalIcon };
-  if (modes.includes("ONLINE")) return { label: "Online", icon: MonitorIcon };
-  return { label: "Tại nhà", icon: HouseLineIcon };
+  if (capabilities.online) return { label: "Online", icon: MonitorIcon };
+  if (capabilities.offline) return { label: "Tại nhà", icon: HouseLineIcon };
+  return { label: "Chưa cập nhật", icon: HouseLineIcon };
 };
 
 function TutorAvatar({ tutor }: { tutor: ApiTutorProfile }) {
@@ -71,10 +77,18 @@ function TutorAvatar({ tutor }: { tutor: ApiTutorProfile }) {
       )}
       {tutor.isOnline && (
         <span
-          className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#447353]"
+          className="absolute right-1 top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#447353]"
           aria-label="Đang trực tuyến"
         />
       )}
+      <span
+        className="absolute bottom-1 right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-[#447353] text-white shadow-md"
+        role="img"
+        aria-label="Hồ sơ đã xác thực"
+        title="Hồ sơ đã xác thực"
+      >
+        <BadgeCheck size={16} aria-hidden="true" />
+      </span>
     </div>
   );
 }
@@ -83,11 +97,19 @@ export function TutorCard({
   tutor,
   isLoggedIn = false,
   isBestMatch = false,
+  alignWithBestMatch,
 }: TutorCardProps) {
   const [showReason, setShowReason] = useState(false);
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
   const tutorId = tutor.profileId || tutor.userId || "";
+  const tutorProfileHref = `/tutors/${tutor.profileId}${tutor.userId ? `?tutorUserId=${encodeURIComponent(tutor.userId)}` : ""}`;
   const isSaved = isFavorite(tutorId);
+
+  const { data: viewsData, isLoading: isViewsLoading } = useTutorViewsQuery(
+    tutor.profileId,
+    { enabled: Boolean(tutor.profileId) },
+  );
+  const totalViews = viewsData?.data?.totalViews;
 
   useEffect(() => {
     if (!showReason) return;
@@ -114,27 +136,52 @@ export function TutorCard({
       isCurrentlySaved: isSaved,
     });
   };
-  const modeInfo = getTeachingModeInfo(tutor.teachingModes || []);
+  const allTeachingModes =
+    tutor.teachingModes && tutor.teachingModes.length > 0
+      ? tutor.teachingModes
+      : (tutor.teachingOfferings || [])
+          .map((o) => o.teachingMode)
+          .filter(Boolean);
+  const modeInfo = getTeachingModeInfo(allTeachingModes);
+  const teachingCapabilities = getTeachingCapabilities(allTeachingModes);
   const ModeIcon = modeInfo.icon;
-  const tags = [
-    ...(tutor.subjects || []).map((subject) => subject?.name).filter(Boolean),
-    ...(tutor.gradeLevels || [])
-      .map((g) => (typeof g === "string" ? g : g?.name))
-      .filter(Boolean),
-    ...(tutor.specializations || [])
-      .map((s) => (typeof s === "string" ? s : s?.name))
-      .filter(Boolean),
-  ];
 
+  const offeringTags = (tutor.teachingOfferings || [])
+    .map((o) => o.teachingItemName || o.proposal?.teachingItemName || o.programName)
+    .filter(Boolean) as string[];
+
+  const tags = Array.from(new Set(offeringTags));
   const visibleTags = tags.slice(0, 3);
   const extraCount = Math.max(0, tags.length - visibleTags.length);
+
+  const offeringMinPrice =
+    tutor.teachingOfferings && tutor.teachingOfferings.length > 0
+      ? Math.min(
+          ...tutor.teachingOfferings
+            .map((o) => o.basePrice)
+            .filter((p) => typeof p === "number" && p > 0),
+        )
+      : null;
+  const effectiveHourlyRate =
+    typeof tutor.hourlyRate === "number" && tutor.hourlyRate > 0
+      ? tutor.hourlyRate
+      : offeringMinPrice && Number.isFinite(offeringMinPrice)
+        ? offeringMinPrice
+        : null;
 
   const location =
     tutor.offlineDistrict && tutor.offlineCity
       ? `${tutor.offlineDistrict}, ${tutor.offlineCity}`
-      : tutor.offlineCity || "Online";
+      : tutor.offlineCity || "";
 
   const name = tutor.displayName || "Gia Sư";
+  const nameSpacing = isBestMatch
+    ? ""
+    : alignWithBestMatch === "sm"
+      ? "pr-10 sm:pr-0"
+      : alignWithBestMatch === "xl"
+        ? "pr-10 xl:pr-0"
+        : "pr-10";
 
   return (
     <>
@@ -143,44 +190,47 @@ export function TutorCard({
         aria-label={`Gia sư ${name}`}
       >
         {isBestMatch && (
-          <div className="h-1 w-full bg-[#ffc500]" aria-hidden="true" />
+          <div
+            className="absolute inset-x-0 top-0 h-1 bg-[#ffc500]"
+            aria-hidden="true"
+          />
         )}
 
-        <div className="flex flex-1 flex-col p-4 sm:p-5">
-          <div className="mb-4 flex min-h-8 items-center justify-between gap-3">
-            {isBestMatch ? (
-              <span
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#fff6d6] px-2.5 py-1 text-[11px] font-extrabold text-[#8a5a00]"
-                style={{ fontFamily: "var(--font-nunito-family)" }}
-              >
-                <SparkleIcon size={13} weight="fill" aria-hidden="true" />
-                Phù hợp nhất
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#447353]">
-                <CheckCircleIcon size={15} weight="fill" aria-hidden="true" />
-                Hồ sơ đã xác thực
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={handleSave}
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition ${isSaved ? "border-[#f1b8c0] bg-[#fff1f3] text-[#c52f47]" : "border-[#dce3f0] bg-white text-[#667085] hover:border-[#280f91]/30 hover:bg-[#f7f5ff] hover:text-[#280f91]"}`}
-              aria-label={`${isSaved ? "Bỏ lưu" : "Lưu"} gia sư ${name}`}
+        <div className="relative flex flex-1 flex-col p-4 sm:p-5">
+          {(isBestMatch || alignWithBestMatch) && (
+            <div
+              className={`mb-4 h-9 items-center pr-11 ${isBestMatch ? "flex" : alignWithBestMatch === "sm" ? "hidden sm:flex" : "hidden xl:flex"}`}
+              aria-hidden={!isBestMatch}
             >
-              <HeartIcon
-                size={17}
-                weight={isSaved ? "fill" : "regular"}
-                aria-hidden="true"
-              />
-            </button>
-          </div>
+              {isBestMatch && (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[#fff6d6] px-2.5 py-1 text-[11px] font-extrabold text-[#8a5a00]"
+                  style={{ fontFamily: "var(--font-nunito-family)" }}
+                >
+                  <SparkleIcon size={13} weight="fill" aria-hidden="true" />
+                  Phù hợp nhất
+                </span>
+              )}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleSave}
+            className={`absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border transition sm:right-5 sm:top-5 ${isSaved ? "border-[#f1b8c0] bg-[#fff1f3] text-[#c52f47]" : "border-[#dce3f0] bg-white text-[#667085] hover:border-[#280f91]/30 hover:bg-[#f7f5ff] hover:text-[#280f91]"}`}
+            aria-label={`${isSaved ? "Bỏ lưu" : "Lưu"} gia sư ${name}`}
+          >
+            <HeartIcon
+              size={17}
+              weight={isSaved ? "fill" : "regular"}
+              aria-hidden="true"
+            />
+          </button>
 
           <div className="flex items-start gap-4">
             <TutorAvatar tutor={tutor} />
             <div className="min-w-0 flex-1 pt-0.5">
               <h3
-                className="line-clamp-2 text-lg font-extrabold leading-[1.25] text-[#17131f]"
+                className={`line-clamp-2 text-lg font-extrabold leading-[1.25] text-[#17131f] ${nameSpacing}`}
                 style={{ fontFamily: "var(--font-nunito-family)" }}
               >
                 {name}
@@ -216,45 +266,49 @@ export function TutorCard({
             </div>
           </div>
 
-          <p className="mt-4 line-clamp-2 min-h-11 text-sm leading-[1.55] text-[#475467]">
+          <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-[1.5] text-[#475467]">
             {tutor.profileHeadline || tutor.bio || "Gia sư chuyên nghiệp"}
           </p>
 
-          <div className="mt-3 flex min-h-7 flex-wrap content-start gap-1.5">
-            {visibleTags.map((tag, index) => (
-              <span
-                key={`${tag}-${index}`}
-                className={`rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-[#280f91]" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
-              >
-                {tag}
-              </span>
-            ))}
-            {extraCount > 0 && (
-              <span className="rounded-lg bg-[#f2f4f7] px-2.5 py-1 text-[11px] font-bold text-[#667085]">
-                +{extraCount}
-              </span>
-            )}
-          </div>
+          {tags.length > 0 ? (
+            <div className="mt-2.5 flex min-h-7 flex-wrap content-start gap-1.5">
+              {visibleTags.map((tag, index) => (
+                <span
+                  key={`${tag}-${index}`}
+                  className={`rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-[#280f91]" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
+                >
+                  {tag}
+                </span>
+              ))}
+              {extraCount > 0 && (
+                <span className="rounded-lg bg-[#f2f4f7] px-2.5 py-1 text-[11px] font-bold text-[#667085]">
+                  +{extraCount}
+                </span>
+              )}
+            </div>
+          ) : null}
 
-          <div className="mt-4 flex flex-col gap-2.5 rounded-xl border border-[#e7eaf2] bg-[#fafbfc] p-3 text-xs text-[#475467]">
+          <div className="mt-3 flex flex-col gap-2 rounded-xl border border-[#e7eaf2] bg-[#fafbfc] p-2.5 text-xs text-[#475467]">
             <p className="flex min-w-0 items-center gap-2">
               <ModeIcon
                 size={16}
-                className="shrink-0 text-[#280f91]"
+                className="shrink-0 text-primary"
                 aria-hidden="true"
               />
               <span className="font-semibold">{modeInfo.label}</span>
             </p>
-            <p className="flex min-w-0 items-start gap-2">
-              <MapPinIcon
-                size={16}
-                className="mt-0.5 shrink-0 text-[#280f91]"
-                aria-hidden="true"
-              />
-              <span className="min-w-0 break-words font-semibold leading-5">
-                {location}
-              </span>
-            </p>
+            {teachingCapabilities.offline && location && (
+              <p className="flex min-w-0 items-start gap-2">
+                <MapPinIcon
+                  size={16}
+                  className="mt-0.5 shrink-0 text-primary"
+                  aria-hidden="true"
+                />
+                <span className="min-w-0 break-words font-semibold leading-5">
+                  {location}
+                </span>
+              </p>
+            )}
           </div>
 
           {tutor.reason && (
@@ -271,33 +325,50 @@ export function TutorCard({
             </button>
           )}
 
-          <div className="mt-auto flex items-end justify-between gap-4 pt-4">
+          <div className="mt-auto flex items-end justify-between gap-2 pt-3">
             <div className="min-w-0">
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#98a2b3]">
                 Học phí từ
               </p>
               <p
-                className="mt-0.5 text-lg font-extrabold tracking-tight text-[#17131f]"
+                className="mt-0.5 whitespace-nowrap text-lg font-extrabold tracking-tight text-primary"
                 style={{ fontFamily: "var(--font-nunito-family)" }}
               >
-                {tutor.hourlyRate
-                  ? tutor.hourlyRate.toLocaleString("vi-VN")
+                {effectiveHourlyRate
+                  ? effectiveHourlyRate.toLocaleString("vi-VN")
                   : "Liên hệ"}
-                {tutor.hourlyRate ? (
-                  <span className="ml-1 text-[11px] font-semibold tracking-normal text-[#667085]">
-                    VNĐ / 60 phút
-                  </span>
-                ) : null}
               </p>
+              {effectiveHourlyRate ? (
+                <p className="whitespace-nowrap text-[11px] font-semibold text-[#667085]">
+                  VNĐ / 60 phút
+                </p>
+              ) : null}
             </div>
-            <Link
-              href={`/tutors/${tutor.profileId}`}
-              id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
-              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#280f91] px-4 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
-            >
-              Xem hồ sơ
-              <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />
-            </Link>
+            <div className="flex shrink-0 flex-col items-stretch gap-1.5">
+              {isViewsLoading ? (
+                <span className="h-5 w-full animate-pulse rounded-full bg-[#f0f4fa]" />
+              ) : totalViews !== undefined ? (
+                <span
+                  className="flex w-full items-center justify-center gap-1 rounded-full border border-accent/50 bg-gradient-to-r from-accent/25 via-accent/10 to-primary/10 px-2 py-0.5 text-[11px] font-extrabold text-primary shadow-xs"
+                  title={`${totalViews.toLocaleString("vi-VN")} lượt xem`}
+                >
+                  <Eye
+                    size={12}
+                    className="shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
+                  <span>{totalViews.toLocaleString("vi-VN")} lượt xem</span>
+                </span>
+              ) : null}
+              <Link
+                href={tutorProfileHref}
+                id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
+                className="inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
+              >
+                Xem hồ sơ
+                <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />
+              </Link>
+            </div>
           </div>
         </div>
       </article>
@@ -405,7 +476,7 @@ export function TutorCard({
                       Đóng
                     </button>
                     <Link
-                      href={`/tutors/${tutor.profileId}`}
+                      href={tutorProfileHref}
                       className="inline-flex h-11 items-center justify-center rounded-xl bg-[#280f91] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(40,15,145,0.18)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/35 focus-visible:ring-offset-2"
                     >
                       Xem hồ sơ {name}
