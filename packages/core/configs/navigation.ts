@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   FolderCog,
+  BookOpenCheck,
   Wallet,
   UserCircle,
   PieChart,
@@ -217,6 +218,11 @@ export const navigationConfig: RoleNavigation = {
           title: "Quản Lý Cấu Hình",
           url: "/admin/settings",
           icon: FolderCog,
+        },
+        {
+          title: "Chương Trình Học",
+          url: "/admin/learning-programs",
+          icon: BookOpenCheck,
         },
         {
           title: "Quản Lý Rủi Ro",

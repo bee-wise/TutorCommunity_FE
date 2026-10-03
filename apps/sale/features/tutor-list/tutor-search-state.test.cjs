@@ -16,14 +16,14 @@ test("clearing filters preserves AI and manual search queries", () => {
 
   assert.ok(clearFiltersHandler, "handleClearFilters must exist");
   assert.match(clearFiltersHandler[1], /setFiltersByMode/);
-  assert.match(clearFiltersHandler[1], /\[searchMode\]: DEFAULT_FILTERS/);
+  assert.match(clearFiltersHandler[1], /\[searchMode\]:\s*nextFilters/);
   assert.doesNotMatch(clearFiltersHandler[1], /setQueries|cachedQueries/);
 });
 
 test("AI results are filtered from the cached server response", () => {
   assert.match(
     hook,
-    /applyLocalFiltersToAIResults\(aiTutors \|\| \[\], filtersByMode\.ai\)/,
+    /applyLocalFilters\(aiTutors \|\| \[\], filtersByMode\.ai, "ai"\)/,
   );
 });
 
