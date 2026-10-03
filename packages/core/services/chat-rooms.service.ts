@@ -1,62 +1,85 @@
 import { z } from "zod";
 import { apiClient } from "../configs/client";
 
-const uuid = z.string().uuid();
 const paginationSchema = z.object({
-  page: z.number().int(),
-  pageSize: z.number().int(),
-  totalItems: z.number().int(),
-  totalPages: z.number().int(),
-});
+  page: z.number().int().optional().default(1),
+  pageSize: z.number().int().optional().default(50),
+  totalItems: z.number().int().optional().default(0),
+  totalPages: z.number().int().optional().default(1),
+}).passthrough();
+
+const participantSchema = z.object({
+  userId: z.string(),
+  joinedAt: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  role: z.string().nullable().optional(),
+}).passthrough();
 
 const connectRequestSchema = z.object({
-  id: uuid,
-  learnerId: uuid,
-  tutorId: uuid,
+  id: z.string(),
+  learnerId: z.string().nullable().optional(),
+  tutorId: z.string().nullable().optional(),
   status: z.string().nullable().optional(),
-  chatRoomId: uuid.nullable().optional(),
+  chatRoomId: z.string().nullable().optional(),
   connectionStage: z.string().nullable().optional(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-});
+  createdAt: z.string().default(() => new Date().toISOString()),
+  updatedAt: z.string().default(() => new Date().toISOString()),
+}).passthrough();
+
 const roomSchema = z.object({
-  id: uuid,
-  connectRequestId: uuid,
+  id: z.string(),
+  connectRequestId: z.string().nullable().optional(),
   status: z.string().nullable().optional(),
   lastMessageAt: z.string().nullable().optional(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  participants: z.array(z.object({ userId: uuid, joinedAt: z.string() })).nullable().optional(),
-});
+  closedAt: z.string().nullable().optional(),
+  closeReason: z.string().nullable().optional(),
+  closeNote: z.string().nullable().optional(),
+  closedBy: z.string().nullable().optional(),
+  recipientUserId: z.string().nullable().optional(),
+  recipientName: z.string().nullable().optional(),
+  createdAt: z.string().default(() => new Date().toISOString()),
+  updatedAt: z.string().default(() => new Date().toISOString()),
+  participants: z.array(participantSchema).nullable().optional(),
+}).passthrough();
+
+const roomListSchema = z.object({
+  items: z.array(roomSchema).nullable().optional(),
+  pagination: paginationSchema,
+}).passthrough();
+
 const messageSchema = z.object({
-  id: uuid,
-  chatRoomId: uuid,
-  senderId: uuid,
+  id: z.string(),
+  chatRoomId: z.string().default(""),
+  senderId: z.string().default(""),
   content: z.string().nullable().optional(),
-  createdAt: z.string(),
+  createdAt: z.string().default(() => new Date().toISOString()),
   messageType: z.string().nullable().optional(),
   businessType: z.string().nullable().optional(),
-  businessReferenceId: uuid.nullable().optional(),
+  businessReferenceId: z.string().nullable().optional(),
   businessPayload: z.unknown().optional(),
-});
+}).passthrough();
+
 const requestListSchema = z.object({
-  items: z.array(connectRequestSchema).nullable(),
+  items: z.array(connectRequestSchema).nullable().optional(),
   pagination: paginationSchema,
-});
+}).passthrough();
+
 const messageListSchema = z.object({
-  items: z.array(messageSchema).nullable(),
+  items: z.array(messageSchema).nullable().optional(),
   pagination: paginationSchema,
-});
+}).passthrough();
+
 const centrifugoTokenSchema = z.object({
   token: z.string().min(1),
   expiresAt: z.string(),
-  userId: uuid,
-});
+  userId: z.string(),
+}).passthrough();
+
 const centrifugoSubscriptionTokenSchema = z.object({
   token: z.string().min(1),
   channel: z.string().min(1),
   expiresAt: z.string(),
-});
+}).passthrough();
 
 export type ConnectRequest = z.infer<typeof connectRequestSchema>;
 export type ChatRoomRecord = z.infer<typeof roomSchema>;
@@ -66,9 +89,18 @@ export type ConnectionDirection = "outbound" | "inbound" | "consultant";
 
 function dataOf<T extends z.ZodType>(schema: T, value: unknown): z.infer<T> {
   const envelope = z.object({ success: z.literal(true), data: z.unknown() }).safeParse(value);
-  if (!envelope.success) throw new Error("Phản hồi từ máy chủ không hợp lệ. Vui lòng thử lại.");
+  if (!envelope.success) {
+    const directParsed = schema.safeParse(value);
+    if (directParsed.success) return directParsed.data;
+    throw new Error("Phản hồi từ máy chủ không hợp lệ. Vui lòng thử lại.");
+  }
   const parsed = schema.safeParse(envelope.data.data);
-  if (!parsed.success) throw new Error("Dữ liệu chat chưa đúng định dạng. Vui lòng thử lại.");
+  if (!parsed.success) {
+    console.error("Chat rooms service parsing error:", parsed.error);
+    const fallbackParsed = schema.safeParse(envelope.data);
+    if (fallbackParsed.success) return fallbackParsed.data;
+    throw new Error("Dữ liệu chat chưa đúng định dạng. Vui lòng thử lại.");
+  }
   return parsed.data;
 }
 
@@ -94,8 +126,9 @@ export const chatRoomsService = {
 
   async listAllConnections(direction: ConnectionDirection) {
     const first = await this.listConnections(direction);
+    const totalPages = first.pagination?.totalPages ?? 1;
     const pages = await Promise.all(
-      Array.from({ length: Math.max(0, first.pagination.totalPages - 1) }, (_, index) =>
+      Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) =>
         this.listConnections(direction, index + 2),
       ),
     );
@@ -105,6 +138,13 @@ export const chatRoomsService = {
   async getRoom(id: string) {
     const response: unknown = await apiClient.get(`/chat-rooms/${encodeURIComponent(id)}`);
     return dataOf(roomSchema, response);
+  },
+
+  async listRooms(page = 1, pageSize = 100) {
+    const response: unknown = await apiClient.get("/chat-rooms", {
+      params: { page, pageSize },
+    });
+    return dataOf(roomListSchema, response);
   },
 
   async listMessages(id: string, before?: string, pageSize = 50) {
