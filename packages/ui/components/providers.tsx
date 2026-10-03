@@ -8,6 +8,9 @@ import { ThemeProvider } from "next-themes";
 import { BeeToaster } from "@workspace/ui/components/ui/bee-toast";
 
 import { AuthBootstrap } from "./AuthBootstrap";
+import { CentrifugoBootstrap } from "./CentrifugoBootstrap";
+import { NotificationDrawer } from "./notifications/NotificationDrawer";
+import { NotificationsBootstrap } from "./notifications/NotificationsBootstrap";
 
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   const orig = console.error;
@@ -34,7 +37,10 @@ export function Providers({ children }: { children: ReactNode }) {
     >
       <QueryClientProvider client={queryClient}>
         <AuthBootstrap />
+        <CentrifugoBootstrap />
+        <NotificationsBootstrap />
         {children}
+        <NotificationDrawer />
 
         <BeeToaster />
         <ReactQueryDevtools initialIsOpen={false} />

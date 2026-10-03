@@ -288,10 +288,10 @@ LLMs default to "static successful state only." Always implement full cycles:
   - Every form control MUST be custom-styled to match the project's design system tokens, typography, border-radius scale, and focus states.
 
 - **Custom Select / Dropdown:**
-  - Build using accessible component primitives (Radix UI / custom dropdown / Headless UI) or customized wrapper with `appearance-none`.
+  - **Every select generated from now on must be a custom control.** Reuse the project's shared Select / Combobox component when available; otherwise build a reusable one with accessible primitives such as Radix UI or Headless UI. Styling only the border or trigger of a visible native `<select>` with `appearance-none` does not satisfy this rule because the opened option menu remains browser-default.
   - Trigger must have tailored padding, crisp border (`border-border`), subtle hover state, and a custom chevron icon (`CaretDown` / `ChevronDown` from the active icon library) that smoothly animates/rotates on open.
   - The dropdown menu surface must be opaque (`bg-card border border-border shadow-md rounded-lg`), with clear option hover states (`hover:bg-muted text-foreground`), active/selected check indicator, and smooth enter/exit transitions.
-  - If a native `<select>` element is used for mobile/accessibility fallback, apply `appearance-none`, custom `pr-10`, and an absolute-positioned custom SVG chevron inside a relative wrapper.
+  - Preserve label association, keyboard navigation, focus management, screen-reader semantics, disabled and error states, and form value submission. A hidden native form control used internally by the accessible primitive is acceptable; a visible browser-default select menu is not.
 
 - **Custom Checkbox:**
   - Container: Square with consistent corner radius (`rounded-[4px]` or `rounded-md`), 16–20px (`w-4 h-4` or `w-5 h-5`), distinct border (`border-2 border-border` or `border-input`).
@@ -1075,6 +1075,7 @@ Run this matrix before outputting code. This is the last filter.
 - [ ] **Button Contrast Check**: every CTA text is readable against its background (no white-on-white, WCAG AA 4.5:1)?
 - [ ] **CTA Button Wrap**: no CTA label wraps to 2+ lines at desktop?
 - [ ] **Form Contrast Check**: form inputs, placeholders, focus rings, labels all pass WCAG AA against the section background?
+- [ ] **Custom Select Check**: every newly generated select uses a reusable custom trigger and option menu, with keyboard, focus, label, disabled, error, and form behavior verified?
 - [ ] **Serif discipline**: if a serif is used, it is NOT Fraunces or Instrument_Serif (or it is, with explicit brand justification)? Different serif from your previous project?
 - [ ] **Premium-consumer palette check**: if the brief is premium-consumer (cookware / wellness / artisan / luxury), the palette is NOT the AI-default beige+brass+oxblood+espresso family? Different family from your previous premium-consumer project?
 - [ ] **Italic descender clearance**: every italic word with `y g j p q` has `leading-[1.1]` min + `pb-1` reserve?

@@ -77,57 +77,83 @@ function applyLocalFilters(
   filters: TutorFilters,
   mode: SearchMode,
 ) {
+  const getTutorEffectiveRate = (tutor: ApiTutorProfile) => {
+    if (typeof tutor.hourlyRate === "number" && tutor.hourlyRate > 0) {
+      return tutor.hourlyRate;
+    }
+    const offeringMinPrice =
+      tutor.teachingOfferings && tutor.teachingOfferings.length > 0
+        ? Math.min(
+            ...tutor.teachingOfferings
+              .map((o) => o.basePrice)
+              .filter((p) => typeof p === "number" && p > 0),
+          )
+        : null;
+    return offeringMinPrice && Number.isFinite(offeringMinPrice)
+      ? offeringMinPrice
+      : 0;
+  };
+
   const filtered = tutors.filter((tutor) => {
-      if (filters.teachingMode !== "all") {
-        const capabilities = getTeachingCapabilities(tutor.teachingModes || []);
-        if (filters.teachingMode === "online" && !capabilities.online) return false;
-        if (filters.teachingMode === "offline" && !capabilities.offline) return false;
-      }
-
-      if (filters.level !== "all") {
-        const isTeacher = tutor.studentYear === "GRADUATED";
-        if (filters.level === "teacher" || filters.level === "expert") {
-          if (!isTeacher) return false;
-        } else {
-          if (isTeacher) return false;
-        }
-      }
-
-      if (
-        filters.maxPricePerSession !== null &&
-        (tutor.hourlyRate || 0) > filters.maxPricePerSession
-      ) {
+    if (filters.teachingMode !== "all") {
+      const modes =
+        tutor.teachingModes && tutor.teachingModes.length > 0
+          ? tutor.teachingModes
+          : (tutor.teachingOfferings || [])
+              .map((o) => o.teachingMode)
+              .filter(Boolean);
+      const capabilities = getTeachingCapabilities(modes);
+      if (filters.teachingMode === "online" && !capabilities.online)
         return false;
-      }
-
-      if (
-        filters.minRating !== null &&
-        (tutor.ratingAvg || 0) < filters.minRating
-      ) {
+      if (filters.teachingMode === "offline" && !capabilities.offline)
         return false;
+    }
+
+    if (filters.level !== "all") {
+      const isTeacher = tutor.studentYear === "GRADUATED";
+      if (filters.level === "teacher" || filters.level === "expert") {
+        if (!isTeacher) return false;
+      } else {
+        if (isTeacher) return false;
       }
+    }
 
-      if (filters.availableOnly && !tutor.isOnline) return false;
+    const rate = getTutorEffectiveRate(tutor);
+    if (
+      filters.maxPricePerSession !== null &&
+      rate > filters.maxPricePerSession
+    ) {
+      return false;
+    }
 
-      return true;
-    });
+    if (
+      filters.minRating !== null &&
+      (tutor.ratingAvg || 0) < filters.minRating
+    ) {
+      return false;
+    }
+
+    if (filters.availableOnly && !tutor.isOnline) return false;
+
+    return true;
+  });
 
   // The API already ranks AI matches and sorts manual results. Preserve that order
   // unless the learner explicitly selects another sort for the AI list.
   if (mode === "manual" || filters.sortBy === "best_match") return filtered;
 
   return filtered.sort((a, b) => {
-      switch (filters.sortBy) {
-        case "rating":
-          return (b.ratingAvg || 0) - (a.ratingAvg || 0);
-        case "price_asc":
-          return (a.hourlyRate || 0) - (b.hourlyRate || 0);
-        case "price_desc":
-          return (b.hourlyRate || 0) - (a.hourlyRate || 0);
-        default:
-          return 0;
-      }
-    });
+    switch (filters.sortBy) {
+      case "rating":
+        return (b.ratingAvg || 0) - (a.ratingAvg || 0);
+      case "price_asc":
+        return getTutorEffectiveRate(a) - getTutorEffectiveRate(b);
+      case "price_desc":
+        return getTutorEffectiveRate(b) - getTutorEffectiveRate(a);
+      default:
+        return 0;
+    }
+  });
 }
 
 export function useTutorSearch() {

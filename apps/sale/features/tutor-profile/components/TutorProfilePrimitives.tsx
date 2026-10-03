@@ -44,12 +44,14 @@ export function SectionShell({
       className={`rounded-2xl border border-[#e8edf5] bg-white p-5 sm:p-6 shadow-[0_2px_12px_-4px_rgba(40,15,145,0.04)] ${className}`}
     >
       <div className="mb-5 flex flex-col gap-2 border-b border-[#f0f4fa] pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <span className="h-5 w-1.5 rounded-full bg-[#280f91]" aria-hidden="true" />
-            <h2 className="text-lg font-extrabold text-[#0c0c0b] sm:text-xl">{title}</h2>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3 sm:justify-start sm:items-center">
+            <div className="flex min-w-0 items-start gap-2.5">
+              <span className="mt-1 h-5 w-1.5 shrink-0 rounded-full bg-[#280f91]" aria-hidden="true" />
+              <h2 className="text-lg font-extrabold text-[#0c0c0b] sm:text-xl">{title}</h2>
+            </div>
             {badge ? (
-              <span className="rounded-full bg-[#280f91]/10 px-2.5 py-0.5 text-xs font-bold text-[#280f91]">
+              <span className="shrink-0 whitespace-nowrap rounded-full bg-[#280f91]/10 px-2.5 py-0.5 text-xs font-bold text-[#280f91]">
                 {badge}
               </span>
             ) : null}
@@ -60,7 +62,7 @@ export function SectionShell({
             </p>
           ) : null}
         </div>
-        {headerAction ? <div>{headerAction}</div> : null}
+        {headerAction ? <div className="shrink-0">{headerAction}</div> : null}
       </div>
       {children}
     </section>

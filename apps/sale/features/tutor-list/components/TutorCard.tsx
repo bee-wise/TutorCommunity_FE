@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, Eye } from "lucide-react";
 import {
   ArrowsHorizontalIcon,
   ArrowRightIcon,
@@ -23,6 +23,7 @@ import {
 import type { ApiTutorProfile } from "../data/types";
 import { getTeachingCapabilities } from "../utils/tutor-filter.utils";
 import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
+import { useTutorViewsQuery } from "../../tutor-profile/hooks/useTutorViewsQuery";
 
 interface TutorCardProps {
   tutor: ApiTutorProfile;
@@ -101,7 +102,14 @@ export function TutorCard({
   const [showReason, setShowReason] = useState(false);
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
   const tutorId = tutor.profileId || tutor.userId || "";
+  const tutorProfileHref = `/tutors/${tutor.profileId}${tutor.userId ? `?tutorUserId=${encodeURIComponent(tutor.userId)}` : ""}`;
   const isSaved = isFavorite(tutorId);
+
+  const { data: viewsData, isLoading: isViewsLoading } = useTutorViewsQuery(
+    tutor.profileId,
+    { enabled: Boolean(tutor.profileId) },
+  );
+  const totalViews = viewsData?.data?.totalViews;
 
   useEffect(() => {
     if (!showReason) return;
@@ -128,21 +136,38 @@ export function TutorCard({
       isCurrentlySaved: isSaved,
     });
   };
-  const modeInfo = getTeachingModeInfo(tutor.teachingModes || []);
-  const teachingCapabilities = getTeachingCapabilities(tutor.teachingModes || []);
+  const allTeachingModes =
+    tutor.teachingModes && tutor.teachingModes.length > 0
+      ? tutor.teachingModes
+      : (tutor.teachingOfferings || [])
+          .map((o) => o.teachingMode)
+          .filter(Boolean);
+  const modeInfo = getTeachingModeInfo(allTeachingModes);
+  const teachingCapabilities = getTeachingCapabilities(allTeachingModes);
   const ModeIcon = modeInfo.icon;
-  const tags = [
-    ...(tutor.subjects || []).map((subject) => subject?.name).filter(Boolean),
-    ...(tutor.gradeLevels || [])
-      .map((g) => (typeof g === "string" ? g : g?.name))
-      .filter(Boolean),
-    ...(tutor.specializations || [])
-      .map((s) => (typeof s === "string" ? s : s?.name))
-      .filter(Boolean),
-  ];
 
+  const offeringTags = (tutor.teachingOfferings || [])
+    .map((o) => o.teachingItemName || o.proposal?.teachingItemName || o.programName)
+    .filter(Boolean) as string[];
+
+  const tags = Array.from(new Set(offeringTags));
   const visibleTags = tags.slice(0, 3);
   const extraCount = Math.max(0, tags.length - visibleTags.length);
+
+  const offeringMinPrice =
+    tutor.teachingOfferings && tutor.teachingOfferings.length > 0
+      ? Math.min(
+          ...tutor.teachingOfferings
+            .map((o) => o.basePrice)
+            .filter((p) => typeof p === "number" && p > 0),
+        )
+      : null;
+  const effectiveHourlyRate =
+    typeof tutor.hourlyRate === "number" && tutor.hourlyRate > 0
+      ? tutor.hourlyRate
+      : offeringMinPrice && Number.isFinite(offeringMinPrice)
+        ? offeringMinPrice
+        : null;
 
   const location =
     tutor.offlineDistrict && tutor.offlineCity
@@ -165,7 +190,10 @@ export function TutorCard({
         aria-label={`Gia sư ${name}`}
       >
         {isBestMatch && (
-          <div className="absolute inset-x-0 top-0 h-1 bg-[#ffc500]" aria-hidden="true" />
+          <div
+            className="absolute inset-x-0 top-0 h-1 bg-[#ffc500]"
+            aria-hidden="true"
+          />
         )}
 
         <div className="relative flex flex-1 flex-col p-4 sm:p-5">
@@ -242,21 +270,23 @@ export function TutorCard({
             {tutor.profileHeadline || tutor.bio || "Gia sư chuyên nghiệp"}
           </p>
 
-          <div className="mt-2.5 flex min-h-7 flex-wrap content-start gap-1.5">
-            {visibleTags.map((tag, index) => (
-              <span
-                key={`${tag}-${index}`}
-                className={`rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-[#280f91]" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
-              >
-                {tag}
-              </span>
-            ))}
-            {extraCount > 0 && (
-              <span className="rounded-lg bg-[#f2f4f7] px-2.5 py-1 text-[11px] font-bold text-[#667085]">
-                +{extraCount}
-              </span>
-            )}
-          </div>
+          {tags.length > 0 ? (
+            <div className="mt-2.5 flex min-h-7 flex-wrap content-start gap-1.5">
+              {visibleTags.map((tag, index) => (
+                <span
+                  key={`${tag}-${index}`}
+                  className={`rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-[#280f91]" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
+                >
+                  {tag}
+                </span>
+              ))}
+              {extraCount > 0 && (
+                <span className="rounded-lg bg-[#f2f4f7] px-2.5 py-1 text-[11px] font-bold text-[#667085]">
+                  +{extraCount}
+                </span>
+              )}
+            </div>
+          ) : null}
 
           <div className="mt-3 flex flex-col gap-2 rounded-xl border border-[#e7eaf2] bg-[#fafbfc] p-2.5 text-xs text-[#475467]">
             <p className="flex min-w-0 items-center gap-2">
@@ -304,24 +334,41 @@ export function TutorCard({
                 className="mt-0.5 whitespace-nowrap text-lg font-extrabold tracking-tight text-primary"
                 style={{ fontFamily: "var(--font-nunito-family)" }}
               >
-                {tutor.hourlyRate
-                  ? tutor.hourlyRate.toLocaleString("vi-VN")
+                {effectiveHourlyRate
+                  ? effectiveHourlyRate.toLocaleString("vi-VN")
                   : "Liên hệ"}
               </p>
-              {tutor.hourlyRate ? (
+              {effectiveHourlyRate ? (
                 <p className="whitespace-nowrap text-[11px] font-semibold text-[#667085]">
                   VNĐ / 60 phút
                 </p>
               ) : null}
             </div>
-            <Link
-              href={`/tutors/${tutor.profileId}`}
-              id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
-              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
-            >
-              Xem hồ sơ
-              <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />
-            </Link>
+            <div className="flex shrink-0 flex-col items-stretch gap-1.5">
+              {isViewsLoading ? (
+                <span className="h-5 w-full animate-pulse rounded-full bg-[#f0f4fa]" />
+              ) : totalViews !== undefined ? (
+                <span
+                  className="flex w-full items-center justify-center gap-1 rounded-full border border-accent/50 bg-gradient-to-r from-accent/25 via-accent/10 to-primary/10 px-2 py-0.5 text-[11px] font-extrabold text-primary shadow-xs"
+                  title={`${totalViews.toLocaleString("vi-VN")} lượt xem`}
+                >
+                  <Eye
+                    size={12}
+                    className="shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
+                  <span>{totalViews.toLocaleString("vi-VN")} lượt xem</span>
+                </span>
+              ) : null}
+              <Link
+                href={tutorProfileHref}
+                id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
+                className="inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
+              >
+                Xem hồ sơ
+                <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />
+              </Link>
+            </div>
           </div>
         </div>
       </article>
@@ -429,7 +476,7 @@ export function TutorCard({
                       Đóng
                     </button>
                     <Link
-                      href={`/tutors/${tutor.profileId}`}
+                      href={tutorProfileHref}
                       className="inline-flex h-11 items-center justify-center rounded-xl bg-[#280f91] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(40,15,145,0.18)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/35 focus-visible:ring-offset-2"
                     >
                       Xem hồ sơ {name}

@@ -1,9 +1,24 @@
 import { z } from "zod";
-import { isEligibleBirthDate, MIN_TUTOR_AGE, parseBirthDate } from "../utils/birth-date";
+import {
+  isEligibleBirthDate,
+  MIN_TUTOR_AGE,
+  parseBirthDate,
+} from "../utils/birth-date";
+import { STUDENT_YEAR_VALUES } from "../constants/student-year.constants";
 
 const requiredText = (label: string, minimum = 2) =>
   z.string().trim().min(minimum, `${label} cần ít nhất ${minimum} ký tự.`);
-const optionalUrl = z.string().trim().url("Đường dẫn tệp không hợp lệ.").or(z.literal(""));
+const requiredUrl = (label: string) =>
+  z
+    .string()
+    .trim()
+    .min(1, `Vui lòng tải lên ${label.toLowerCase()}.`)
+    .url("Đường dẫn tệp không hợp lệ.");
+const optionalUrl = z
+  .string()
+  .trim()
+  .url("Đường dẫn tệp không hợp lệ.")
+  .or(z.literal(""));
 const dateOfBirthSchema = z.string().superRefine((value, context) => {
   if (!value) {
     context.addIssue({ code: "custom", message: "Vui lòng chọn ngày sinh." });
@@ -13,21 +28,97 @@ const dateOfBirthSchema = z.string().superRefine((value, context) => {
   if (!date) {
     context.addIssue({ code: "custom", message: "Ngày sinh không hợp lệ." });
   } else if (!isEligibleBirthDate(date)) {
-    context.addIssue({ code: "custom", message: `Gia sư cần từ đủ ${MIN_TUTOR_AGE} tuổi.` });
+    context.addIssue({
+      code: "custom",
+      message: `Gia sư cần từ đủ ${MIN_TUTOR_AGE} tuổi.`,
+    });
   }
 });
 const timeRangeSchema = z
   .string()
-  .regex(/^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/, "Khung giờ không hợp lệ.")
+  .regex(
+    /^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/,
+    "Khung giờ không hợp lệ.",
+  )
   .refine((value) => {
     const [start = "", end = ""] = value.split("-");
     return start < end;
   }, "Giờ kết thúc phải sau giờ bắt đầu.");
 
-export const hourlyRateSchema = z.object({
-  subjectId: z.string().uuid("Môn dạy không hợp lệ."),
-  price: z.number().positive("Học phí phải lớn hơn 0."),
-});
+const teachingOfferingSchema = z
+  .object({
+    id: z.string().uuid().nullable(),
+    programId: z.string().uuid("Vui lòng chọn chương trình."),
+    programVersionId: z
+      .string()
+      .uuid("Chương trình chưa có phiên bản được xuất bản."),
+    teachingItemId: z.string(),
+    contextSelection: z.string(),
+    proposedTeachingItemName: z.string().trim(),
+    proposedContextName: z.string().trim(),
+    proposedContextType: z.enum([
+      "GRADE",
+      "LEVEL",
+      "MAJOR",
+      "EXAM_TRACK",
+      "CERT_LEVEL",
+      "OTHER",
+    ]),
+    teachingMode: z.enum(["ONLINE", "OFFLINE"]),
+    basePrice: z
+      .number({ error: "Vui lòng nhập học phí hợp lệ." })
+      .positive("Học phí phải lớn hơn 0."),
+  })
+  .superRefine((offering, context) => {
+    if (offering.teachingItemId === "__proposal__") {
+      if (offering.proposedTeachingItemName.length < 2) {
+        context.addIssue({
+          code: "custom",
+          path: ["proposedTeachingItemName"],
+          message: "Vui lòng nhập tên môn đề xuất.",
+        });
+      }
+    } else if (!z.uuid().safeParse(offering.teachingItemId).success) {
+      context.addIssue({
+        code: "custom",
+        path: ["teachingItemId"],
+        message: "Vui lòng chọn môn giảng dạy.",
+      });
+    }
+    if (offering.contextSelection === "__proposal__") {
+      if (offering.proposedContextName.length < 2) {
+        context.addIssue({
+          code: "custom",
+          path: ["proposedContextName"],
+          message: "Vui lòng nhập cấp học đề xuất.",
+        });
+      }
+    } else if (
+      offering.contextSelection !== "__none__" &&
+      !z.uuid().safeParse(offering.contextSelection).success
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["contextSelection"],
+        message: "Vui lòng chọn cấp học hoặc ngữ cảnh.",
+      });
+    }
+  });
+
+export type TeachingOfferingFormValue = z.infer<typeof teachingOfferingSchema>;
+
+export const emptyTeachingOffering: TeachingOfferingFormValue = {
+  id: null,
+  programId: "",
+  programVersionId: "",
+  teachingItemId: "",
+  contextSelection: "",
+  proposedTeachingItemName: "",
+  proposedContextName: "",
+  proposedContextType: "OTHER",
+  teachingMode: "ONLINE",
+  basePrice: 0,
+};
 
 export const tutorProfileFormSchema = z
   .object({
@@ -38,15 +129,33 @@ export const tutorProfileFormSchema = z
         message: "Vui lòng chọn giới tính.",
       })
       .refine((value): boolean => value !== "", "Vui lòng chọn giới tính."),
-    avatarUrl: optionalUrl,
-    headline: requiredText("Tiêu đề hồ sơ", 12).max(120, "Tiêu đề tối đa 120 ký tự."),
+    avatarUrl: requiredUrl("Ảnh đại diện"),
+    headline: requiredText("Tiêu đề hồ sơ", 12).max(
+      120,
+      "Tiêu đề tối đa 120 ký tự.",
+    ),
     universityId: z.string().uuid("Vui lòng chọn trường đại học."),
     majorId: z.string().uuid("Vui lòng chọn chuyên ngành."),
-    studentYear: requiredText("Năm học"),
-    studentCardUrl: optionalUrl,
-    hourlyRate: z.array(hourlyRateSchema).min(1, "Vui lòng chọn ít nhất một môn dạy."),
-    introduction: requiredText("Phần giới thiệu", 80).max(2000, "Phần giới thiệu tối đa 2.000 ký tự."),
-    shortIntro: requiredText("Giới thiệu ngắn", 30).max(240, "Giới thiệu ngắn tối đa 240 ký tự."),
+    studentYear: z
+      .enum(["", ...STUDENT_YEAR_VALUES, "GRATUATED"], {
+        message: "Vui lòng chọn năm học / tình trạng học tập.",
+      })
+      .refine(
+        (value): boolean => value !== "",
+        "Vui lòng chọn năm học / tình trạng học tập.",
+      ),
+    studentCardUrl: requiredUrl("Thẻ sinh viên / bằng tốt nghiệp"),
+    teachingOfferings: z
+      .array(teachingOfferingSchema)
+      .min(1, "Vui lòng thêm ít nhất một tổ hợp giảng dạy."),
+    introduction: requiredText("Phần giới thiệu", 80).max(
+      2000,
+      "Phần giới thiệu tối đa 2.000 ký tự.",
+    ),
+    shortIntro: requiredText("Giới thiệu ngắn", 30).max(
+      240,
+      "Giới thiệu ngắn tối đa 240 ký tự.",
+    ),
     videoUrl: optionalUrl,
     experienceYears: z.number().int().min(0).max(99),
     area: z.string().trim(),
@@ -55,14 +164,17 @@ export const tutorProfileFormSchema = z
     offlineWard: z.string().trim(),
     offlineAddressDetail: z.string().trim(),
     travelRadiusKm: z.number().int().min(0).max(100),
-    identityDocumentsUrl: optionalUrl,
+    identityDocumentsUrl: requiredUrl("Giấy tờ tùy thân"),
     bankInformation: z.string().trim(),
     availability: z.array(
       z.object({ day: requiredText("Ngày"), time: timeRangeSchema }),
     ),
-    teachingMethods: z
-      .array(z.object({ title: requiredText("Tên phương pháp"), description: requiredText("Mô tả", 10) }))
-      .min(1, "Vui lòng thêm ít nhất một phương pháp giảng dạy."),
+    teachingMethods: z.array(
+      z.object({
+        title: requiredText("Tên phương pháp"),
+        description: requiredText("Mô tả", 10),
+      }),
+    ),
     achievements: z.array(
       z.object({
         id: z.string().uuid(),
@@ -88,22 +200,30 @@ export const tutorProfileFormSchema = z
         isCurrent: z.boolean(),
       }),
     ),
-    subjectIds: z.array(z.string().uuid()).min(1, "Vui lòng chọn ít nhất một môn dạy."),
-    gradeLevelIds: z.array(z.string().uuid()).min(1, "Vui lòng chọn ít nhất một cấp học."),
     specializationIds: z.array(z.string().uuid()),
-    teachingModes: z.array(z.enum(["ONLINE", "OFFLINE"])).min(1, "Vui lòng chọn hình thức dạy."),
+    teachingModes: z
+      .array(z.enum(["ONLINE", "OFFLINE"]))
+      .min(1, "Vui lòng chọn hình thức dạy."),
   })
   .superRefine((value, context) => {
-    const rateSubjects = value.hourlyRate.map((item) => item.subjectId);
-    const uniqueRateSubjects = new Set(rateSubjects);
-    if (
-      uniqueRateSubjects.size !== value.subjectIds.length ||
-      value.subjectIds.some((id) => !uniqueRateSubjects.has(id))
-    ) {
+    const offeringKeys = value.teachingOfferings.map((item) =>
+      [
+        item.programVersionId,
+        item.teachingItemId === "__proposal__"
+          ? item.proposedTeachingItemName.toLowerCase()
+          : item.teachingItemId,
+        item.contextSelection === "__proposal__"
+          ? item.proposedContextName.toLowerCase()
+          : item.contextSelection,
+        item.teachingMode,
+      ].join(":"),
+    );
+    if (new Set(offeringKeys).size !== offeringKeys.length) {
       context.addIssue({
         code: "custom",
-        path: ["hourlyRate"],
-        message: "Mỗi môn dạy phải có đúng một mức học phí.",
+        path: ["teachingOfferings"],
+        message:
+          "Tổ hợp giảng dạy bị trùng. Hãy thay đổi môn, cấp học hoặc hình thức dạy.",
       });
     }
     if (
@@ -123,9 +243,21 @@ export type TutorProfileFormValues = z.infer<typeof tutorProfileFormSchema>;
 const draftText = z.string().nullish();
 const draftNumber = z.union([z.number(), z.string()]).nullish();
 
-const draftHourlyRateSchema = z.object({
-  subjectId: draftText,
-  price: draftNumber,
+const draftTeachingOfferingSchema = z.object({
+  id: draftText,
+  programId: draftText,
+  programVersionId: draftText,
+  teachingItemId: draftText,
+  contextId: draftText,
+  teachingMode: draftText,
+  basePrice: draftNumber,
+  proposal: z
+    .object({
+      teachingItemName: draftText,
+      contextName: draftText,
+      contextType: draftText,
+    })
+    .nullish(),
 });
 
 const draftAchievementSchema = z.object({
@@ -166,8 +298,7 @@ export const tutorProfileDraftResponseSchema = z
     major: z.unknown().optional(),
     studentYear: draftText,
     studentCardUrl: draftText,
-    hourlyRate: z.array(draftHourlyRateSchema).nullish(),
-    hourlyRates: z.array(draftHourlyRateSchema).nullish(),
+    teachingOfferings: z.array(draftTeachingOfferingSchema).nullish(),
     introduction: draftText,
     shortIntro: draftText,
     videoUrl: draftText,
@@ -212,7 +343,7 @@ export const tutorProfileDefaultValues: TutorProfileFormValues = {
   majorId: "",
   studentYear: "",
   studentCardUrl: "",
-  hourlyRate: [],
+  teachingOfferings: [emptyTeachingOffering],
   introduction: "",
   shortIntro: "",
   videoUrl: "",
@@ -226,11 +357,9 @@ export const tutorProfileDefaultValues: TutorProfileFormValues = {
   identityDocumentsUrl: "",
   bankInformation: "",
   availability: [],
-  teachingMethods: [{ title: "", description: "" }],
+  teachingMethods: [],
   achievements: [],
   teachingHistory: [],
-  subjectIds: [],
-  gradeLevelIds: [],
   specializationIds: [],
   teachingModes: ["ONLINE"],
 };
@@ -249,12 +378,61 @@ function number(value: number | string | null | undefined): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function normalizeContextType(
+  value: unknown,
+): TeachingOfferingFormValue["proposedContextType"] {
+  const type = text(value);
+  return type === "GRADE" ||
+    type === "LEVEL" ||
+    type === "MAJOR" ||
+    type === "EXAM_TRACK" ||
+    type === "CERT_LEVEL"
+    ? type
+    : "OTHER";
+}
+
 function normalizeGender(value: unknown): TutorProfileFormValues["gender"] {
   const normalized = text(value).toLowerCase();
-  if (normalized === "male" || normalized === "female" || normalized === "others") {
+  if (
+    normalized === "male" ||
+    normalized === "female" ||
+    normalized === "others"
+  ) {
     return normalized;
   }
   return normalized === "other" ? "others" : "";
+}
+
+function normalizeStudentYear(
+  value: unknown,
+): TutorProfileFormValues["studentYear"] {
+  const str = text(value).trim().toUpperCase();
+  if (str === "GRATUATED" || str === "GRADUATED") return "GRADUATED";
+  if (
+    STUDENT_YEAR_VALUES.includes(str as (typeof STUDENT_YEAR_VALUES)[number])
+  ) {
+    return str as (typeof STUDENT_YEAR_VALUES)[number];
+  }
+  if (str.includes("NĂM 1") || str.includes("NAM 1") || str === "1")
+    return "YEAR_1";
+  if (str.includes("NĂM 2") || str.includes("NAM 2") || str === "2")
+    return "YEAR_2";
+  if (str.includes("NĂM 3") || str.includes("NAM 3") || str === "3")
+    return "YEAR_3";
+  if (str.includes("NĂM 4") || str.includes("NAM 4") || str === "4")
+    return "YEAR_4";
+  if (str.includes("NĂM 5") || str.includes("NAM 5") || str === "5")
+    return "YEAR_5";
+  if (str.includes("NĂM 6") || str.includes("NAM 6") || str === "6")
+    return "YEAR_6";
+  if (
+    str.includes("TỐT NGHIỆP") ||
+    str.includes("TOT NGHIEP") ||
+    str.includes("GRADUAT")
+  ) {
+    return "GRADUATED";
+  }
+  return "";
 }
 
 function extractCatalogId(value: unknown): string {
@@ -291,7 +469,25 @@ export function mapDraftResponseToFormValues(
     (mode): mode is "ONLINE" | "OFFLINE" =>
       mode === "ONLINE" || mode === "OFFLINE",
   );
-  const rates = draft.hourlyRate ?? draft.hourlyRates ?? [];
+  const offerings = (draft.teachingOfferings ?? []).map((item) => ({
+    id: text(item.id) || null,
+    programId: text(item.programId),
+    programVersionId: text(item.programVersionId),
+    teachingItemId:
+      text(item.teachingItemId) ||
+      (text(item.proposal?.teachingItemName) ? "__proposal__" : ""),
+    contextSelection:
+      text(item.contextId) ||
+      (text(item.proposal?.contextName) ? "__proposal__" : "__none__"),
+    proposedTeachingItemName: text(item.proposal?.teachingItemName),
+    proposedContextName: text(item.proposal?.contextName),
+    proposedContextType: normalizeContextType(item.proposal?.contextType),
+    teachingMode:
+      item.teachingMode === "OFFLINE"
+        ? ("OFFLINE" as const)
+        : ("ONLINE" as const),
+    basePrice: number(item.basePrice),
+  }));
 
   return {
     displayName: text(draft.displayName),
@@ -307,14 +503,11 @@ export function mapDraftResponseToFormValues(
       extractCatalogId(draft.majorId) ||
       extractCatalogId(draft.major) ||
       extractCatalogId(draft.major_id),
-    studentYear: text(draft.studentYear),
+    studentYear: normalizeStudentYear(draft.studentYear),
     studentCardUrl: text(draft.studentCardUrl),
-    hourlyRate: rates
-      .filter((item) => Boolean(item.subjectId))
-      .map((item) => ({
-        subjectId: text(item.subjectId),
-        price: number(item.price),
-      })),
+    teachingOfferings: offerings.length
+      ? offerings
+      : [{ ...emptyTeachingOffering }],
     introduction: text(draft.introduction),
     shortIntro: text(draft.shortIntro),
     videoUrl: text(draft.videoUrl),
@@ -330,13 +523,12 @@ export function mapDraftResponseToFormValues(
     availability: (draft.availability ?? [])
       .filter((item) => Boolean(item.day) || Boolean(item.time))
       .map((item) => ({ day: text(item.day), time: text(item.time) })),
-    teachingMethods:
-      draft.teachingMethods?.length
-        ? draft.teachingMethods.map((item) => ({
-            title: text(item.title),
-            description: text(item.description),
-          }))
-        : [{ title: "", description: "" }],
+    teachingMethods: (draft.teachingMethods ?? [])
+      .filter((item) => text(item.title) || text(item.description))
+      .map((item) => ({
+        title: text(item.title),
+        description: text(item.description),
+      })),
     achievements: (draft.achievements ?? []).map((item) => ({
       id: text(item.id),
       type: text(item.type),
@@ -358,24 +550,16 @@ export function mapDraftResponseToFormValues(
       endDate: date(item.endDate),
       isCurrent: item.isCurrent ?? false,
     })),
-    subjectIds: [
-      ...new Set([
-        ...extractCatalogIds(draft.subjectIds),
-        ...extractCatalogIds(draft.subjects),
-      ]),
-    ],
-    gradeLevelIds: [
-      ...new Set([
-        ...extractCatalogIds(draft.gradeLevelIds),
-        ...extractCatalogIds(draft.gradeLevels),
-      ]),
-    ],
     specializationIds: [
       ...new Set([
         ...extractCatalogIds(draft.specializationIds),
         ...extractCatalogIds(draft.specializations),
       ]),
     ],
-    teachingModes: teachingModes.length ? teachingModes : ["ONLINE"],
+    teachingModes: offerings.length
+      ? [...new Set(offerings.map((item) => item.teachingMode))]
+      : teachingModes.length
+        ? teachingModes
+        : ["ONLINE"],
   };
 }

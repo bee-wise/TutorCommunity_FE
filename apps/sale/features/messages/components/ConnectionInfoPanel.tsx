@@ -137,7 +137,7 @@ export function ConnectionInfoPanel({ room }: ConnectionInfoPanelProps) {
           Thông tin kết nối
         </h3>
         <div>
-          <InfoRow
+          {room.hasLearningDetails !== false && <><InfoRow
             icon={BookOpen}
             label="Môn học"
             value={`${room.subject} · ${room.gradeLevel}`}
@@ -152,7 +152,7 @@ export function ConnectionInfoPanel({ room }: ConnectionInfoPanelProps) {
                   ? "Tại nhà"
                   : "Online & Tại nhà"
             }
-          />
+          /></>}
           {room.feeProposal && (
             <InfoRow
               icon={CircleDollarSign}

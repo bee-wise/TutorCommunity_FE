@@ -14,6 +14,7 @@ import type {
   VietnamWard,
 } from "../services/vietnam-administrative.service";
 import { ProfileField, profileInputClass } from "./ProfileField";
+import { ProfileSelect } from "./ProfileSelect";
 
 const LEGACY_VALUE = "__legacy_location__";
 
@@ -116,8 +117,9 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
           label="Tỉnh / thành phố"
           required={required}
           error={errors.offlineCity?.message}
+          interactive
         >
-          <select
+          <ProfileSelect
             value={
               selectedProvince
                 ? String(selectedProvince.code)
@@ -125,55 +127,43 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
                   ? LEGACY_VALUE
                   : ""
             }
-            onChange={(event) => selectProvince(event.target.value)}
+            onChange={selectProvince}
             disabled={provincesQuery.isLoading || provincesQuery.isError}
-            className={profileInputClass}
-          >
-            <option value="">
-              {provincesQuery.isLoading
+            label="Tỉnh / thành phố"
+            invalid={Boolean(errors.offlineCity)}
+            searchable
+            searchPlaceholder="Tìm tỉnh / thành phố..."
+            placeholder={provincesQuery.isLoading
                 ? "Đang tải tỉnh / thành phố..."
                 : "Chọn tỉnh / thành phố"}
-            </option>
-            {city && !selectedProvince ? (
-              <option value={LEGACY_VALUE} disabled>
-                {city} (dữ liệu đã lưu)
-              </option>
-            ) : null}
-            {provinces.map((province) => (
-              <option key={province.code} value={province.code}>
-                {province.name}
-              </option>
-            ))}
-          </select>
+            options={[
+              ...(city && !selectedProvince ? [{ value: LEGACY_VALUE, label: `${city} (dữ liệu đã lưu)`, disabled: true }] : []),
+              ...provinces.map((province) => ({ value: String(province.code), label: province.name })),
+            ]}
+          />
         </ProfileField>
 
-        <ProfileField label="Phường / xã / đặc khu">
-          <select
+        <ProfileField label="Phường / xã / đặc khu" interactive>
+          <ProfileSelect
             value={
               selectedWard ? String(selectedWard.code) : ward ? LEGACY_VALUE : ""
             }
-            onChange={(event) => selectWard(event.target.value)}
+            onChange={selectWard}
             disabled={!selectedProvince || provinceQuery.isLoading || provinceQuery.isError}
-            className={profileInputClass}
-          >
-            <option value="">
-              {provinceQuery.isLoading
+            label="Phường / xã / đặc khu"
+            searchable
+            searchPlaceholder="Tìm phường / xã..."
+            placeholder={provinceQuery.isLoading
                 ? "Đang tải phường / xã..."
                 : selectedProvince
                   ? "Toàn tỉnh / thành phố"
                   : "Chọn tỉnh / thành phố trước"}
-            </option>
-            {ward && !selectedWard ? (
-              <option value={LEGACY_VALUE} disabled>
-                {ward} (dữ liệu đã lưu)
-              </option>
-            ) : null}
-            {wards.map((item) => (
-              <option key={item.code} value={item.code}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: "", label: "Toàn tỉnh / thành phố" },
+              ...(ward && !selectedWard ? [{ value: LEGACY_VALUE, label: `${ward} (dữ liệu đã lưu)`, disabled: true }] : []),
+              ...wards.map((item) => ({ value: String(item.code), label: item.name })),
+            ]}
+          />
         </ProfileField>
 
         <ProfileField label="Địa chỉ chi tiết">

@@ -45,7 +45,7 @@ function RoomRow({
       {/* Avatar */}
       <div className="relative shrink-0">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
-          {peer.initials}
+          {(room.recipientName || peer.name).split(/\s+/).filter(Boolean).slice(-2).map((part) => part[0]).join("").toUpperCase() || "BW"}
         </div>
         {peer.isOnline && !isReadOnly && (
           <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-card bg-secondary" aria-label="Đang trực tuyến" />
@@ -56,7 +56,7 @@ function RoomRow({
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-1">
           <span className="truncate text-sm font-bold text-foreground group-hover:text-primary">
-            {peer.name}
+            {room.recipientName || peer.name}
           </span>
           {room.lastMessageAt && (
             <time className="shrink-0 text-[10px] text-muted-foreground">
@@ -66,13 +66,11 @@ function RoomRow({
         </div>
 
         {/* Subject + Stage */}
-        <p className="mb-0.5 text-[11px] text-muted-foreground">
-          {room.category === "CONNECTION" ? `${room.subject} ${room.gradeLevel}` : room.subject}
-        </p>
+        {room.hasConnectionDetails && <p className="mb-0.5 text-[11px] text-muted-foreground">{room.subject} {room.gradeLevel}</p>}
 
         <div className="flex items-center justify-between gap-2">
           <p className="truncate text-xs text-muted-foreground">
-            {room.lastMessage ?? "Chưa có tin nhắn"}
+            {room.lastMessage ?? "Mở để xem tin nhắn"}
           </p>
           {room.unreadCount > 0 && (
             <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-black text-primary-foreground">
@@ -82,7 +80,7 @@ function RoomRow({
         </div>
 
         {/* Stage badge */}
-        <span
+        {(isReadOnly || room.hasConnectionDetails || room.category === "SUPPORT") && <span
           className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${
             room.category === "SUPPORT" && !isReadOnly
               ? "border-secondary/20 bg-secondary/10 text-secondary"
@@ -97,14 +95,14 @@ function RoomRow({
             : isReadOnly
             ? STATUS_ROOM_LABELS[room.status]
             : STAGE_LABELS[room.connectionStage]}
-        </span>
+        </span>}
       </div>
     </Link>
   );
 }
 
 export function ChatSidebar() {
-  const { rooms } = useMessages();
+  const { rooms, loading, error, refetch, fetchNextPage, hasNextPage, fetchingNextPage } = useMessages();
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
@@ -125,11 +123,12 @@ export function ChatSidebar() {
   const filtered = availableRooms.filter(
     (r) =>
       r.category === category && (
-      normalizedQuery === "" ||
+      (normalizedQuery === "" ||
       (r.category === "SUPPORT" ? r.consultant.name : currentUserRole === "LEARNER" ? r.tutor.name : r.learner.name)
         .toLowerCase()
         .includes(normalizedQuery) ||
-      r.subject.toLowerCase().includes(normalizedQuery)),
+      r.subject.toLowerCase().includes(normalizedQuery) ||
+      r.recipientName?.toLowerCase().includes(normalizedQuery))),
   );
 
   return (
@@ -204,7 +203,7 @@ export function ChatSidebar() {
 
       {/* Room list */}
       <div className="flex-1 overflow-y-auto p-2">
-        {filtered.length === 0 ? (
+        {loading ? <p className="px-4 py-10 text-center text-xs text-muted-foreground">Đang tải cuộc trò chuyện...</p> : error ? <div className="px-4 py-10 text-center text-xs text-muted-foreground"><p>Không tải được danh sách trò chuyện.</p><button type="button" onClick={() => void refetch()} className="mt-2 font-semibold text-primary underline">Thử lại</button></div> : filtered.length === 0 ? (
           <div className="flex flex-col items-center px-4 py-12 text-center">
             <MessageCircleIcon size={32} className="mb-3 text-muted-foreground" />
             <strong className="text-sm text-foreground">
@@ -214,7 +213,7 @@ export function ChatSidebar() {
               {query
                 ? "Thử tìm kiếm khác"
                 : category === "SUPPORT"
-                  ? "Tin nhắn với tư vấn viên sẽ hiện tại đây."
+                  ? "Chưa có cuộc trò chuyện hỗ trợ."
                   : "Các cuộc trò chuyện kết nối sẽ hiện tại đây."}
             </p>
           </div>
@@ -227,6 +226,7 @@ export function ChatSidebar() {
                 currentUserRole={currentUserRole}
               />
             ))}
+            {hasNextPage && <button type="button" disabled={fetchingNextPage} onClick={() => void fetchNextPage()} className="w-full rounded-lg py-3 text-xs font-semibold text-primary disabled:opacity-50">{fetchingNextPage ? "Đang tải..." : "Xem thêm cuộc trò chuyện"}</button>}
           </div>
         )}
       </div>
