@@ -14,6 +14,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
   const exerciseRoute = pathname.match(/^\/lms\/learner\/exercises\/([^/]+)$/);
   const isFullscreenExercise = Boolean(exerciseRoute && exerciseRoute[1] !== "classes");
+  const isFullscreenMaterialPreview = /^\/lms\/tutor\/materials\/[^/]+\/preview\/?$/.test(pathname);
 
   const isFullscreenChat = Boolean(
     pathname.startsWith("/lms/tutor/messages") ||
@@ -29,12 +30,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background">
-        <AppSidebar />
+      <div className={isFullscreenMaterialPreview ? "flex h-dvh w-full overflow-hidden bg-background" : "flex min-h-screen w-full bg-background"}>
+        {!isFullscreenMaterialPreview && <AppSidebar />}
         <div className="relative flex min-w-0 flex-1 flex-col">
-          <Topbar />
-          <main className="min-w-0 min-h-0 flex-1">
-            <div className="min-w-0 w-full">{children}</div>
+          {!isFullscreenMaterialPreview && <Topbar />}
+          <main className={`min-w-0 min-h-0 flex-1 ${isFullscreenMaterialPreview ? "overflow-hidden" : ""}`}>
+            <div className={`min-w-0 w-full ${isFullscreenMaterialPreview ? "h-full" : ""}`}>{children}</div>
           </main>
         </div>
       </div>
