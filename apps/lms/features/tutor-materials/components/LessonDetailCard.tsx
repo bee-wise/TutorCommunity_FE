@@ -1,163 +1,74 @@
-"use client";
-
-import React, { useState } from "react";
 import Link from "next/link";
-import { Lesson, MaterialStatus } from "../types";
-import { CircleNotch, MagicWand, FileText } from "@phosphor-icons/react";
-
-const StatusBadge = ({ status }: { status: MaterialStatus }) => {
-  switch (status) {
-    case "Published":
-      return (
-        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-[#447353]/10 text-[#447353]">
-          Đã xuất bản
-        </span>
-      );
-    case "Drafting":
-      return (
-        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-[#ffc500]/20 text-[#905b0f]">
-          Bản nháp
-        </span>
-      );
-    case "Not Generated":
-    default:
-      return (
-        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-gray-100 text-gray-800">
-          Chưa tạo
-        </span>
-      );
-  }
-};
+import { ArrowLeft } from "@phosphor-icons/react";
+import type { AIAnalyzeRequest, Learner, LearningSession, TutorMaterial } from "../types";
+import { LessonContextPanel } from "./LessonContextPanel";
+import { TranscriptWorkspace } from "./TranscriptWorkspace";
 
 interface LessonDetailCardProps {
-  lesson: Lesson;
-  onGenerate: (data: {
-    transcript: string;
-    subject: string;
-    num_questions: number;
-  }) => void;
-  isGenerating: boolean;
+  session: LearningSession;
+  learner: Learner;
+  materials: TutorMaterial[];
+  transcript: string;
+  onTranscriptChange: (value: string) => void;
+  onGenerate: (data: AIAnalyzeRequest) => void;
+  errorMessage?: string;
 }
 
-export const LessonDetailCard = ({
-  lesson,
+export function LessonDetailCard({
+  session,
+  learner,
+  materials,
+  transcript,
+  onTranscriptChange,
   onGenerate,
-  isGenerating,
-}: LessonDetailCardProps) => {
-  const [transcript, setTranscript] = useState(
-    "Nơi em sẽ học về phương pháp cộng đại số nha\nĐầu tiên ờ chúng ta sẽ học về\nXuất phát số bằng cách là đầu tiên chúng ta sẽ đặt hẹn phương trình lần lượt là một và hai, ha\nCái\ncộng thì số lại á\nHoặc trường hay mấy phương trời một chúng ta sẽ\nTrước tiên đã ngay\nRồi ha,\nChúng tôi sẽ có được một phương trình chúng ta giải quyết trình đó thì chúng ta sẽ tìm được ít.\nThật\nCó thể vào để mà tìm nếu mà có ý thiệp tìm biết\nVà chúng ta sẽ\nCó kết quả và kết luận vậy thì hành hương trình nó có nghiện ít là bao nhiêu đây là bao nhiêu",
-  );
-
-  const handleGenerate = () => {
-    onGenerate({
-      transcript,
-      subject: lesson.subject.split(" - ")[0],
-      num_questions: 4,
-    });
-  };
+  errorMessage,
+}: LessonDetailCardProps) {
+  const learnerMaterialsHref = `/lms/tutor/materials/learner/${learner.id}`;
+  const hasAiMaterial = materials.some((material) => material.source === "ai");
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6 flex-1 min-h-0">
-        {/* Lẽft Side: Chi tiết buổi học */}
-        <div className="w-full md:w-1/3 flex flex-col bg-white rounded-2xl border shadow-sm p-4 md:p-6 overflow-y-auto shrink-0 md:h-full">
-          <div className="flex flex-col gap-4 mb-4 md:mb-8">
-            <div>
-              <h1
-                className="text-xl md:text-2xl font-extrabold text-[#280F91] mb-2"
-                style={{
-                  fontFamily: "var(--font-nunito-family), sans-serif",
-                }}
-              >
-                Chi tiết buổi học
-              </h1>
-              <p className="text-gray-600 text-xs md:text-sm">
-                Kiểm tra thông tin và tạo tài liệu học tập từ bản ghi hình Zoom.
-              </p>
-            </div>
-            <div>
-              <StatusBadge status={lesson.status} />
-            </div>
-          </div>
+    <main className="min-h-full bg-background text-foreground">
+      <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <Link
+          href={learnerMaterialsHref}
+          className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <ArrowLeft size={16} weight="bold" aria-hidden="true" />
+          Thư viện của {learner.fullName}
+        </Link>
 
-          <div className="flex flex-col sm:flex-row md:flex-col gap-4 bg-gray-50/50 p-4 md:p-5 rounded-xl border border-gray-100 mb-0 md:mb-4">
-            <div className="flex-1">
-              <p className="text-xs text-gray-500 mb-1">Học sinh</p>
-              <p className="font-semibold text-gray-900 text-sm">
-                {lesson.studentName}
-              </p>
-            </div>
-            <div className="flex-1">
-              <p className="text-xs text-gray-500 mb-1">Môn/Chủ đề</p>
-              <p className="font-semibold text-gray-900 text-sm">
-                {lesson.subject}
-              </p>
-            </div>
-            <div className="flex-1">
-              <p className="text-xs text-gray-500 mb-1">Ngày học</p>
-              <p className="font-semibold text-gray-900 text-sm">
-                {lesson.date}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side: Transcript & Actions */}
-        <div className="w-full md:w-2/3 flex flex-col bg-white rounded-2xl border shadow-sm p-4 md:p-6 overflow-hidden flex-1 md:h-full">
-          <div className="shrink-0 mb-4">
-            <label
-              htmlFor="transcript"
-              className="block text-base font-bold text-gray-900 mb-1"
-            >
-              Nội dung từ buổi học Zoom (Transcript)
-            </label>
-            <p className="text-sm text-gray-500">
-              Bạn có thể chỉnh sửa nội dung trước khi gửi cho AI phân tích để có
-              kết quả chính xác hơn.
+        <header className="mt-6 flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-primary">Chi tiết buổi học</p>
+            <h1 className="mt-2 max-w-4xl font-nunito text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-4xl">
+              {session.topic}
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+              Kiểm tra bản ghi và chuẩn bị tài liệu ôn tập cho học viên sau buổi học.
             </p>
           </div>
+          <span className="inline-flex h-9 w-fit shrink-0 items-center rounded-full border border-primary bg-card px-3 text-sm font-bold text-primary">
+            {materials.length} tài liệu
+          </span>
+        </header>
 
-          <div className="flex-1 min-h-0 relative">
-            <textarea
-              id="transcript"
-              value={transcript}
-              onChange={(e) => setTranscript(e.target.value)}
-              className="absolute inset-0 w-full h-full p-4 text-sm text-gray-800 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#280F91]/20 focus:border-[#280F91] outline-none transition-all resize-none"
-              placeholder="Nội dung buổi học từ Zoom sẽ hiển thị ở đây..."
-            />
-          </div>
-
-          <div className="shrink-0 flex flex-col sm:flex-row gap-4 items-center justify-end border-t border-gray-100 pt-5 mt-5">
-            {lesson.status !== "Not Generated" ? (
-              <Link
-                href={`/lms/tutor/materials/${lesson.id}/preview`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-white border border-gray-200 px-6 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
-              >
-                <FileText weight="fill" className="text-gray-400" />
-                Xem bản lưu
-              </Link>
-            ) : null}
-
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#280F91] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#280F91]/90 focus:ring-4 focus:ring-[#280F91]/20 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isGenerating ? (
-                <>
-                  <CircleNotch className="animate-spin" size={18} weight="bold" />
-                  Đang khởi tạo AI...
-                </>
-              ) : (
-                <>
-                  <MagicWand weight="fill" className="text-[#FFC500]" />
-                  Tạo tài liệu bài học (AI)
-                </>
-              )}
-            </button>
-          </div>
+        <div className="mt-6 grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(270px,340px)_minmax(0,1fr)] lg:gap-6">
+          <LessonContextPanel
+            session={session}
+            learner={learner}
+            materials={materials}
+            learnerMaterialsHref={learnerMaterialsHref}
+          />
+          <TranscriptWorkspace
+            session={session}
+            hasAiMaterial={hasAiMaterial}
+            transcript={transcript}
+            onTranscriptChange={onTranscriptChange}
+            onGenerate={onGenerate}
+            errorMessage={errorMessage}
+          />
         </div>
       </div>
-    </div>
+    </main>
   );
-};
+}

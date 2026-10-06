@@ -7,6 +7,7 @@ import {
   useReducer,
   type ReactNode,
 } from "react";
+import type { MeType } from "@workspace/core/types/auth.type";
 import { MockTutorOnboardingDataSource } from "../constants/tutor-onboarding.fixtures";
 import { applyTutorOnboardingAction } from "../api/tutor-onboarding.api";
 import { resolveTutorOnboardingView } from "../schemas/tutor-onboarding.resolver";
@@ -22,6 +23,7 @@ type TutorOnboardingContextValue = {
   state: TutorOnboardingMockState;
   view: ReturnType<typeof resolveTutorOnboardingView>;
   session: ReturnType<TutorOnboardingDataSource["getSession"]>;
+  isPreview: boolean;
   dispatchAction: (
     action: TutorOnboardingActionId,
     payload?: { stepId?: TutorOnboardingStepId },
@@ -49,10 +51,14 @@ export function TutorOnboardingProvider({
   children,
   scenario,
   dataSource = MockTutorOnboardingDataSource,
+  mode = "preview",
+  sessionUser,
 }: {
   children: ReactNode;
   scenario: TutorOnboardingScenario | "unknown";
   dataSource?: TutorOnboardingDataSource;
+  mode?: "preview" | "live";
+  sessionUser?: MeType;
 }) {
   const initialState = useMemo(
     () => dataSource.getInitialState(scenario),
@@ -60,18 +66,32 @@ export function TutorOnboardingProvider({
   );
   const [state, dispatch] = useReducer(reducer, initialState);
   const view = useMemo(() => resolveTutorOnboardingView(state), [state]);
-  const session = useMemo(() => dataSource.getSession(), [dataSource]);
+  const session = useMemo(() => {
+    const base = dataSource.getSession();
+    return sessionUser
+      ? {
+          ...base,
+          user: sessionUser,
+          tutorProfileId: sessionUser.tutorProfileId ?? "",
+          tutorProfileStatus: sessionUser.tutorProfileStatus ?? "",
+          canAccessTutorLms: sessionUser.canAccessTutorLms === true,
+        }
+      : base;
+  }, [dataSource, sessionUser]);
 
   const value = useMemo<TutorOnboardingContextValue>(
     () => ({
       state,
       view,
       session,
-      dispatchAction: (action, payload) =>
-        dispatch({ type: "action", action, payload }),
+      isPreview: mode === "preview",
+      dispatchAction: (action, payload) => {
+        if (mode === "live" && action !== "switch-journey-detail-step") return;
+        dispatch({ type: "action", action, payload });
+      },
       reset: () => dispatch({ type: "reset", state: initialState }),
     }),
-    [initialState, session, state, view],
+    [initialState, mode, session, state, view],
   );
 
   return (

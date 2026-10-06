@@ -7,6 +7,7 @@ import {
   MessageHeader,
 } from "@workspace/ui/components/ui/message";
 import type { WorkspaceMessage, WorkspaceParticipant, ParticipantRole } from "../types/workspace";
+import { BusinessChatWidget } from "@workspace/core/components/BusinessChatWidget";
 import {
   formatMessageTime,
   formatSessionTime,
@@ -158,11 +159,13 @@ export function MessageBubble({
           </MessageHeader>
         )}
 
-        <TextBubble
-          text={message.content}
-          isMine={isMine}
-          time={bubbleTime}
-        />
+        {message.business ? (
+          <div className="max-w-full">
+            {message.content && <p className="mb-2 max-w-[440px] text-xs text-muted-foreground">{message.content}</p>}
+            <BusinessChatWidget business={message.business} currentRole="CONSULTANT" />
+            {bubbleTime && <time className="mt-1 block text-right text-[10px] text-muted-foreground">{bubbleTime}</time>}
+          </div>
+        ) : <TextBubble text={message.content} isMine={isMine} time={bubbleTime} />}
       </MessageContent>
     </Message>
   );

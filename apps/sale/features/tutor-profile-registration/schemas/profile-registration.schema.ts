@@ -177,7 +177,7 @@ export const tutorProfileFormSchema = z
     ),
     achievements: z.array(
       z.object({
-        id: z.string().uuid(),
+        id: z.string().optional(),
         type: requiredText("Loại thành tích"),
         title: requiredText("Tên thành tích"),
         issuer: requiredText("Đơn vị cấp"),
@@ -190,7 +190,7 @@ export const tutorProfileFormSchema = z
     ),
     teachingHistory: z.array(
       z.object({
-        id: z.string().uuid(),
+        id: z.string().optional(),
         title: requiredText("Vai trò giảng dạy"),
         organization: requiredText("Đơn vị giảng dạy"),
         detail: requiredText("Mô tả kinh nghiệm", 10),

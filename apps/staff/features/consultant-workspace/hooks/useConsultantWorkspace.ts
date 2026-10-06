@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { chatRoomsService } from "@workspace/core/services/chat-rooms.service";
+import { toChatBusinessMessage } from "@workspace/core/services/chat-business-message";
 import { subscribeToChatRoom } from "@workspace/core/sys-libs/centrifugo";
 import { toWorkspaceRoom, type WorkspaceMessage } from "../types/workspace";
 
@@ -19,19 +20,9 @@ export function useConsultantRooms() {
   const authLoading = useAuthStore((state) => state.isAuthLoading);
   const query = useQuery({
     queryKey: ["consultant-workspace", "rooms", userId],
-    queryFn: async () => {
-      const first = await chatRoomsService.listRooms();
-      const totalPages = first?.pagination?.totalPages ?? 1;
-      const rest = await Promise.all(
-        Array.from(
-          { length: Math.max(0, totalPages - 1) },
-          (_, index) => chatRoomsService.listRooms(index + 2),
-        ),
-      );
-      return [first, ...rest]
-        .flatMap((page) => page?.items ?? [])
-        .map((room) => toWorkspaceRoom(room, userId ?? ""));
-    },
+    enabled: Boolean(userId),
+    queryFn: async () => (await chatRoomsService.listAllRooms())
+      .map((room) => toWorkspaceRoom(room, userId ?? "")),
     staleTime: 15_000,
     refetchInterval: 30_000,
   });
@@ -101,11 +92,10 @@ export function useConsultantConversation(roomId: string | null) {
           {
             id: item.id,
             senderId: item.senderId ?? "",
-            content:
-              item.content ??
-              (item.businessType ? "Thông tin kết nối đã được cập nhật." : ""),
+            content: item.content ?? "",
             createdAt: item.createdAt ?? new Date().toISOString(),
-            isSystem: item.messageType?.toUpperCase() === "SYSTEM",
+            isSystem: item.messageType?.toUpperCase() === "SYSTEM" && !item.businessType,
+            business: toChatBusinessMessage(item.businessType || item.messageType, item.businessReferenceId, item.businessPayload),
           },
         ],
       ),
