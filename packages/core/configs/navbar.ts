@@ -5,8 +5,7 @@ export type NavbarState =
   | "GUEST"
   | "LEARNER"
   | "TUTOR_ONBOARDING"
-  | "TUTOR_APPROVED"
-  | "INTERNAL_STAFF";
+  | "TUTOR_APPROVED";
 
 export type TutorOnboardingStatus =
   | "ACCOUNT_CREATED"
@@ -52,8 +51,6 @@ export type NavbarContext = {
   lmsAccessEnabled?: boolean | null;
 };
 
-const internalStaffRoles = new Set(["ADMIN", "CONSULTANT"]);
-
 export function normalizeRole(role?: string | null) {
   return role?.trim().toUpperCase() ?? "";
 }
@@ -82,7 +79,6 @@ export function resolveNavbarState({
 
   const normalizedRole = normalizeRole(role);
 
-  if (internalStaffRoles.has(normalizedRole)) return "INTERNAL_STAFF";
   if (normalizedRole === "LEARNER") return "LEARNER";
 
   if (normalizedRole === "TUTOR") {
@@ -134,10 +130,6 @@ const tutorPostApprovalMenu: NavbarItem[] = [
   { label: "Bổ sung thông tin", href: "/tutor/post-approval" },
   { label: "Lịch rảnh", href: "/tutor/availability" },
   { label: "Thông tin thanh toán", href: "/tutor/payments" },
-];
-
-const internalStaffMenu: NavbarItem[] = [
-  { label: "Operations Portal", href: "/staff" },
 ];
 
 const guestConfig: NavbarConfig = {
@@ -202,19 +194,6 @@ export function getNavbarConfig({
         { label: "Chỉnh sửa hồ sơ", href: "/tutor/profile/edit" },
         // { label: "Cài đặt tài khoản", href: "/account/settings" },
         { label: "Hỗ trợ", href: "/support" },
-        { label: "Đăng xuất", href: "/", action: "logout" },
-      ],
-      showNotifications: true,
-    };
-  }
-
-  if (state === "INTERNAL_STAFF") {
-    return {
-      homeHref: "/staff",
-      centerItems: internalStaffMenu,
-      rightItems: [{ label: "Vào portal", href: "/staff", variant: "primary" }],
-      accountItems: [
-        { label: "Tài khoản", href: "/account" },
         { label: "Đăng xuất", href: "/", action: "logout" },
       ],
       showNotifications: true,

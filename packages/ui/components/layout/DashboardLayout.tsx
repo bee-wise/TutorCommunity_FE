@@ -15,9 +15,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const exerciseRoute = pathname.match(/^\/lms\/learner\/exercises\/([^/]+)$/);
   const isFullscreenExercise = Boolean(exerciseRoute && exerciseRoute[1] !== "classes");
 
-  if (isFullscreenExercise) {
+  const isFullscreenChat = Boolean(
+    pathname.startsWith("/lms/tutor/messages") ||
+    pathname.startsWith("/lms/learner/messages") ||
+    pathname.startsWith("/consultant/workspace")
+  );
+
+  if (isFullscreenExercise || isFullscreenChat) {
     return (
-      <main className="min-h-[100dvh] w-full bg-background">{children}</main>
+      <main className="h-dvh w-full overflow-hidden bg-background">{children}</main>
     );
   }
 

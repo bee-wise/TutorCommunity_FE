@@ -1,4 +1,5 @@
 import type { ApiChatMessage, ApiChatRoom } from "../services/chat-rooms.service";
+import { toChatBusinessMessage } from "@workspace/core/services/chat-business-message";
 import type { ChatMessage, ChatParticipant, ChatParticipantRole, ChatRoom } from "../types/messages.types";
 
 function participant(id: string, name: string, role: ChatParticipantRole): ChatParticipant {
@@ -51,14 +52,16 @@ export function mapChatMessage(raw: ApiChatMessage, room: ChatRoom, userId: stri
   const sender = [room.learner, room.tutor, room.consultant].find((item) => item.id === raw.senderId);
   const senderRole = sender?.role ?? (raw.senderId === userId ? userRole : userRole === "LEARNER" ? "TUTOR" : "LEARNER");
   const isSystem = raw.messageType?.toUpperCase() === "SYSTEM" || raw.senderId === "00000000-0000-0000-0000-000000000000";
+  const business = toChatBusinessMessage(raw.businessType || raw.messageType, raw.businessReferenceId, raw.businessPayload);
   return {
     id: raw.id,
     chatRoomId: raw.chatRoomId,
     senderId: raw.senderId,
     senderRole,
     senderName: sender?.name ?? (raw.senderId === userId ? "Bạn" : room.recipientName ?? "Người tham gia"),
-    type: isSystem ? "SYSTEM" : "TEXT",
-    text: raw.content?.trim() || (raw.businessType ? `Cập nhật: ${raw.businessType}` : "Tin nhắn hệ thống"),
+    type: business ? "WIDGET" : isSystem ? "SYSTEM" : "TEXT",
+    business,
+    text: raw.content?.trim() || (business ? "" : raw.businessType ? "Thông tin kết nối đã được cập nhật." : "Tin nhắn hệ thống"),
     createdAt: raw.createdAt,
     isRead: true,
   };

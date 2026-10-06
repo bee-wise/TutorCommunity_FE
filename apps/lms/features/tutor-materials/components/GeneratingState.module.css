@@ -1,0 +1,33 @@
+.animatedTitle {
+  color: var(--primary);
+  background: linear-gradient(
+    90deg,
+    var(--primary) 0%,
+    var(--warning) 25%,
+    var(--primary) 50%,
+    var(--warning) 75%,
+    var(--primary) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: title-gradient-flow 4s linear infinite;
+}
+
+@keyframes title-gradient-flow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animatedTitle {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: var(--primary);
+  }
+}

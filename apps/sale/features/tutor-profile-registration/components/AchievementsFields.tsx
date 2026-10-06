@@ -18,7 +18,11 @@ export function AchievementsFields() {
     register,
     formState: { errors },
   } = useFormContext<TutorProfileFormValues>();
-  const achievements = useFieldArray({ control, name: "achievements" });
+  const achievements = useFieldArray({
+    control,
+    name: "achievements",
+    keyName: "fieldKey",
+  });
 
   return (
     <section className="space-y-4 border-t border-border pt-6" aria-labelledby="achievements-heading">
@@ -37,7 +41,7 @@ export function AchievementsFields() {
           size="sm"
           onClick={() =>
             achievements.append({
-              id: crypto.randomUUID(),
+              id: "",
               type: "CERTIFICATE",
               title: "",
               issuer: "",
@@ -63,7 +67,7 @@ export function AchievementsFields() {
       ) : null}
 
       {achievements.fields.map((item, index) => (
-        <div key={item.id} className="space-y-4 rounded-xl border border-border p-4 sm:p-5">
+        <div key={item.fieldKey} className="space-y-4 rounded-xl border border-border p-4 sm:p-5">
           <div className="flex items-center justify-between gap-3">
             <h4 className="font-semibold text-foreground">Thành tích {index + 1}</h4>
             <Button

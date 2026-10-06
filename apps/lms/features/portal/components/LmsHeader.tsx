@@ -22,20 +22,20 @@ export function LmsHeader() {
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex shrink-0 items-center"
+          className="flex shrink-0 items-center gap-1.5"
           aria-label="BeeWise LMS, trang chủ"
         >
-          <div className="relative h-16 w-32 sm:h-18 sm:w-36">
+          <div className="relative h-8 w-[108px] sm:h-9 sm:w-[120px]">
             <Image
-              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790065308/Logo_2.png"
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
               alt="BeeWise LMS"
               fill
               priority
-              sizes="(max-width: 640px) 144px, 160px"
-              className="object-cover object-left"
+              sizes="(max-width: 640px) 108px, 120px"
+              className="object-contain object-left"
             />
           </div>
-          <span className="rounded-full bg-accent/40 px-1 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-primary">
+          <span className="rounded-full bg-accent/40 px-1.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-primary">
             LMS
           </span>
         </Link>

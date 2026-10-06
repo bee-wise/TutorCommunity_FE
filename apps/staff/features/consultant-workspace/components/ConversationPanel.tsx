@@ -31,7 +31,6 @@ import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import {
   closeReasons,
   messageTemplates,
-  widgetPreviews,
 } from "../data/workspace-options";
 import { initials, shouldShowSessionDivider } from "../utils/format";
 import {
@@ -41,6 +40,7 @@ import {
 } from "../types/workspace";
 import { RoomDetails } from "./RoomDetails";
 import { MessageBubble, SessionTimeDivider } from "./MessageBubble";
+import { ConsultantWidgetTools } from "./ConsultantWidgetTools";
 
 interface ConversationPanelProps {
   room: WorkspaceRoom;
@@ -76,7 +76,8 @@ export function ConversationPanel({
   onBack,
 }: ConversationPanelProps) {
   const [draft, setDraft] = useState("");
-  const [tool, setTool] = useState<"templates" | "widgets" | null>(null);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showWidgets, setShowWidgets] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showClose, setShowClose] = useState(false);
   const [reason, setReason] = useState<string>("OTHER");
@@ -126,7 +127,7 @@ export function ConversationPanel({
     try {
       await onSend(content);
       setDraft("");
-      setTool(null);
+      setShowTemplates(false);
     } catch (caught) {
       setActionError(getApiErrorMessage(caught, "Không gửi được tin nhắn."));
     }
@@ -342,55 +343,41 @@ export function ConversationPanel({
       {!readOnly && (
         <div className="shrink-0 border-t border-border bg-card px-4 py-3 sm:px-5">
           <div className="mx-auto max-w-3xl">
-            {tool && (
-              <div className="mb-3 rounded-xl border border-border bg-muted/40 p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <strong className="text-xs font-bold text-foreground">
-                    {tool === "templates"
-                      ? "Mẫu tin nhắn hỗ trợ"
-                      : "Widget tiện ích · Sắp ra mắt"}
-                  </strong>
+            {showTemplates && (
+              <div className="mb-3 max-h-[45dvh] overflow-y-auto rounded-xl border border-border bg-muted/40 p-3">
+                <div className="mb-2.5 flex items-start justify-between gap-3">
+                  <div>
+                    <strong className="text-xs font-bold text-foreground">Tin nhắn mẫu</strong>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">Chọn mẫu để chỉnh sửa trước khi gửi.</p>
+                  </div>
                   <button
                     type="button"
-                    onClick={() => setTool(null)}
-                    className="text-xs text-muted-foreground hover:text-primary"
+                    onClick={() => setShowTemplates(false)}
+                    className="shrink-0 text-xs text-muted-foreground hover:text-primary"
                   >
                     Thu gọn
                   </button>
                 </div>
-                {tool === "templates" ? (
-                  <div className="grid gap-1.5">
-                    {messageTemplates.map((template) => (
-                      <button
-                        type="button"
-                        key={template}
-                        onClick={() => {
-                          setDraft(template);
-                          setTool(null);
-                        }}
-                        className="rounded-lg border border-border bg-card px-3 py-2 text-left text-xs leading-5 text-foreground transition hover:border-primary/40 hover:bg-primary/5"
-                      >
-                        {template}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid gap-1.5 sm:grid-cols-3">
-                    {widgetPreviews.map((widget) => (
-                      <div
-                        key={widget.title}
-                        className="rounded-lg border border-dashed border-border bg-card p-2.5"
-                      >
-                        <p className="text-xs font-semibold text-foreground">
-                          {widget.title}
-                        </p>
-                        <p className="mt-1 text-[11px] text-muted-foreground">
-                          {widget.detail}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {messageTemplates.map((template) => (
+                    <button
+                      type="button"
+                      key={template.id}
+                      onClick={() => {
+                        setDraft(template.content);
+                        setShowTemplates(false);
+                      }}
+                      className="group rounded-xl border border-border bg-card p-3 text-left transition hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-primary"
+                    >
+                      <span className="flex items-center justify-between gap-2">
+                        <strong className="text-xs font-bold text-foreground group-hover:text-primary">{template.title}</strong>
+                        <span className="text-[10px] font-semibold text-primary">Dùng mẫu</span>
+                      </span>
+                      <span className="mt-0.5 block text-[11px] text-muted-foreground">{template.description}</span>
+                      <span className="mt-2 line-clamp-2 block text-xs leading-5 text-foreground/80">{template.content}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -400,12 +387,10 @@ export function ConversationPanel({
               </span>
               <button
                 type="button"
-                onClick={() =>
-                  setTool(tool === "templates" ? null : "templates")
-                }
-                aria-expanded={tool === "templates"}
+                onClick={() => setShowTemplates((open) => !open)}
+                aria-expanded={showTemplates}
                 className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
-                  tool === "templates"
+                  showTemplates
                     ? "border-primary/30 bg-primary/10 text-primary"
                     : "border-border text-foreground hover:border-primary/30"
                 }`}
@@ -415,20 +400,15 @@ export function ConversationPanel({
               </button>
               <button
                 type="button"
-                onClick={() =>
-                  setTool(tool === "widgets" ? null : "widgets")
-                }
-                aria-expanded={tool === "widgets"}
+                onClick={() => setShowWidgets(true)}
+                aria-haspopup="dialog"
                 className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
-                  tool === "widgets"
+                  showWidgets
                     ? "border-primary/30 bg-primary/10 text-primary"
                     : "border-border text-foreground hover:border-primary/30"
                 }`}
               >
                 <Sparkles className="size-3.5" /> Widget{" "}
-                <span className="rounded bg-amber-500/10 px-1 text-[10px] text-amber-700 dark:text-amber-400">
-                  Sắp có
-                </span>
               </button>
             </div>
 
@@ -473,6 +453,28 @@ export function ConversationPanel({
           </div>
         </div>
       )}
+
+      <Dialog open={showWidgets} onOpenChange={setShowWidgets}>
+        <DialogContent className="max-h-[85dvh] max-w-2xl overflow-y-auto p-5">
+          <DialogHeader>
+            <DialogTitle className="font-nunito">Widget cho phòng chat</DialogTitle>
+            <DialogDescription>
+              Chọn nội dung cần gửi vào cuộc trò chuyện này.
+            </DialogDescription>
+          </DialogHeader>
+          {room.isMock || room.kind !== "group" ? (
+            <p className="text-sm text-muted-foreground">Widget chỉ dùng trong phòng chat kết nối ba bên.</p>
+          ) : (
+            <ConsultantWidgetTools
+              roomId={room.id}
+              onSent={() => {
+                onRetry();
+                setShowWidgets(false);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog Thông tin hỗ trợ (Modal) */}
       <Dialog open={showInfoModal} onOpenChange={setShowInfoModal}>
