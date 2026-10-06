@@ -286,7 +286,11 @@ export function IntroductionSection() {
     control,
     formState: { errors },
   } = useFormContext<TutorProfileFormValues>();
-  const methods = useFieldArray({ control, name: "teachingMethods" });
+  const methods = useFieldArray({
+    control,
+    name: "teachingMethods",
+    keyName: "fieldKey",
+  });
   return (
     <div className="space-y-5">
       <SectionHeading
@@ -350,7 +354,7 @@ export function IntroductionSection() {
         ) : (
           methods.fields.map((item, index) => (
             <div
-              key={item.id}
+              key={item.fieldKey}
               className="grid items-start gap-3 rounded-xl border border-border p-4 sm:grid-cols-[1fr_1.6fr_auto]"
             >
               <div>
@@ -422,8 +426,16 @@ export function AvailabilityAndVerificationSection() {
     control,
     formState: { errors },
   } = useFormContext<TutorProfileFormValues>();
-  const availability = useFieldArray({ control, name: "availability" });
-  const teachingHistory = useFieldArray({ control, name: "teachingHistory" });
+  const availability = useFieldArray({
+    control,
+    name: "availability",
+    keyName: "fieldKey",
+  });
+  const teachingHistory = useFieldArray({
+    control,
+    name: "teachingHistory",
+    keyName: "fieldKey",
+  });
   const teachingModes = useWatch({ control, name: "teachingModes" });
   const requiresTeachingArea = teachingModes.includes("OFFLINE");
   return (
@@ -454,7 +466,7 @@ export function AvailabilityAndVerificationSection() {
         ) : null}
         {availability.fields.map((item, index) => (
           <div
-            key={item.id}
+            key={item.fieldKey}
             className="grid gap-3 sm:grid-cols-[minmax(160px,0.7fr)_minmax(280px,1.3fr)_auto] sm:items-end"
           >
             <Controller control={control} name={`availability.${index}.day`} render={({ field }) => (
@@ -512,7 +524,7 @@ export function AvailabilityAndVerificationSection() {
             size="sm"
             onClick={() =>
               teachingHistory.append({
-                id: crypto.randomUUID(),
+                id: "",
                 title: "",
                 organization: "",
                 detail: "",
@@ -528,7 +540,7 @@ export function AvailabilityAndVerificationSection() {
         </div>
         {teachingHistory.fields.map((item, index) => (
           <div
-            key={item.id}
+            key={item.fieldKey}
             className="space-y-3 rounded-xl border border-border p-4"
           >
             <div className="grid items-start gap-3 sm:grid-cols-2">

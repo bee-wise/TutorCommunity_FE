@@ -1,3 +1,5 @@
+import type { ChatBusinessMessage } from "@workspace/core/services/chat-business-message";
+
 // ============================================================
 // DOMAIN TYPES: Connection & Chat Room
 // ============================================================
@@ -60,6 +62,7 @@ export interface ChatMessage {
   text?: string;
   attachment?: FileAttachment;
   widget?: ChatWidget;
+  business?: ChatBusinessMessage | null;
   createdAt: string; // ISO string
   isRead: boolean;
 }

@@ -6,6 +6,7 @@ import { useAuthStore } from "@workspace/core/store/useAuthStore";
 
 import { TutorOnboardingProvider } from "./TutorOnboardingProvider";
 import { parseTutorOnboardingScenario } from "../schemas/tutor-onboarding.resolver";
+import { resolveLiveTutorOnboardingScenario } from "../schemas/live-tutor-onboarding";
 import {
   tutorOnboardingScenarios,
   type TutorOnboardingScenario,
@@ -24,7 +25,7 @@ export function TutorOnboardingPreview({
   const parsedScenario = parseTutorOnboardingScenario(scenario);
 
   return (
-    <TutorOnboardingProvider scenario={parsedScenario}>
+    <TutorOnboardingProvider key={parsedScenario} scenario={parsedScenario}>
       <TutorOnboardingPreviewContent
         scenario={parsedScenario === "unknown" ? "journey" : parsedScenario}
         capture={capture}
@@ -34,9 +35,9 @@ export function TutorOnboardingPreview({
 }
 
 export function TutorOnboardingExperience({
-  scenario = "journey",
+  scenario: requestedScenario,
 }: {
-  scenario?: TutorOnboardingScenario;
+  scenario?: "post-approval";
 } = {}) {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
@@ -66,8 +67,20 @@ export function TutorOnboardingExperience({
     return null;
   }
 
+  const resolvedScenario = resolveLiveTutorOnboardingScenario(user);
+  const scenario =
+    requestedScenario === "post-approval" &&
+    (resolvedScenario === "approved" || resolvedScenario === "post-approval")
+      ? "post-approval"
+      : resolvedScenario;
+
   return (
-    <TutorOnboardingProvider scenario={scenario}>
+    <TutorOnboardingProvider
+      key={scenario}
+      scenario={scenario}
+      mode="live"
+      sessionUser={user}
+    >
       <TutorOnboardingShell
         capture={false}
         toolbar={null}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Warning } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@workspace/ui/components/ui/button";
 import { onboardingSteps } from "../constants/tutor-onboarding.fixtures";
@@ -88,7 +89,8 @@ function OverviewScreen() {
 }
 
 function RejectedScreen() {
-  const { dispatchAction } = useTutorOnboardingViewModel();
+  const router = useRouter();
+  const { dispatchAction, isPreview } = useTutorOnboardingViewModel();
 
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -97,7 +99,7 @@ function RejectedScreen() {
           Một số thông tin trong hồ sơ chưa đáp ứng yêu cầu. Vui lòng xem phản
           hồi bên dưới và gửi lại.
         </p>
-        <div className="mt-4 rounded-lg border border-accent/30 bg-card p-4">
+        {isPreview ? <div className="mt-4 rounded-lg border border-accent/30 bg-card p-4">
           <p className="text-xs font-bold uppercase tracking-wide text-amber-800">
             Mục cần chỉnh sửa
           </p>
@@ -112,27 +114,35 @@ function RejectedScreen() {
               </li>
             ))}
           </ul>
-        </div>
+        </div> : (
+          <p className="mt-4 text-sm text-muted-foreground">
+            Vui lòng xem phản hồi BeeWise đã gửi cho bạn trước khi cập nhật hồ sơ.
+          </p>
+        )}
       </StatusCard>
       <StatusCard title="Gửi lại hồ sơ">
         <p>Sau khi chỉnh sửa, gửi lại hồ sơ để BeeWise xét duyệt lần tiếp theo.</p>
         <div className="mt-4 grid gap-3">
           <Button
-            onClick={() => dispatchAction("edit-rejected-profile")}
+            onClick={() =>
+              isPreview
+                ? dispatchAction("edit-rejected-profile")
+                : router.push("/tutor/onboarding/profile-register")
+            }
             className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Chỉnh sửa hồ sơ
           </Button>
-          <Button
+          {isPreview ? <Button
             variant="outline"
             onClick={() => dispatchAction("resubmit-profile")}
             className="rounded-full border-primary/30 text-primary hover:bg-primary/5"
           >
             Gửi lại hồ sơ
-          </Button>
-          <Button variant="outline" className="rounded-full border-border text-muted-foreground hover:bg-muted">
+          </Button> : null}
+          {isPreview ? <Button variant="outline" className="rounded-full border-border text-muted-foreground hover:bg-muted">
             Liên hệ BeeWise
-          </Button>
+          </Button> : null}
         </div>
       </StatusCard>
     </section>
@@ -140,7 +150,8 @@ function RejectedScreen() {
 }
 
 function ApprovedScreen() {
-  const { dispatchAction } = useTutorOnboardingViewModel();
+  const router = useRouter();
+  const { dispatchAction, isPreview } = useTutorOnboardingViewModel();
 
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -151,7 +162,7 @@ function ApprovedScreen() {
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <InfoItem label="Trạng thái hồ sơ" value="Đã phê duyệt" />
           <InfoItem label="Hồ sơ công khai" value="Sẵn sàng kích hoạt" />
-          <InfoItem label="Ngày phê duyệt" value="18/07/2026" />
+          {isPreview ? <InfoItem label="Ngày phê duyệt" value="18/07/2026" /> : null}
           <InfoItem label="Bước tiếp theo" value="Bổ sung thông tin" />
         </div>
       </StatusCard>
@@ -172,7 +183,11 @@ function ApprovedScreen() {
         </ol>
         <div className="mt-4">
           <Button
-            onClick={() => dispatchAction("open-post-approval-form")}
+            onClick={() =>
+              isPreview
+                ? dispatchAction("open-post-approval-form")
+                : router.push("/tutor/post-approval")
+            }
             className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Bổ sung thông tin

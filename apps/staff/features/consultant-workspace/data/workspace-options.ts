@@ -13,13 +13,23 @@ export const closeReasons = [
 ] as const;
 
 export const messageTemplates = [
-  "Chào bạn, mình là tư vấn viên BeeWise. Mình sẽ hỗ trợ hai bên trong quá trình kết nối nhé.",
-  "Hai bên có thể cho mình biết khung giờ phù hợp để sắp xếp buổi học thử không ạ?",
-  "Mình sẽ tổng hợp thông tin và cập nhật lại trong cuộc trò chuyện này.",
-];
+  {
+    id: "greeting",
+    title: "Chào hỏi",
+    description: "Mở đầu cuộc trò chuyện",
+    content: "Chào bạn, mình là tư vấn viên BeeWise. Mình sẽ hỗ trợ hai bên trong quá trình kết nối nhé.",
+  },
+  {
+    id: "trial-time",
+    title: "Hẹn học thử",
+    description: "Hỏi thời gian phù hợp",
+    content: "Hai bên có thể cho mình biết khung giờ phù hợp để sắp xếp buổi học thử không ạ?",
+  },
+  {
+    id: "follow-up",
+    title: "Cập nhật tiến độ",
+    description: "Thông báo bước tiếp theo",
+    content: "Mình sẽ tổng hợp thông tin và cập nhật lại trong cuộc trò chuyện này.",
+  },
+] as const;
 
-export const widgetPreviews = [
-  { title: "Đề xuất học thử", detail: "Chọn thời gian và hình thức học" },
-  { title: "Điều khoản lớp học", detail: "Tổng hợp lịch học và học phí" },
-  { title: "Theo dõi lớp học", detail: "Cập nhật tiến độ sau kết nối" },
-];

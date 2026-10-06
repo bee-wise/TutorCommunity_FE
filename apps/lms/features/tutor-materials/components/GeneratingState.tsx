@@ -1,93 +1,94 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { MagicWand, Sparkle } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import beeWiseAiIcon from "../../../../sale/public/icons/BeeWiseAI-icon.svg";
+import styles from "./GeneratingState.module.css";
 
 const TIPS = [
   "Mẹo: Bạn có thể chỉnh sửa nội dung bài tóm tắt nếu AI tóm tắt thiếu ý.",
-  "Mẹo: Các câu hỏi trắc nghiệm được tạo dựa trên những phần học sinh hay làm sai nhất.",
-  "Mẹo: BeeWise AI phân tích cả giọng nói và slide bài giảng để đưa ra tóm tắt chính xác.",
-  "Mẹo: Hãy kiểm tra lại các công thức toán học (LaTeX) sau khi AI tạo xong.",
-  "Mẹo: Gửi ngay tài liệu cho học sinh để các em ôn tập khi kiến thức còn mới mẻ!",
-  "Sắp xong rồi, bạn chờ Beewise chút nhé",
-];
+  "Mẹo: Hãy đọc lại câu hỏi và đáp án trước khi chia sẻ với học viên.",
+  "Mẹo: BeeWise AI tạo tài liệu dựa trên bản ghi bạn vừa cung cấp.",
+  "Mẹo: Hãy kiểm tra lại các công thức toán học sau khi AI tạo xong.",
+  "Mẹo: Gửi tài liệu sau buổi học để học viên ôn tập khi kiến thức còn mới.",
+] as const;
 
-export const GeneratingState = () => {
+export function GeneratingState() {
   const [progress, setProgress] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
 
   useEffect(() => {
-    // Simulate progress bar over 10 seconds
     const duration = 10000;
     const intervalTime = 100;
     const steps = duration / intervalTime;
     let currentStep = 0;
 
-    const timer = setInterval(() => {
-      currentStep++;
-      const newProgress = Math.min((currentStep / steps) * 100, 99); // max out at 99% until finished
-      setProgress(newProgress);
-
-      if (currentStep >= steps) {
-        clearInterval(timer);
-      }
+    const timer = window.setInterval(() => {
+      currentStep += 1;
+      setProgress(Math.min((currentStep / steps) * 100, 99));
+      if (currentStep >= steps) window.clearInterval(timer);
     }, intervalTime);
 
-    return () => clearInterval(timer);
+    return () => window.clearInterval(timer);
   }, []);
 
   useEffect(() => {
-    // Rotate tips every 3 seconds
-    const tipTimer = setInterval(() => {
-      setTipIndex((prev) => (prev + 1) % TIPS.length);
-    }, 3000);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: number | undefined;
 
-    return () => clearInterval(tipTimer);
+    const syncTips = () => {
+      if (timer !== undefined) window.clearInterval(timer);
+      if (media.matches) {
+        setTipIndex(0);
+        return;
+      }
+      timer = window.setInterval(() => {
+        setTipIndex((current) => (current + 1) % TIPS.length);
+      }, 3000);
+    };
+
+    syncTips();
+    media.addEventListener("change", syncTips);
+    return () => {
+      if (timer !== undefined) window.clearInterval(timer);
+      media.removeEventListener("change", syncTips);
+    };
   }, []);
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-12 bg-white rounded-3xl p-8 shadow-sm border text-center relative overflow-hidden">
-      {/* Decorative background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-gradient-to-b from-[#cfe1fa]/50 to-transparent blur-xl pointer-events-none" />
+    <main className="min-h-full bg-background px-4 py-8 text-foreground sm:px-6" role="status" aria-live="polite">
+      <div className="relative mx-auto mt-4 w-full max-w-2xl overflow-hidden rounded-3xl border border-border bg-card p-6 text-center shadow-sm sm:mt-12 sm:p-8">
+        <div className="pointer-events-none absolute left-1/2 top-0 h-32 w-full -translate-x-1/2 bg-gradient-to-b from-[#cfe1fa]/50 to-transparent blur-xl" aria-hidden="true" />
 
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="w-16 h-16 rounded-2xl bg-[#cfe1fa] flex items-center justify-center mb-6 relative">
-          <MagicWand
-            weight="fill"
-            className="text-[#280F91] text-3xl animate-pulse"
+        <div className="relative flex flex-col items-center">
+          <Image
+            src={beeWiseAiIcon}
+            alt="BeeWise AI"
+            width={240}
+            height={72}
+            unoptimized
+            className="mb-5 h-auto w-48 sm:w-60"
           />
-          <Sparkle
-            weight="fill"
-            className="text-[#FFC500] text-xl absolute -top-2 -right-2 animate-bounce"
-          />
-        </div>
 
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
-          Đang phân tích bản ghi Zoom...
-        </h2>
-        <p className="text-gray-500 mb-8 max-w-sm mx-auto">
-          BeeWise AI đang trích xuất các ý chính và tự động tạo bài tập phù hợp
-          với trình độ của học sinh.
-        </p>
+          <h1 className={`${styles.animatedTitle} mb-2 font-nunito text-xl font-extrabold sm:text-2xl`}>
+            Đang phân tích bản ghi Zoom...
+          </h1>
+          <p className="mx-auto mb-8 max-w-sm text-sm leading-6 text-muted-foreground sm:text-base">
+            BeeWise AI đang trích xuất ý chính và tạo bài tập từ nội dung buổi học.
+          </p>
 
-        {/* Progress Bar */}
-        <div className="w-full bg-gray-100 rounded-full h-2 mb-4 overflow-hidden">
-          <div
-            className="bg-[#280F91] h-2 rounded-full transition-all duration-100 ease-linear"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+          <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-[#e8ebf0]" aria-hidden="true">
+            <div
+              className="h-full rounded-full bg-primary transition-[width] duration-100 ease-linear motion-reduce:transition-none"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
 
-        {/* Tip with fade transition */}
-        <div className="h-6">
-          <p
-            key={tipIndex}
-            className="text-sm font-medium text-[#447353] animate-[fadeIn_0.5s_ease-in-out]"
-          >
+          <p className="min-h-10 text-sm font-medium leading-5 text-secondary sm:min-h-6" aria-live="off">
             {TIPS[tipIndex]}
           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
-};
+}

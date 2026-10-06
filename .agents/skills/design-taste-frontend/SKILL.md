@@ -32,7 +32,7 @@ Example reads:
 - _"Reading this as: B2B SaaS landing for technical buyers, with a Linear-style minimalist language, leaning toward Tailwind utilities + Geist + restrained motion."_
 - _"Reading this as: solo designer portfolio for hiring managers, with an editorial / kinetic-type language, leaning toward native CSS + scroll-driven animation + custom typography."_
 - _"Reading this as: redesign of a public-sector service site, with a trust-first language, leaning toward GOV.UK Frontend or USWDS."_
-- _"Reading this as: **BeeWise** - Vietnamese tutor-learner marketplace for learners, tutors, staff, and admin; crisp, flat-first surfaces, mobile-first, Nunito headlines + Google Sans body, solid deep-indigo primary (#280F91), forest-green secondary (#447353), amber accent (#FFC500), VND currency, Vietnamese UX conventions."_
+- _"Reading this as: **BeeWise** - Vietnamese tutor-learner marketplace for learners, tutors, staff, and admin; soft-modern Edutech SaaS language (rounded, layered, mascot-led, solid color-blocked sections), mobile-first, Nunito headlines + Google Sans body, 2 core brand colors: primary royal blue (`#0C1EAA`) and accent bee-amber (`#FFC500`), with supporting secondary forest-green (`#447353`) for verification/success states, VND currency, Vietnamese UX conventions."_
 
 ### 0.C If the brief is ambiguous, ask one question, do not guess
 
@@ -70,18 +70,19 @@ After the design read, set three dials. Every layout, motion, and density decisi
 
 ### 1.B Use-Case Presets
 
-| Use case                             | VARIANCE | MOTION  | DENSITY |
-| ------------------------------------ | -------- | ------- | ------- |
-| Landing (SaaS, mainstream)           | 7        | 6       | 4       |
-| Landing (Agency / creative)          | 9        | 8       | 3       |
-| Landing (Premium consumer)           | 7        | 6       | 3       |
-| Portfolio (Designer / studio)        | 8        | 7       | 3       |
-| Portfolio (Developer)                | 6        | 5       | 4       |
-| Editorial / Blog                     | 6        | 4       | 3       |
-| Public-sector service                | 3        | 2       | 5       |
-| Redesign - preserve                  | match    | match+1 | match   |
-| Redesign - overhaul                  | +2       | +2      | match   |
-| **BeeWise (Vietnamese marketplace)** | **7**    | **5**   | **5**   |
+| Use case                        | VARIANCE | MOTION  | DENSITY |
+| ------------------------------- | -------- | ------- | ------- |
+| Landing (SaaS, mainstream)      | 7        | 6       | 4       |
+| Landing (Agency / creative)     | 9        | 8       | 3       |
+| Landing (Premium consumer)      | 7        | 6       | 3       |
+| Portfolio (Designer / studio)   | 8        | 7       | 3       |
+| Portfolio (Developer)           | 6        | 5       | 4       |
+| Editorial / Blog                | 6        | 4       | 3       |
+| Public-sector service           | 3        | 2       | 5       |
+| Redesign - preserve             | match    | match+1 | match   |
+| Redesign - overhaul             | +2       | +2      | match   |
+| **BeeWise landing / marketing** | **7**    | **6**   | **3**   |
+| **BeeWise marketplace screens** | **6**    | **5**   | **5**   |
 
 ### 1.C How the Dials Drive Output
 
@@ -189,7 +190,9 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
   - **Override:** Inter is acceptable when the user explicitly asks for a neutral / standard / Linear-style feel, or when the brief is a public-sector / accessibility-first site.
 - **Pairings to know:** `Geist` + `Geist Mono`, `Satoshi` + `JetBrains Mono`, `Cabinet Grotesk` + `Inter Tight`, `GT America` + `IBM Plex Mono`.
 
-> **BeeWise override:** Match `apps/sale/app/layout.tsx`, `packages/core/configs/fonts.ts`, and `packages/ui/globals.css`: use local **Nunito** (`font-nunito`, weight 800-900) for headings and local **Google Sans** (`font-sans`) for body and controls. Scale the hero headline to its content and viewport; 60px is not a fixed token. Do not introduce Montserrat, Geist, Satoshi, or Inter as a new BeeWise brand typeface.
+> **BeeWise override:** Match `apps/sale/app/layout.tsx`, `packages/core/configs/fonts.ts`, and `packages/ui/globals.css`: use local **Nunito** (`font-nunito`, weight 800-900) for headings and local **Google Sans** (`font-sans`) for body and controls. Nunito's rounded terminals are the main source of BeeWise friendliness, so keep headings heavy and let them be big. Do not introduce Montserrat, Geist, Satoshi, or Inter as a new BeeWise brand typeface. The full type recipe (clamp scale, Vietnamese diacritic safety, marker highlight) lives in Section 4.12.D.
+>
+> **Vietnamese diacritic safety (overrides the generic `leading-none` default above):** stacked tone marks (`ẳ ỡ ợ ế ộ`) clip at `leading-none` or `leading-[1.05]`. BeeWise headlines use `leading-[1.15]` minimum on desktop and `leading-[1.2]` on mobile, with `pb-1` reserve on any element that has `overflow-hidden` or a clipping mask (text reveal animations). Test headlines with real strings such as "Học tiếng Anh giao tiếp cùng gia sư bản ngữ" before shipping.
 
 - **SERIF DISCIPLINE (VERY DISCOURAGED AS DEFAULT):**
   - Serif is **very discouraged as the default font for any project.** "It feels creative / premium / editorial" is NOT a reason to reach for serif. The agent's default mental model that "creative brief = serif" is the single most-tested AI tell in production rounds.
@@ -211,27 +214,50 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 - **One palette per project.** Do not fluctuate between warm and cool grays within the same project.
 - **COLOR CONSISTENCY LOCK (mandatory):** Once an accent color is chosen for a page, it is used on the WHOLE page. A warm-grey site does not suddenly get a blue CTA in section 7. A rose-accented site does not get a teal status badge in the footer. Pick one accent, lock it, audit every component before shipping.
 
-> **BeeWise sale token contract (applies to every new `apps/sale` screen, including product screens):** `packages/ui/globals.css` is the source of truth. Read it before designing. The active theme is light; its `.dark` block is currently commented out, so do not assume dark mode is available or invent dark values in a screen. Use semantic Tailwind utilities backed by its CSS variables rather than copying hex values into new components.
+> **BeeWise sale token contract (applies to every new `apps/sale` screen, including product screens):** `packages/ui/globals.css` is the source of truth for **color**. Read it before designing. The active theme is light; its `.dark` block is currently commented out, so do not assume dark mode is available or invent dark values in a screen. Use semantic Tailwind utilities backed by its CSS variables rather than copying hex values into new components.
 >
-> | Purpose | Global token and current light value | Use |
-> | --- | --- | --- |
-> | Brand action | `bg-primary` `#280f91` + `text-primary-foreground` `#ffffff` | Solid primary CTAs, selected controls, active nav |
-> | Brand text / focus | `text-primary`, `border-primary`, `ring-ring` `#280f91` | Headings, links, focus and selected edges |
-> | Success / verification | `secondary` `#447353` + `secondary-foreground` `#ffffff` | Verified and success states; not a second CTA color |
-> | Emphasis | `accent` `#ffc500` + `accent-foreground` `#0c0c0b` | Small highlights, ratings, promo CTA where hierarchy calls for it |
-> | Text highlight | `highlight` `#fadc76` | Small flat highlight behind dark text, not a haze |
-> | Page / card | `background`, `card`, `popover` `#ffffff` | Opaque surfaces |
-> | Text | `foreground` `#0c0c0b`; `muted-foreground` `#5a6a9a` | Primary copy and secondary copy after contrast check |
-> | Quiet structure | `muted` `#f0f4ff`; `border` / `input` `#dce8fb` | Local panels, separators, form edges; never a full-page primary wash |
-> | Feedback | `warning` `#905b0f`; `error` `#e1aba7`; `destructive` `#dc2626` | Semantic feedback; use `destructive` for readable error text on white |
+> **The palette is locked: never add, remove, or retune a color token.** Shape, elevation, spacing, and motion are NOT locked. They are governed by Section 4.4 (surfaces) and Section 4.12 (soft-modern recipe). If a design needs more depth or energy, get it from radius, layered elevation, solid color-blocks, imagery, and motion, never from new colors.
 >
-> The global `--glass` token exists for legacy use; its presence is **not** a design instruction. The single-accent rule does not erase the defined roles of green success and amber highlights. Keep the indigo, green, and amber at their global values. Do not add a competing blue, violet, pink, or another brand color. When a visual needs depth, first use hierarchy, an opaque surface, a visible border, and spacing.
+> **BeeWise Brand Palette Structure:**
 >
-> **Crisp-color rule for future BeeWise screens:** A brand action is solid `bg-primary` with `text-primary-foreground`, not `bg-primary/5`, a radial glow, or a glass layer. Use full-strength `text-primary` for key headings and links. Keep body copy readable; avoid `text-foreground/35`, `/45`, `/60` for essential content. Amber needs dark foreground text; `text-accent` on white is not a readable default. Keep tints (`muted`, low-opacity primary) for small nonessential backgrounds or selected areas only, with full-strength text and a clear border. Check actual rendered contrast in every state.
+> - **2 Màu chính thương hiệu (Core Brand Colors):**
+>   1. **`primary` (`#0c1eaa`)** + `primary-foreground` (`#ffffff`): Xanh hoàng gia đậm (Royal Blue) — Màu thương hiệu chủ đạo cho Brand Action, main CTAs, tiêu đề, liên kết chính, active state.
+>   2. **`accent` (`#ffc500`)** + `accent-foreground` (`#0c0c0b`): Vàng mật ong / Hổ phách (Bee Amber) — Màu nhận diện cốt lõi gắn liền với linh vật BeeWise; dùng cho điểm nhấn thương hiệu, promo badges/CTAs, sao đánh giá (ratings), highlights.
+> - **Các màu phụ trợ & ngữ nghĩa (Supporting & Semantic Colors):**
 >
-> **New-screen recipe:** Page `bg-background text-foreground`; content panels `bg-card border border-border`; main action `bg-primary text-primary-foreground`; secondary action `bg-background text-primary border border-primary`; focus `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`; selected state `border-primary bg-muted text-primary`. Use `bg-accent text-accent-foreground` only for a deliberate second emphasis. Never use opacity to make a primary action look inactive; disabled states must remain recognisable and readable.
+> | Purpose                    | Global token and current light value                              | Use                                                                   |
+> | -------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------- |
+> | **Main Brand Action**      | `bg-primary` `#0c1eaa` + `text-primary-foreground` `#ffffff`      | Solid primary CTAs, selected controls, active nav                     |
+> | **Main Brand Text**        | `text-primary`, `border-primary` `#0c1eaa`; `ring-ring` `#280f91` | Headings, key links, focus and selected outlines                      |
+> | **Core Brand Accent**      | `accent` `#ffc500` + `accent-foreground` `#0c0c0b`                | Brand highlights, ratings, promo CTA, bee-theme elements              |
+> | **Verification / Success** | `secondary` `#447353` + `secondary-foreground` `#ffffff`          | Verified tutors, success badges, checkmarks (supporting color)        |
+> | **Text highlight**         | `highlight` `#fadc76`                                             | Small flat highlight behind dark text, not a haze                     |
+> | **Page / card**            | `background`, `card`, `popover` `#ffffff`                         | Pure opaque white surfaces                                            |
+> | **Text**                   | `foreground` `#0c0c0b`; `muted-foreground` `#5a6a9a`              | Primary copy and secondary copy after contrast check                  |
+> | **Quiet structure**        | `border` / `input` `#dce8fb`                                      | Clean neutral separators, form borders, dividers                      |
+> | **Feedback**               | `warning` `#905b0f`; `error` `#e1aba7`; `destructive` `#dc2626`   | Semantic feedback; use `destructive` for readable error text on white |
 >
-> **Badge and chip rule:** Small metadata labels must not default to `bg-primary/5` or `/8` plus `border-primary/20` and a tinted shadow; that combination looks faded. Give the main label an opaque `bg-primary text-primary-foreground` fill. Give secondary metadata an opaque `bg-card text-primary border-primary` outline. Use `bg-secondary text-secondary-foreground` or `bg-card text-secondary border-secondary` for verified states. Noninteractive chips do not need hover effects. Preserve readable text and let long labels wrap on narrow screens.
+> **Palette roles (the BeeWise version of the Color Consistency Lock):** BeeWise has two brand colors, so lock by role, not by count.
+>
+> - `primary`: action, structure, headings, and the solid color-block sections.
+> - `accent`: reward and highlight (ratings, stickers, the marker highlight behind one headline word, one deliberately promotional CTA, one amber band per page at most).
+> - `secondary`: verification and success only.
+>   Never swap roles between sections. A green CTA or a blue star rating is a Pre-Flight Fail.
+>
+> The global `--glass` token exists for legacy use; its presence is **not** a design instruction. Do not add competing colors (violet, pink, or random teal).
+>
+> **Surface tint policy (replaces the old blanket pastel ban):**
+>
+> - **Still banned** as the default fill for content containers, meta grids, stat blocks, and badges: baby-blue or lavender washes (`bg-muted`, `#f0f4ff`, `bg-primary/5` to `/10`). This look reads as a 2010s corporate portal.
+> - **What replaces it:** depth from large radius and layered elevation (Section 4.4), and rhythm from **solid color-blocks**: a full-strength `bg-primary` section with `text-primary-foreground`, or one `bg-accent` band with `text-accent-foreground`. Color arrives at full strength or not at all.
+> - **Allowed low-alpha use, decorative only:** hexagon clusters in `primary-foreground` or `accent` at 6-10% on top of a solid primary block; shadows per Section 4.4. Never a translucent primary fill as the background of a button, badge, card, or input.
+> - A page must not be a continuous run of plain white sections. See the section rhythm in Section 4.12.H.
+>
+> **Color strength rule:** A brand action is solid `bg-primary` with `text-primary-foreground`, never `bg-primary/5`, a radial glow, or a glass layer. Use full-strength `text-primary` for key headings and links. Keep body copy readable; avoid `text-foreground/35`, `/45`, `/60` for essential content. Amber needs dark foreground text (`text-accent-foreground` / `#0c0c0b`); `text-accent` on white is not a readable default. Check actual rendered contrast in every state.
+>
+> **New-screen recipe:** Page `bg-background text-foreground`; content panels `bg-card border border-border rounded-3xl shadow-[var(--shadow-soft)]`; main action = pill `bg-primary text-primary-foreground` (button recipe in Section 4.12.E); secondary action `bg-background text-primary border-2 border-primary` pill; focus `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`; selected state `border-2 border-primary bg-card text-primary font-semibold`; brand emphasis `bg-accent text-accent-foreground`. Never use opacity to make a primary action look inactive; disabled states must remain recognisable and readable.
+>
+> **Badge, chip & meta block rule:** Badges and chips are pills. Main label: opaque `bg-primary text-primary-foreground`. Promo or reward: `bg-accent text-accent-foreground`. Verified or success: `bg-secondary text-secondary-foreground` with a check icon. Secondary metadata: opaque `bg-card text-primary border border-border` (or `border-primary` when it must stand out). Meta stats (time, duration, format, level) go in `bg-card border border-border` cards or border-separated rows, with the icon sitting in a solid-filled rounded square or hexagon (`bg-primary` + white icon, or `bg-accent` + dark icon), never in pastel `bg-muted` boxes.
 
 - **PREMIUM-CONSUMER PALETTE BAN (mandatory, second-most-recurring AI-tell):**
   - For premium-consumer briefs (cookware, wellness, artisan, luxury, heritage craft, DTC home goods, etc.) the LLM default is **warm beige/cream + brass/clay/oxblood/ochre + espresso/ink dark text**. Concretely banned hex families as default backgrounds and accents:
@@ -258,15 +284,52 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 ### 4.4 Materiality, Shadows, Cards
 
 - Use cards ONLY when elevation communicates real hierarchy. Otherwise group with `border-t`, `divide-y`, or negative space.
-- When a shadow is used, tint it to the background hue. No pure-black drop shadows on light backgrounds. **BeeWise exception:** use the neutral, restrained elevation in the BeeWise rule below, not an indigo-tinted halo.
+- When a shadow is used, tint it to the background hue. No pure-black drop shadows on light backgrounds. **BeeWise:** use the layered soft elevation tokens in the BeeWise rule below (a neutral contact layer plus a low-alpha primary-tinted ambient layer).
 - For `VISUAL_DENSITY > 7`: generic card containers are banned. Data metrics breathe in plain layout.
 - **SHAPE CONSISTENCY LOCK (mandatory):** Pick ONE corner-radius scale for the page and stick to it. Options: all-sharp (radius 0), all-soft (radius 12-16px), all-pill (full radius for interactive). Mixed systems are allowed only when there is a documented rule (e.g. "buttons are full-pill, cards are 16px, inputs are 8px") and that rule is followed everywhere. Round buttons in a square layout, or square cards on a pill-button page, is broken design.
+- **SINGLE-EDGE COLORED BORDER BAN (Mandatory - Cấm viền màu đơn cạnh trên Card):**
+  - **Strictly BANNED:** Single-sided colored accent borders on cards, widgets, or panels (e.g. `border-t-4 border-primary`, `border-t-2 border-amber-500`, `border-l-4 border-primary`, `border-b-2`, `border-r-4`, etc.). Adding a colored strip to only the top, bottom, left, or right edge of a card is a dated 2010s / Bootstrap / template cliché that fractures card geometry and looks amateur.
+  - **Rule:** Card and panel borders MUST be clean, continuous, and uniform across all 4 sides (`border border-border/80` or `border border-border`).
+  - **How to express status, hierarchy, or brand accent instead:**
+    1. **Semantic Pill Badge:** Place a clean pill badge in the top-right / header (`bg-primary/10 text-primary font-bold text-xs`, `bg-accent text-accent-foreground`, or `bg-secondary text-secondary-foreground`).
+    2. **Dedicated Icon Container:** Use a soft-tinted icon square/pill (`h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center`).
+    3. **Status Dot Indicator:** An internal status dot (`h-2 w-2 rounded-full bg-emerald-500`).
+    4. **Active / Selected State:** Highlight the **entire perimeter** uniformly with `border-2 border-primary` or `ring-2 ring-primary`.
+    5. **Never use top-only, bottom-only, left-only, or right-only colored accent border stripes** on cards.
 
-> **BeeWise surface rule for new screens:** Default to opaque `bg-background` / `bg-card` / `bg-popover` and a distinct `border-border` or brand-colored edge. Do not add `backdrop-blur`, `filter: blur(...)`, `--glass`, translucent primary overlays, purple/blue glows, radial or conic primary gradients, or color-mixed drop shadows to hero panels, AI search, cards, nav, modals, drawers, or decorative backgrounds. A modal may dim its backdrop for focus, but its content stays opaque. A media overlay may need a dark scrim for legibility; that is not a glass surface. This rule supersedes the generic glassmorphism suggestions in Sections 2.B, 4.10, 10, and Appendix C for BeeWise.
+> **BeeWise surface rule (soft-modern):** Surfaces are opaque and layered, never flat-on-flat. Cards, panels, popovers, modals, nav, and AI search use `bg-background` / `bg-card` / `bg-popover`, a visible `border-border`, a large radius, and soft elevation (below). Content never sits on blur or translucency.
 >
-> **BeeWise elevation:** Prefer a 1px border and a restrained neutral shadow only where separation is needed. A hover state may move 1-2px and strengthen the border; avoid large floating shadows, indigo shadow halos, and blur-based depth. Use `--radius` (`0.75rem`) as the base radius; reserve full pills for compact actions or tags when consistent with the surrounding UI.
+> **Allowed:** (a) the floating pill nav may gain `backdrop-blur-md` with `bg-background/90` only after the page scrolls, with a `border-border` edge, a solid-fill fallback under `prefers-reduced-transparency`, and a contrast check; (b) a modal may dim its backdrop with a scrim, its content stays opaque; (c) a media overlay may use a dark scrim gradient for legibility.
 >
-> **BeeWise Tutor Card rules:** Equal-height cards. Avatar aspect ratio 1:1. Max 2-line title. Aligned CTAs at card bottom. Hover with a stronger border and at most `translateY(-2px)`; no primary-colored shadow halo. Transition 200-250ms ease.
+> **Still banned:** `--glass` surfaces; `backdrop-blur` or `filter: blur(...)` on cards, hero panels, AI search, drawers, or decorative backgrounds; purple or blue haze; radial or conic primary glows; shadows with blur radius over 48px or tint alpha over 0.18; gradient text. This rule supersedes the generic glassmorphism suggestions in Sections 2.B, 4.10, 10, and Appendix C for BeeWise.
+>
+> **BeeWise shape scale (the documented rule for the Shape Consistency Lock):**
+>
+> | Element                                           | Radius                                          |
+> | ------------------------------------------------- | ----------------------------------------------- |
+> | Buttons, chips, badges, segmented controls        | full pill                                       |
+> | Inputs, selects, textareas                        | `rounded-2xl` (16px)                            |
+> | Cards (tutor, feature, bento cell, stat, pricing) | `rounded-3xl` (24px)                            |
+> | Panels (hero visual, inset CTA band, large media) | `rounded-[32px]`, `rounded-3xl` below `md`      |
+> | Avatars                                           | circle, or `rounded-[28%]` squircle, always 1:1 |
+> | Image inside a padded card                        | card radius minus the padding (nested radius)   |
+>
+> Add `--radius-card: 1.5rem` and `--radius-panel: 2rem` to `globals.css` as **additive** tokens for new screens. Do not change the existing `--radius` (`0.75rem`); existing components depend on it.
+>
+> **BeeWise elevation (always two layers, always with a visible border):**
+>
+> ```css
+> --shadow-soft:
+>   0 1px 2px rgb(12 12 11 / 0.05), 0 12px 32px -12px rgb(12 30 170 / 0.12);
+> --shadow-soft-hover:
+>   0 2px 4px rgb(12 12 11 / 0.05), 0 20px 40px -14px rgb(12 30 170 / 0.18);
+> --shadow-pop:
+>   0 2px 6px rgb(12 12 11 / 0.06), 0 24px 48px -16px rgb(12 12 11 / 0.22); /* menus, floating chips, modals */
+> ```
+>
+> The shadow adds to the border, it does not replace it. Y-offset is positive, spread is negative, so the shadow reads as light falling on a raised object, not as a halo. Hover on a card: `-translate-y-1` (4px), `--shadow-soft-hover`, 250ms `ease-out`; interactive or selectable cards may also take `border-primary`. Hover on a non-interactive card is optional. Never animate shadow blur radius; cross-fade a pseudo-element's opacity instead (Section 6.A).
+>
+> **BeeWise Tutor Card rules:** Equal-height cards in a grid or carousel. Large 1:1 avatar at the top or left (squircle or circle). Max 2-line title. Rating row with an amber star and a `bg-secondary` verified badge. Price in Nunito 800, `text-primary`, VND format (`450.000đ/giờ`). CTA pinned to the card bottom as a pill. Whole card is the click target with a visible focus ring. Hover per the elevation rule. Skeleton loader matches the card shape. No primary-colored shadow halo.
 
 ### 4.5 Interactive UI States
 
@@ -343,6 +406,7 @@ LLMs default to "static successful state only." Always implement full cycles:
   - **What to do instead of an eyebrow:** drop it entirely. The headline alone is enough. If you need to categorize a section, the section's location on the page already categorizes it; no label needed.
 - **SPLIT-HEADER BAN (mandatory).** The pattern "left big headline + right small explainer paragraph" as a section header (left col-span-7/8, right col-span-4/5 with a small body paragraph floating in the right column) is **banned as default**. Sections should have ONE focused message. If you genuinely need both a headline and an explainer paragraph, stack them vertically (headline on top, body below, max-width 65ch). Reach for the split-header pattern only when there is a real compositional reason (e.g., the right column carries a visual or interactive element, not just filler text).
 - **Bento Background Diversity (mandatory).** Bento and feature-grid sections cannot be 6 white-on-white cards with text inside. At least 2-3 cells in any multi-cell grid need real visual variation: a real image, a brand-appropriate gradient (not AI-purple), a pattern, a tinted background. A cream-on-cream bento with only typography inside reads as boring AI default, even when the rest of the page is good.
+  - **BeeWise:** achieve cell variation WITHOUT new colors or pastel fills. Mix: white `bg-card` cells with soft elevation, one real photo cell, one solid `bg-accent` cell (dark text, mascot or big number), one cell with a hexagon cluster, and the whole bento sitting inside a solid `bg-primary` color-block so the white cells pop. Cell count still equals content count.
 - **Mobile collapse must be explicit per section.** For every multi-column layout, declare the `< 768px` fallback in the same component. No "it'll work, Tailwind handles it" assumptions.
 
 ### 4.8 Image & Visual Asset Strategy
@@ -384,6 +448,12 @@ Landing pages and portfolios are **visual products**. Text-only pages with fake-
 - Or skip the preview entirely and use editorial photography
 
 **Hero needs a real visual.** Text + gradient blob is not a hero - it's a placeholder.
+
+> **BeeWise asset exceptions (what gives the product its character):**
+>
+> - **Mascot:** the BeeWise bee mascot is a supplied brand asset, not a hand-rolled illustration. Use only poses that exist in the repo's asset folder. Never redraw, recolor, or approximate it in SVG or CSS. If the needed pose is missing, leave a labeled placeholder slot (`<!-- TODO: mascot, waving pose, transparent PNG/WebP, 800x800 -->`) and list it at the end of the response. Rules in Section 4.12.J.
+> - **People:** real photos of tutors and learners (or generated photos when a gen tool exists), cropped into the shape scale from Section 4.4. Avoid stock-handshake and laptop-on-desk clichés; prefer a visible human face mid-lesson.
+> - **Product proof:** floating UI chips that are **real components** (a rating card, a verified-tutor badge, a booking mini-card) are allowed on top of photos. They are product UI, not decorative tags, so the "no pills overlaid on images" ban in Section 9.F does not apply to them.
 
 ### 4.9 Content Density
 
@@ -436,6 +506,138 @@ The page has ONE theme. Sections do not invert.
 - The exception: if the brief explicitly calls for a "Color Block Story" or "Theme Switch on Scroll" device AND that is a deliberate composition (one full theme switch with a strong transition, not random alternation), it is allowed once per page.
 - Default behaviour: pick light, dark, or auto (`prefers-color-scheme`) at the page level and lock it. Section-level background tints within the same theme family are fine (`bg-zinc-950` next to `bg-zinc-900`); flipping to `bg-amber-50` in the middle of a `bg-zinc-950` page is broken.
 - When using a design system with built-in theming (Radix Themes, shadcn/ui with `<Theme>`), set the theme ONCE in `layout.tsx` or the page root. Do not let individual sections override.
+- **BeeWise:** a solid `bg-primary` or `bg-accent` section is a **brand color-block inside the light theme**, not a dark-mode inversion, and is allowed (budget in Section 4.12.H). Text inside it uses `text-primary-foreground` / `text-accent-foreground`. Do not invent a dark variant of the page.
+
+### 4.12 BeeWise Soft-Modern Edutech Recipe (applies to every new `apps/sale` screen)
+
+BeeWise should feel like a modern Edutech SaaS: friendly like Duolingo, clear like Preply, trustworthy like Coursera, polished like Linear or Framer. Use these as mood references only; copy no layouts, no assets, no wording. It must NOT feel like a government portal or a 2015 corporate site.
+
+**A. Five principles**
+
+1. **Soft shape:** big radius everywhere (Section 4.4 scale). Corners are the cheapest way to look modern.
+2. **Layered depth:** opaque surface + visible border + two-layer elevation. Never a wall of flat white boxes with hairlines.
+3. **Color at full strength:** solid primary blocks, solid amber accents, no washes. Rhythm comes from alternating white and solid sections.
+4. **Human and branded:** real faces, the supplied mascot, and a hexagon motif tied to the bee. Not stock gradients.
+5. **Alive but calm:** spring reveals, tactile buttons, hover lift. Nothing loops except one optional mascot float.
+
+**B. Additive tokens (non-color only; add to `globals.css`, never alter existing tokens)**
+
+```css
+:root {
+  --radius-card: 1.5rem;
+  --radius-panel: 2rem;
+  --shadow-soft:
+    0 1px 2px rgb(12 12 11 / 0.05), 0 12px 32px -12px rgb(12 30 170 / 0.12);
+  --shadow-soft-hover:
+    0 2px 4px rgb(12 12 11 / 0.05), 0 20px 40px -14px rgb(12 30 170 / 0.18);
+  --shadow-pop:
+    0 2px 6px rgb(12 12 11 / 0.06), 0 24px 48px -16px rgb(12 12 11 / 0.22);
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bw-hex {
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+}
+```
+
+**C. Spacing and density (landing and marketing)**
+
+Section padding `py-20 md:py-28`. Container `max-w-7xl px-5 md:px-8`. Card padding `p-6 md:p-8`. Gap between cards `gap-5 md:gap-6`. Marketplace and listing screens may tighten to `py-12 md:py-16` and `p-5` (density 5).
+
+**D. Typography recipe**
+
+- H1: Nunito 900, `text-[clamp(2.25rem,5vw,4rem)]`, `leading-[1.15]`, `tracking-[-0.02em]` (never tighter than `-0.025em`). Max 2 lines on desktop.
+- H2: Nunito 800, `text-[clamp(1.75rem,3.5vw,2.75rem)]`, `leading-[1.2]`, `tracking-[-0.01em]`, color `text-primary` on white, `text-primary-foreground` on primary blocks.
+- H3 and card titles: Nunito 800, `text-xl`, `leading-snug`.
+- Body: Google Sans, `text-[17px] md:text-lg` on landing, `text-base` in product UI, `leading-relaxed`, `text-muted-foreground` (`#5a6a9a`, verify 4.5:1) or `text-foreground`, max `65ch`.
+- **Marker highlight:** at most ONE word or short phrase per page headline gets a marker highlight: `bg-[linear-gradient(transparent_62%,var(--highlight)_62%)]` with `box-decoration-clone px-1`, dark text stays `text-primary`. It uses the existing `highlight` token (`#fadc76`). No gradient text, no italic-serif emphasis.
+- Numbers (price, rating, stats): Nunito 800, tabular figures (`tabular-nums`).
+
+**E. Buttons (tactile, pill, one line)**
+
+```
+Primary:   inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 text-base font-bold whitespace-nowrap
+           text-primary-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_8px_20px_-8px_rgb(12_30_170/0.45)]
+           transition-[transform,box-shadow] duration-200 ease-out
+           hover:-translate-y-0.5 active:translate-y-px active:scale-[0.98]
+           focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+Amber:     same shape, bg-accent text-accent-foreground, shadow-[inset_0_1px_0_rgb(255_255_255/0.35),0_8px_20px_-10px_rgb(12_12_11/0.25)]
+Secondary: h-12 rounded-full border-2 border-primary bg-background px-6 font-bold text-primary hover:-translate-y-0.5
+```
+
+- Trailing arrow icon (Phosphor `ArrowRight`, `bold`) slides `group-hover:translate-x-0.5`.
+- Hero and nav: one primary per view. One label per intent (Section 4.5).
+- Large touch target: `h-12` minimum on mobile, `h-14` allowed for hero CTA.
+- No hard offset "block" shadows and no new border-bottom colors; the look stays soft and inside the palette.
+
+**F. Navigation**
+
+Floating pill nav, `h-16`, `mx-auto max-w-7xl` with `top-3` offset, `rounded-full border border-border bg-background shadow-[var(--shadow-soft)]`. Blur and translucency only after scroll per Section 4.4. One line at desktop. Logo left, 4-5 links center, login (secondary) and the single primary CTA right. Mobile: logo + primary CTA + menu button; the menu opens as an opaque `rounded-3xl` sheet.
+
+**G. Hero recipe (BeeWise landing)**
+
+Asymmetric split, desktop 7/5 columns. Left: headline (with at most one marker highlight word), subtext of 20 words or fewer, one primary CTA + one secondary. Right: a real photo of a tutor and learner mid-lesson in a `rounded-[32px]` panel (or an arch mask) over a solid `bg-primary` or `bg-accent` plate with a small hexagon cluster behind it; the mascot peeks from one corner. Add at most **two floating real-component chips** (for example a rating card with amber stars and a verified-tutor badge, or a booking mini-card) using realistic Vietnamese names and organic numbers, with `--shadow-pop` and a gentle offset, never covering the face or the CTA. Hero stack discipline (Section 4.7) still applies: chips and mascot are visuals, not text elements. Mobile: copy first, then the photo panel; chips collapse into a single row under the photo.
+
+**H. Section rhythm for a landing page**
+
+| #   | Section                                       | Background                                                                    | Layout family                                                  |
+| --- | --------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 1   | Hero                                          | white                                                                         | asymmetric split with photo panel                              |
+| 2   | Trust strip (logos only, or 3-4 real numbers) | white                                                                         | single horizontal row                                          |
+| 3   | Subject chip rail                             | white                                                                         | scroll-snap pills with Phosphor icons in solid rounded squares |
+| 4   | Value propositions                            | **solid `bg-primary` block**                                                  | bento: white cards, photo cell, amber cell, hexagon cell       |
+| 5   | How it works                                  | white                                                                         | 3 hexagon badges joined by a line (not a zigzag)               |
+| 6   | Featured tutors                               | white                                                                         | equal-height carousel of Tutor Cards                           |
+| 7   | Results and testimonials                      | **one solid `bg-accent` band** (dark text) or white                           | big numbers + photo testimonial                                |
+| 8   | FAQ                                           | white                                                                         | accordion                                                      |
+| 9   | Final CTA                                     | **inset `rounded-[32px]` `bg-primary` panel** with mascot and hexagon cluster | centered panel, same CTA label as hero                         |
+| 10  | Footer                                        | white, `border-t border-border`                                               | multi-column                                                   |
+
+Budget: at most 2 full-bleed solid primary sections plus the inset CTA panel, at most 1 amber band, no 3 consecutive plain-white sections without a bento, color-block, or media break, at least 4 layout families (Section 4.7 still applies).
+
+**I. Edutech modules to reach for (vocabulary for the Block Library)**
+
+- Subject chip rail (Toán, Tiếng Anh, IELTS, Lập trình, Piano...) with icon + label.
+- How-it-works with hexagon badges. Label each by verb-noun ("Tìm gia sư", "Đặt lịch học", "Học thử"). Never "Bước 1" or "Step 1" (Section 9.F).
+- Tutor card carousel and tutor profile header (large photo, verified badge, rating, price, sticky booking card).
+- Progress and streak preview built as a **real component** (ring or segmented bar, no filled background track on comparison visuals per Section 9.F).
+- Stats band: 3-4 real numbers, Nunito 800, `tabular-nums`, count-up on first view.
+- Photo testimonial: real face, name, role (learner or parent), max 3 lines of quote.
+- Mobile sticky bottom bar on tutor and course detail pages: opaque `bg-card`, `border-t border-border`, upward soft shadow, price left, primary pill CTA right.
+
+**J. Mascot rules**
+
+Supplied assets only (Section 4.8). At most one mascot per viewport and at most three per page. It interacts with the layout (peeks over a panel edge, sits on a card corner, points at a CTA) rather than floating in empty space. Keep clear space around it equal to a quarter of its height. Never place it on top of text. Optional idle float: `translateY` of 6px over 4s `ease-in-out` on at most one mascot per page, disabled under `prefers-reduced-motion`.
+
+**K. Hexagon motif rules**
+
+Compose clusters of 3-7 `.bw-hex` elements at different sizes (CSS `clip-path`, not hand-drawn SVG, not an image pattern). Decorative and `aria-hidden`. On a solid primary block, fill them with `bg-primary-foreground/8`. On white, do not use low-alpha fills (they read as a wash); use a single solid `bg-accent` hexagon behind a photo or mascot instead. One cluster per section maximum. Functional hexagons (step badges, icon holders) are solid-filled with `bg-primary` or `bg-accent` and a Phosphor `bold` icon. Avatars stay circle or squircle.
+
+**L. Icons**
+
+Phosphor, `bold` weight everywhere (one weight per project, Section 3.C). Icons sit in solid-filled rounded squares or hexagons (`bg-primary` + `text-primary-foreground`, or `bg-accent` + `text-accent-foreground`), 40-48px containers. Bare thin line icons on white look dated.
+
+**M. Motion recipe (`MOTION_INTENSITY` 6 on landing, 5 on marketplace)**
+
+- **Section reveal:** children fade + rise (`y: 24 -> 0`, `opacity: 0 -> 1`) with `type: "spring", stiffness: 120, damping: 20`, `staggerChildren: 0.08`, triggered once via `whileInView` (`viewport={{ once: true, amount: 0.25 }}`).
+- **Hover:** cards lift 4px with the elevation swap; images inside cards scale `1.03` over 400ms inside an `overflow-hidden` rounded wrapper; buttons per 4.12.E.
+- **Counters:** stats count up with `useMotionValue` + `useTransform`, never `useState`.
+- **Nav:** shrink-and-blur transition on scroll via `useScroll`, never a scroll listener.
+- **Reduced motion:** every item above degrades to static under `prefers-reduced-motion` (Section 6.B).
+- No parallax hijacks, no magnetic cursor effects, no infinite loops except the single optional mascot float.
+
+**N. Mobile rules**
+
+Single column below `md`. Chips and subject rails become horizontal scroll-snap rows with a visible peek of the next item. Touch targets 44px minimum. Floating hero chips become a static row. Panels drop to `rounded-3xl`. Bento collapses to a stacked list with the amber and photo cells keeping their full width. Body text never below 16px. Test at 360px width with the longest realistic Vietnamese names and prices.
+
+**O. Anti-patterns specific to BeeWise**
+
+- White cards with a 1px border and no elevation, repeated six times on a white page (the "old portal" look).
+- Pastel-blue stat boxes or `bg-primary/10` badges.
+- A rainbow of category colors. Categories use icons and labels in primary or accent only.
+- The mascot used as wallpaper, repeated, or recolored.
+- Stock photos of anonymous suits shaking hands.
+- Three identical feature cards in a row (Section 9.C). Use the bento or an asymmetric 2+1 composition instead.
+- Gradient text, glow buttons, glass cards, aurora backgrounds.
 
 ---
 
@@ -732,7 +934,7 @@ Avoid these signatures unless the brief explicitly asks for them.
 ### 9.E External Resources & Components
 
 - **NO hand-rolled SVG icons.** Use Phosphor / HugeIcons / Radix / Tabler. Lucide on explicit request only
-- **Hand-rolled decorative SVGs strongly discouraged** as default (see Section 4.8).
+- **Hand-rolled decorative SVGs strongly discouraged** as default (see Section 4.8). Supplied brand assets such as the BeeWise mascot are not hand-rolled and are allowed per Section 4.12.J.
 - **NO div-based fake screenshots.** Never build a fake product UI out of `<div>` rectangles to simulate a screenshot. Use real images, generated images, or skip the preview.
 - **NO broken Unsplash links.** Use `https://picsum.photos/seed/{descriptive-string}/{w}/{h}`, or generated photo placeholders, or actual assets.
 - **shadcn/ui customization:** Allowed, but NEVER in default state. Customize radii, colors, shadows, typography to the project aesthetic.
@@ -782,7 +984,7 @@ These patterns came out of real LLM-generated landing-page tests. They are the s
 
 **Pills, labels and version stamps**
 
-- **NO pills/labels/tags overlaid on images.** No `<span>` overlays on photos with tags like `Brand · 02`, `PLATE · BRAND`, `Field notes - journal`. Either let the image speak alone, or add a caption directly below (outside the image).
+- **NO pills/labels/tags overlaid on images.** No `<span>` overlays on photos with tags like `Brand · 02`, `PLATE · BRAND`, `Field notes - journal`. Either let the image speak alone, or add a caption directly below (outside the image). **Exception:** functional UI chips that are real product components (a rating card, a verified-tutor badge, a booking mini-card) may overlay a photo, because they are product proof and not decorative tags (see Section 4.8 and 4.12.G).
 - **NO photo-credit captions as decoration.** Strings like `Field study no. 12 · Ines Caetano`, `Plate 03 · House archive`, `Frame XII · 35mm` under stock/picsum images are pretentious. Photo credit is allowed ONLY when there is a real photographer being credited for a real photo (with permission). Otherwise: skip the caption or use a one-line functional caption ("The 6-quart, in Sage.").
 - **NO version footers on marketing pages.** Footer strings like `v1.4.2`, `Build 0048`, `last sync 4s ago · main` are CLI / devtool fixtures, not landing-page content. Banned on marketing/landing/portfolio pages.
 - **NO "Reservation 412 of 800"-style live-stock counters** as decoration. Only if the brief is explicitly a limited-run waitlist with real data.
@@ -949,7 +1151,7 @@ Apply in order - stop when the brief is satisfied:
 
 1. **Typography refresh** - biggest visual lift per unit of risk.
 2. **Spacing & rhythm** - increase section padding, fix vertical rhythm.
-3. **Color recalibration** - unify neutrals and restore the brand token's intended strength; desaturate only if the brand itself calls for it. For BeeWise, remove haze and low-opacity primary decoration instead of changing `globals.css` colors.
+3. **Color recalibration** - unify neutrals and restore the brand token's intended strength; desaturate only if the brand itself calls for it. For BeeWise, replace haze and low-opacity primary decoration with solid color-blocks and soft layered elevation (Section 4.4 and 4.12), and never change `globals.css` color tokens.
 4. **Motion layer** - add `MOTION_INTENSITY`-appropriate micro-interactions to existing components.
 5. **Hero & key-section recomposition** - restructure top-of-funnel using Section 10 vocabulary.
 6. **Full block replacement** - only when the existing block is unsalvageable.
@@ -1050,7 +1252,7 @@ This skill is NOT for:
 
 If the brief is one of the above, **say so explicitly**, point to the right tool, and only apply this skill's marketing-page / about-page / landing-page parts to the surfaces where they apply.
 
-The BeeWise sale token contract in Section 4.2 and surface rule in Section 4.4 still apply to every `apps/sale` screen, including product UI; this scope limit concerns layout recipes, not brand consistency.
+The BeeWise sale token contract in Section 4.2, surface rule in Section 4.4, and soft-modern recipe in Section 4.12 still apply to every `apps/sale` screen, including product UI; this scope limit concerns layout recipes, not brand consistency.
 
 ---
 
@@ -1067,11 +1269,17 @@ Run this matrix before outputting code. This is the last filter.
 - [ ] **ZERO em-dashes (`—`) anywhere on the page.** Headlines, eyebrows, pills, body, quotes, attribution, captions, buttons, alt text. Zero. (Section 9.G - non-negotiable.)
 - [ ] **Page Theme Lock**: ONE theme (light, dark, or auto) for the whole page. No section flips to inverted mode mid-page (Section 4.11)?
 - [ ] **Color Consistency Lock**: one accent color used identically across all sections (Section 4.2)?
-- [ ] **BeeWise token source**: new `apps/sale` UI uses the active semantic tokens in `packages/ui/globals.css`, with Nunito headings and Google Sans body, rather than new hardcoded brand colors or the old Montserrat guidance?
-- [ ] **BeeWise color clarity**: primary actions and key text are full-strength; essential copy and amber labels pass contrast; no decorative primary blur, glow, glass, radial/conic gradient, or indigo shadow halo was introduced?
-- [ ] **BeeWise badge clarity**: important badges use solid brand fill or opaque outlined surfaces, with no `bg-primary/5` or `/8` wash, weak translucent border, or decorative shadow?
-- [ ] **BeeWise surface clarity**: cards, AI search, nav, and dialogs use opaque surfaces and visible borders; a future dark mode was not invented while global `.dark` tokens remain disabled?
+- [ ] **BeeWise token source**: new `apps/sale` UI uses the active semantic color tokens in `packages/ui/globals.css` (palette untouched, only additive non-color tokens added), with Nunito headings and Google Sans body, rather than new hardcoded brand colors or the old Montserrat guidance?
+- [ ] **BeeWise color clarity**: primary actions and key text are full-strength; essential copy and amber labels pass contrast; color roles respected (primary = action, accent = reward, secondary = verified); no translucent primary fill on buttons, badges, cards, or inputs?
+- [ ] **BeeWise soft-modern surfaces**: cards `rounded-3xl`, panels `rounded-[32px]`, buttons and chips pill, inputs `rounded-2xl`; every card has an opaque fill, a visible border, AND two-layer soft elevation (not a flat 1px-only box)?
+- [ ] **BeeWise no-glow check**: no glass, no blur on content surfaces (floating nav after scroll is the only blur), no radial or conic glow, no gradient text, no shadow over 48px blur or 0.18 tint alpha?
+- [ ] **BeeWise section rhythm** (Section 4.12.H): landing has at least one solid primary color-block, at most 2 full-bleed primary sections plus the inset CTA panel, at most 1 amber band, and no 3 consecutive plain-white sections?
+- [ ] **BeeWise badge clarity**: important badges are solid pills (primary, accent, or secondary) or opaque outlined pills, with no `bg-primary/5` or `/8` wash and no weak translucent border?
+- [ ] **BeeWise brand assets**: mascot comes only from supplied assets (max 1 per viewport, never over text), hexagon clusters are CSS `clip-path` (max 1 per section), hero has at most 2 floating chips and they are real components?
+- [ ] **BeeWise Vietnamese typography**: headline `leading` at least 1.15, no clipped diacritics (tested with long Vietnamese strings), prices in VND format (`450.000đ`), tabular numbers for stats?
+- [ ] **BeeWise interaction feel**: buttons have hover lift, press feedback, and focus ring; cards lift 4px on hover; section reveal uses spring + stagger; everything degrades under reduced motion; a future dark mode was not invented while global `.dark` tokens remain disabled?
 - [ ] **Shape Consistency Lock**: one corner-radius system applied consistently (Section 4.4)?
+- [ ] **Uniform Card Borders (No single-edge colored borders)**: cards have continuous 4-sided borders (`border border-border/80`); zero single-sided colored accent borders (`border-t-4`, `border-l-4`, `border-b-2`, etc.) on cards or panels (Section 4.4)?
 - [ ] **Button Contrast Check**: every CTA text is readable against its background (no white-on-white, WCAG AA 4.5:1)?
 - [ ] **CTA Button Wrap**: no CTA label wraps to 2+ lines at desktop?
 - [ ] **Form Contrast Check**: form inputs, placeholders, focus rings, labels all pass WCAG AA against the section background?
@@ -1096,8 +1304,8 @@ Run this matrix before outputting code. This is the last filter.
 - [ ] **Section-Layout-Repetition** check: no two sections share the same layout family (at least 4 different families across 8 sections)?
 - [ ] **Bento has rhythm AND exact cell count** (N items → N cells, no empty cells in middle or at end)?
 - [ ] **Long lists use the right UI component** (not default `<ul>` with `divide-y` for > 5 items - see Section 4.9 alternatives)?
-- [ ] **Real images used** (gen-tool first, then Picsum-seed, then explicit placeholder slots) - NO div-based fake screenshots, NO hand-rolled decorative SVGs, NO pure-text minimalism?
-- [ ] **No pills/labels overlaid on images** (no `Plate · Brand`, no `Field notes - journal`)?
+- [ ] **Real images used** (gen-tool first, then Picsum-seed, then explicit placeholder slots) - NO div-based fake screenshots, NO hand-rolled decorative SVGs (supplied BeeWise mascot assets are the one exception), NO pure-text minimalism?
+- [ ] **No pills/labels overlaid on images** (no `Plate · Brand`, no `Field notes - journal`; real-component chips per Section 4.12.G are the exception)?
 - [ ] **No photo-credit captions as decoration** (`Field study no. 12 · Ines Caetano`)?
 - [ ] **No version footers** (`v1.4.2`, `Build 0048`) on marketing pages?
 - [ ] **No micro-meta-sentences** under eyebrows ("Each of these is a feature we ship today...")?

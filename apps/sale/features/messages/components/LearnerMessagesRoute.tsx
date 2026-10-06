@@ -21,6 +21,7 @@ export function LearnerMessagesRoute({
   const loading = useAuthStore((state) => state.isAuthLoading);
 
   useEffect(() => {
+    if (chatRoomId === "tvc-demo") return;
     if (loading) return;
     if (!authenticated || !user) {
       router.replace(`/login?returnUrl=${encodeURIComponent(pathname || "")}`);
@@ -31,13 +32,14 @@ export function LearnerMessagesRoute({
     if (role !== "LEARNER") {
       router.replace("/");
     }
-  }, [loading, authenticated, user, router, pathname]);
+  }, [loading, authenticated, user, router, pathname, chatRoomId]);
 
   if (
-    loading ||
-    !authenticated ||
-    !user ||
-    user.role?.trim().toUpperCase() !== "LEARNER"
+    chatRoomId !== "tvc-demo" &&
+    (loading ||
+      !authenticated ||
+      !user ||
+      user.role?.trim().toUpperCase() !== "LEARNER")
   ) {
     return null;
   }

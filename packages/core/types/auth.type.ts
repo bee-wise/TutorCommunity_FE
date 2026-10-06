@@ -50,10 +50,17 @@ export type MeType = {
   bankInformationCompleted?: boolean | null;
   availabilityCompleted?: boolean | null;
   postApprovalCompleted?: boolean | null;
-  listingStatus?: "WAIVED_ACTIVE" | "ACTIVE" | "EXPIRING_SOON" | "EXPIRED" | string | null;
+  listingStatus?:
+    | "WAIVED_ACTIVE"
+    | "ACTIVE"
+    | "EXPIRING_SOON"
+    | "EXPIRED"
+    | string
+    | null;
   listingExpiresAt?: string | null;
   isProfilePublic?: boolean | null;
   canReceiveNewConnections?: boolean | null;
+  isInterviewed?: boolean | null;
 };
 
 export type GetMeReponseType = ApiResponse<MeType>;

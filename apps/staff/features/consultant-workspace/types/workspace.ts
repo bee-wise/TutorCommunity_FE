@@ -1,4 +1,5 @@
 import type { ChatRoomRecord } from "@workspace/core/services/chat-rooms.service";
+import type { ChatBusinessMessage } from "@workspace/core/services/chat-business-message";
 
 export type RoomStatus = "ACTIVE" | "CLOSED" | "CONVERTED_TO_CLASS";
 export type ParticipantRole = "LEARNER" | "TUTOR" | "CONSULTANT";
@@ -30,6 +31,7 @@ export interface WorkspaceMessage {
   content: string;
   createdAt: string;
   isSystem?: boolean;
+  business?: ChatBusinessMessage | null;
 }
 
 export function toWorkspaceRoom(

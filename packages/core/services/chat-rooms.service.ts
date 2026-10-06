@@ -147,6 +147,16 @@ export const chatRoomsService = {
     return dataOf(roomListSchema, response);
   },
 
+  async listAllRooms() {
+    const first = await this.listRooms();
+    const rest = await Promise.all(
+      Array.from({ length: Math.max(0, first.pagination.totalPages - 1) }, (_, index) =>
+        this.listRooms(index + 2),
+      ),
+    );
+    return [first, ...rest].flatMap((page) => page.items ?? []);
+  },
+
   async listMessages(id: string, before?: string, pageSize = 50) {
     const response: unknown = await apiClient.get(
       `/chat-rooms/${encodeURIComponent(id)}/messages`,
