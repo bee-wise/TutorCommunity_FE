@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import type { CSSProperties } from "react";
 import {
   ArrowRight,
   Bank,
@@ -194,7 +193,9 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
           const isCurrent =
             status === "CURRENT" || status === "ACTION_REQUIRED";
           const isComplete = status === "COMPLETED";
-          const isSelected = state.selectedStepId === step.id;
+          const canSelectStep = view.currentScreen === "JOURNEY";
+          const isSelected =
+            (canSelectStep ? state.selectedStepId : view.activeStep) === step.id;
 
           return (
             <li
@@ -219,16 +220,17 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
               />
               <button
                 type="button"
+                disabled={!canSelectStep}
                 onClick={() =>
                   dispatchAction("switch-journey-detail-step", {
                     stepId: step.id,
                   })
                 }
                 aria-current={isCurrent ? "step" : undefined}
-                className={`relative z-10 flex w-full flex-col items-center gap-2 rounded-xl px-1 py-1.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                className={`relative z-10 flex w-full flex-col items-center gap-2 rounded-xl px-1 py-1.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-default ${
                   isSelected
                     ? "scale-[1.03]"
-                    : "hover:scale-[1.02] hover:opacity-95"
+                    : "enabled:hover:scale-[1.02] enabled:hover:opacity-95"
                 }`}
               >
                 <div className="flex items-center justify-center">
@@ -287,12 +289,15 @@ export function MobileStepNav() {
           const Icon = stepIcons[step.id];
           const isCurrent =
             status === "CURRENT" || status === "ACTION_REQUIRED";
-          const isSelected = state.selectedStepId === step.id;
+          const canSelectStep = view.currentScreen === "JOURNEY";
+          const isSelected =
+            (canSelectStep ? state.selectedStepId : view.activeStep) === step.id;
 
           return (
             <li key={step.id} className="flex flex-col items-center">
               <button
                 type="button"
+                disabled={!canSelectStep}
                 onClick={() =>
                   dispatchAction("switch-journey-detail-step", {
                     stepId: step.id,
@@ -300,8 +305,8 @@ export function MobileStepNav() {
                 }
                 title={step.shortTitle}
                 aria-current={isCurrent ? "step" : undefined}
-                className={`relative flex flex-col items-center p-1 rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                  isSelected ? "scale-105" : "opacity-85 hover:opacity-100"
+                className={`relative flex flex-col items-center p-1 rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-default ${
+                  isSelected ? "scale-105" : "opacity-85 enabled:hover:opacity-100"
                 }`}
               >
                 <span

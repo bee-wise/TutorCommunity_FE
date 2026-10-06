@@ -129,14 +129,18 @@ test("approved tutor uses post-approval navbar when LMS access is disabled", () 
   );
 });
 
-test("admin and consultant resolve to internal staff", () => {
+test("staff roles resolve to guest navbar state", () => {
   assert.equal(
     resolveNavbarState({ isAuthenticated: true, role: "ADMIN" }),
-    "INTERNAL_STAFF",
+    "GUEST",
   );
   assert.equal(
     resolveNavbarState({ isAuthenticated: true, role: "CONSULTANT" }),
-    "INTERNAL_STAFF",
+    "GUEST",
+  );
+  assert.equal(
+    resolveNavbarState({ isAuthenticated: true, role: "STAFF" }),
+    "GUEST",
   );
 });
 
@@ -148,9 +152,10 @@ test("guest config uses standardized labels", () => {
   ];
 
   assert.deepEqual(labels, [
-    "Gia sư",
-    "Cách hoạt động",
+    "Gia sư 1:1",
+    "Tìm lớp",
     "Trở thành gia sư",
+    "Về chúng tôi",
     "Đăng nhập",
     "Tìm gia sư",
   ]);

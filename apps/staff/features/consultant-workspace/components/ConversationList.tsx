@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import {
+  ArrowLeft,
   LockKeyhole,
   MessageCircleMore,
   Search,
@@ -8,6 +10,7 @@ import {
 } from "lucide-react";
 import { formatWorkspaceTime, initials } from "../utils/format";
 import { participantName, type WorkspaceRoom } from "../types/workspace";
+import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 
 export type StatusFilter = "ACTIVE" | "CLOSED" | "ALL";
 export type ChatKind = "group" | "private";
@@ -28,7 +31,7 @@ interface ConversationListProps {
   closedCount: number;
   totalCount: number;
   loading: boolean;
-  error: boolean;
+  error: unknown;
   onRetry: () => void;
   isPreview: boolean;
 }
@@ -111,15 +114,24 @@ export function ConversationList({
         </div>
 
         <div className="flex items-center justify-between gap-2">
-          <div>
-            <h2 className="font-nunito text-base font-extrabold text-foreground">
-              Cuộc trò chuyện
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              {isPreview
-                ? "Bản xem thử chat riêng"
-                : "Phòng kết nối bạn tham gia"}
-            </p>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/consultant/tutors"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition hover:brightness-95"
+              aria-label="Quay lại Danh sách gia sư"
+            >
+              <ArrowLeft className="size-4" />
+            </Link>
+            <div>
+              <h2 className="font-nunito text-base font-extrabold text-foreground">
+                Cuộc trò chuyện
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                {isPreview
+                  ? "Bản xem thử chat riêng"
+                  : "Phòng kết nối bạn tham gia"}
+              </p>
+            </div>
           </div>
           <span className="rounded-lg bg-muted px-2.5 py-1 text-xs font-bold text-primary">
             {rooms.length}
@@ -178,9 +190,9 @@ export function ConversationList({
           </p>
         ) : null}
 
-        {error && !isPreview ? (
+        {Boolean(error) && !isPreview ? (
           <div className="px-4 py-10 text-center text-xs text-muted-foreground">
-            <p>Không tải được danh sách phòng chat.</p>
+            <p role="alert">{getApiErrorMessage(error, "Không tải được danh sách phòng chat.")}</p>
             <button
               type="button"
               onClick={onRetry}

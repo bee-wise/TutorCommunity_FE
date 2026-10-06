@@ -6,6 +6,7 @@ import type {
   TutorPreviewSession,
   WeeklyAvailability,
 } from "../types";
+import { getTutorOnboardingActiveStep } from "../schemas/tutor-onboarding.resolver";
 
 export const previewTutorSession: TutorPreviewSession = {
   status: "authenticated",
@@ -123,7 +124,7 @@ export const createInitialTutorOnboardingState = (
   scenario: TutorOnboardingScenario | "unknown",
 ): TutorOnboardingMockState => ({
   scenario,
-  selectedStepId: scenario === "completed" ? "lms" : "profile",
+  selectedStepId: getTutorOnboardingActiveStep(scenario),
   profile: {
     headline: "Gia sư Toán - Lý đồng hành cùng học sinh THCS và THPT",
     subjects: ["Toán", "Vật lý", "Luyện thi vào 10"],

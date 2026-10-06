@@ -15,6 +15,7 @@ import {
 import type { ChatMessage, ChatParticipantRole } from "../types/messages.types";
 import { formatMessageTime, formatSessionTime, formatFileSize } from "../constants/messages.utils";
 import { ChatWidget } from "./ChatWidget";
+import { BusinessChatWidget } from "@workspace/core/components/BusinessChatWidget";
 
 export function SessionTimeDivider({ timestamp }: { timestamp: string }) {
   return (
@@ -265,17 +266,18 @@ export function MessageBubble({
             onContextMenu={handleContextMenu}
           />
         )}
-        {message.type === "WIDGET" && message.widget && (
+        {message.type === "WIDGET" && (message.widget || message.business) && (
           <div
             className="mt-1 w-full max-w-[440px]"
             title="Nhấn chuột phải để xem tùy chọn"
             onContextMenu={handleContextMenu}
           >
             {message.text && <p className="mb-2 text-xs leading-5 text-muted-foreground">{message.text}</p>}
-            <ChatWidget
-              widget={message.widget}
-              currentRole={currentRole}
-            />
+            {message.business ? (
+              <BusinessChatWidget business={message.business} currentRole={currentRole} />
+            ) : message.widget ? (
+              <ChatWidget widget={message.widget} currentRole={currentRole} />
+            ) : null}
             {showTime && (
               <div className={`mt-1 flex ${isMine ? "justify-end" : "justify-start"} px-1`}>
                 <time className="text-[10px] text-muted-foreground leading-none">{formattedTime}</time>
