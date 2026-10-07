@@ -6,12 +6,15 @@ interface FormFieldProps {
   error?: FieldError;
   children: React.ReactNode;
   hint?: string;
+  htmlFor?: string;
+  errorId?: string;
 }
 
-export function FormField({ label, error, children, hint }: FormFieldProps) {
+export function FormField({ label, error, children, hint, htmlFor, errorId }: FormFieldProps) {
   return (
     <div className="flex flex-col gap-1">
       <label
+        htmlFor={htmlFor}
         className="text-xs font-semibold text-foreground/80"
         style={{ fontFamily: "var(--font-nunito-family)" }}
       >
@@ -22,7 +25,7 @@ export function FormField({ label, error, children, hint }: FormFieldProps) {
         <p className="text-[10px] text-foreground/50">{hint}</p>
       )}
       {error && (
-        <p className="text-[10px] text-red-500 flex items-center gap-1">
+        <p id={errorId} className="text-[10px] text-red-500 flex items-center gap-1">
           <span aria-hidden="true">✕</span>
           {error.message}
         </p>

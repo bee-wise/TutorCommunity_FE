@@ -87,6 +87,14 @@ test("onboarding tutor navbar is restricted to the onboarding journey", () => {
   ]);
 });
 
+test("password change is absent from navigation and account menus", () => {
+  for (const state of ["GUEST", "LEARNER", "TUTOR_ONBOARDING", "TUTOR_APPROVED"]) {
+    const config = getNavbarConfig({ state });
+    const items = [...config.centerItems, ...config.rightItems, ...config.accountItems];
+    assert.equal(items.some((item) => item.href === "/change-password"), false);
+  }
+});
+
 test("approved tutor does not see LMS CTA without LMS access", () => {
   const config = getNavbarConfig({
     state: "TUTOR_APPROVED",

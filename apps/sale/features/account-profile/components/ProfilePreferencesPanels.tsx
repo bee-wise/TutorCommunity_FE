@@ -1,5 +1,7 @@
-import { Bell, Check, Desktop, EnvelopeSimple, ShieldCheck, DeviceMobile } from "@phosphor-icons/react";
+import Link from "next/link";
+import { Bell, Check, Desktop, EnvelopeSimple, ShieldCheck, DeviceMobile, Key } from "@phosphor-icons/react";
 import { cn } from "@workspace/core/helpers/utils";
+import { Button } from "@workspace/ui/components/ui/button";
 import type { AccountProfileDemo } from "../hooks/useAccountProfileDemo";
 import type { NotificationKey } from "../types/account-profile";
 
@@ -17,8 +19,20 @@ export function ProfileSecurityPanel({ demo }: { demo: AccountProfileDemo }) {
     <div className="space-y-5">
       <section aria-labelledby="security-heading" className="rounded-2xl border border-border bg-card p-6 sm:p-7">
         <div className="flex items-start gap-3"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><ShieldCheck size={24} weight="bold" aria-hidden="true" /></span><div><h2 id="security-heading" className="font-nunito text-xl font-extrabold text-foreground">Bảo mật tài khoản</h2><p className="mt-1 text-sm text-muted-foreground">Thêm một lớp bảo vệ cho tài khoản của bạn.</p></div></div>
-        <div className="mt-4 border-t border-border"><PreferenceToggle title="Xác thực hai bước" description="Mô phỏng bật/tắt xác thực hai bước trong bản demo." checked={demo.twoFactor} onChange={demo.toggleTwoFactor} /></div>
-        <p className="rounded-lg bg-muted px-4 py-3 text-xs leading-5 text-muted-foreground">Bạn có thể trải nghiệm thao tác tại đây. Cài đặt bảo mật thực tế chưa thay đổi.</p>
+        <div className="mt-5 flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/20 text-primary"><Key size={21} weight="bold" aria-hidden="true" /></span>
+            <div>
+              <h3 className="font-nunito text-base font-extrabold text-foreground">Mật khẩu đăng nhập</h3>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">Đổi mật khẩu để bảo vệ tài khoản. Bạn sẽ đăng nhập lại sau khi đổi.</p>
+            </div>
+          </div>
+          <Button asChild className="h-10 self-start rounded-xl px-4 font-bold transition-all active:scale-[0.98] sm:self-center">
+            <Link href="/change-password">Đổi mật khẩu</Link>
+          </Button>
+        </div>
+        <div className="mt-5 border-t border-border"><PreferenceToggle title="Xác thực hai bước" description="Mô phỏng bật/tắt xác thực hai bước trong bản demo." checked={demo.twoFactor} onChange={demo.toggleTwoFactor} /></div>
+        <p className="rounded-lg bg-muted px-4 py-3 text-xs leading-5 text-muted-foreground">Xác thực hai bước đang ở chế độ demo; đổi mật khẩu ở trên là thao tác thật.</p>
       </section>
 
       <section aria-labelledby="sessions-heading" className="rounded-2xl border border-border bg-card p-6 sm:p-7">

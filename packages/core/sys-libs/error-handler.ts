@@ -25,18 +25,31 @@ export class ApiError extends Error {
   public statusCode: number;
   public code?: string;
   public errors?: Record<string, string[]>;
+  public retryAfterSeconds?: number;
 
   constructor(
     message: string,
     statusCode: number,
     code?: string,
     errors?: Record<string, string[]>,
+    retryAfterSeconds?: number,
   ) {
     super(message);
     this.name = "ApiError";
     this.statusCode = statusCode;
     this.code = code;
     this.errors = errors;
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+}
+
+function parseRetryAfter(value: unknown): number | undefined {
+  if (typeof value !== "string" && typeof value !== "number") return;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds) && seconds >= 0) return Math.ceil(seconds);
+  if (typeof value === "string") {
+    const date = Date.parse(value);
+    if (Number.isFinite(date)) return Math.max(0, Math.ceil((date - Date.now()) / 1000));
   }
 }
 
@@ -66,6 +79,9 @@ export function handleApiError(error: unknown): ApiError {
           case 404:
             message = "Không tìm thấy dữ liệu (Not Found).";
             break;
+          case 429:
+            message = "Bạn đã thao tác quá thường xuyên. Vui lòng thử lại sau.";
+            break;
           case 500:
             message = "Lỗi hệ thống (Internal Server Error).";
             break;
@@ -79,6 +95,7 @@ export function handleApiError(error: unknown): ApiError {
         status,
         data?.error?.code || data?.code,
         data?.error?.details || data?.errors,
+        parseRetryAfter(error.response.headers?.["retry-after"]),
       );
     } else if (error.request) {
       return new ApiError(
