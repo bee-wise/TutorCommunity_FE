@@ -1,11 +1,19 @@
 import { apiClient } from "../configs/client";
 import { ApiResponse } from "../types/api-response.type";
 import {
+  ChangePasswordRequest,
+  ForgotPasswordRequest,
   GetMeReponseType,
   LoginRequest,
   RegisterRequest,
   RegisterResponse,
+  ResetPasswordRequest,
 } from "../types/auth.type";
+
+const passwordRequestConfig = {
+  headers: { "Content-Type": "application/json", "X-BeeWise-CSRF": "1" },
+  withCredentials: true,
+};
 
 export const authService = {
   login: async (
@@ -32,5 +40,23 @@ export const authService = {
 
   logout: async (): Promise<ApiResponse<undefined>> => {
     return await apiClient.post("/auth/logout");
+  },
+
+  forgotPassword: async (
+    req: ForgotPasswordRequest,
+  ): Promise<ApiResponse<undefined>> => {
+    return await apiClient.post("/auth/forgot-password", req, passwordRequestConfig);
+  },
+
+  resetPassword: async (
+    req: ResetPasswordRequest,
+  ): Promise<ApiResponse<undefined>> => {
+    return await apiClient.post("/auth/reset-password", req, passwordRequestConfig);
+  },
+
+  changePassword: async (
+    req: ChangePasswordRequest,
+  ): Promise<ApiResponse<undefined>> => {
+    return await apiClient.post("/auth/change-password", req, passwordRequestConfig);
   },
 };

@@ -48,9 +48,7 @@ export function LoginForm({ authPaused = false }: { authPaused?: boolean }) {
   return (
     <div className="w-full max-w-[420px] mx-auto">
       <div className="mb-6">
-        <h1
-          className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground"
-        >
+        <h1 className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground">
           {authPaused ? "Đăng nhập sẽ sớm mở" : "Chào mừng trở lại"}
         </h1>
         <p className="text-xs text-foreground/60 leading-relaxed">
@@ -107,7 +105,6 @@ export function LoginForm({ authPaused = false }: { authPaused?: boolean }) {
           <Link
             href="/forgot-password"
             className="text-xs text-primary hover:text-primary/80 font-semibold transition-colors"
-            tabIndex={-1}
           >
             Quên mật khẩu?
           </Link>
@@ -117,10 +114,10 @@ export function LoginForm({ authPaused = false }: { authPaused?: boolean }) {
           id="login-submit"
           type="submit"
           disabled={isPending || authPaused}
-          className="relative w-full h-10 rounded-xl bg-accent text-primary font-bold text-sm
+          className="relative w-full h-10 rounded-xl bg-primary text-accent uppercase font-bold text-sm
             flex items-center justify-center gap-2
-            hover:bg-accent/90 active:scale-[0.98] transition-all duration-200
-            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-accent/25"
+            hover:bg-primary/90 active:scale-[0.98] transition-all duration-200
+            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-primary/25"
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (

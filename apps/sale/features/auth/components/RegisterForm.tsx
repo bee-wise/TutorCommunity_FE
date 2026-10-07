@@ -77,9 +77,7 @@ export function RegisterForm({ authPaused = false }: { authPaused?: boolean }) {
   return (
     <div className="mx-auto w-full max-w-[480px]">
       <div className="mb-2">
-        <h1
-          className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground"
-        >
+        <h1 className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground">
           {authPaused ? "Đăng ký sẽ sớm mở" : "Tạo tài khoản BEEWISE"}
         </h1>
         <p className="text-xs text-foreground/60 leading-relaxed">
@@ -310,9 +308,9 @@ export function RegisterForm({ authPaused = false }: { authPaused?: boolean }) {
           id="register-submit"
           type="submit"
           disabled={isPending || authPaused}
-          className="relative flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-accent text-sm font-bold text-primary
-            hover:bg-accent/90 active:scale-[0.98] transition-all duration-200
-            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-accent/25"
+          className="relative flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-primary text-accent uppercase text-sm font-bold
+            hover:bg-primary/90 active:scale-[0.98] transition-all duration-200
+            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-primary/25"
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (

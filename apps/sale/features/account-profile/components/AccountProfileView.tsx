@@ -56,10 +56,10 @@ export function AccountProfileView({ user }: { user: MeType }) {
           </div>
           <div className="max-w-72 sm:text-right">
             <span className="inline-flex rounded-md border border-accent bg-accent px-2.5 py-1 text-[11px] font-bold text-accent-foreground">
-              DEMO TƯƠNG TÁC
+              MỘT SỐ MỤC ĐANG DEMO
             </span>
             <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
-              Thay đổi chỉ áp dụng trong phiên xem này.
+              Chỉnh sửa hồ sơ và các tùy chọn đang ở chế độ demo; đổi mật khẩu là thao tác thật.
             </p>
           </div>
         </div>
