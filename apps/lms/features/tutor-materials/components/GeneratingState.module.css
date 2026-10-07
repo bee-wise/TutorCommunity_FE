@@ -1,0 +1,13 @@
+.animatedTitle {
+  composes: text from "./AIGradientText.module.css";
+  --ai-spectrum-duration: 6s;
+  color: var(--primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animatedTitle {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: var(--primary);
+  }
+}

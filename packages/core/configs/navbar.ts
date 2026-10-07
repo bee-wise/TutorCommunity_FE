@@ -5,8 +5,7 @@ export type NavbarState =
   | "GUEST"
   | "LEARNER"
   | "TUTOR_ONBOARDING"
-  | "TUTOR_APPROVED"
-  | "INTERNAL_STAFF";
+  | "TUTOR_APPROVED";
 
 export type TutorOnboardingStatus =
   | "ACCOUNT_CREATED"
@@ -52,8 +51,6 @@ export type NavbarContext = {
   lmsAccessEnabled?: boolean | null;
 };
 
-const internalStaffRoles = new Set(["ADMIN", "CONSULTANT"]);
-
 export function normalizeRole(role?: string | null) {
   return role?.trim().toUpperCase() ?? "";
 }
@@ -82,7 +79,6 @@ export function resolveNavbarState({
 
   const normalizedRole = normalizeRole(role);
 
-  if (internalStaffRoles.has(normalizedRole)) return "INTERNAL_STAFF";
   if (normalizedRole === "LEARNER") return "LEARNER";
 
   if (normalizedRole === "TUTOR") {
@@ -136,10 +132,6 @@ const tutorPostApprovalMenu: NavbarItem[] = [
   { label: "Thông tin thanh toán", href: "/tutor/payments" },
 ];
 
-const internalStaffMenu: NavbarItem[] = [
-  { label: "Operations Portal", href: "/staff" },
-];
-
 const guestConfig: NavbarConfig = {
   homeHref: "/",
   centerItems: guestMenu,
@@ -155,10 +147,12 @@ export function getNavbarConfig({
   state,
   tutorOnboardingStatus,
   lmsAccessEnabled,
+  isPublic,
 }: {
   state: NavbarState;
   tutorOnboardingStatus?: TutorOnboardingStatus | null;
   lmsAccessEnabled?: boolean | null;
+  isPublic?: boolean | null;
 }): NavbarConfig {
   if (state === "LEARNER") {
     return {
@@ -193,7 +187,11 @@ export function getNavbarConfig({
 
     return {
       homeHref: isCompleted ? "/" : "/tutor/post-approval",
-      centerItems: isCompleted ? tutorApprovedMenu : tutorPostApprovalMenu,
+      centerItems: (isCompleted ? tutorApprovedMenu : tutorPostApprovalMenu).filter(
+        (item) =>
+          isPublic === true ||
+          !["Lịch rảnh", "Thông tin thanh toán"].includes(item.label),
+      ),
       rightItems: lmsAccessEnabled
         ? [{ label: "Vào LMS", href: TUTOR_LMS_URL, variant: "primary" }]
         : [],
@@ -202,19 +200,6 @@ export function getNavbarConfig({
         { label: "Chỉnh sửa hồ sơ", href: "/tutor/profile/edit" },
         // { label: "Cài đặt tài khoản", href: "/account/settings" },
         { label: "Hỗ trợ", href: "/support" },
-        { label: "Đăng xuất", href: "/", action: "logout" },
-      ],
-      showNotifications: true,
-    };
-  }
-
-  if (state === "INTERNAL_STAFF") {
-    return {
-      homeHref: "/staff",
-      centerItems: internalStaffMenu,
-      rightItems: [{ label: "Vào portal", href: "/staff", variant: "primary" }],
-      accountItems: [
-        { label: "Tài khoản", href: "/account" },
         { label: "Đăng xuất", href: "/", action: "logout" },
       ],
       showNotifications: true,

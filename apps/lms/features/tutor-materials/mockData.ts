@@ -2,7 +2,6 @@ import type {
   AIAnalyzeResponse,
   Learner,
   LearningSession,
-  Lesson,
   TutorMaterial,
 } from "./types";
 
@@ -33,14 +32,6 @@ export const MOCK_MATERIALS: TutorMaterial[] = [
   { id: "material-05", learnerId: "learner-khanh-linh", sessionId: "session-kl-02", title: "Bộ câu hỏi nguyên hàm cơ bản", source: "ai", status: "draft", fileType: "BEEWISE", updatedAt: "2026-08-13T10:40:00+07:00" },
   { id: "material-06", learnerId: "learner-thao-my", sessionId: "session-tm-02", title: "IELTS Writing Task 1 templates", source: "upload", status: "published", fileType: "DOCX", fileSize: "840 KB", updatedAt: "2026-08-11T08:20:00+07:00" },
 ];
-
-export const MOCK_LESSONS: Lesson[] = MOCK_SESSIONS.map((session) => ({
-  id: session.id,
-  studentName: MOCK_LEARNERS.find((learner) => learner.id === session.learnerId)?.fullName ?? "Học viên",
-  subject: `${session.subject} - ${session.topic}`,
-  date: new Intl.DateTimeFormat("vi-VN").format(new Date(session.taughtAt)),
-  status: MOCK_MATERIALS.some((material) => material.sessionId === session.id) ? "Drafting" : "Not Generated",
-}));
 
 export const MOCK_AI_RESPONSE: AIAnalyzeResponse = {
   summary: {

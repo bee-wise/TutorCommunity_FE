@@ -8,19 +8,19 @@ import type {
   TutorOnboardingStepStatus,
 } from "../types";
 
-const scenarioScreenMap: Record<
+const scenarioDefinitions: Record<
   TutorOnboardingScenario,
-  TutorOnboardingScreen
+  { screen: TutorOnboardingScreen; activeStep: TutorOnboardingStepId }
 > = {
-  journey: "JOURNEY",
-  overview: "OVERVIEW",
-  "profile-draft": "PROFILE_DRAFT",
-  interview: "INTERVIEW",
-  "pending-review": "PENDING_REVIEW",
-  rejected: "REJECTED",
-  approved: "APPROVED",
-  "post-approval": "POST_APPROVAL",
-  completed: "COMPLETED",
+  journey: { screen: "JOURNEY", activeStep: "profile" },
+  overview: { screen: "OVERVIEW", activeStep: "profile" },
+  "profile-draft": { screen: "PROFILE_DRAFT", activeStep: "profile" },
+  interview: { screen: "INTERVIEW", activeStep: "interview" },
+  "pending-review": { screen: "PENDING_REVIEW", activeStep: "verification" },
+  rejected: { screen: "REJECTED", activeStep: "verification" },
+  approved: { screen: "APPROVED", activeStep: "postApproval" },
+  "post-approval": { screen: "POST_APPROVAL", activeStep: "postApproval" },
+  completed: { screen: "COMPLETED", activeStep: "lms" },
 };
 
 const stepOrder: TutorOnboardingStepId[] = [
@@ -32,26 +32,19 @@ const stepOrder: TutorOnboardingStepId[] = [
   "lms",
 ];
 
-const scenarioActiveStep: Record<
-  TutorOnboardingScenario,
-  TutorOnboardingStepId
-> = {
-  journey: "profile",
-  overview: "profile",
-  "profile-draft": "profile",
-  interview: "interview",
-  "pending-review": "verification",
-  rejected: "verification",
-  approved: "postApproval",
-  "post-approval": "postApproval",
-  completed: "lms",
-};
+export function getTutorOnboardingActiveStep(
+  scenario: TutorOnboardingScenario | "unknown",
+): TutorOnboardingStepId {
+  return scenario === "unknown"
+    ? "profile"
+    : scenarioDefinitions[scenario].activeStep;
+}
 
 const titleMap: Record<TutorOnboardingScreen, string> = {
   JOURNEY: "Hành trình trở thành gia sư BeeWise",
   OVERVIEW: "Tổng quan onboarding gia sư",
   PROFILE_DRAFT: "Hoàn thiện hồ sơ gia sư",
-  INTERVIEW: "Phỏng vấn AI cùng BeeWise",
+  INTERVIEW: "Phỏng vấn cùng trợ lý BeeWise AI",
   PENDING_REVIEW: "Hồ sơ đang được xét duyệt",
   REJECTED: "Hồ sơ cần được chỉnh sửa",
   APPROVED: "Hồ sơ đã được phê duyệt",
@@ -66,7 +59,7 @@ const descriptionMap: Record<TutorOnboardingScreen, string> = {
   PROFILE_DRAFT:
     "Bổ sung học vấn, môn dạy, kinh nghiệm và minh chứng trước khi gửi xét duyệt.",
   INTERVIEW:
-    "Tham gia phỏng vấn tự động cùng trợ lý AI 24/7 bất kỳ lúc nào bạn sẵn sàng để đánh giá phương pháp giảng dạy.",
+    "Tham gia phỏng vấn tự động cùng trợ lý BeeWise AI 24/7 bất kỳ lúc nào bạn sẵn sàng.",
   PENDING_REVIEW:
     "BeeWise đang kiểm tra hồ sơ và kết quả phỏng vấn AI của bạn. Vui lòng chờ trong 1–3 ngày làm việc.",
   REJECTED:
@@ -193,9 +186,8 @@ export function resolveTutorOnboardingView(
 ): TutorOnboardingResolvedView {
   const scenario = mockState.scenario;
   const currentScreen =
-    scenario === "unknown" ? "UNKNOWN" : scenarioScreenMap[scenario];
-  const activeStep =
-    scenario === "unknown" ? "profile" : scenarioActiveStep[scenario];
+    scenario === "unknown" ? "UNKNOWN" : scenarioDefinitions[scenario].screen;
+  const activeStep = getTutorOnboardingActiveStep(scenario);
   const stepStatuses = createStepStatuses(activeStep, scenario);
   const completedSteps = Object.values(stepStatuses).filter(
     (status) => status === "COMPLETED",
@@ -225,7 +217,7 @@ export function parseTutorOnboardingScenario(
   scenario?: string | null,
 ): TutorOnboardingScenario | "unknown" {
   if (!scenario) return "journey";
-  const validScenarios = Object.keys(scenarioScreenMap);
+  const validScenarios = Object.keys(scenarioDefinitions);
   return validScenarios.includes(scenario)
     ? (scenario as TutorOnboardingScenario)
     : "unknown";

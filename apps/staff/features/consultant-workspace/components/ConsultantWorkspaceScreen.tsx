@@ -209,7 +209,7 @@ export function ConsultantWorkspaceScreen() {
   ).length;
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] w-full flex-col overflow-hidden p-2.5 sm:p-3 lg:p-4">
+    <div className="flex h-dvh w-full flex-col overflow-hidden bg-muted p-2.5 sm:p-3 lg:p-4">
       <div className="grid h-full min-h-0 flex-1 grid-cols-1 gap-3 overflow-hidden lg:grid-cols-[320px_minmax(0,1fr)] 2xl:grid-cols-[360px_minmax(0,1fr)]">
         {/* Left Column: Conversation List with top Chat Kind switcher */}
         <div
@@ -239,7 +239,7 @@ export function ConsultantWorkspaceScreen() {
             closedCount={closedCount}
             totalCount={allRooms.length}
             loading={roomsQuery.isLoading}
-            error={Boolean(roomsQuery.error)}
+            error={roomsQuery.error}
             onRetry={() => void roomsQuery.refetch()}
             isPreview={kind === "private"}
           />

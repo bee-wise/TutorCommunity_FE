@@ -27,6 +27,11 @@
   --glass: color-mix(in srgb, #fff3cb 20%, transparent);
 
   --radius: 0.75rem;
+  --radius-card: 1.5rem;
+  --radius-panel: 2rem;
+  --bw-shadow-soft: 0 1px 2px rgb(12 12 11 / 0.05), 0 12px 32px -12px rgb(12 30 170 / 0.12);
+  --bw-shadow-soft-hover: 0 2px 4px rgb(12 12 11 / 0.05), 0 20px 40px -14px rgb(12 30 170 / 0.18);
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
 
   --card: #ffffff;
   --card-foreground: #0c0c0b;
@@ -138,6 +143,8 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --shadow-soft: var(--bw-shadow-soft);
+  --shadow-soft-hover: var(--bw-shadow-soft-hover);
 
   --font-google-sans:
     var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;

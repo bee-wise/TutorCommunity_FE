@@ -1,6 +1,7 @@
 import type {
   EarningSession,
   EarningsPeriod,
+  SettlementFilter,
 } from "../types/earnings.types";
 
 export const VND_FORMATTER = new Intl.NumberFormat("vi-VN", {
@@ -20,46 +21,61 @@ export function formatDateTime(value: string) {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "Asia/Ho_Chi_Minh",
   }).format(new Date(value));
 }
 
-function startOfDay(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
+const DAY_MS = 86_400_000;
+const VIETNAM_OFFSET = 7 * 60 * 60 * 1000;
 
 export function isInPeriod(
   value: string,
   period: EarningsPeriod,
   referenceDate: Date,
 ) {
-  const date = new Date(value);
-  const reference = startOfDay(referenceDate);
+  const date = new Date(new Date(value).getTime() + VIETNAM_OFFSET);
+  const reference = new Date(referenceDate.getTime() + VIETNAM_OFFSET);
+  if (!Number.isFinite(date.getTime()) || !Number.isFinite(reference.getTime())) return false;
+  const dayIndex = Math.floor(date.getTime() / DAY_MS);
+  const referenceIndex = Math.floor(reference.getTime() / DAY_MS);
 
   if (period === "day") {
-    return startOfDay(date).getTime() === reference.getTime();
+    return dayIndex === referenceIndex;
   }
 
   if (period === "week") {
-    const day = reference.getDay() || 7;
-    const start = new Date(reference);
-    start.setDate(reference.getDate() - day + 1);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 7);
-    return date >= start && date < end;
+    const start = referenceIndex - (reference.getUTCDay() || 7) + 1;
+    return dayIndex >= start && dayIndex < start + 7;
   }
 
   if (period === "month") {
     return (
-      date.getFullYear() === reference.getFullYear() &&
-      date.getMonth() === reference.getMonth()
+      date.getUTCFullYear() === reference.getUTCFullYear() &&
+      date.getUTCMonth() === reference.getUTCMonth()
     );
   }
 
-  return date.getFullYear() === reference.getFullYear();
+  return date.getUTCFullYear() === reference.getUTCFullYear();
+}
+
+function normalizeSearch(value: string) {
+  return value.trim().toLocaleLowerCase("vi").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replaceAll("đ", "d");
+}
+
+export function filterEarningSessions(sessions: readonly EarningSession[], filters: {
+  period: EarningsPeriod; referenceDate: string; status: SettlementFilter; search: string;
+}) {
+  const reference = new Date(`${filters.referenceDate}T12:00:00+07:00`);
+  const search = normalizeSearch(filters.search);
+  return sessions.filter((session) => isInPeriod(session.taughtAt, filters.period, reference)
+    && (filters.status === "all" || session.settlementStatus === filters.status)
+    && normalizeSearch(`${session.sessionCode} ${session.learnerName} ${session.className} ${session.subject}`).includes(search))
+    .sort((a, b) => new Date(b.taughtAt).getTime() - new Date(a.taughtAt).getTime());
 }
 
 function escapeExcelCell(value: string | number) {
-  return String(value)
+  const text = typeof value === "string" && /^[=+@-]/.test(value.trimStart()) ? `'${value}` : String(value);
+  return text
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
@@ -97,6 +113,6 @@ export function exportEarningsToExcel(sessions: EarningSession[]) {
   anchor.href = url;
   anchor.download = `thu-nhap-beewise-${new Date().toISOString().slice(0, 10)}.xls`;
   anchor.click();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 

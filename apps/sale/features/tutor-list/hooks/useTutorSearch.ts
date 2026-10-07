@@ -6,11 +6,13 @@ import {
   type SearchMode,
   type TutorFilters,
   type ApiTutorProfile,
-  type ManualSearchQuery,
 } from "../data/types";
 import { useGetTutorByAI } from "./useGetTutorByAI";
 import { useGetTutorsManual } from "./useGetTutorsManual";
-import { getTeachingCapabilities } from "../utils/tutor-filter.utils";
+import {
+  getTeachingCapabilities,
+  mapFiltersToManualQuery,
+} from "../utils/tutor-filter.utils";
 
 let cachedSearchMode: SearchMode = "manual";
 let cachedQueries: Record<SearchMode, string> = { manual: "", ai: "" };
@@ -19,57 +21,6 @@ let cachedFiltersByMode: Record<SearchMode, TutorFilters> = {
   ai: DEFAULT_AI_FILTERS,
 };
 let cachedPage: number = 1;
-
-const mapFiltersToManualQuery = (
-  query: string,
-  filters: TutorFilters,
-  page: number,
-): ManualSearchQuery => {
-  const manualQuery: ManualSearchQuery = {
-    keyword: query || undefined,
-    page,
-    pageSize: 6,
-  };
-
-  if (filters.subjectId) manualQuery.subjectId = filters.subjectId;
-  if (filters.gradeLevelId) manualQuery.gradeLevelId = filters.gradeLevelId;
-  if (filters.city) manualQuery.city = filters.city;
-
-  if (filters.teachingMode !== "all") {
-    manualQuery.teachingMode = filters.teachingMode.toUpperCase();
-  }
-
-  if (filters.maxPricePerSession !== null) {
-    manualQuery.maxHourlyRate = filters.maxPricePerSession;
-  }
-
-  if (filters.availableOnly) {
-    manualQuery.isOnline = true;
-  }
-
-  switch (filters.sortBy) {
-    case "rating":
-      manualQuery.sortBy = "rating";
-      manualQuery.sortDirection = "desc";
-      break;
-    case "price_asc":
-      manualQuery.sortBy = "hourlyRate";
-      manualQuery.sortDirection = "asc";
-      break;
-    case "price_desc":
-      manualQuery.sortBy = "hourlyRate";
-      manualQuery.sortDirection = "desc";
-      break;
-    case "best_match":
-      manualQuery.sortBy = "relevance";
-      manualQuery.sortDirection = "desc";
-      break;
-    default:
-      break;
-  }
-
-  return manualQuery;
-};
 
 // Filter function for AI mode results (since AI endpoint doesn't accept complex filters)
 function applyLocalFilters(
@@ -192,7 +143,7 @@ export function useTutorSearch() {
   }, [initialQuery, requestedMode]);
 
   const aiSearchQuery = useMemo(
-    () => ({ query: queries.ai, limit: 10, thresold: 0.65 }),
+    () => ({ query: queries.ai }),
     [queries.ai],
   );
 

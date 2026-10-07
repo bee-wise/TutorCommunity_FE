@@ -1,10 +1,5 @@
-export type MaterialStatus = "Not Generated" | "Drafting" | "Published";
-
 export type MaterialSource = "ai" | "upload";
 export type LibraryMaterialStatus = "draft" | "published" | "hidden";
-export type MaterialCoverageFilter = "all" | "missing" | "complete";
-export type MaterialSourceFilter = "all" | MaterialSource;
-export type LibraryMaterialStatusFilter = "all" | LibraryMaterialStatus;
 
 export interface Learner {
   id: string;
@@ -36,27 +31,10 @@ export interface TutorMaterial {
   updatedAt: string;
 }
 
-export interface LearnerMaterialSummary {
-  learner: Learner;
-  subjects: string[];
-  sessionCount: number;
-  materialCount: number;
-  missingMaterialCount: number;
-  latestSessionAt: string;
-}
-
 export interface AIAnalyzeRequest {
   transcript: string;
   subject: string;
   num_questions: number;
-}
-
-export interface Lesson {
-  id: string;
-  studentName: string;
-  subject: string;
-  date: string;
-  status: MaterialStatus;
 }
 
 export interface Formula {

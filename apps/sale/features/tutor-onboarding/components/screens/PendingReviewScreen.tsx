@@ -5,7 +5,12 @@ import { Button } from "@workspace/ui/components/ui/button";
 const reviewSteps = [
   { label: "Hồ sơ đã gửi", date: "12/07/2026", done: true },
   { label: "Phỏng vấn AI hoàn tất", date: "Đã hoàn thành", done: true },
-  { label: "Đang xét duyệt", date: "1–3 ngày làm việc", done: false, current: true },
+  {
+    label: "Đang xét duyệt",
+    date: "1–3 ngày làm việc",
+    done: false,
+    current: true,
+  },
   { label: "Nhận kết quả", date: "", done: false },
 ];
 
@@ -71,7 +76,9 @@ export function PendingReviewScreen() {
                     {step.label}
                   </p>
                   {step.date && (
-                    <p className="mt-0.5 text-xs text-muted-foreground">{step.date}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {step.date}
+                    </p>
                   )}
                 </div>
               </li>

@@ -34,16 +34,6 @@ const dateOfBirthSchema = z.string().superRefine((value, context) => {
     });
   }
 });
-const timeRangeSchema = z
-  .string()
-  .regex(
-    /^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/,
-    "Khung giờ không hợp lệ.",
-  )
-  .refine((value) => {
-    const [start = "", end = ""] = value.split("-");
-    return start < end;
-  }, "Giờ kết thúc phải sau giờ bắt đầu.");
 
 const teachingOfferingSchema = z
   .object({
@@ -165,10 +155,6 @@ export const tutorProfileFormSchema = z
     offlineAddressDetail: z.string().trim(),
     travelRadiusKm: z.number().int().min(0).max(100),
     identityDocumentsUrl: requiredUrl("Giấy tờ tùy thân"),
-    bankInformation: z.string().trim(),
-    availability: z.array(
-      z.object({ day: requiredText("Ngày"), time: timeRangeSchema }),
-    ),
     teachingMethods: z.array(
       z.object({
         title: requiredText("Tên phương pháp"),
@@ -177,7 +163,7 @@ export const tutorProfileFormSchema = z
     ),
     achievements: z.array(
       z.object({
-        id: z.string().uuid(),
+        id: z.string().optional(),
         type: requiredText("Loại thành tích"),
         title: requiredText("Tên thành tích"),
         issuer: requiredText("Đơn vị cấp"),
@@ -190,7 +176,7 @@ export const tutorProfileFormSchema = z
     ),
     teachingHistory: z.array(
       z.object({
-        id: z.string().uuid(),
+        id: z.string().optional(),
         title: requiredText("Vai trò giảng dạy"),
         organization: requiredText("Đơn vị giảng dạy"),
         detail: requiredText("Mô tả kinh nghiệm", 10),
@@ -310,10 +296,6 @@ export const tutorProfileDraftResponseSchema = z
     offlineAddressDetail: draftText,
     travelRadiusKm: draftNumber,
     identityDocumentsUrl: draftText,
-    bankInformation: draftText,
-    availability: z
-      .array(z.object({ day: draftText, time: draftText }))
-      .nullish(),
     teachingMethods: z
       .array(z.object({ title: draftText, description: draftText }))
       .nullish(),
@@ -355,8 +337,6 @@ export const tutorProfileDefaultValues: TutorProfileFormValues = {
   offlineAddressDetail: "",
   travelRadiusKm: 0,
   identityDocumentsUrl: "",
-  bankInformation: "",
-  availability: [],
   teachingMethods: [],
   achievements: [],
   teachingHistory: [],
@@ -519,10 +499,6 @@ export function mapDraftResponseToFormValues(
     offlineAddressDetail: text(draft.offlineAddressDetail),
     travelRadiusKm: number(draft.travelRadiusKm),
     identityDocumentsUrl: text(draft.identityDocumentsUrl),
-    bankInformation: text(draft.bankInformation),
-    availability: (draft.availability ?? [])
-      .filter((item) => Boolean(item.day) || Boolean(item.time))
-      .map((item) => ({ day: text(item.day), time: text(item.time) })),
     teachingMethods: (draft.teachingMethods ?? [])
       .filter((item) => text(item.title) || text(item.description))
       .map((item) => ({

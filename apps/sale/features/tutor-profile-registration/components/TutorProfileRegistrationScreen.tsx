@@ -17,7 +17,7 @@ import { useTutorProfileRegistration } from "../hooks/useTutorProfileRegistratio
 import { getProfileStepIssues } from "../utils/profile-step-completion";
 import { AchievementsFields } from "./AchievementsFields";
 import {
-  AvailabilityAndVerificationSection,
+  TeachingAreaAndVerificationSection,
   BasicInformationSection,
   IntroductionSection,
   TeachingInformationSection,
@@ -181,7 +181,7 @@ export function TutorProfileRegistrationScreen() {
                   <AchievementsFields />
                 </div>
               ) : null}
-              {activeStep === 3 ? <AvailabilityAndVerificationSection /> : null}
+              {activeStep === 3 ? <TeachingAreaAndVerificationSection /> : null}
               <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-5">
                 <Button
                   type="button"

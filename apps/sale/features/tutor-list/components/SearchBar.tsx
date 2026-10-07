@@ -166,7 +166,7 @@ export function SearchBar({
         <div
           className={`relative rounded-2xl transition-all duration-300 ${
             isAI
-              ? "p-[1.5px] overflow-hidden bg-primary/20"
+              ? `p-[1.5px] overflow-hidden bg-primary/20 ${styles.aiFrame}`
               : "border border-border shadow-sm"
           }`}
           style={
@@ -181,12 +181,7 @@ export function SearchBar({
           {/* AI animated conic border */}
           {isAI && (
             <div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] aspect-square animate-spin pointer-events-none"
-              style={{
-                background:
-                  "conic-gradient(from 0deg, transparent 0%, transparent 20%, #a855f7 35%, #3b82f6 50%, var(--primary) 65%, transparent 80%)",
-                animationDuration: "4s",
-              }}
+              className={styles.aiBorderGlow}
               aria-hidden="true"
             />
           )}
@@ -199,10 +194,13 @@ export function SearchBar({
             }`}
           >
             {isAI && (
-              <span
-                className={`${styles.gradientSweep} ${isLoading ? styles.loading : ""}`}
-                aria-hidden="true"
-              />
+              <>
+                <span
+                  className={`${styles.gradientSweep} ${isLoading ? styles.loading : ""}`}
+                  aria-hidden="true"
+                />
+                <span className={styles.aiRevealBurst} aria-hidden="true" />
+              </>
             )}
             {/* Icon prefix */}
             <div className="relative z-10 shrink-0 flex items-center justify-center">
@@ -237,7 +235,7 @@ export function SearchBar({
                     ? AI_PLACEHOLDER_EXAMPLES[placeholderIndex]
                     : "Tìm kiếm theo tên gia sư, môn học, chuyên môn và nhiều hơn..."
               }
-              className="relative z-10 flex-1 bg-transparent text-sm text-foreground placeholder-foreground/35 outline-none min-w-0"
+              className="relative z-10 min-w-0 flex-1 bg-transparent text-sm font-semibold text-foreground placeholder:font-semibold placeholder:text-foreground/50 outline-none"
               aria-label={isAI ? "Mô tả gia sư bạn cần" : "Nhập tên gia sư"}
               autoComplete="off"
             />

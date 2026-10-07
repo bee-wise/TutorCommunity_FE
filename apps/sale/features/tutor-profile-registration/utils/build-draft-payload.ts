@@ -39,12 +39,47 @@ function normalizeDraftValue(value: unknown): unknown {
   return value;
 }
 
+function buildAchievements(profile: TutorProfileFormValues) {
+  return (profile.achievements ?? [])
+    .filter((item) => item.type?.trim() || item.title?.trim() || item.issuer?.trim())
+    .map((item) => ({
+      ...(item.id?.trim() ? { id: item.id.trim() } : {}),
+      type: item.type?.trim() || "CERTIFICATE",
+      title: item.title?.trim() || "",
+      issuer: item.issuer?.trim() || "",
+      score: item.score?.trim() || null,
+      startDate: item.startDate?.trim() || null,
+      endDate: item.endDate?.trim() || null,
+      imageUrl: item.imageUrl?.trim() || null,
+      description: item.description?.trim() || null,
+    }));
+}
+
+function buildTeachingHistory(profile: TutorProfileFormValues) {
+  return (profile.teachingHistory ?? [])
+    .filter((item) => item.title?.trim() || item.organization?.trim() || item.detail?.trim())
+    .map((item) => ({
+      ...(item.id?.trim() ? { id: item.id.trim() } : {}),
+      title: item.title?.trim() || "",
+      organization: item.organization?.trim() || "",
+      detail: item.detail?.trim() || "",
+      outcome: item.outcome?.trim() || null,
+      startDate: item.startDate?.trim() || null,
+      endDate: item.endDate?.trim() || null,
+      isCurrent: Boolean(item.isCurrent),
+    }));
+}
+
 export function buildTutorProfileDraftPayload(
   profile: TutorProfileFormValues,
 ): Record<string, unknown> {
   const payload = normalizeDraftValue(profile) as Record<string, unknown>;
+  delete payload.bankInformation;
+  delete payload.availability;
   payload.teachingOfferings = buildTeachingOfferings(profile);
   payload.teachingModes = [...new Set(profile.teachingOfferings.map((item) => item.teachingMode))];
+  payload.achievements = buildAchievements(profile);
+  payload.teachingHistory = buildTeachingHistory(profile);
   if (!profile.gender) delete payload.gender;
   if (profile.universityId) {
     payload.universityId = profile.universityId;

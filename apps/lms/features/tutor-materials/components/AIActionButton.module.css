@@ -1,0 +1,95 @@
+/* Explicit AI CTA exception: seven-color text and a zero-blur hard shadow.
+   Keep the spectrum local; the application's brand tokens stay unchanged. */
+.button {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-self: flex-start;
+  max-width: calc(100% - 4px);
+  margin: 0 4px 4px 0;
+  padding: 0;
+  border: 2px solid var(--primary);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--primary);
+  box-shadow: 4px 4px 0 0 var(--primary);
+  cursor: pointer;
+}
+
+.content {
+  position: relative;
+  display: inline-flex;
+  min-height: 48px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.375rem;
+  border-radius: inherit;
+  background: var(--card);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.label {
+  composes: text from "./AIGradientText.module.css";
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 5px;
+}
+
+.button:disabled {
+  border-color: var(--border);
+  color: var(--muted-foreground);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.button:disabled .label {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  animation: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .button {
+    transition: transform 180ms var(--ease-soft, ease-out);
+  }
+
+  .button:not(:disabled):active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--primary);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .button:not(:disabled):hover:not(:active) {
+    transform: translate(-1px, -1px);
+  }
+}
+
+@media (forced-colors: active) {
+  .button {
+    border-color: ButtonText;
+    color: ButtonText;
+    box-shadow: none;
+  }
+
+  .content {
+    background: Canvas;
+  }
+
+  .button .label {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    animation: none;
+  }
+
+  .button:disabled {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}

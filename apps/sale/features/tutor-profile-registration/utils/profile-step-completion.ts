@@ -34,8 +34,6 @@ const FIELD_STEPS: Record<string, ProfileStepIndex> = {
   offlineWard: 3,
   offlineAddressDetail: 3,
   travelRadiusKm: 3,
-  bankInformation: 3,
-  availability: 3,
   teachingHistory: 3,
 };
 
@@ -64,8 +62,6 @@ const FIELD_LABELS: Record<string, string> = {
   offlineWard: "Phường / xã",
   offlineAddressDetail: "Địa chỉ chi tiết",
   travelRadiusKm: "Bán kính di chuyển",
-  bankInformation: "Thông tin ngân hàng",
-  availability: "Lịch có thể dạy",
   achievements: "Thành tích và chứng chỉ",
   teachingHistory: "Kinh nghiệm giảng dạy",
 };
@@ -94,7 +90,6 @@ function indexedLabel(path: PropertyKey[], fallback: string): string {
       ? `Mô tả phương pháp ${index}`
       : `Tên phương pháp ${index}`;
   }
-  if (collection === "availability") return `Khung giờ dạy ${index}`;
   if (collection === "achievements") return `Thành tích ${index}`;
   if (collection === "teachingHistory") return `Kinh nghiệm ${index}`;
   return fallback;

@@ -129,14 +129,45 @@ test("approved tutor uses post-approval navbar when LMS access is disabled", () 
   );
 });
 
-test("admin and consultant resolve to internal staff", () => {
+test("private tutor header hides availability and payment while keeping onboarding details", () => {
+  for (const lmsAccessEnabled of [false, true]) {
+    const config = getNavbarConfig({
+      state: "TUTOR_APPROVED",
+      tutorOnboardingStatus: lmsAccessEnabled ? "COMPLETED" : "APPROVED",
+      lmsAccessEnabled,
+      isPublic: false,
+    });
+    const labels = config.centerItems.map((item) => item.label);
+    assert.equal(labels.includes("Lịch rảnh"), false);
+    assert.equal(labels.includes("Thông tin thanh toán"), false);
+    if (!lmsAccessEnabled) assert.equal(labels.includes("Bổ sung thông tin"), true);
+  }
+});
+
+test("public tutor header shows availability and payment during onboarding", () => {
+  const config = getNavbarConfig({
+    state: "TUTOR_APPROVED",
+    tutorOnboardingStatus: "APPROVED",
+    lmsAccessEnabled: false,
+    isPublic: true,
+  });
+  const labels = config.centerItems.map((item) => item.label);
+  assert.equal(labels.includes("Lịch rảnh"), true);
+  assert.equal(labels.includes("Thông tin thanh toán"), true);
+});
+
+test("staff roles resolve to guest navbar state", () => {
   assert.equal(
     resolveNavbarState({ isAuthenticated: true, role: "ADMIN" }),
-    "INTERNAL_STAFF",
+    "GUEST",
   );
   assert.equal(
     resolveNavbarState({ isAuthenticated: true, role: "CONSULTANT" }),
-    "INTERNAL_STAFF",
+    "GUEST",
+  );
+  assert.equal(
+    resolveNavbarState({ isAuthenticated: true, role: "STAFF" }),
+    "GUEST",
   );
 });
 
@@ -148,9 +179,10 @@ test("guest config uses standardized labels", () => {
   ];
 
   assert.deepEqual(labels, [
-    "Gia sư",
-    "Cách hoạt động",
+    "Gia sư 1:1",
+    "Tìm lớp",
     "Trở thành gia sư",
+    "Về chúng tôi",
     "Đăng nhập",
     "Tìm gia sư",
   ]);
