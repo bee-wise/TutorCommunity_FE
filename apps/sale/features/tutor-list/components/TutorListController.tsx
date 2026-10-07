@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   CircleNotchIcon,
-  FunnelIcon,
   SparkleIcon,
 } from "@phosphor-icons/react";
 import { SearchBar } from "./SearchBar";
@@ -11,6 +10,7 @@ import { FilterPanel } from "./FilterPanel";
 import { TutorListResults } from "./TutorListResults";
 import { AILoadingOverlay } from "./AILoadingOverlay";
 import { MobileFilterDrawer } from "./MobileFilterDrawer";
+import { ProfileSelect } from "../../tutor-profile-registration/components/ProfileSelect";
 import { useTutorSearch } from "../hooks/useTutorSearch";
 import type { TutorFilters } from "../data/types";
 import { countActiveFilters } from "../utils/tutor-filter.utils";
@@ -180,29 +180,20 @@ export function TutorListController({
                         </span>
                       )}
                     </button>
-                    <label htmlFor="result-sort" className="sr-only">
-                      Sắp xếp kết quả
-                    </label>
-                    <select
-                      id="result-sort"
-                      value={filters.sortBy}
-                      onChange={(event) =>
-                        handleFiltersChange({
-                          ...filters,
-                          sortBy: event.target.value as TutorFilters["sortBy"],
-                        })
-                      }
-                      className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
-                    >
-                      {SORT_OPTIONS.map((option, index) => (
-                        <option
-                          key={`${option.value}-${index}`}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="w-[180px] min-w-0 sm:w-[190px] [&>button]:h-10">
+                      <ProfileSelect
+                        label="Sắp xếp kết quả"
+                        value={filters.sortBy}
+                        onChange={(sortBy) =>
+                          handleFiltersChange({
+                            ...filters,
+                            sortBy: sortBy as TutorFilters["sortBy"],
+                          })
+                        }
+                        options={SORT_OPTIONS}
+                        placeholder="Sắp xếp kết quả"
+                      />
+                    </div>
                   </div>
                 </div>
               )}

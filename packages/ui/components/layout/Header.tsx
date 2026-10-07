@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Bell, ChevronDown } from "lucide-react";
@@ -17,6 +18,10 @@ import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { useNotificationDrawerStore } from "@workspace/core/store/useNotificationDrawerStore";
 import { cn } from "@workspace/core/helpers/utils";
 import type { MeType } from "@workspace/core/types/auth.type";
+import {
+  getTutorReadiness,
+  tutorReadinessQueryKey,
+} from "@workspace/core/services/tutor-readiness.service";
 import { MobileNav } from "./MobileNav";
 
 type HeaderProps = {
@@ -99,10 +104,25 @@ export function Header({
     lmsAccessEnabled,
   });
 
+  const readiness = useQuery({
+    queryKey: tutorReadinessQueryKey(user?.id),
+    queryFn: getTutorReadiness,
+    enabled:
+      previewUser === undefined &&
+      isAuthenticated &&
+      Boolean(user?.id) &&
+      navbarState === "TUTOR_APPROVED",
+    retry: false,
+  });
+
   const navbarConfig = getNavbarConfig({
     state: navbarState,
     tutorOnboardingStatus,
     lmsAccessEnabled,
+    isPublic:
+      previewUser !== undefined
+        ? previewUser?.isProfilePublic === true
+        : readiness.data?.isPublic === true,
   });
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);

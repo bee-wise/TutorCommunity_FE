@@ -74,6 +74,8 @@ export function buildTutorProfileDraftPayload(
   profile: TutorProfileFormValues,
 ): Record<string, unknown> {
   const payload = normalizeDraftValue(profile) as Record<string, unknown>;
+  delete payload.bankInformation;
+  delete payload.availability;
   payload.teachingOfferings = buildTeachingOfferings(profile);
   payload.teachingModes = [...new Set(profile.teachingOfferings.map((item) => item.teachingMode))];
   payload.achievements = buildAchievements(profile);
