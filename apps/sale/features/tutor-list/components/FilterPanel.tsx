@@ -1,7 +1,8 @@
 "use client";
 
-import { useId } from "react";
-import { CaretDownIcon, FunnelIcon, XIcon } from "@phosphor-icons/react";
+import { useEffect, useId } from "react";
+import { XIcon } from "@phosphor-icons/react";
+import { ProfileSelect } from "../../tutor-profile-registration/components/ProfileSelect";
 import type { SearchMode, TutorFilters } from "../data/types";
 import { countActiveFilters } from "../utils/tutor-filter.utils";
 import { useTutorSearchOptions } from "../hooks/useTutorSearchOptions";
@@ -19,9 +20,6 @@ interface FilterPanelProps {
   showHeader?: boolean;
 }
 
-const selectClassName =
-  "peer h-11 w-full appearance-none rounded-xl border border-input bg-background px-3 pr-10 text-sm font-medium text-foreground transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground";
-
 export function FilterPanel({
   searchMode,
   filters,
@@ -30,18 +28,83 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const availableId = useId();
   const isManual = searchMode === "manual";
-  const { subjects, gradeLevels, provinces } = useTutorSearchOptions(isManual);
+  const { programs, contexts, teachingItems, provinces } =
+    useTutorSearchOptions(
+      isManual,
+      filters.programId,
+      filters.contextId,
+      filters.hasContext,
+    );
   const update = <K extends keyof TutorFilters>(
     key: K,
     value: TutorFilters[K],
   ) => onFiltersChange({ ...filters, [key]: value });
 
   const activeFilterCount = countActiveFilters(filters, isManual);
+  const failedFilterNames = [
+    programs.isError && "chương trình",
+    contexts.isError && "cấp học / ngữ cảnh",
+    teachingItems.isError && "môn / nội dung dạy",
+    provinces.isError && "tỉnh / thành phố",
+  ].filter(Boolean).join(", ");
+  const teachingItemOptions = Array.from(
+    new Map(
+      (teachingItems.data ?? []).map((item) => [
+        item.teachingItemId ?? item.id,
+        item,
+      ]),
+    ).values(),
+  );
+
+  useEffect(() => {
+    if (!isManual || !filters.programId || !contexts.data) return;
+    const currentVersionId = contexts.data.programVersionId;
+    if (filters.programVersionId !== currentVersionId) {
+      onFiltersChange({
+        ...filters,
+        programVersionId: currentVersionId,
+        contextId: null,
+        hasContext: null,
+        teachingItemId: null,
+      });
+      return;
+    }
+    const contextIsInvalid =
+      (filters.contextId &&
+        !contexts.data.contexts.some((item) => item.id === filters.contextId)) ||
+      (filters.hasContext === false && !contexts.data.hasWithoutContext);
+    if (contextIsInvalid) {
+      onFiltersChange({
+        ...filters,
+        contextId: null,
+        hasContext: null,
+        teachingItemId: null,
+      });
+    }
+  }, [contexts.data, filters, isManual, onFiltersChange]);
+
+  useEffect(() => {
+    if (
+      !isManual ||
+      !filters.teachingItemId ||
+      !teachingItems.isSuccess ||
+      teachingItems.isFetching ||
+      filters.programVersionId !== contexts.data?.programVersionId
+    ) return;
+    if (!teachingItems.data.some(
+      (item) => (item.teachingItemId ?? item.id) === filters.teachingItemId,
+    )) {
+      onFiltersChange({ ...filters, teachingItemId: null });
+    }
+  }, [contexts.data?.programVersionId, filters, isManual, onFiltersChange, teachingItems.data, teachingItems.isFetching, teachingItems.isSuccess]);
 
   const resetAll = () =>
     onFiltersChange({
-      subjectId: null,
-      gradeLevelId: null,
+      programId: null,
+      programVersionId: null,
+      contextId: null,
+      teachingItemId: null,
+      hasContext: null,
       city: "",
       teachingMode: "all",
       level: "all",
@@ -91,96 +154,111 @@ export function FilterPanel({
           <p className="font-nunito text-sm font-extrabold text-foreground">
             Nhu cầu học tập
           </p>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-foreground">
-            Môn học
-            <span className="relative">
-              <select
-                value={filters.subjectId ?? ""}
-                onChange={(event) =>
-                  update("subjectId", event.target.value || null)
-                }
-                disabled={subjects.isPending || subjects.isError}
-                className={selectClassName}
+          <div className="flex flex-col gap-1.5 text-xs font-semibold text-foreground">
+            <span>Chương trình</span>
+            <ProfileSelect
+              label="Chương trình"
+              value={filters.programId ?? ""}
+              onChange={(programId) =>
+                onFiltersChange({
+                  ...filters,
+                  programId: programId || null,
+                  programVersionId: null,
+                  contextId: null,
+                  teachingItemId: null,
+                  hasContext: null,
+                })
+              }
+              options={programs.data ? [
+                { value: "", label: "Tất cả chương trình" },
+                ...programs.data.map((program) => ({
+                  value: program.id,
+                  label: program.name ?? program.code ?? "Chương trình chưa đặt tên",
+                })),
+              ] : []}
+              placeholder={programs.isPending ? "Đang tải chương trình..." : "Tất cả chương trình"}
+              disabled={programs.isPending || programs.isError}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5 text-xs font-semibold text-foreground">
+            <span>Cấp học / ngữ cảnh</span>
+            <ProfileSelect
+              label="Cấp học / ngữ cảnh"
+              value={filters.hasContext === false ? "__none__" : filters.contextId ?? ""}
+              onChange={(selection) =>
+                onFiltersChange({
+                  ...filters,
+                  contextId: selection && selection !== "__none__" ? selection : null,
+                  hasContext: selection === "__none__" ? false : null,
+                  teachingItemId: null,
+                })
+              }
+              options={contexts.data ? [
+                { value: "", label: "Tất cả cấp học / ngữ cảnh" },
+                ...contexts.data.contexts.map((context) => ({
+                  value: context.id,
+                  label: context.name ?? context.code ?? "Ngữ cảnh chưa đặt tên",
+                })),
+                ...(contexts.data.hasWithoutContext
+                  ? [{ value: "__none__", label: "Không áp dụng ngữ cảnh" }]
+                  : []),
+              ] : []}
+              placeholder={!filters.programId ? "Chọn chương trình trước" : contexts.isPending ? "Đang tải cấp học..." : "Tất cả cấp học / ngữ cảnh"}
+              disabled={!filters.programId || contexts.isPending || contexts.isError || !contexts.data}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5 text-xs font-semibold text-foreground">
+            <span>Môn / nội dung dạy</span>
+            <ProfileSelect
+              label="Môn / nội dung dạy"
+              value={filters.teachingItemId ?? ""}
+              onChange={(value) => update("teachingItemId", value || null)}
+              options={teachingItems.data ? [
+                { value: "", label: "Tất cả môn / nội dung" },
+                ...teachingItemOptions.map((item) => ({
+                  value: item.teachingItemId ?? item.id,
+                  label: item.name ?? item.code ?? "Môn chưa đặt tên",
+                })),
+              ] : []}
+              placeholder={!filters.programId ? "Chọn chương trình trước" : teachingItems.isPending ? "Đang tải môn dạy..." : "Tất cả môn / nội dung"}
+              disabled={!filters.programId || teachingItems.isPending || teachingItems.isError}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5 text-xs font-semibold text-foreground">
+            <span>Tỉnh / thành phố</span>
+            <ProfileSelect
+              label="Tỉnh / thành phố"
+              value={filters.city}
+              onChange={(value) => update("city", value)}
+              options={provinces.data ? [
+                { value: "", label: "Toàn quốc" },
+                ...provinces.data.map((province) => ({
+                  value: province.name,
+                  label: province.name,
+                })),
+              ] : []}
+              placeholder={provinces.isPending ? "Đang tải khu vực..." : "Toàn quốc"}
+              disabled={provinces.isPending || provinces.isError}
+              searchable
+              searchPlaceholder="Tìm tỉnh / thành phố..."
+            />
+          </div>
+          {failedFilterNames && (
+            <div className="flex flex-wrap items-center gap-2 text-xs leading-5 text-destructive">
+              <span>Không tải được {failedFilterNames}.</span>
+              <button
+                type="button"
+                onClick={() => {
+                  if (programs.isError) void programs.refetch();
+                  if (contexts.isError) void contexts.refetch();
+                  if (teachingItems.isError) void teachingItems.refetch();
+                  if (provinces.isError) void provinces.refetch();
+                }}
+                className="font-bold underline underline-offset-2"
               >
-                <option value="">
-                  {subjects.isPending
-                    ? "Đang tải môn học..."
-                    : "Tất cả môn học"}
-                </option>
-                {(subjects.data ?? []).map((subject) => (
-                  <option key={subject.id} value={subject.id}>
-                    {subject.name}
-                  </option>
-                ))}
-              </select>
-              <CaretDownIcon
-                size={16}
-                weight="bold"
-                aria-hidden="true"
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-primary transition-transform duration-200 peer-focus:rotate-180"
-              />
-            </span>
-          </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-foreground">
-            Cấp lớp
-            <span className="relative">
-              <select
-                value={filters.gradeLevelId ?? ""}
-                onChange={(event) =>
-                  update("gradeLevelId", event.target.value || null)
-                }
-                disabled={gradeLevels.isPending || gradeLevels.isError}
-                className={selectClassName}
-              >
-                <option value="">
-                  {gradeLevels.isPending
-                    ? "Đang tải cấp lớp..."
-                    : "Tất cả cấp lớp"}
-                </option>
-                {(gradeLevels.data ?? []).map((gradeLevel) => (
-                  <option key={gradeLevel.id} value={gradeLevel.id}>
-                    {gradeLevel.name}
-                  </option>
-                ))}
-              </select>
-              <CaretDownIcon
-                size={16}
-                weight="bold"
-                aria-hidden="true"
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-primary transition-transform duration-200 peer-focus:rotate-180"
-              />
-            </span>
-          </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-foreground">
-            Tỉnh / thành phố
-            <span className="relative">
-              <select
-                value={filters.city}
-                onChange={(event) => update("city", event.target.value)}
-                disabled={provinces.isPending || provinces.isError}
-                className={selectClassName}
-              >
-                <option value="">
-                  {provinces.isPending ? "Đang tải khu vực..." : "Toàn quốc"}
-                </option>
-                {(provinces.data ?? []).map((province) => (
-                  <option key={province.code} value={province.name}>
-                    {province.name}
-                  </option>
-                ))}
-              </select>
-              <CaretDownIcon
-                size={16}
-                weight="bold"
-                aria-hidden="true"
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-primary transition-transform duration-200 peer-focus:rotate-180"
-              />
-            </span>
-          </label>
-          {(subjects.isError || gradeLevels.isError || provinces.isError) && (
-            <p className="text-xs leading-5 text-destructive">
-              Chưa tải được một số bộ lọc. Vui lòng thử lại sau.
-            </p>
+                Thử lại
+              </button>
+            </div>
           )}
         </div>
       )}

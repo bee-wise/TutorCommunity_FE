@@ -7,6 +7,7 @@ import {
   ArrowRightIcon,
   BookmarkSimpleIcon,
   CalendarBlankIcon,
+  CaretDownIcon,
   ClockIcon,
   FunnelIcon,
   MagnifyingGlassIcon,
@@ -464,17 +465,20 @@ export function ClassDiscovery() {
             </div>
           </div>
 
-          <details className="mt-5 rounded-2xl border border-border bg-background p-4 lg:hidden">
+          <details className="group mt-5 rounded-2xl border border-border bg-background p-4 lg:hidden">
             <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-bold text-primary [&::-webkit-details-marker]:hidden">
               <span className="flex items-center gap-2">
                 <FunnelIcon size={18} />
                 Bộ lọc
               </span>
-              {activeFilterCount > 0 && (
-                <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                  {activeFilterCount}
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {activeFilterCount > 0 && (
+                  <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                    {activeFilterCount}
+                  </span>
+                )}
+                <CaretDownIcon size={16} className="text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
+              </div>
             </summary>
             <div className="mt-5 border-t border-border pt-5">
               <FilterFields {...filterProps} idPrefix="mobile-class" />

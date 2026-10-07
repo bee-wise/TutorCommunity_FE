@@ -147,10 +147,12 @@ export function getNavbarConfig({
   state,
   tutorOnboardingStatus,
   lmsAccessEnabled,
+  isPublic,
 }: {
   state: NavbarState;
   tutorOnboardingStatus?: TutorOnboardingStatus | null;
   lmsAccessEnabled?: boolean | null;
+  isPublic?: boolean | null;
 }): NavbarConfig {
   if (state === "LEARNER") {
     return {
@@ -185,7 +187,11 @@ export function getNavbarConfig({
 
     return {
       homeHref: isCompleted ? "/" : "/tutor/post-approval",
-      centerItems: isCompleted ? tutorApprovedMenu : tutorPostApprovalMenu,
+      centerItems: (isCompleted ? tutorApprovedMenu : tutorPostApprovalMenu).filter(
+        (item) =>
+          isPublic === true ||
+          !["Lịch rảnh", "Thông tin thanh toán"].includes(item.label),
+      ),
       rightItems: lmsAccessEnabled
         ? [{ label: "Vào LMS", href: TUTOR_LMS_URL, variant: "primary" }]
         : [],

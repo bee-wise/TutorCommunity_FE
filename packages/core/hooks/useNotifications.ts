@@ -55,23 +55,37 @@ export function useMarkNotificationRead(userId: string) {
 export function useMarkAllNotificationsRead(userId: string) {
   const invalidate = useInvalidateNotifications(userId);
   return useMutation({
-    mutationFn: async () => {
-      const firstPage = await notificationsService.list({ unreadOnly: true, page: 1, pageSize: 100 });
-      const ids = new Set((firstPage.items ?? []).map((item) => item.id));
-      for (let page = 2; page <= firstPage.pagination.totalPages; page += 1) {
-        const nextPage = await notificationsService.list({ unreadOnly: true, page, pageSize: 100 });
-        for (const item of nextPage.items ?? []) ids.add(item.id);
-      }
-      const notificationIds = [...ids];
+    mutationFn: notificationsService.markAllRead,
+    onSettled: invalidate,
+  });
+}
 
-      for (let index = 0; index < notificationIds.length; index += 10) {
-        const results = await Promise.allSettled(
-          notificationIds.slice(index, index + 10).map((id) => notificationsService.markRead(id)),
-        );
-        const failure = results.find((result) => result.status === "rejected");
-        if (failure?.status === "rejected") throw failure.reason;
+export function useDeleteNotification(userId: string) {
+  const invalidate = useInvalidateNotifications(userId);
+  return useMutation({
+    mutationFn: notificationsService.deleteOne,
+    onSettled: invalidate,
+  });
+}
+
+export function useDeleteNotificationsBatch(userId: string) {
+  const invalidate = useInvalidateNotifications(userId);
+  return useMutation({
+    mutationFn: async (ids: string[]) => {
+      let affectedCount = 0;
+      for (let index = 0; index < ids.length; index += 100) {
+        affectedCount += await notificationsService.deleteBatch(ids.slice(index, index + 100));
       }
+      return affectedCount;
     },
+    onSettled: invalidate,
+  });
+}
+
+export function useDeleteAllNotifications(userId: string) {
+  const invalidate = useInvalidateNotifications(userId);
+  return useMutation({
+    mutationFn: notificationsService.deleteAll,
     onSettled: invalidate,
   });
 }

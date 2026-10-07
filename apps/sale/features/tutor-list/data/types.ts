@@ -11,8 +11,11 @@ export type SortOption =
   | "price_desc";
 
 export interface TutorFilters {
-  subjectId: string | null;
-  gradeLevelId: string | null;
+  programId: string | null;
+  programVersionId: string | null;
+  contextId: string | null;
+  teachingItemId: string | null;
+  hasContext: boolean | null;
   city: string;
   teachingMode: TeachingMode | "all";
   level: TutorLevel | "all";
@@ -23,8 +26,11 @@ export interface TutorFilters {
 }
 
 export const DEFAULT_FILTERS: TutorFilters = {
-  subjectId: null,
-  gradeLevelId: null,
+  programId: null,
+  programVersionId: null,
+  contextId: null,
+  teachingItemId: null,
+  hasContext: null,
   city: "",
   teachingMode: "all",
   level: "all",
@@ -114,14 +120,15 @@ export type TutorSearchResponse = ApiResponse<TutorSearchResultData>;
 
 export type AISearchQuery = {
   query: string;
-  limit?: number;
-  thresold?: number;
 };
 
 export type ManualSearchQuery = {
   keyword?: string;
-  subjectId?: string;
-  gradeLevelId?: string;
+  programId?: string;
+  programVersionId?: string;
+  contextId?: string;
+  teachingItemId?: string;
+  hasContext?: boolean;
   specializationId?: string;
   teachingMode?: string;
   city?: string;

@@ -13,7 +13,7 @@ const TIPS = [
   "Mẹo: Gửi tài liệu sau buổi học để học viên ôn tập khi kiến thức còn mới.",
 ] as const;
 
-export function GeneratingState() {
+export function GeneratingState({ compact = false, startedAt }: { compact?: boolean; startedAt?: number }) {
   const [progress, setProgress] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
 
@@ -21,7 +21,7 @@ export function GeneratingState() {
     const duration = 10000;
     const intervalTime = 100;
     const steps = duration / intervalTime;
-    let currentStep = 0;
+    let currentStep = startedAt ? Math.max(0, (Date.now() - startedAt) / intervalTime) : 0;
 
     const timer = window.setInterval(() => {
       currentStep += 1;
@@ -30,7 +30,7 @@ export function GeneratingState() {
     }, intervalTime);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [startedAt]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -56,9 +56,8 @@ export function GeneratingState() {
   }, []);
 
   return (
-    <main className="min-h-full bg-background px-4 py-8 text-foreground sm:px-6" role="status" aria-live="polite">
-      <div className="relative mx-auto mt-4 w-full max-w-2xl overflow-hidden rounded-3xl border border-border bg-card p-6 text-center shadow-sm sm:mt-12 sm:p-8">
-        <div className="pointer-events-none absolute left-1/2 top-0 h-32 w-full -translate-x-1/2 bg-gradient-to-b from-[#cfe1fa]/50 to-transparent blur-xl" aria-hidden="true" />
+    <div className={`min-h-full bg-background text-foreground ${compact ? "py-2" : "px-4 py-8 sm:px-6"}`} role="status" aria-live="polite">
+      <div className={`relative mx-auto w-full max-w-2xl overflow-hidden rounded-3xl border border-border bg-card p-6 text-center shadow-soft sm:p-8 ${compact ? "" : "mt-4 sm:mt-12"}`}>
 
         <div className="relative flex flex-col items-center">
           <Image
@@ -70,9 +69,9 @@ export function GeneratingState() {
             className="mb-5 h-auto w-48 sm:w-60"
           />
 
-          <h1 className={`${styles.animatedTitle} mb-2 font-nunito text-xl font-extrabold sm:text-2xl`}>
+          <h2 className={`${styles.animatedTitle} mb-2 font-nunito text-xl font-extrabold leading-[1.25] sm:text-2xl`}>
             Đang phân tích bản ghi Zoom...
-          </h1>
+          </h2>
           <p className="mx-auto mb-8 max-w-sm text-sm leading-6 text-muted-foreground sm:text-base">
             BeeWise AI đang trích xuất ý chính và tạo bài tập từ nội dung buổi học.
           </p>
@@ -87,8 +86,9 @@ export function GeneratingState() {
           <p className="min-h-10 text-sm font-medium leading-5 text-secondary sm:min-h-6" aria-live="off">
             {TIPS[tipIndex]}
           </p>
+          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Thanh tiến trình là minh họa. Bạn có thể đóng modal để AI tiếp tục chạy nền trong tab này.</p>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
