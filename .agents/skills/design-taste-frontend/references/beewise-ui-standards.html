@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BeeWise UI Component Showcase & Design System Test</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400..1000;1,400..1000&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#0C1EAA',
+              foreground: '#FFFFFF',
+              hover: '#0A188C',
+              subtle: '#EEF2FF',
+            },
+            accent: {
+              DEFAULT: '#FFC500',
+              foreground: '#0C0C0B',
+              hover: '#E5B100',
+            },
+            secondary: {
+              DEFAULT: '#447353',
+              foreground: '#FFFFFF',
+              subtle: '#ECFDF5',
+            },
+            highlight: '#FADC76',
+            muted: {
+              DEFAULT: '#F0F4FF',
+              foreground: '#5A6A9A',
+            },
+            border: '#DCE8FB',
+            card: {
+              DEFAULT: '#FFFFFF',
+              foreground: '#0C0C0B',
+            },
+            destructive: {
+              DEFAULT: '#DC2626',
+              foreground: '#FFFFFF',
+              subtle: '#FEF2F2',
+            }
+          },
+          fontFamily: {
+            nunito: ['Nunito', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 2px 10px -2px rgba(12, 30, 170, 0.08), 0 12px 32px -10px rgba(12, 30, 170, 0.12)',
+            'soft-hover': '0 4px 16px -2px rgba(12, 30, 170, 0.12), 0 20px 40px -12px rgba(12, 30, 170, 0.18)',
+            'amber': '0 4px 16px -2px rgba(255, 197, 0, 0.35)',
+            '2xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-nunito {
+      font-family: 'Nunito', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-[#F8FAFC] text-[#0C0C0B] antialiased selection:bg-accent selection:text-primary transition-colors duration-200 min-h-screen">
+  
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-50 border-b border-border bg-white/90 backdrop-blur-md px-6 py-3.5 shadow-2xs">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-accent shadow-md shadow-primary/20 font-black text-xl font-nunito">
+          BW
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-nunito font-extrabold text-lg text-primary tracking-tight">BeeWise UI Standards</h1>
+            <span class="px-2 py-0.5 text-[11px] font-bold bg-accent/30 text-primary border border-accent/40 rounded-full">v1.0 SKILL Spec</span>
+          </div>
+          <p class="text-xs text-muted-foreground">Mẫu chuẩn Component & Triết lý Anti-Slop (Edutech Soft-Modern)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="#anti-slop" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Anti-Slop Rules</a>
+        <a href="#buttons" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Buttons</a>
+        <a href="#chips" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Action Chips</a>
+        <a href="#forms" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Forms & OTP</a>
+        <a href="#cards" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Cards</a>
+        
+        <button onclick="toggleDarkMode()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border border-border bg-background hover:bg-muted text-foreground transition-all cursor-pointer">
+          <i class="ph-bold ph-moon-stars text-primary"></i>
+          <span id="theme-text">Giao diện sáng</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8 space-y-12">
+
+    <!-- 0. Brand Identity & Dials Summary -->
+    <section class="rounded-3xl border border-border bg-white p-6 shadow-soft">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-border pb-6">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-2.5 py-1 rounded-lg">Design System</span>
+          <h2 class="font-nunito text-2xl font-black text-foreground mt-2">Bảng màu cốt lõi & Bộ 3 Dials</h2>
+          <p class="text-xs text-muted-foreground mt-1">Chuẩn hóa giao diện BeeWise Edutech: Nunito Headlines + Plus Jakarta Sans Body</p>
+        </div>
+
+        <div class="flex flex-wrap gap-2 text-xs font-bold">
+          <div class="px-3 py-1.5 rounded-xl bg-muted border border-border text-foreground">
+            <span class="text-muted-foreground">VARIANCE:</span> 7 (Cân đối mềm mại)
+          </div>
+          <div class="px-3 py-1.5 rounded-xl bg-muted border border-border text-foreground">
+            <span class="text-muted-foreground">MOTION:</span> 6 (Micro-interactions)
+          </div>
+          <div class="px-3 py-1.5 rounded-xl bg-muted border border-border text-foreground">
+            <span class="text-muted-foreground">DENSITY:</span> 4 (Thoáng đãng & Dễ đọc)
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
+        <div class="p-3.5 rounded-2xl bg-primary text-white space-y-2 shadow-sm">
+          <div class="text-xs font-black font-nunito uppercase">Primary</div>
+          <div class="text-[11px] font-mono opacity-80">#0C1EAA</div>
+          <div class="text-[10px] opacity-75">Royal Blue chính</div>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-accent text-accent-foreground space-y-2 shadow-sm">
+          <div class="text-xs font-black font-nunito uppercase">Accent</div>
+          <div class="text-[11px] font-mono opacity-80">#FFC500</div>
+          <div class="text-[10px] opacity-75">Bee Amber điểm nhấn</div>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-secondary text-white space-y-2 shadow-sm">
+          <div class="text-xs font-black font-nunito uppercase">Secondary</div>
+          <div class="text-[11px] font-mono opacity-80">#447353</div>
+          <div class="text-[10px] opacity-75">Forest Green Verified</div>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-muted text-primary border border-border space-y-2">
+          <div class="text-xs font-black font-nunito uppercase">Muted / Soft</div>
+          <div class="text-[11px] font-mono text-muted-foreground">#F0F4FF</div>
+          <div class="text-[10px] text-muted-foreground">Nền badge / chip</div>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-destructive text-white space-y-2">
+          <div class="text-xs font-black font-nunito uppercase">Destructive</div>
+          <div class="text-[11px] font-mono opacity-80">#DC2626</div>
+          <div class="text-[10px] opacity-75">Lỗi / Cảnh báo đỏ</div>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-border text-foreground space-y-2">
+          <div class="text-xs font-black font-nunito uppercase">Surface & Border</div>
+          <div class="text-[11px] font-mono text-muted-foreground">#DCE8FB</div>
+          <div class="text-[10px] text-muted-foreground">Viền bo / Khối thẻ</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. ANTI-SLOP COMPARISON (CẤM HOÀN TOÀN VS CHUẨN MỚI) -->
+    <section id="anti-slop" class="rounded-3xl border-2 border-primary/20 bg-gradient-to-b from-white to-primary/5 p-6 shadow-soft">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="ph-fill ph-shield-check text-primary text-2xl"></i>
+        <h2 class="font-nunito text-2xl font-black text-foreground">1. Anti-Slop Discipline: So sánh Thực Tế</h2>
+      </div>
+      <p class="text-xs text-muted-foreground max-w-3xl mb-6">
+        Quy định trong <code class="bg-muted px-1.5 py-0.5 rounded text-primary font-mono font-bold">SKILL.md</code>: Cấm tuyệt đối button kiểu text link xanh gạch chân thô sơ. Bắt buộc chuyển hóa thành Action Chip, Badge Box hoặc Ghost/Outline Button có phân tầng rõ rệt.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- WRONG EXAMPLE -->
+        <div class="rounded-2xl border border-red-200 bg-red-50/50 p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-100 text-red-700 text-xs font-bold">
+              <i class="ph-bold ph-x-circle text-base"></i> CẤM TUYỆT ĐỐI (Slop / Lỗi thời)
+            </span>
+            <span class="text-[11px] text-red-500 font-mono">hover:underline text-blue</span>
+          </div>
+
+          <div class="bg-white rounded-xl border border-red-200 p-4 space-y-3">
+            <p class="text-xs text-slate-500">Kiểm tra hộp thư: <strong class="text-black font-bold">student@example.com</strong></p>
+            <!-- SLOP BUTTON -->
+            <button type="button" class="inline-flex items-center gap-1 text-xs font-bold text-primary underline">
+              <i class="ph-bold ph-arrow-left"></i> Đổi email
+            </button>
+            <div class="pt-2 border-t border-slate-100 text-xs text-slate-500">
+              Chưa nhận được mã? <button class="font-bold text-primary underline">Gửi mã mới</button>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-red-600 leading-relaxed">
+            ❌ <strong>Nhược điểm:</strong> Nhìn như web thập niên 90, không có vùng bấm (hit-target) rõ ràng, thiếu phân cấp thị giác và làm giảm sự tin cậy của sản phẩm Edutech cao cấp.
+          </p>
+        </div>
+
+        <!-- CORRECT EXAMPLE -->
+        <div class="rounded-2xl border border-secondary/30 bg-secondary/5 p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary/15 text-secondary text-xs font-bold">
+              <i class="ph-bold ph-check-circle text-base"></i> CHUẨN BEEWISE MỚI (Modern SaaS)
+            </span>
+            <span class="text-[11px] text-secondary font-mono">Info Box + Action Chip</span>
+          </div>
+
+          <div class="bg-white rounded-xl border border-border p-4 space-y-3">
+            <div class="flex items-center justify-between gap-3 rounded-xl border border-border bg-muted/50 px-3.5 py-2.5">
+              <div class="min-w-0 flex-1">
+                <p class="text-[11px] font-medium text-muted-foreground">Mã xác minh gửi tới</p>
+                <p class="truncate text-xs font-bold text-foreground">student@example.com</p>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-bold text-foreground/80 shadow-2xs transition-all hover:bg-muted hover:text-foreground active:scale-95 cursor-pointer"
+              >
+                <i class="ph-bold ph-arrow-left text-xs"></i>
+                <span>Đổi email</span>
+              </button>
+            </div>
+
+            <div class="pt-2 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+              <span>Chưa nhận được mã?</span>
+              <button class="font-bold text-primary transition-colors hover:text-primary/80 cursor-pointer">
+                Gửi mã mới
+              </button>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-secondary leading-relaxed">
+            ✅ <strong>Ưu điểm:</strong> Rõ ràng, bảo mật, diện mạo bo góc tinh tế, vùng bấm chip 36px chuẩn UX di động, tương thích hoàn hảo với toàn hệ thống BeeWise.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. BUTTONS & ACTIONS HIERARCHY -->
+    <section id="buttons" class="rounded-3xl border border-border bg-white p-6 shadow-soft space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-nunito text-2xl font-black text-foreground">2. Hệ Thống Nút Bấm (Button Hierarchy)</h2>
+          <p class="text-xs text-muted-foreground">Quy chuẩn Variants, Kích thước, Icon & Trạng thái Loading/Disabled</p>
+        </div>
+      </div>
+
+      <!-- Variants Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <!-- Primary Button -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-foreground">Primary (Chính)</span>
+            <span class="text-muted-foreground text-[10px]">Variant: default</span>
+          </div>
+          <button class="w-full h-10 rounded-xl bg-primary text-accent uppercase font-bold text-xs flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-md shadow-primary/20 cursor-pointer font-nunito tracking-wide">
+            <span>Tạo tài khoản</span>
+            <i class="ph-bold ph-arrow-right text-sm"></i>
+          </button>
+          <p class="text-[11px] text-muted-foreground">Dành cho hành động chính yếu (CTA, Submit form, Xác nhận).</p>
+        </div>
+
+        <!-- Accent Button -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-foreground">Accent (Nổi bật)</span>
+            <span class="text-muted-foreground text-[10px]">Variant: accent</span>
+          </div>
+          <button class="w-full h-10 rounded-xl bg-accent text-accent-foreground font-extrabold text-xs flex items-center justify-center gap-2 hover:bg-highlight active:scale-[0.98] transition-all shadow-md shadow-accent/25 cursor-pointer font-nunito">
+            <i class="ph-bold ph-lightning text-sm"></i>
+            <span>Đặt lịch gia sư ngay</span>
+          </button>
+          <p class="text-[11px] text-muted-foreground">Dành cho nút chuyển đổi doanh thu, đặt lịch nhanh.</p>
+        </div>
+
+        <!-- Secondary Button -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-foreground">Secondary (Thành công / Xác thực)</span>
+            <span class="text-muted-foreground text-[10px]">Variant: secondary</span>
+          </div>
+          <button class="w-full h-10 rounded-xl bg-secondary text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-secondary/90 active:scale-[0.98] transition-all shadow-sm cursor-pointer font-nunito">
+            <i class="ph-bold ph-seal-check text-sm"></i>
+            <span>Đã xác thực hồ sơ</span>
+          </button>
+          <p class="text-[11px] text-muted-foreground">Dành cho trạng thái đã duyệt, lưu tiến trình học.</p>
+        </div>
+
+        <!-- Outline Button -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-foreground">Outline (Viền)</span>
+            <span class="text-muted-foreground text-[10px]">Variant: outline</span>
+          </div>
+          <button class="w-full h-10 rounded-xl border border-border bg-background text-foreground/80 font-bold text-xs flex items-center justify-center gap-2 hover:bg-muted hover:text-foreground active:scale-[0.98] transition-all shadow-2xs cursor-pointer">
+            <i class="ph-bold ph-sliders-horizontal text-sm"></i>
+            <span>Bộ lọc nâng cao</span>
+          </button>
+          <p class="text-[11px] text-muted-foreground">Dành cho hành động phụ, hủy thao tác, bộ lọc.</p>
+        </div>
+
+        <!-- Ghost Button -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-foreground">Ghost (Trong suốt)</span>
+            <span class="text-muted-foreground text-[10px]">Variant: ghost</span>
+          </div>
+          <button class="w-full h-10 rounded-xl text-muted-foreground font-bold text-xs flex items-center justify-center gap-2 hover:bg-muted hover:text-primary transition-all cursor-pointer">
+            <i class="ph-bold ph-arrow-left text-sm"></i>
+            <span>Quay về trang chủ</span>
+          </button>
+          <p class="text-[11px] text-muted-foreground">Dành cho điều hướng, đóng cửa sổ, nút quay lại.</p>
+        </div>
+
+        <!-- Destructive Button -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-foreground">Destructive (Xóa / Hủy)</span>
+            <span class="text-muted-foreground text-[10px]">Variant: destructive</span>
+          </div>
+          <button class="w-full h-10 rounded-xl bg-destructive text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-destructive/90 active:scale-[0.98] transition-all shadow-sm cursor-pointer">
+            <i class="ph-bold ph-trash text-sm"></i>
+            <span>Hủy buổi học</span>
+          </button>
+          <p class="text-[11px] text-muted-foreground">Dành cho thao tác nguy hiểm, xóa dữ liệu, rời nhóm.</p>
+        </div>
+
+      </div>
+
+      <!-- Button States: Sizes, Loading & Disabled -->
+      <div class="border-t border-border pt-6">
+        <h3 class="font-nunito text-base font-bold text-foreground mb-4">Các Kích Thước & Trạng Thái Tương Tác</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Size XS -->
+          <button class="h-7 px-2.5 rounded-lg bg-primary text-white text-[11px] font-bold inline-flex items-center gap-1 hover:bg-primary/90 transition-all cursor-pointer">
+            <i class="ph-bold ph-plus text-xs"></i> Size XS (h-7)
+          </button>
+          
+          <!-- Size SM -->
+          <button class="h-8 px-3 rounded-lg bg-primary text-white text-xs font-bold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-all cursor-pointer">
+            <i class="ph-bold ph-plus text-xs"></i> Size SM (h-8)
+          </button>
+          
+          <!-- Size MD (Default) -->
+          <button class="h-10 px-4 rounded-xl bg-primary text-white text-xs font-bold inline-flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer">
+            <i class="ph-bold ph-plus text-sm"></i> Size MD Default (h-10)
+          </button>
+
+          <!-- Size LG -->
+          <button class="h-12 px-6 rounded-2xl bg-primary text-white text-sm font-bold inline-flex items-center gap-2.5 hover:bg-primary/90 transition-all cursor-pointer">
+            <i class="ph-bold ph-plus text-base"></i> Size LG (h-12)
+          </button>
+
+          <!-- Loading State -->
+          <button disabled class="h-10 px-5 rounded-xl bg-primary text-white text-xs font-bold inline-flex items-center gap-2 opacity-70 cursor-not-allowed">
+            <span class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
+            <span>Đang xử lý...</span>
+          </button>
+
+          <!-- Disabled State -->
+          <button disabled class="h-10 px-5 rounded-xl bg-muted text-muted-foreground text-xs font-bold inline-flex items-center gap-2 cursor-not-allowed opacity-60">
+            <span>Không thể thao tác</span>
+          </button>
+
+          <!-- Icon Only Buttons -->
+          <div class="flex items-center gap-1.5 border-l border-border pl-3">
+            <button class="w-8 h-8 rounded-lg border border-border bg-background flex items-center justify-center text-foreground/70 hover:bg-muted hover:text-primary transition-all cursor-pointer shadow-2xs">
+              <i class="ph-bold ph-heart text-sm"></i>
+            </button>
+            <button class="w-9 h-9 rounded-xl border border-border bg-background flex items-center justify-center text-foreground/70 hover:bg-muted hover:text-primary transition-all cursor-pointer shadow-2xs">
+              <i class="ph-bold ph-share-network text-base"></i>
+            </button>
+            <button class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-all cursor-pointer">
+              <i class="ph-bold ph-chat-teardrop-text text-lg"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ACTION CHIPS, BADGES & INTERACTIVE TAGS -->
+    <section id="chips" class="rounded-3xl border border-border bg-white p-6 shadow-soft space-y-6">
+      <div>
+        <h2 class="font-nunito text-2xl font-black text-foreground">3. Action Chips, Badges & Pills</h2>
+        <p class="text-xs text-muted-foreground">Thay thế toàn bộ hyperlink trần bằng thẻ chip bo góc có phân tầng rõ rệt</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Action Chip Example: Back Navigation -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="text-xs font-bold text-foreground">Nút Điều Hướng / Back Chip</div>
+          <div class="flex flex-wrap gap-2">
+            <button class="inline-flex items-center gap-1.5 rounded-xl border border-border bg-white px-3 py-1.5 text-xs font-bold text-foreground/80 shadow-2xs hover:bg-muted hover:text-primary transition-all active:scale-95 cursor-pointer">
+              <i class="ph-bold ph-arrow-left text-xs"></i>
+              <span>Về danh sách gia sư</span>
+            </button>
+            <button class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary/15 transition-all cursor-pointer">
+              <i class="ph-bold ph-caret-left"></i> Bước trước
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Chip Example: Countdown & Resend -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="text-xs font-bold text-foreground">Nút Gửi Lại Mã / Cooldown Pill</div>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <button class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-bold text-primary hover:bg-muted transition-all cursor-pointer">
+                <i class="ph-bold ph-arrows-clockwise text-xs"></i>
+                <span>Gửi lại mã OTP</span>
+              </button>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold bg-muted text-muted-foreground rounded-lg border border-border">
+                <i class="ph-bold ph-clock text-xs"></i> 45s
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Badges -->
+        <div class="p-4 rounded-2xl border border-border bg-muted/20 space-y-3">
+          <div class="text-xs font-bold text-foreground">Status Badges (Huy hiệu)</div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-secondary/15 text-secondary border border-secondary/20">
+              <i class="ph-fill ph-check-circle"></i> Đã xác thực
+            </span>
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent/25 text-amber-900 border border-accent/30">
+              <i class="ph-fill ph-clock"></i> Chờ duyệt
+            </span>
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20">
+              <i class="ph-fill ph-star"></i> Top Gia Sư
+            </span>
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-100 text-destructive border border-destructive/20">
+              <i class="ph-fill ph-prohibit"></i> Đã hủy
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. FORMS, INPUTS & INTERACTIVE OTP DEMO -->
+    <section id="forms" class="rounded-3xl border border-border bg-white p-6 shadow-soft space-y-6">
+      <div>
+        <h2 class="font-nunito text-2xl font-black text-foreground">4. Form & Ô Nhập Liệu Chuẩn UX</h2>
+        <p class="text-xs text-muted-foreground">Bao gồm Text Input, Password Toggle và 6-Digit OTP Box trực quan</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Standard Inputs -->
+        <div class="space-y-4">
+          <h3 class="font-nunito font-bold text-sm text-foreground">Ô Nhập Liệu Cơ Bản</h3>
+
+          <!-- Regular Field -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-foreground/80 font-nunito">Địa chỉ Email</label>
+            <input 
+              type="email" 
+              value="student@beewise.edu.vn" 
+              class="w-full h-10 rounded-xl border border-border bg-background px-3.5 text-xs text-foreground outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+
+          <!-- Password Field with Toggle -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-foreground/80 font-nunito">Mật khẩu</label>
+              <a href="javascript:void(0)" class="text-xs font-bold text-primary hover:text-primary/80 transition-colors">Quên mật khẩu?</a>
+            </div>
+            <div class="relative">
+              <input 
+                id="demo-password"
+                type="password" 
+                value="SecretPass123" 
+                class="w-full h-10 rounded-xl border border-border bg-background px-3.5 pr-10 text-xs text-foreground outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+              <button 
+                type="button" 
+                onclick="toggleDemoPassword()"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                <i id="demo-eye" class="ph-bold ph-eye text-base"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Error State -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-foreground/80 font-nunito">Số điện thoại</label>
+            <input 
+              type="text" 
+              value="0912345" 
+              class="w-full h-10 rounded-xl border border-destructive bg-destructive/5 px-3.5 text-xs text-foreground outline-none focus:ring-2 focus:ring-destructive/20"
+            />
+            <p class="text-[11px] text-destructive flex items-center gap-1 font-medium">
+              <i class="ph-bold ph-warning-circle"></i> Số điện thoại phải gồm đúng 10 chữ số hợp lệ.
+            </p>
+          </div>
+        </div>
+
+        <!-- 6-DIGIT OTP INTERACTIVE DEMO -->
+        <div class="rounded-2xl border border-border bg-muted/20 p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+                <i class="ph-duotone ph-key text-lg"></i>
+              </div>
+              <h3 class="font-nunito font-extrabold text-sm text-foreground">Interactive 6-Digit OTP Demo</h3>
+            </div>
+            <span class="text-[10px] font-bold text-secondary bg-secondary/15 px-2 py-0.5 rounded-md">Live test</span>
+          </div>
+          
+          <p class="text-xs text-muted-foreground">Gõ thử 6 số vào các ô bên dưới (tự động nhảy focus & hỗ trợ dán mã):</p>
+
+          <!-- OTP Input Boxes -->
+          <div class="flex gap-2 sm:gap-2.5">
+            <input type="text" maxlength="1" oninput="handleOtp(this, 1)" id="otp-1" class="w-12 h-12 rounded-xl border border-border bg-white text-center font-nunito text-xl font-black text-primary outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-2xs" />
+            <input type="text" maxlength="1" oninput="handleOtp(this, 2)" id="otp-2" class="w-12 h-12 rounded-xl border border-border bg-white text-center font-nunito text-xl font-black text-primary outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-2xs" />
+            <input type="text" maxlength="1" oninput="handleOtp(this, 3)" id="otp-3" class="w-12 h-12 rounded-xl border border-border bg-white text-center font-nunito text-xl font-black text-primary outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-2xs" />
+            <input type="text" maxlength="1" oninput="handleOtp(this, 4)" id="otp-4" class="w-12 h-12 rounded-xl border border-border bg-white text-center font-nunito text-xl font-black text-primary outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-2xs" />
+            <input type="text" maxlength="1" oninput="handleOtp(this, 5)" id="otp-5" class="w-12 h-12 rounded-xl border border-border bg-white text-center font-nunito text-xl font-black text-primary outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-2xs" />
+            <input type="text" maxlength="1" oninput="handleOtp(this, 6)" id="otp-6" class="w-12 h-12 rounded-xl border border-border bg-white text-center font-nunito text-xl font-black text-primary outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-2xs" />
+          </div>
+
+          <div class="flex items-center justify-between text-xs pt-2">
+            <span class="text-muted-foreground">Mã có hiệu lực: <strong>09:59</strong></span>
+            <button onclick="clearOtp()" class="text-primary font-bold hover:text-primary/80 transition-colors cursor-pointer">Xóa mã</button>
+          </div>
+
+          <button class="w-full h-10 rounded-xl bg-accent text-accent-foreground font-extrabold text-xs flex items-center justify-center gap-2 hover:bg-highlight active:scale-[0.98] transition-all shadow-md shadow-accent/25 cursor-pointer font-nunito">
+            <span>Xác nhận mã OTP</span>
+            <i class="ph-bold ph-arrow-right"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Role Selector Card Samples -->
+      <div class="border-t border-border pt-6">
+        <h3 class="font-nunito text-base font-bold text-foreground mb-3">Role Selector Segment Cards</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+          
+          <!-- Role 1: Learner (Active) -->
+          <div class="p-3.5 rounded-2xl border-2 border-primary bg-primary/5 cursor-pointer flex items-center gap-3 transition-all">
+            <div class="w-10 h-10 rounded-xl bg-primary text-accent flex items-center justify-center text-xl shadow-xs">
+              <i class="ph-duotone ph-student"></i>
+            </div>
+            <div>
+              <div class="font-nunito font-extrabold text-sm text-primary">Học viên / Phụ huynh</div>
+              <p class="text-[11px] text-muted-foreground">Tìm kiếm gia sư chất lượng</p>
+            </div>
+            <i class="ph-fill ph-check-circle text-primary text-xl ml-auto"></i>
+          </div>
+
+          <!-- Role 2: Tutor (Inactive) -->
+          <div class="p-3.5 rounded-2xl border-2 border-border bg-white hover:border-primary/40 cursor-pointer flex items-center gap-3 transition-all">
+            <div class="w-10 h-10 rounded-xl bg-muted text-muted-foreground flex items-center justify-center text-xl">
+              <i class="ph-duotone ph-chalkboard-teacher"></i>
+            </div>
+            <div>
+              <div class="font-nunito font-extrabold text-sm text-foreground/80">Gia sư BeeWise</div>
+              <p class="text-[11px] text-muted-foreground">Đăng ký giảng dạy & kết nối</p>
+            </div>
+            <div class="w-5 h-5 rounded-full border border-border ml-auto"></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. REALISTIC COMPONENT CARDS -->
+    <section id="cards" class="rounded-3xl border border-border bg-white p-6 shadow-soft space-y-6">
+      <div>
+        <h2 class="font-nunito text-2xl font-black text-foreground">5. Thẻ Nội Dung (Tutor & Class Cards)</h2>
+        <p class="text-xs text-muted-foreground">Tổng hòa typography Nunito, màu sắc thương hiệu, badges và nút CTA</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Tutor Card Sample -->
+        <div class="rounded-3xl border border-border bg-white p-5 shadow-soft hover:shadow-soft-hover transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="relative">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-blue-400 p-0.5 shadow-sm">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Tutor" class="w-full h-full object-cover rounded-[14px]" />
+                  </div>
+                  <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-secondary text-white flex items-center justify-center text-[10px] border-2 border-white shadow-2xs">
+                    <i class="ph-bold ph-check"></i>
+                  </span>
+                </div>
+                <div>
+                  <h4 class="font-nunito font-extrabold text-base text-foreground">Trần Mai Linh</h4>
+                  <p class="text-xs text-muted-foreground">Gia sư Tiếng Anh IELTS 8.0</p>
+                  <div class="flex items-center gap-1.5 text-xs mt-1">
+                    <span class="flex items-center gap-0.5 text-amber-500 font-bold">
+                      <i class="ph-fill ph-star text-xs"></i> 4.9
+                    </span>
+                    <span class="text-muted-foreground text-[11px]">(128 đánh giá)</span>
+                  </div>
+                </div>
+              </div>
+              <button class="w-8 h-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-all cursor-pointer">
+                <i class="ph-bold ph-heart text-sm"></i>
+              </button>
+            </div>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-1.5 mt-4">
+              <span class="px-2.5 py-0.5 rounded-lg bg-muted text-primary text-[11px] font-bold">IELTS Academic</span>
+              <span class="px-2.5 py-0.5 rounded-lg bg-muted text-primary text-[11px] font-bold">Giao tiếp</span>
+              <span class="px-2.5 py-0.5 rounded-lg bg-secondary/10 text-secondary text-[11px] font-bold">Top 1% Tutors</span>
+            </div>
+          </div>
+
+          <div class="border-t border-border pt-4 mt-5 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-muted-foreground block font-medium">Học phí / giờ</span>
+              <span class="font-nunito font-black text-primary text-base">250.000đ</span>
+            </div>
+            <button class="h-9 px-4 rounded-xl bg-primary text-accent font-bold text-xs inline-flex items-center gap-1.5 hover:bg-primary/90 active:scale-95 transition-all shadow-sm shadow-primary/20 cursor-pointer font-nunito">
+              <span>Xem lịch dạy</span>
+              <i class="ph-bold ph-arrow-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Banner / Alert Callout Samples -->
+        <div class="space-y-3.5">
+          <!-- Info Alert -->
+          <div class="rounded-2xl border border-primary/20 bg-muted/60 p-4 flex gap-3">
+            <i class="ph-duotone ph-info text-primary text-xl shrink-0 mt-0.5"></i>
+            <div class="text-xs space-y-1">
+              <p class="font-bold text-primary font-nunito">Thông báo lịch khai giảng</p>
+              <p class="text-muted-foreground leading-relaxed">Lớp học nhóm sẽ bắt đầu vào ngày 15/10. Vui lòng hoàn tất xác nhận.</p>
+            </div>
+          </div>
+
+          <!-- Success Alert -->
+          <div class="rounded-2xl border border-secondary/30 bg-secondary/10 p-4 flex gap-3">
+            <i class="ph-duotone ph-check-circle text-secondary text-xl shrink-0 mt-0.5"></i>
+            <div class="text-xs space-y-1">
+              <p class="font-bold text-secondary font-nunito">Đăng ký thành công</p>
+              <p class="text-foreground/70 leading-relaxed">Hồ sơ gia sư đã được gửi tới hội đồng chuyên môn BeeWise.</p>
+            </div>
+          </div>
+
+          <!-- Warning Alert -->
+          <div class="rounded-2xl border border-accent/40 bg-accent/15 p-4 flex gap-3">
+            <i class="ph-duotone ph-warning text-amber-800 text-xl shrink-0 mt-0.5"></i>
+            <div class="text-xs space-y-1">
+              <p class="font-bold text-amber-900 font-nunito">Chưa cập nhật CCCD</p>
+              <p class="text-amber-800/80 leading-relaxed">Bạn cần bổ sung ảnh chụp giấy tờ để mở khóa tính năng nhận lớp.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback & Review Widget -->
+        <div class="rounded-3xl border border-border bg-muted/30 p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-nunito font-extrabold text-sm text-foreground">Trạng thái Gửi Feedback</h4>
+            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+          </div>
+
+          <p class="text-xs text-muted-foreground leading-relaxed">
+            Bạn có thể mở file này trực tiếp bằng trình duyệt để kiểm tra trực quan từng thành phần giao diện theo đúng tinh thần Anti-Slop của BeeWise.
+          </p>
+
+          <div class="p-3 rounded-2xl bg-white border border-border space-y-2">
+            <div class="text-[11px] font-mono text-muted-foreground">Path: <span class="text-primary font-bold">.agents/skills/design-taste-frontend/references/beewise-ui-standards.html</span></div>
+            <div class="text-[11px] text-foreground font-semibold">Tất cả tương tác đều có active:scale-95 & transition-all</div>
+          </div>
+
+          <button onclick="alert('Đã sẵn sàng nhận feedback của bạn về SKILL!')" class="w-full h-10 rounded-xl bg-primary text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-primary/90 transition-all cursor-pointer font-nunito">
+            <i class="ph-bold ph-chat-circle-dots"></i>
+            <span>Gửi Feedback Cho Agent</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-border bg-white py-6 px-6 text-center text-xs text-muted-foreground">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="font-black text-primary font-nunito">BeeWise</span> — Tutor & Learner Community Platform
+      </div>
+      <div>Designed with Anti-Slop Frontend Standard (@design-taste-frontend)</div>
+    </div>
+  </footer>
+
+  <!-- Scripts for interactivity -->
+  <script>
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      document.getElementById('theme-text').textContent = isDark ? 'Giao diện tối' : 'Giao diện sáng';
+    }
+
+    function toggleDemoPassword() {
+      const input = document.getElementById('demo-password');
+      const icon = document.getElementById('demo-eye');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'ph-bold ph-eye-slash text-base';
+      } else {
+        input.type = 'password';
+        icon.className = 'ph-bold ph-eye text-base';
+      }
+    }
+
+    function handleOtp(input, index) {
+      if (input.value.length === 1 && index < 6) {
+        document.getElementById(`otp-${index + 1}`).focus();
+      }
+    }
+
+    function clearOtp() {
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById(`otp-${i}`).value = '';
+      }
+      document.getElementById('otp-1').focus();
+    }
+  </script>
+</body>
+</html>

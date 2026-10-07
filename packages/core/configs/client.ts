@@ -14,6 +14,8 @@ const AUTH_ENDPOINTS_WITHOUT_REFRESH = [
   "/auth/register",
   "/auth/logout",
   "/auth/refresh",
+  "/auth/forgot-password",
+  "/auth/reset-password",
 ];
 
 export function shouldAttemptRefresh(url?: string): boolean {

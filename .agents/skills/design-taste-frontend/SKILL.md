@@ -40,9 +40,17 @@ Ask exactly **one** clarifying question - never a multi-question dump - and only
 
 If you can confidently infer from context, **do not ask**. Just declare the design read and proceed.
 
-### 0.D Anti-Default Discipline
+### 0.D Anti-Default Discipline & Forbidden UI Patterns
 
 Do not default to: AI-purple gradients, centered hero over dark mesh, three equal feature cards, generic glassmorphism on everything, infinite-loop micro-animations everywhere, Inter + slate-900. These are the LLM defaults. Reach past them deliberately based on the design read.
+
+#### 🚫 CẤM TUYỆT ĐỐI (Strictly Forbidden Button & Action Link Styles):
+- **CẤM HOÀN TOÀN** tạo các button/link hành động dạng text trần có gạch chân (`hover:underline`, `underline`) kèm icon mũi tên thô sơ (ví dụ: `← Đổi email`, `← Quay lại`). Đây là phong cách web cổ điển/slop rẻ tiền, thiếu thẩm mỹ.
+- **Quy chuẩn thay thế bắt buộc:**
+  1. **Action Chips / Badges:** Khi hiển thị thông tin kèm hành động phụ (như đổi email, đổi thông tin), phải đóng gói trong container sạch sẽ (`rounded-xl border bg-muted/40 px-3.5 py-2.5`) kèm nút chip/badge sắc nét (`rounded-lg border bg-background px-2.5 py-1 text-xs font-bold hover:bg-muted active:scale-95`).
+  2. **Ghost / Outline Buttons:** Dùng component Button chuẩn (`variant="ghost"` hoặc `variant="outline"`) với padding, radius và hover/active state chỉn chu từ `@workspace/ui`.
+  3. **Text Links tương tác:** Chỉ dùng `transition-colors hover:text-primary/80` (KHÔNG dùng `hover:underline` trừ liên kết trong văn bản pháp lý/Terms & Privacy).
+- **Golden UI Benchmark Reference:** Mọi thành phần mẫu đã được chuẩn hóa trực quan trong file tham chiếu [.agents/skills/design-taste-frontend/references/beewise-ui-standards.html](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/references/beewise-ui-standards.html).
 
 ---
 

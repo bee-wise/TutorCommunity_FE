@@ -11,6 +11,7 @@ import { LaunchNoticeBanner } from "./LaunchNoticeBanner";
 interface AuthLayoutProps {
   children: React.ReactNode;
   variant?: "login" | "register";
+  compact?: boolean;
   authPaused?: boolean;
   notice?: string;
 }
@@ -23,13 +24,14 @@ const robotImages = {
 export function AuthLayout({
   children,
   variant = "login",
+  compact = false,
   authPaused = false,
   notice = "",
 }: AuthLayoutProps) {
   const router = useRouter();
 
   return (
-    <div className={`${styles.layout} ${variant === "register" ? styles.registerLayout : ""}`}>
+    <div className={`${styles.layout} ${variant === "register" || compact ? styles.registerLayout : ""}`}>
       <aside className={styles.artPanel} aria-label="BeeWise">
         <Link href="/" className={styles.brand} aria-label="BeeWise - Về trang chủ">
           <span className={styles.brandMark}>
@@ -89,7 +91,7 @@ export function AuthLayout({
 
       <main className={styles.formPanel}>
         <Button
-          className={`absolute left-3 z-10 flex items-center gap-2 rounded-full px-3 text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground sm:left-5 ${variant === "register" ? "top-0 h-8 lg:top-5 lg:h-9" : "top-3 h-9 sm:top-5"}`}
+          className={`absolute left-3 z-10 flex items-center gap-2 rounded-full px-3 text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground sm:left-5 ${variant === "register" || compact ? "top-0 h-8 lg:top-5 lg:h-9" : "top-3 h-9 sm:top-5"}`}
           variant="ghost"
           onClick={() => router.replace("/")}
         >
@@ -99,7 +101,7 @@ export function AuthLayout({
 
         <div className={styles.formContainer}>
           {authPaused && <LaunchNoticeBanner notice={notice} />}
-          <div className={`${styles.formCard} ${variant === "register" ? styles.registerCard : ""}`}>
+          <div className={`${styles.formCard} ${variant === "register" || compact ? styles.registerCard : ""}`}>
             {children}
           </div>
         </div>
