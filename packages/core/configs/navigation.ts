@@ -111,6 +111,11 @@ export const navigationConfig: RoleNavigation = {
           icon: CalendarDays,
         },
         {
+          title: "Quản Lý Lớp Học",
+          url: "/lms/tutor/classes",
+          icon: UsersRound,
+        },
+        {
           title: "Quản Lý Tin Nhắn",
           url: "/lms/tutor/messages",
           icon: MessageSquare,

@@ -2,60 +2,36 @@
 
 import { useMemo, useState } from "react";
 import { EARNING_SESSIONS } from "../data/earnings.mock";
-import type {
-  EarningsPeriod,
-  SettlementStatus,
-} from "../types/earnings.types";
-import { isInPeriod } from "../utils/earnings.utils";
+import type { EarningsPeriod, SettlementFilter } from "../types/earnings.types";
+import { filterEarningSessions } from "../utils/earnings.utils";
 
-export type SettlementFilter = "all" | SettlementStatus;
+const PAGE_SIZE = 6;
+// Anchor the demo to its latest session rather than pretending mock data is live.
+const REFERENCE_DATE = EARNING_SESSIONS[0]?.taughtAt.slice(0, 10) ?? "2026-08-22";
 
 export function useEarnings() {
-  const [period, setPeriod] = useState<EarningsPeriod>("month");
-  const [referenceDate, setReferenceDate] = useState("2026-08-22");
-  const [status, setStatus] = useState<SettlementFilter>("all");
-  const [search, setSearch] = useState("");
-
-  const filteredSessions = useMemo(() => {
-    const normalizedSearch = search.trim().toLocaleLowerCase("vi");
-    const reference = new Date(`${referenceDate}T12:00:00+07:00`);
-
-    return EARNING_SESSIONS.filter((session) => {
-      const matchesPeriod = isInPeriod(session.taughtAt, period, reference);
-      const matchesStatus = status === "all" || session.settlementStatus === status;
-      const searchable = `${session.sessionCode} ${session.learnerName} ${session.className}`.toLocaleLowerCase("vi");
-      return matchesPeriod && matchesStatus && searchable.includes(normalizedSearch);
-    });
-  }, [period, referenceDate, search, status]);
-
-  const summary = useMemo(
-    () =>
-      filteredSessions.reduce(
-        (result, session) => {
-          result.total += session.fee;
-          result.sessionCount += 1;
-          if (session.settlementStatus === "settled") {
-            result.settled += session.fee;
-          } else {
-            result.pending += session.fee;
-          }
-          return result;
-        },
-        { total: 0, settled: 0, pending: 0, sessionCount: 0 },
-      ),
-    [filteredSessions],
-  );
+  const [period, updatePeriod] = useState<EarningsPeriod>("month");
+  const [referenceDate, updateDate] = useState(REFERENCE_DATE);
+  const [status, updateStatus] = useState<SettlementFilter>("all");
+  const [search, updateSearch] = useState("");
+  const [page, setPage] = useState(0);
+  const filteredSessions = useMemo(() => filterEarningSessions(EARNING_SESSIONS, {
+    period, referenceDate, status, search,
+  }), [period, referenceDate, status, search]);
+  const pageCount = Math.max(1, Math.ceil(filteredSessions.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount - 1);
 
   return {
-    period,
-    referenceDate,
-    status,
-    search,
-    filteredSessions,
-    summary,
-    setPeriod,
-    setReferenceDate,
-    setStatus,
-    setSearch,
+    period, referenceDate, status, search, filteredSessions,
+    pagedSessions: filteredSessions.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE),
+    totalFee: filteredSessions.reduce((total, session) => total + session.fee, 0),
+    page: currentPage, pageCount, setPage,
+    setPeriod(value: EarningsPeriod) { updatePeriod(value); setPage(0); },
+    setReferenceDate(value: string) { updateDate(value); setPage(0); },
+    setStatus(value: SettlementFilter) { updateStatus(value); setPage(0); },
+    setSearch(value: string) { updateSearch(value); setPage(0); },
+    resetFilters() {
+      updatePeriod("month"); updateDate(REFERENCE_DATE); updateStatus("all"); updateSearch(""); setPage(0);
+    },
   };
 }

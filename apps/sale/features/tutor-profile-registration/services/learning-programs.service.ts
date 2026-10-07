@@ -1,17 +1,18 @@
 import { z } from "zod";
 import { apiClient } from "@workspace/core/configs/client";
+import { learningCatalogIdSchema } from "../data/learning-catalog-id.schema";
 
 const learningCatalogItemSchema = z
   .object({
-    id: z.string().uuid(),
+    id: learningCatalogIdSchema,
     code: z.string().nullish(),
     name: z.string().nullish(),
     type: z.string().nullish(),
     status: z.string().nullish(),
-    programId: z.string().uuid().nullish(),
-    programVersionId: z.string().uuid().nullish(),
-    teachingItemId: z.string().uuid().nullish(),
-    contextId: z.string().uuid().nullish(),
+    programId: learningCatalogIdSchema.nullish(),
+    programVersionId: learningCatalogIdSchema.nullish(),
+    teachingItemId: learningCatalogIdSchema.nullish(),
+    contextId: learningCatalogIdSchema.nullish(),
   })
   .passthrough();
 
@@ -24,7 +25,7 @@ const learningProgramContextsResponseSchema = z.object({
   success: z.boolean(),
   data: z
     .object({
-      programVersionId: z.string().uuid(),
+      programVersionId: learningCatalogIdSchema,
       hasWithoutContext: z.boolean(),
       contexts: z.array(learningCatalogItemSchema),
     })
@@ -52,10 +53,12 @@ export const learningProgramsService = {
   async listTeachingItems(
     programId: string,
     programVersionId: string,
-    contextSelection: string,
+    contextSelection = "",
   ): Promise<LearningCatalogItem[]> {
     const hasContext =
-      contextSelection !== "__none__" && contextSelection !== "__proposal__";
+      Boolean(contextSelection) &&
+      contextSelection !== "__none__" &&
+      contextSelection !== "__proposal__";
     const path = hasContext
       ? `/learning-programs/${programId}/contexts/${contextSelection}/teaching-items`
       : `/learning-programs/${programId}/teaching-items`;

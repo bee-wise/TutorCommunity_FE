@@ -21,7 +21,7 @@ const SLOT_LABELS: Record<string, string> = {
 };
 
 export function CompletedScreen() {
-  const { session, state } = useTutorOnboardingViewModel();
+  const { session, state, isPreview } = useTutorOnboardingViewModel();
   const { profile, bankInfo, weeklyAvailability } = state;
 
   const availabilitySummary = Object.entries(weeklyAvailability)
@@ -71,12 +71,12 @@ export function CompletedScreen() {
               <p className="text-lg font-bold text-foreground">
                 {session.user.fullName}
               </p>
-              <p className="text-sm text-muted-foreground">{profile.headline}</p>
+              {isPreview && <p className="text-sm text-muted-foreground">{profile.headline}</p>}
             </div>
           </div>
 
           {/* Profile details */}
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          {isPreview && <div className="mt-5 grid gap-3 sm:grid-cols-2">
             <ProfileRow label="Môn dạy" value={profile.subjects.join(", ")} />
             <ProfileRow label="Học vấn" value={profile.education} />
             <ProfileRow
@@ -84,10 +84,10 @@ export function CompletedScreen() {
               value={profile.experience}
               fullWidth
             />
-          </div>
+          </div>}
 
           {/* Availability summary */}
-          {availabilitySummary && (
+          {isPreview && availabilitySummary && (
             <div className="mt-4 rounded-xl bg-muted p-4">
               <p className="text-xs font-bold text-primary">Lịch rảnh đã thiết lập</p>
               <p className="mt-1 text-sm text-foreground/80">{availabilitySummary}</p>
@@ -95,14 +95,14 @@ export function CompletedScreen() {
           )}
 
           {/* Bank info (masked) */}
-          <div className="mt-3 rounded-xl bg-muted p-4">
+          {isPreview ? <div className="mt-3 rounded-xl bg-muted p-4">
             <p className="text-xs font-bold text-primary">Ngân hàng nhận thanh toán</p>
             <p className="mt-1 text-sm text-foreground/80">
               {bankInfo.bankName} – TK:{" "}
               {"•".repeat(Math.max(0, bankInfo.accountNumber.length - 4))}
               {bankInfo.accountNumber.slice(-4)}
             </p>
-          </div>
+          </div> : <p className="mt-5 rounded-xl bg-secondary/10 p-4 text-sm text-secondary">Thông tin ngân hàng và lịch rảnh của bạn đã được lưu trên hệ thống.</p>}
         </div>
 
         {/* CTA sidebar */}

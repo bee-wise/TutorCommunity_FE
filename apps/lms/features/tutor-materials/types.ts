@@ -1,8 +1,5 @@
 export type MaterialSource = "ai" | "upload";
 export type LibraryMaterialStatus = "draft" | "published" | "hidden";
-export type MaterialCoverageFilter = "all" | "missing" | "complete";
-export type MaterialSourceFilter = "all" | MaterialSource;
-export type LibraryMaterialStatusFilter = "all" | LibraryMaterialStatus;
 
 export interface Learner {
   id: string;
@@ -32,15 +29,6 @@ export interface TutorMaterial {
   fileType: "PDF" | "DOCX" | "PPTX" | "BEEWISE";
   fileSize?: string;
   updatedAt: string;
-}
-
-export interface LearnerMaterialSummary {
-  learner: Learner;
-  subjects: string[];
-  sessionCount: number;
-  materialCount: number;
-  missingMaterialCount: number;
-  latestSessionAt: string;
 }
 
 export interface AIAnalyzeRequest {

@@ -11,8 +11,6 @@ import { Button } from "@workspace/ui/components/ui/button";
 import type { TutorProfileFormValues } from "../schemas/profile-registration.schema";
 import { STUDENT_YEAR_OPTIONS } from "../constants/student-year.constants";
 import { CatalogSelect } from "./CatalogSelect";
-import { AvailabilityTimeRangeField } from "./AvailabilityTimeRangeField";
-import { BankInformationField } from "./BankInformationField";
 import { BirthDatePicker } from "./BirthDatePicker";
 import { TeachingOfferingsFields } from "./TeachingOfferingsFields";
 import { TeachingAreaFields } from "./TeachingAreaFields";
@@ -420,17 +418,12 @@ export function IntroductionSection() {
   );
 }
 
-export function AvailabilityAndVerificationSection() {
+export function TeachingAreaAndVerificationSection() {
   const {
     register,
     control,
     formState: { errors },
   } = useFormContext<TutorProfileFormValues>();
-  const availability = useFieldArray({
-    control,
-    name: "availability",
-    keyName: "fieldKey",
-  });
   const teachingHistory = useFieldArray({
     control,
     name: "teachingHistory",
@@ -441,75 +434,10 @@ export function AvailabilityAndVerificationSection() {
   return (
     <div className="space-y-5">
       <SectionHeading
-        title="Khu vực, lịch dạy và xác minh"
+        title="Khu vực và xác minh"
         description="Thông tin xác minh được bảo mật và chỉ dùng để xét duyệt hồ sơ."
       />
       <TeachingAreaFields required={requiresTeachingArea} />
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="font-bold text-foreground">Lịch có thể dạy</h3>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              availability.append({ day: "MONDAY", time: "18:00-20:00" })
-            }
-          >
-            <Plus /> Thêm khung giờ
-          </Button>
-        </div>
-        {availability.fields.length === 0 ? (
-          <p className="rounded-xl bg-muted p-4 text-sm text-muted-foreground">
-            Chưa có lịch dạy. Bạn có thể bổ sung sau.
-          </p>
-        ) : null}
-        {availability.fields.map((item, index) => (
-          <div
-            key={item.fieldKey}
-            className="grid gap-3 sm:grid-cols-[minmax(160px,0.7fr)_minmax(280px,1.3fr)_auto] sm:items-end"
-          >
-            <Controller control={control} name={`availability.${index}.day`} render={({ field }) => (
-              <ProfileSelect
-                label={`Thứ trong tuần, khung giờ ${index + 1}`}
-                value={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                placeholder="Chọn thứ"
-                options={[
-                  { value: "MONDAY", label: "Thứ Hai" },
-                  { value: "TUESDAY", label: "Thứ Ba" },
-                  { value: "WEDNESDAY", label: "Thứ Tư" },
-                  { value: "THURSDAY", label: "Thứ Năm" },
-                  { value: "FRIDAY", label: "Thứ Sáu" },
-                  { value: "SATURDAY", label: "Thứ Bảy" },
-                  { value: "SUNDAY", label: "Chủ Nhật" },
-                ]}
-              />
-            )} />
-            <Controller
-              control={control}
-              name={`availability.${index}.time`}
-              render={({ field }) => (
-                <AvailabilityTimeRangeField
-                  value={field.value}
-                  error={errors.availability?.[index]?.time?.message}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => availability.remove(index)}
-              aria-label="Xóa khung giờ"
-            >
-              <Trash />
-            </Button>
-          </div>
-        ))}
-      </div>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
@@ -595,21 +523,6 @@ export function AvailabilityAndVerificationSection() {
             </div>
           </div>
         ))}
-      </div>
-      <div className="grid gap-1.5">
-        <p className="text-sm font-semibold text-foreground">
-          Thông tin ngân hàng
-        </p>
-        <Controller
-          control={control}
-          name="bankInformation"
-          render={({ field }) => (
-            <BankInformationField
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
       </div>
     </div>
   );

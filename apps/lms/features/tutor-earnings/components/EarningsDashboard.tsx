@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Info, MicrosoftExcelLogo } from "@phosphor-icons/react";
+import { DownloadSimple } from "@phosphor-icons/react";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
 import { EARNINGS_REPORTS } from "../data/earnings.mock";
 import { useEarnings } from "../hooks/useEarnings";
@@ -9,130 +9,55 @@ import type { EarningSession, EarningsReport } from "../types/earnings.types";
 import { exportEarningsToExcel } from "../utils/earnings.utils";
 import { EarningDetailDialog } from "./EarningsDialogs";
 import { EarningsReportsPanel } from "./EarningsReportsPanel";
-import { EarningsSummaryCards } from "./EarningsSummaryCards";
 import { EarningsTable } from "./EarningsTable";
 import { EarningsToolbar } from "./EarningsToolbar";
 import { ReportIssueDialog } from "./ReportIssueDialog";
+import { outlineActionClass, primaryActionClass } from "./earnings-ui";
 
 export function EarningsDashboard() {
   const earnings = useEarnings();
-  const [selectedSession, setSelectedSession] = useState<EarningSession | null>(
-    null,
-  );
+  const [view, setView] = useState<"sessions" | "reports">("sessions");
+  const [selectedSession, setSelectedSession] = useState<EarningSession | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reports, setReports] = useState<EarningsReport[]>(EARNINGS_REPORTS);
-
-  function openDetail(session: EarningSession) {
-    setSelectedSession(session);
-    setDetailOpen(true);
-  }
-
-  function openReport(session: EarningSession) {
-    setSelectedSession(session);
-    setReportOpen(true);
-  }
-
+  function openDetail(session: EarningSession) { setSelectedSession(session); setDetailOpen(true); }
+  function openReport(session: EarningSession) { setSelectedSession(session); setReportOpen(true); }
   function submitReport(title: string, description: string) {
     if (!selectedSession) return;
-    const newReport: EarningsReport = {
-      id: `report-${Date.now()}`,
-      reportCode: `BC-${new Date().getDate().toString().padStart(2, "0")}${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${(reports.length + 1).toString().padStart(3, "0")}`,
-      sessionId: selectedSession.id,
-      title,
-      description,
-      createdAt: new Date().toISOString(),
-      status: "received",
-    };
-    setReports((current) => [newReport, ...current]);
+    const id = crypto.randomUUID();
+    setReports((current) => [{ id, reportCode: `BC-${id.slice(0, 8).toUpperCase()}`, sessionId: selectedSession.id, title, description, createdAt: new Date().toISOString(), status: "received" }, ...current]);
     setReportOpen(false);
-    toast.success("Đã gửi báo cáo", {
-      description:
-        "Admin đã tiếp nhận và sẽ phản hồi trong danh sách đơn báo cáo.",
-    });
+    setView("reports");
+    toast.success("Đã tạo đơn báo cáo (mock)", { description: "Đơn lưu trong phiên hiện tại. Chưa kết nối hệ thống admin." });
   }
-
   function handleExport() {
-    exportEarningsToExcel(earnings.filteredSessions);
-    toast.success("Đã xuất file Excel", {
-      description: `${earnings.filteredSessions.length} buổi học đã được đưa vào báo cáo.`,
-    });
+    try {
+      exportEarningsToExcel(earnings.filteredSessions);
+      toast.success("Đã xuất báo cáo Excel", { description: `${earnings.filteredSessions.length} buổi phù hợp bộ lọc, bao gồm tất cả các trang.` });
+    } catch {
+      toast.error("Không thể xuất báo cáo", { description: "Vui lòng thử lại." });
+    }
   }
-
   return (
-    <div className="min-h-full bg-[#F8FAFC]">
-      <div className="mx-auto max-w-[1400px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h1 className="text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
-              Thu nhập & Thanh toán
-            </h1>
-            <p className="mt-1.5 max-w-2xl text-sm text-muted-foreground">
-              Theo dõi học phí từng buổi đã dạy, trạng thái quyết toán và các
-              yêu cầu hỗ trợ.
-            </p>
-          </div>
-          <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#DCE8FB] bg-white px-3.5 py-2 text-xs text-muted-foreground shadow-sm">
-            <MicrosoftExcelLogo
-              size={19}
-              weight="duotone"
-              className="text-[#447353]"
-              aria-hidden="true"
-            />
-            Báo cáo Excel áp dụng đúng bộ lọc đang chọn
-          </div>
+    <div className="min-h-full bg-background">
+      <div className="mx-auto max-w-[1400px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
+        <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div><p className="mb-2 text-xs font-bold text-muted-foreground">ĐỐI SOÁT GIA SƯ · DỮ LIỆU MINH HỌA</p><h1 className="font-nunito text-2xl font-extrabold leading-relaxed text-primary sm:text-3xl">Thu nhập & Thanh toán</h1><p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">Theo dõi từng buổi đã dạy, trạng thái quyết toán và yêu cầu hỗ trợ.</p></div>
+          {view === "sessions" && <div className="flex flex-col items-start gap-2 md:items-end"><button type="button" onClick={handleExport} disabled={!earnings.filteredSessions.length} className={primaryActionClass}><DownloadSimple size={18} weight="bold" aria-hidden="true" />Xuất Excel</button><p className="text-xs text-muted-foreground">Xuất toàn bộ kết quả theo bộ lọc</p></div>}
         </header>
-
-        <EarningsSummaryCards summary={earnings.summary} />
-
-        <div className="flex items-start gap-2 rounded-xl border border-[#FFC500]/35 bg-[#FFC500]/10 px-3.5 py-3 text-sm text-[#905B0F]">
-          <Info
-            className="mt-0.5 shrink-0"
-            size={18}
-            weight="bold"
-            aria-hidden="true"
-          />
-          <p>
-            Hệ thống quyết toán các buổi hợp lệ theo chu kỳ. Buổi đang kiểm tra
-            sẽ được cập nhật sau khi admin xác minh.
-          </p>
+        <div role="group" aria-label="Chọn mục đối soát" className="flex flex-wrap gap-2">
+          <button type="button" aria-pressed={view === "sessions"} onClick={() => setView("sessions")} className={view === "sessions" ? primaryActionClass : outlineActionClass}>Thu nhập theo buổi</button>
+          <button type="button" aria-pressed={view === "reports"} onClick={() => setView("reports")} className={view === "reports" ? primaryActionClass : outlineActionClass}>Đơn báo cáo ({reports.length})</button>
         </div>
-
-        <EarningsToolbar
-          period={earnings.period}
-          referenceDate={earnings.referenceDate}
-          status={earnings.status}
-          search={earnings.search}
-          exportDisabled={earnings.filteredSessions.length === 0}
-          onPeriodChange={earnings.setPeriod}
-          onReferenceDateChange={earnings.setReferenceDate}
-          onStatusChange={earnings.setStatus}
-          onSearchChange={earnings.setSearch}
-          onExport={handleExport}
-        />
-
-        <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
-          <EarningsTable
-            sessions={earnings.filteredSessions}
-            onViewDetail={openDetail}
-            onReport={openReport}
-          />
-          <EarningsReportsPanel reports={reports} />
-        </div>
+        {view === "sessions" ? <div className="space-y-5">
+          <EarningsToolbar period={earnings.period} referenceDate={earnings.referenceDate} status={earnings.status} search={earnings.search} onPeriodChange={earnings.setPeriod} onReferenceDateChange={earnings.setReferenceDate} onStatusChange={earnings.setStatus} onSearchChange={earnings.setSearch} />
+          <EarningsTable sessions={earnings.pagedSessions} totalCount={earnings.filteredSessions.length} totalFee={earnings.totalFee} page={earnings.page} pageCount={earnings.pageCount} onPageChange={earnings.setPage} onResetFilters={earnings.resetFilters} onViewDetail={openDetail} onReport={openReport} />
+          <p className="max-w-3xl text-xs leading-relaxed text-muted-foreground">Thu nhập áp dụng mức phí đã chốt trước mỗi buổi hoàn thành. “Đang kiểm tra” là khoản chờ admin xác minh, không đồng nghĩa đã quyết toán.</p>
+        </div> : <EarningsReportsPanel reports={reports} />}
       </div>
-
-      <EarningDetailDialog
-        session={selectedSession}
-        open={detailOpen}
-        onOpenChange={setDetailOpen}
-        onReport={openReport}
-      />
-      <ReportIssueDialog
-        session={selectedSession}
-        open={reportOpen}
-        onOpenChange={setReportOpen}
-        onSubmit={submitReport}
-      />
+      <EarningDetailDialog session={selectedSession} open={detailOpen} onOpenChange={setDetailOpen} onReport={openReport} />
+      <ReportIssueDialog key={selectedSession?.id ?? "no-session"} session={selectedSession} open={reportOpen} onOpenChange={setReportOpen} onSubmit={submitReport} />
     </div>
   );
 }

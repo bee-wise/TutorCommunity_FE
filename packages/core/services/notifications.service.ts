@@ -27,6 +27,9 @@ const notificationListResponseSchema = z.object({
 });
 
 const successResponseSchema = z.object({ success: z.literal(true) });
+const mutationResponseSchema = successResponseSchema.extend({
+  data: z.object({ affectedCount: z.number().int().nonnegative() }),
+});
 
 export type Notification = z.infer<typeof notificationSchema>;
 export type NotificationPage = z.infer<typeof notificationPageSchema>;
@@ -52,5 +55,27 @@ export const notificationsService = {
     if (!successResponseSchema.safeParse(response).success) {
       throw new Error("Không thể đánh dấu thông báo đã đọc.");
     }
+  },
+
+  async markAllRead(): Promise<number> {
+    const response: unknown = await apiClient.put("/notifications/read-all");
+    return mutationResponseSchema.parse(response).data.affectedCount;
+  },
+
+  async deleteOne(id: string): Promise<void> {
+    const response: unknown = await apiClient.delete(`/notifications/${encodeURIComponent(id)}`);
+    successResponseSchema.parse(response);
+  },
+
+  async deleteBatch(ids: string[]): Promise<number> {
+    const response: unknown = await apiClient.delete("/notifications/batch", {
+      data: { ids },
+    });
+    return mutationResponseSchema.parse(response).data.affectedCount;
+  },
+
+  async deleteAll(): Promise<number> {
+    const response: unknown = await apiClient.delete("/notifications");
+    return mutationResponseSchema.parse(response).data.affectedCount;
   },
 };

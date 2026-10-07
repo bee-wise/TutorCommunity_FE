@@ -1,0 +1,61 @@
+.card {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card, 1.5rem);
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: var(--bw-shadow-soft);
+  outline: none;
+}
+
+/* A separate shadow layer fades in without animating blur or layout. */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: var(--bw-shadow-soft-hover);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+
+.card:focus-visible::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    transition: transform 250ms ease-out;
+  }
+
+  .card::after {
+    transition: opacity 250ms ease-out;
+  }
+
+  .card:active {
+    transform: scale(0.985);
+  }
+}
+
+@media (hover: hover) {
+  .card:hover {
+    border-color: var(--primary);
+  }
+
+  .card:hover::after {
+    opacity: 1;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card:hover:not(:active) {
+    transform: translateY(-4px);
+  }
+}

@@ -1,44 +1,66 @@
+import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@workspace/core/configs/client";
-import type { ApiResponse } from "@workspace/core/types/api-response.type";
+import { ApiError } from "@workspace/core/sys-libs/error-handler";
 import { vietnamAdministrativeService } from "../../tutor-profile-registration/services/vietnam-administrative.service";
+import { learningProgramsService } from "../../tutor-profile-registration/services/learning-programs.service";
+import { learningProgramQueryKeys } from "../../tutor-profile-registration/hooks/useLearningProgramOptions";
 
-type CatalogOption = {
-  id: string;
-  name: string;
-  isApproved?: boolean;
-  sortOrder?: number | null;
-};
-
-async function listCatalog(resource: "subjects" | "grade_levels") {
-  const response = await apiClient.get<never, ApiResponse<CatalogOption[]>>(
-    `/${resource}`,
-    { params: { limit: 100 } },
-  );
-
-  return (response.data ?? [])
-    .filter((item) => item.isApproved !== false)
-    .sort((a, b) =>
-      (a.sortOrder ?? Number.MAX_SAFE_INTEGER) -
-        (b.sortOrder ?? Number.MAX_SAFE_INTEGER) ||
-      a.name.localeCompare(b.name, "vi"),
-    );
-}
-
-export function useTutorSearchOptions(enabled: boolean) {
-  const subjects = useQuery({
-    queryKey: ["tutor-search-options", "subjects"],
-    queryFn: () => listCatalog("subjects"),
+export function useTutorSearchOptions(
+  enabled: boolean,
+  programId: string | null,
+  contextId: string | null,
+  hasContext: boolean | null,
+) {
+  const refreshedVersionRef = useRef("");
+  const programs = useQuery({
+    queryKey: learningProgramQueryKeys.programs,
+    queryFn: learningProgramsService.listPrograms,
     enabled,
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
   });
 
-  const gradeLevels = useQuery({
-    queryKey: ["tutor-search-options", "grade-levels"],
-    queryFn: () => listCatalog("grade_levels"),
-    enabled,
-    staleTime: 24 * 60 * 60 * 1000,
+  const contexts = useQuery({
+    queryKey: learningProgramQueryKeys.contexts(programId ?? ""),
+    queryFn: () => learningProgramsService.listContexts(programId ?? ""),
+    enabled: enabled && Boolean(programId),
+    staleTime: 0,
+    retry: (failureCount, error) =>
+      !(error instanceof ApiError && error.statusCode === 404) && failureCount < 1,
   });
+
+  const programVersionId = contexts.data?.programVersionId ?? "";
+  const contextSelection = hasContext === false ? "__none__" : contextId ?? "";
+  const teachingItems = useQuery({
+    queryKey: learningProgramQueryKeys.teachingItems(
+      programId ?? "",
+      programVersionId,
+      contextSelection,
+    ),
+    queryFn: () =>
+      learningProgramsService.listTeachingItems(
+        programId ?? "",
+        programVersionId,
+        contextSelection,
+      ),
+    enabled: enabled && Boolean(programId && programVersionId),
+    staleTime: 5 * 60 * 1000,
+    retry: (failureCount, error) =>
+      !(error instanceof ApiError && error.statusCode === 409) && failureCount < 1,
+  });
+
+  const refetchContexts = contexts.refetch;
+  useEffect(() => {
+    if (
+      !(teachingItems.error instanceof ApiError) ||
+      teachingItems.error.statusCode !== 409 ||
+      !programId ||
+      !programVersionId
+    ) return;
+    const versionKey = `${programId}:${programVersionId}`;
+    if (refreshedVersionRef.current === versionKey) return;
+    refreshedVersionRef.current = versionKey;
+    void refetchContexts();
+  }, [programId, programVersionId, refetchContexts, teachingItems.error]);
 
   const provinces = useQuery({
     queryKey: ["vietnam-administrative", "v2", "provinces"],
@@ -47,5 +69,5 @@ export function useTutorSearchOptions(enabled: boolean) {
     staleTime: 24 * 60 * 60 * 1000,
   });
 
-  return { subjects, gradeLevels, provinces };
+  return { programs, contexts, teachingItems, provinces };
 }

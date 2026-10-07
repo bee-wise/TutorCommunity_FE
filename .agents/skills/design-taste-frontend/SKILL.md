@@ -154,11 +154,20 @@ Unless the design read picks a real design system (Section 2.A), these are the d
 
 ### 3.C Icons
 
+- **Icon Overflow Menu (Mandatory - Gom icon khi quá nhiều):** If a card, row, toolbar, or screen area has too many action icons to scan comfortably, or the controls become cramped at a responsive breakpoint, consolidate secondary actions into one compact overflow-menu icon (`DotsThree` / ellipsis) instead of showing every icon on the screen. Keep the primary action visible; do not hide essential warnings, status indicators, or required navigation in the menu. Remove purely decorative icons rather than moving them into it.
+  - The trigger must have an accessible contextual label such as “Thêm thao tác cho [item]”, a visible focus ring, and a touch target of at least 44px. Menu items use clear text labels; icons inside the menu are optional, not required on every item.
+  - Use the project's existing accessible menu component with keyboard navigation, Escape-to-close, focus return, disabled states, and viewport-safe positioning. Keep destructive actions separated and retain their confirmation flow. Apply the same grouping on mobile without dropping actions.
 - **Allowed libraries (priority order):** `@phosphor-icons/react`, `hugeicons-react`, `@radix-ui/react-icons`, `@tabler/icons-react`.
 - **Discouraged:** `lucide-react`. Acceptable only when the user explicitly asks for it or the project already depends on it.
 - **NEVER hand-roll SVG icons.** If a glyph is missing, install a second library or compose from primitives - do not draw icon paths from scratch.
 - **One family per project.** Do not mix Phosphor with Lucide in the same component tree.
 - **Standardize `strokeWidth` globally** (e.g. `1.5` or `2.0`).
+- **Icon Sizing Scale (Compact & Proportional):**
+  - **Inline & Button icons:** Compact `16px` to `18px` (`w-4 h-4` / `size={16}` or `w-4.5 h-4.5` / `size={18}`). Never use oversized `24px+` (`w-6 h-6`) icons inside buttons or inline copy.
+  - **Dedicated Icon Containers (Tiles, Badges, Meta blocks):** Compact `32px` to `36px` (`h-8 w-8` or `h-9 w-9` rounded-xl) with `16-18px` inner icon. Avoid bulky 48px+ containers for secondary info.
+- **UPWARD ARROW BAN (Mandatory - Cấm icon mũi tên chỉ lên):**
+  - **Strictly BANNED:** Upward or diagonal-up arrow icons (`ArrowUp`, `ArrowUpRight`, `NorthEastArrow`, `ArrowSquareOut` pointing top-right). Do not auto-inject upward arrow icons into buttons, links, or CTA cards.
+  - **Permitted directional icons:** Compact `ArrowRight` (for forward navigation CTAs) and `CaretDown` / `ChevronDown` (for dropdowns / expandables).
 
 ### 3.D Emoji Policy
 
@@ -331,6 +340,18 @@ LLMs default to clichés. Override these defaults proactively. Each rule has a c
 >
 > **BeeWise Tutor Card rules:** Equal-height cards in a grid or carousel. Large 1:1 avatar at the top or left (squircle or circle). Max 2-line title. Rating row with an amber star and a `bg-secondary` verified badge. Price in Nunito 800, `text-primary`, VND format (`450.000đ/giờ`). CTA pinned to the card bottom as a pill. Whole card is the click target with a visible focus ring. Hover per the elevation rule. Skeleton loader matches the card shape. No primary-colored shadow halo.
 
+> **BeeWise Card Purpose & Information Hierarchy Contract (mandatory for every future card):** Design each card from its **user purpose**, never from visual preference, habit, or an assumed card template. Before choosing layout, spacing, badges, icons, stats, or CTAs, identify the one primary question the card must answer or the one action it must enable. Then organize content strictly around that purpose. Do **not** invent extra information, metrics, labels, actions, or decorative emphasis just to make the card feel complete. If the purpose is genuinely unclear from the brief, ask one clarification instead of guessing.
+>
+> - **Primary information must be unmistakable:** the object the user is identifying or comparing (for example class name, tutor name, booking time, payment amount) gets the strongest typographic hierarchy and must be scannable first.
+> - **Status must read as status:** active, pending, completed, verified, warning, error, or other semantic state must use the correct semantic treatment and must not look like ordinary metadata.
+> - **Critical information must look critical:** anything that changes the user's next decision or requires attention must be visually prominent through hierarchy, weight, semantic color, icon, placement, or dedicated space. Never bury a warning, next session, due payment, deadline, unavailable state, or required action inside low-contrast body text.
+> - **Supporting metadata stays subordinate:** IDs, subject, level, counts, dates, secondary descriptions, and other context must not compete with the primary object unless the specific card purpose makes them decision-critical.
+> - **Actions must reflect the card's purpose:** the primary CTA is the clearest action the user is expected to take from that card. Do not add multiple competing CTAs or generic actions. If no action is required, do not force a button into the card.
+> - **Hierarchy must survive a 2-second scan:** a user should be able to tell what the card is about, its important state, and what needs attention without reading every line. If all text, badges, metrics, and controls have similar visual weight, the card fails.
+> - **Same card type, same hierarchy:** cards representing the same entity type must preserve the same information order and emphasis across states. Change the semantic state and relevant action, not the entire reading pattern.
+>
+> **Agent rule:** Never "improve" a card by freely rearranging content or adding UI patterns based on taste alone. Every placement, emphasis, badge, metric, divider, icon, and CTA must be traceable to the card's stated purpose and user task. **If something deserves emphasis, make it visibly dominant. If it does not affect identification, decision, attention, or action, keep it secondary.**
+
 ### 4.5 Interactive UI States
 
 LLMs default to "static successful state only." Always implement full cycles:
@@ -347,8 +368,14 @@ LLMs default to "static successful state only." Always implement full cycles:
 ### 4.6 Data & Form Patterns & Custom Form Controls
 
 - **ZERO BROWSER DEFAULT CONTROLS (Mandatory Ban):**
-  - Raw, unstyled HTML browser controls (`<select>`, `<input type="checkbox">`, `<input type="radio">`, `<input type="range">`, `<input type="file">`) are **STRICTLY BANNED**. Never ship the default operating system controls (blue OS checkbox, gray OS radio circle, native OS dropdown select box).
-  - Every form control MUST be custom-styled to match the project's design system tokens, typography, border-radius scale, and focus states.
+  - Raw, unstyled HTML browser controls (`<select>`, `<input type="checkbox">`, `<input type="radio">`, `<input type="range">`, `<input type="file">`, unstyled `<details><summary>` disclosure triangles `▶`) are **STRICTLY BANNED**. Never ship default operating system controls or raw browser triangle markers.
+  - Every form control and disclosure element MUST be custom-styled to match the project's design system tokens, typography, border-radius scale, and focus states.
+
+- **Custom Accordion / Collapsible / Details Disclosure (Mandatory Modern Styling):**
+  - **STRICT BAN ON BROWSER TRIANGLE MARKER (`▶`):** Never let the native browser triangle marker render before a heading. Always hide default markers with `list-none [&::-webkit-details-marker]:hidden` on `<summary>`.
+  - **Trigger Structure:** Style `<summary>` as an interactive clean header (`flex items-center justify-between cursor-pointer select-none py-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl group`).
+  - **Trailing Chevron:** Place a compact `CaretDown` / `ChevronDown` (size 16px, subtle) on the **right-hand side (trailing)** with smooth rotation on open (`transition-transform duration-200 group-open:rotate-180 text-muted-foreground`).
+  - **Leading Semantic Icon (Optional):** If a leading icon is used, use a context-relevant semantic icon (e.g. `CalendarBlank` for schedules, `BookOpen` for courses) in a compact rounded container (`w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0`), NEVER a bare solid triangle `▶`.
 
 - **Custom Select / Dropdown:**
   - **Every select generated from now on must be a custom control.** Reuse the project's shared Select / Combobox component when available; otherwise build a reusable one with accessible primitives such as Radix UI or Headless UI. Styling only the border or trigger of a visible native `<select>` with `appearance-none` does not satisfy this rule because the opened option menu remains browser-default.
@@ -564,7 +591,8 @@ Amber:     same shape, bg-accent text-accent-foreground, shadow-[inset_0_1px_0_r
 Secondary: h-12 rounded-full border-2 border-primary bg-background px-6 font-bold text-primary hover:-translate-y-0.5
 ```
 
-- Trailing arrow icon (Phosphor `ArrowRight`, `bold`) slides `group-hover:translate-x-0.5`.
+- Trailing arrow icon (compact Phosphor `ArrowRight` size 16-18px `w-4 h-4`, `bold`) slides `group-hover:translate-x-0.5`.
+- **Cấm tuyệt đối icon mũi tên chỉ lên hoặc xiên lên** (`ArrowUp`, `ArrowUpRight`, `ArrowSquareOut` xiên chéo lên) trên buttons và CTAs.
 - Hero and nav: one primary per view. One label per intent (Section 4.5).
 - Large touch target: `h-12` minimum on mobile, `h-14` allowed for hero CTA.
 - No hard offset "block" shadows and no new border-bottom colors; the look stays soft and inside the palette.
@@ -614,7 +642,7 @@ Compose clusters of 3-7 `.bw-hex` elements at different sizes (CSS `clip-path`, 
 
 **L. Icons**
 
-Phosphor, `bold` weight everywhere (one weight per project, Section 3.C). Icons sit in solid-filled rounded squares or hexagons (`bg-primary` + `text-primary-foreground`, or `bg-accent` + `text-accent-foreground`), 40-48px containers. Bare thin line icons on white look dated.
+Phosphor, `bold` weight everywhere (one weight per project, Section 3.C). Icons sit in solid-filled rounded squares or hexagons (`bg-primary` + `text-primary-foreground`, or `bg-accent` + `text-accent-foreground`), compact **32-36px containers (`h-8 w-8` đến `h-9 w-9`)** with **16-18px inner icon size** (tránh container to thô 48px). Bare thin line icons on white look dated. Cấm toàn bộ icon mũi tên chỉ lên (`ArrowUp`, `ArrowUpRight`).
 
 **M. Motion recipe (`MOTION_INTENSITY` 6 on landing, 5 on marketplace)**
 
@@ -934,6 +962,8 @@ Avoid these signatures unless the brief explicitly asks for them.
 ### 9.E External Resources & Components
 
 - **NO hand-rolled SVG icons.** Use Phosphor / HugeIcons / Radix / Tabler. Lucide on explicit request only
+- **NO upward arrow icons (`ArrowUp`, `ArrowUpRight`).** Banned on buttons, links, cards, and CTA containers.
+- **NO oversized icons.** Icons must be compact (16-18px inline, 32-36px containers) so they do not overpower typography.
 - **Hand-rolled decorative SVGs strongly discouraged** as default (see Section 4.8). Supplied brand assets such as the BeeWise mascot are not hand-rolled and are allowed per Section 4.12.J.
 - **NO div-based fake screenshots.** Never build a fake product UI out of `<div>` rectangles to simulate a screenshot. Use real images, generated images, or skip the preview.
 - **NO broken Unsplash links.** Use `https://picsum.photos/seed/{descriptive-string}/{w}/{h}`, or generated photo placeholders, or actual assets.
@@ -1331,6 +1361,8 @@ Run this matrix before outputting code. This is the last filter.
 - [ ] **Empty / loading / error** states provided?
 - [ ] **Cards omitted** in favor of spacing where possible?
 - [ ] **Icons** from an allowed library only (Phosphor / HugeIcons / Radix / Tabler), no hand-rolled SVG paths?
+- [ ] **Icon overflow**: crowded action-icon clusters are consolidated into one accessible overflow menu (Section 3.C), with the primary action visible and no essential warnings/status/navigation hidden?
+- [ ] **Icon size compact & no upward arrows**: inline/button icon size 16-18px (`w-4 h-4`), icon container 32-36px (`h-8 w-8` to `h-9 w-9`), ZERO upward arrow icons (`ArrowUp`, `ArrowUpRight`) on buttons/links/cards?
 - [ ] **Motion** isolated in client-leaf components with `'use client'` at the top, memoized?
 - [ ] **No AI Tells** from Section 9 (Inter as default, AI-purple, three-equal cards, Jane Doe, Acme, "Quietly in use at")?
 - [ ] **Core Web Vitals** plausibly hit (LCP < 2.5s, INP < 200ms, CLS < 0.1)?
