@@ -1,4 +1,4 @@
-.welcome {
+.nextSession {
   container-type: inline-size;
 }
 
@@ -6,82 +6,17 @@
   display: none;
 }
 
-/* Use the panel width, not the viewport: the LMS sidebar reduces usable space. */
-@container (min-width: 640px) {
-  .welcomeContent {
-    padding-right: 240px;
+/* Measure the panel: the LMS sidebar reduces usable width. */
+@container (min-width: 520px) {
+  .nextContent {
+    padding-right: 160px;
   }
 
   .mascot {
     display: block;
-    right: 16px;
-    width: 220px;
-    height: 220px;
-  }
-}
-
-@container (min-width: 1000px) {
-  .welcomeContent {
-    padding-right: 280px;
-  }
-
-  .mascot {
-    right: 32px;
-    width: 260px;
-    height: 260px;
-  }
-}
-
-.action {
-  transition: transform 250ms var(--ease-soft);
-}
-
-.action:focus-visible,
-.textLink:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 4px;
-}
-
-.interactive {
-  position: relative;
-  isolation: isolate;
-  transition: transform 250ms var(--ease-soft);
-}
-
-.interactive::before {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  box-shadow: var(--bw-shadow-soft-hover);
-  opacity: 0;
-  content: "";
-  pointer-events: none;
-  transition: opacity 250ms var(--ease-soft);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .action:hover {
-    transform: translateY(-2px);
-  }
-
-  .action:active {
-    transform: translateY(1px) scale(0.98);
-  }
-
-  .interactive:hover {
-    transform: translateY(-4px);
-  }
-}
-
-.interactive:hover::before {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .action,
-  .interactive,
-  .interactive::before {
-    transition: none;
+    right: 8px;
+    bottom: 0;
+    width: 160px;
+    height: 160px;
   }
 }

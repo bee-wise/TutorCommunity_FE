@@ -1,2 +1,2 @@
-import { ClassMaterialsSkeleton } from "@/features/tutor-materials/components/ClassMaterialsSkeleton";
-export default function Loading() { return <ClassMaterialsSkeleton />; }
+import { MaterialLibrarySkeleton } from "@/features/tutor-materials/components/MaterialLibrarySkeleton";
+export default function Loading() { return <MaterialLibrarySkeleton />; }

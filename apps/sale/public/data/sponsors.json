@@ -1,0 +1,11 @@
+[
+  {
+    "id": "fptu",
+    "name": "Trường Đại Học FPT",
+    "logoUrl": "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787134517/2021-FPTU-Long.png",
+    "websiteUrl": "https://daihoc.fpt.edu.vn",
+    "description": "Đơn vị tài trợ chính thức",
+    "isActive": true,
+    "order": 1
+  }
+]

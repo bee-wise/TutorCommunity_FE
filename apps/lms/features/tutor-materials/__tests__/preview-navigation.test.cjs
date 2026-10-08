@@ -32,9 +32,9 @@ Module._load = function (request, parent, isMain) {
   if (request === "@workspace/ui/components/ui/dropdown-menu") {
     return {
       DropdownMenu: ({ children }) => React.createElement("div", { "data-slot": "dropdown-menu" }, children),
-      DropdownMenuTrigger: ({ children, asChild, ...props }) => React.createElement("button", props, children),
+      DropdownMenuTrigger: ({ children, asChild, ...props }) => asChild ? React.cloneElement(React.Children.only(children), props) : React.createElement("button", props, children),
       DropdownMenuContent: ({ children, ...props }) => React.createElement("div", { "data-slot": "dropdown-menu-content", ...props }, children),
-      DropdownMenuItem: ({ children, asChild, ...props }) => React.createElement("div", { "data-slot": "dropdown-menu-item", ...props }, children),
+      DropdownMenuItem: ({ children, asChild, ...props }) => asChild ? React.cloneElement(React.Children.only(children), { "data-slot": "dropdown-menu-item", ...props }) : React.createElement("div", { "data-slot": "dropdown-menu-item", ...props }, children),
       DropdownMenuSeparator: () => React.createElement("hr", { "data-slot": "dropdown-menu-separator" }),
     };
   }
@@ -56,7 +56,8 @@ const { AIReadyState } = require("../components/AIReadyState.tsx");
 const { MaterialPreviewShell } = require("../components/MaterialPreviewShell.tsx");
 const { ClassMaterialRow } = require("../components/ClassMaterialRow.tsx");
 const { MaterialClassCard } = require("../components/MaterialClassCard.tsx");
-const { MATERIAL_CLASSES, CLASS_SESSIONS } = require("../data/classroom.mock.ts");
+const { MATERIAL_CLASSES, CLASS_SESSIONS, CLASS_LEARNERS } = require("../data/classroom.mock.ts");
+const { getMaterialLibraryCard } = require("../utils/material-library.utils.ts");
 const { getPreviewReturnHref } = require("../utils/preview-navigation.utils.ts");
 const render = (component, props) => renderToStaticMarkup(React.createElement(component, props));
 
@@ -119,7 +120,7 @@ test("Back from the list does not reopen AI; Back from the AI modal restores it"
 test("class cards prioritize the title, retain status, and have a single keyboard navigation target", () => {
   for (const status of ["active", "upcoming", "completed"]) {
     const classInfo = { ...MATERIAL_CLASSES[0], status };
-    const html = render(MaterialClassCard, { classInfo, materials: [] });
+    const html = render(MaterialClassCard, getMaterialLibraryCard(classInfo, CLASS_LEARNERS, CLASS_SESSIONS, []));
     assert.equal((html.match(/<a /g) || []).length, 1);
     assert.match(html, /href="\/lms\/tutor\/materials\/classes\/class-ma-math"/);
     assert.match(html, /aria-label="Xem tài liệu lớp/);
@@ -135,9 +136,9 @@ test("class card attention notice disappears only when every completed session h
   const classInfo = MATERIAL_CLASSES[0];
   const sessions = CLASS_SESSIONS.filter((session) => session.classId === classInfo.id && session.completed);
   assert.ok(sessions.length > 0);
-  assert.match(render(MaterialClassCard, { classInfo, materials: [] }), /bg-accent[\s\S]*chưa có tài liệu đã xuất bản/);
+  assert.match(render(MaterialClassCard, getMaterialLibraryCard(classInfo, CLASS_LEARNERS, CLASS_SESSIONS, [])), /bg-accent[\s\S]*chưa có tài liệu đã xuất bản/);
   const materials = sessions.map((session, index) => ({ id: `published-${index}`, sessionId: session.id, classId: classInfo.id, status: "published" }));
-  assert.doesNotMatch(render(MaterialClassCard, { classInfo, materials }), /chưa có tài liệu đã xuất bản/);
+  assert.doesNotMatch(render(MaterialClassCard, getMaterialLibraryCard(classInfo, CLASS_LEARNERS, CLASS_SESSIONS, materials)), /chưa có tài liệu đã xuất bản/);
 });
 
 after(() => {

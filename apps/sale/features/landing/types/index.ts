@@ -27,3 +27,14 @@ export type FaqItem = {
   question: string;
   answer: string;
 };
+
+export type SponsorItem = {
+  id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl?: string;
+  description?: string;
+  isActive?: boolean;
+  order?: number;
+};
+
