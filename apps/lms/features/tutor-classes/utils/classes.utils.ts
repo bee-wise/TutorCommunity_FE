@@ -1,7 +1,9 @@
-import type { ClassFilters, ClassLearner, SessionAttendance, TutorClass, TutorClassSession } from "../types/classes.types";
+import type { ClassFilters, ClassLearner, SessionAttendance, TutorClass, TutorClassCardModel, TutorClassSession } from "../types/classes.types";
 
 const dateFormatter = new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Ho_Chi_Minh" });
+const dayFormatter = new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" });
 export function formatClassDate(value: string) { return dateFormatter.format(new Date(value)); }
+export function formatClassDay(value: string) { return dayFormatter.format(new Date(value)); }
 export function canMarkAttendance(classInfo: TutorClass, session: TutorClassSession) {
   return classInfo.id === session.classId && classInfo.status === "active" && (session.status === "ongoing" || session.status === "completed");
 }
@@ -18,4 +20,13 @@ export function filterTutorClasses(classes: readonly TutorClass[], learners: rea
 }
 export function attendanceStateLabel(record?: SessionAttendance) {
   return !record ? "Chưa điểm danh" : record.state === "draft" ? "Bản nháp điểm danh" : "Đã xác nhận điểm danh";
+}
+export function getTutorClassCardModel(classInfo: TutorClass, learners: readonly ClassLearner[], sessions: readonly TutorClassSession[], records: Readonly<Record<string, SessionAttendance>>): TutorClassCardModel {
+  const classSessions = sessions.filter((session) => session.classId === classInfo.id);
+  return {
+    classInfo,
+    learners: learners.filter((learner) => classInfo.learnerIds.includes(learner.id)),
+    sessionCount: classSessions.length,
+    attendancePendingCount: classSessions.filter((session) => canMarkAttendance(classInfo, session) && records[session.id]?.state !== "confirmed").length,
+  };
 }

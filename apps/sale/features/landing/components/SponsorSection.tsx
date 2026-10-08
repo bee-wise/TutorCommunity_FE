@@ -1,9 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { Handshake } from "@phosphor-icons/react";
+import { useSponsors } from "../hooks/useSponsors";
 
 export function SponsorSection() {
+  const { data: sponsors = [] } = useSponsors();
+
+  if (sponsors.length === 0) {
+    return null;
+  }
+
   return (
     <section
       className="py-12 sm:py-16 bg-muted/30 border-y border-border/60 relative overflow-hidden"
@@ -18,26 +24,59 @@ export function SponsorSection() {
           {/* Tag & Small Title */}
           <div className="flex flex-col items-center gap-2">
             <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
-              Đơn vị tài trợ
+              {sponsors.length > 1 ? "Đơn vị tài trợ & Đồng hành" : "Đơn vị tài trợ"}
             </span>
           </div>
 
-          {/* Sponsor Logo Card */}
-          <div className="group p-6 sm:p-8 rounded-3xl bg-card border border-border/80 shadow-xs hover:shadow-xl hover:border-primary/20 transition-all duration-300 flex flex-col items-center justify-center max-w-md w-full">
-            <div className="relative w-full h-16 sm:h-20 flex items-center justify-center">
-              <Image
-                src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1787134517/2021-FPTU-Long.png"
-                alt="Trường Đại Học FPT - Nhà tài trợ chính thức"
-                width={360}
-                height={120}
-                unoptimized
-                className="max-h-16 sm:max-h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                priority
-              />
-            </div>
+          {/* Dynamic Sponsors List */}
+          <div className="flex flex-wrap items-center justify-center gap-6 w-full max-w-4xl">
+            {sponsors.map((sponsor) => {
+              const CardContent = (
+                <div className="relative w-full h-16 sm:h-20 flex items-center justify-center p-2">
+                  <Image
+                    src={sponsor.logoUrl}
+                    alt={sponsor.name}
+                    width={360}
+                    height={120}
+                    unoptimized
+                    className="max-h-16 sm:max-h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                    priority
+                  />
+                </div>
+              );
+
+              const cardClasses =
+                "group p-6 sm:p-8 rounded-3xl bg-card border border-border/80 shadow-xs hover:shadow-xl hover:border-primary/20 transition-all duration-300 flex flex-col items-center justify-center min-w-[260px] max-w-md flex-1";
+
+              if (sponsor.websiteUrl) {
+                return (
+                  <a
+                    key={sponsor.id || sponsor.name}
+                    href={sponsor.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={sponsor.name}
+                    className={`${cardClasses} cursor-pointer active:scale-95`}
+                  >
+                    {CardContent}
+                  </a>
+                );
+              }
+
+              return (
+                <div
+                  key={sponsor.id || sponsor.name}
+                  title={sponsor.name}
+                  className={cardClasses}
+                >
+                  {CardContent}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
     </section>
   );
 }
+

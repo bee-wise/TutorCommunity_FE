@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const attendanceEntrySchema = z.object({
   learnerId: z.string().min(1),
-  status: z.enum(["unmarked", "present", "late", "absent", "excused"]),
+  status: z.enum(["unmarked", "present", "absent"]),
   note: z.string().trim().max(500, "Ghi chú không quá 500 ký tự."),
 }).strict();
 export const attendanceFormSchema = z.object({ entries: z.array(attendanceEntrySchema).min(1) });

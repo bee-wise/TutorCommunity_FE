@@ -1,41 +1,56 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { LmsSelect } from "@/components/LmsSelect";
-import { actionClass, inputClass, panelClass, primaryActionClass } from "@/components/lms-page-ui";
-import { TUTOR_CLASS_SESSIONS } from "../data/classes.mock";
-import { useAttendanceStore } from "../store/attendance.store";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { Button } from "@workspace/ui/components/ui/button";
+import { useClassSessions } from "../hooks/useClassSessions";
 import { SESSION_LABELS, type TutorClass, type TutorClassSession } from "../types/classes.types";
-import { canMarkAttendance, formatClassDate, normalizeClassSearch } from "../utils/classes.utils";
-import { AttendanceStateBadge, SessionStatusBadge } from "./ClassBadges";
+import { ClassFilterSelect } from "./ClassFilterSelect";
+import { ClassPagination } from "./ClassPagination";
+import { ClassSessionCard } from "./ClassSessionCard";
+import { classInput, classLabel, classOutlineButton, classPanel } from "./classes-ui";
 
-export function ClassSessionList({ classInfo, onAttendance }: { classInfo: TutorClass; onAttendance: (session: TutorClassSession) => void }) {
-  const records = useAttendanceStore((state) => state.records);
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("all");
-  const [attendance, setAttendance] = useState("all");
-  const [page, setPage] = useState(0);
-  const filtered = useMemo(() => TUTOR_CLASS_SESSIONS.filter((session) => session.classId === classInfo.id
-    && normalizeClassSearch(`${session.topic} ${session.id}`).includes(normalizeClassSearch(search))
-    && (status === "all" || session.status === status)
-    && (attendance === "all" || (attendance === "unmarked" ? !records[session.id] : records[session.id]?.state === attendance)))
-    .sort((a, b) => b.taughtAt.localeCompare(a.taughtAt)), [classInfo.id, search, status, attendance, records]);
-  const pageCount = Math.max(1, Math.ceil(filtered.length / 6));
-  const currentPage = Math.min(page, pageCount - 1);
-  return <section className={`${panelClass} space-y-4`} aria-labelledby="class-sessions-title">
-    <div><h2 id="class-sessions-title" className="font-nunito text-lg font-extrabold text-primary">Buổi học & điểm danh</h2><p className="mt-1 text-sm text-muted-foreground">{filtered.length} buổi phù hợp · Giờ Việt Nam</p></div>
-    <div className="grid gap-3 sm:grid-cols-2">
-      <label className="grid gap-2 sm:col-span-2"><span className="text-sm font-bold">Tìm buổi học</span><input type="search" className={inputClass} value={search} onChange={(event) => { setSearch(event.target.value); setPage(0); }} placeholder="Nội dung hoặc mã buổi học…" /></label>
-      <div className="grid gap-2"><label htmlFor="class-session-status" className="text-sm font-bold">Trạng thái buổi</label><LmsSelect id="class-session-status" value={status} options={[{ value: "all", label: "Tất cả buổi học" }, ...Object.entries(SESSION_LABELS).map(([value, label]) => ({ value, label }))]} onValueChange={(value) => { setStatus(value); setPage(0); }} /></div>
-      <div className="grid gap-2"><label htmlFor="class-attendance-state" className="text-sm font-bold">Điểm danh</label><LmsSelect id="class-attendance-state" value={attendance} options={[{ value: "all", label: "Tất cả điểm danh" }, { value: "unmarked", label: "Chưa điểm danh" }, { value: "draft", label: "Bản nháp" }, { value: "confirmed", label: "Đã xác nhận" }]} onValueChange={(value) => { setAttendance(value); setPage(0); }} /></div>
-    </div>
-    {!filtered.length ? <div className="space-y-3 py-6 text-center"><p className="text-sm text-muted-foreground">Không có buổi học phù hợp.</p><button type="button" className={actionClass} onClick={() => { setSearch(""); setStatus("all"); setAttendance("all"); setPage(0); }}>Đặt lại bộ lọc</button></div> : <div className="divide-y divide-border">{filtered.slice(currentPage * 6, (currentPage + 1) * 6).map((session) => <article key={session.id} className="space-y-3 py-4">
-      <div className="flex flex-wrap gap-2"><SessionStatusBadge status={session.status} /><AttendanceStateBadge record={records[session.id]} /></div>
-      <h3 className="font-nunito text-lg font-extrabold leading-relaxed text-primary">{session.topic}</h3>
-      <p className="text-sm text-muted-foreground">{formatClassDate(session.taughtAt)} · {session.durationMinutes} phút</p>
-      <p className="break-all text-xs text-muted-foreground">Mã buổi: {session.id}</p>
-      <div className="flex flex-wrap items-center justify-between gap-3"><span className="text-xs text-muted-foreground">{records[session.id] ? `Cập nhật ${formatClassDate(records[session.id].updatedAt)}` : "Chưa có dữ liệu điểm danh"}</span><button type="button" onClick={() => onAttendance(session)} className={canMarkAttendance(classInfo, session) ? primaryActionClass : actionClass}>{canMarkAttendance(classInfo, session) ? records[session.id]?.state === "confirmed" ? "Chỉnh sửa điểm danh" : "Điểm danh" : "Xem điểm danh"}</button></div>
-    </article>)}</div>}
-    {pageCount > 1 && <nav aria-label="Phân trang buổi học" className="flex items-center justify-end gap-3"><button type="button" className={actionClass} disabled={!currentPage} onClick={() => setPage(currentPage - 1)}>Trước</button><span aria-live="polite" className="text-sm text-muted-foreground">{currentPage + 1} / {pageCount}</span><button type="button" className={actionClass} disabled={currentPage + 1 === pageCount} onClick={() => setPage(currentPage + 1)}>Sau</button></nav>}
-  </section>;
+const STATUS_OPTIONS = [{ value: "all", label: "Tất cả buổi học" }, ...Object.entries(SESSION_LABELS).map(([value, label]) => ({ value, label }))];
+const ATTENDANCE_OPTIONS = [{ value: "all", label: "Tất cả điểm danh" }, { value: "unmarked", label: "Chưa điểm danh" }, { value: "draft", label: "Bản nháp" }, { value: "confirmed", label: "Đã xác nhận" }];
+
+export function ClassSessionList({ classInfo, onAttendance }: {
+  classInfo: TutorClass;
+  onAttendance: (session: TutorClassSession, trigger: HTMLButtonElement) => void;
+}) {
+  const list = useClassSessions(classInfo.id);
+  return (
+    <section className={`${classPanel} space-y-5`} aria-labelledby="class-sessions-title">
+      <div className="space-y-1">
+        <h2 id="class-sessions-title" className="font-nunito text-lg font-extrabold text-primary">Buổi học & điểm danh</h2>
+        <p aria-live="polite" className="text-xs leading-5 text-muted-foreground">{list.total} buổi phù hợp · Giờ Việt Nam</p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="grid gap-2 sm:col-span-2">
+          <span className={classLabel}>Tìm buổi học</span>
+          <span className="relative">
+            <MagnifyingGlassIcon className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+            <input type="search" className={`${classInput} pl-10`} value={list.search} onChange={(event) => list.updateSearch(event.target.value)} placeholder="Nội dung hoặc mã buổi học…" />
+          </span>
+        </label>
+        <div className="grid gap-2">
+          <label htmlFor="class-session-status" className={classLabel}>Trạng thái buổi</label>
+          <ClassFilterSelect id="class-session-status" value={list.status} options={STATUS_OPTIONS} onValueChange={list.updateStatus} />
+        </div>
+        <div className="grid gap-2">
+          <label htmlFor="class-attendance-state" className={classLabel}>Điểm danh</label>
+          <ClassFilterSelect id="class-attendance-state" value={list.attendance} options={ATTENDANCE_OPTIONS} onValueChange={list.updateAttendance} />
+        </div>
+      </div>
+      {!list.total ? (
+        <div className="space-y-3 rounded-2xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Không có buổi học phù hợp.</p>
+          <Button type="button" variant="outline" className={classOutlineButton} onClick={list.resetFilters}>Đặt lại bộ lọc</Button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {list.sessions.map((session) => <ClassSessionCard key={session.id} classInfo={classInfo} session={session} record={list.records[session.id]} onAttendance={onAttendance} />)}
+        </div>
+      )}
+      <ClassPagination page={list.page} pageCount={list.pageCount} label="Phân trang buổi học" onPageChange={list.setPage} />
+    </section>
+  );
 }
