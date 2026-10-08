@@ -3,8 +3,22 @@ import type {
   HowItWorksStep,
   PainPoint,
   SolutionFeature,
+  SponsorItem,
   TutorBenefit,
 } from "../types";
+
+export const DEFAULT_SPONSORS: SponsorItem[] = [
+  {
+    id: "fptu",
+    name: "Trường Đại Học FPT",
+    logoUrl:
+      "https://res.cloudinary.com/xcrm6ykz/image/upload/v1787134517/2021-FPTU-Long.png",
+    websiteUrl: "https://daihoc.fpt.edu.vn",
+    description: "Nhà tài trợ chính thức",
+    isActive: true,
+    order: 1,
+  },
+];
 
 export const PAIN_POINTS: PainPoint[] = [
   {
@@ -51,7 +65,6 @@ export const TUTOR_PAIN_POINTS: PainPoint[] = [
     text: "Khó chứng minh năng lực và chất lượng.",
   },
 ];
-
 
 export const SOLUTION_FEATURES: SolutionFeature[] = [
   {
