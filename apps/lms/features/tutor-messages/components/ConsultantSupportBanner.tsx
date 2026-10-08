@@ -1,6 +1,9 @@
 "use client";
 
-import { Headset, Sparkles, ShieldCheck } from "lucide-react";
+import {
+  BookOpenIcon,
+  LifebuoyIcon as Headset,
+} from "@heroicons/react/24/outline";
 import type { ChatRoom, ChatParticipantRole } from "../types/messages.types";
 
 interface ConsultantSupportBannerProps {
@@ -10,7 +13,6 @@ interface ConsultantSupportBannerProps {
 
 export function ConsultantSupportBanner({
   room,
-  currentUserRole,
 }: ConsultantSupportBannerProps) {
   const consultantName = room.consultant?.name || "Tư vấn viên BeeWise";
   const isSupport = room.category === "SUPPORT";
@@ -18,7 +20,7 @@ export function ConsultantSupportBanner({
   return (
     <div className="mx-auto my-4 max-w-lg rounded-2xl border border-border/80 bg-card p-4 text-center shadow-xs">
       <div className="mx-auto mb-2.5 flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
-        <Headset size={22} className="text-secondary" />
+        <Headset width={22} height={22} className="text-secondary" />
       </div>
 
       <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
@@ -40,7 +42,8 @@ export function ConsultantSupportBanner({
       {room.hasLearningDetails !== false && room.subject && (
         <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
           <span className="rounded-lg border border-border bg-muted/50 px-2.5 py-1 font-medium">
-            📚 {room.subject} {room.gradeLevel ? `· ${room.gradeLevel}` : ""}
+            <BookOpenIcon className="mr-1 inline size-3.5 align-[-2px]" aria-hidden="true" />
+            {room.subject} {room.gradeLevel ? `· ${room.gradeLevel}` : ""}
           </span>
           {room.teachingMode && (
             <span className="rounded-lg border border-border bg-muted/50 px-2.5 py-1 font-medium">

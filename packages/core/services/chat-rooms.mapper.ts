@@ -3,7 +3,7 @@ import type {
   ChatRoomRecord,
   ConnectRequest,
 } from "./chat-rooms.service";
-import { toChatBusinessMessage } from "./chat-business-message";
+import { toChatHistoryBusinessMessage } from "./chat-business-message";
 
 export type ParticipantRole = "LEARNER" | "TUTOR" | "CONSULTANT";
 type Participant = {
@@ -204,12 +204,9 @@ export function toChatMessage(
   const sender = [room.learner, room.tutor, room.consultant].find(
     (item) => item.id === message.senderId,
   );
-  const isSystem = message.messageType?.toUpperCase() === "SYSTEM";
-  const business = toChatBusinessMessage(
-    message.businessType || message.messageType,
-    message.businessReferenceId,
-    message.businessPayload,
-  );
+  const isSystem = message.type === "SYSTEM" ||
+    (!message.type && message.messageType?.toUpperCase() === "SYSTEM");
+  const business = toChatHistoryBusinessMessage(message);
   return {
     id: message.id,
     chatRoomId: message.chatRoomId,

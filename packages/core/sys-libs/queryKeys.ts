@@ -6,6 +6,13 @@ export const queryKeys = {
     eligibility: (userId: string) => ["connect-requests", "eligibility", userId] as const,
     outbound: (userId: string) => ["connect-requests", "outbound", userId] as const,
   },
+  chatRooms: {
+    list: ["chat-rooms", "list"] as const,
+    messages: (id: string) => ["chat-rooms", id, "messages"] as const,
+  },
+  consultantWorkspace: {
+    messages: (id: string | null) => ["consultant-workspace", "messages", id] as const,
+  },
   saleChatRooms: {
     list: ["sale", "chat-rooms"] as const,
     room: (id: string) => ["sale", "chat-rooms", id] as const,

@@ -1,23 +1,12 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 import {
-  useEffect,
-  useRef,
-  useState,
-  type FormEvent,
-  type KeyboardEvent,
-} from "react";
-import {
-  ArrowLeft,
-  ChevronDown,
-  Info,
-  LayoutTemplate,
-  Lock,
-  Send,
-  Sparkles,
-  UsersRound,
-  XCircle,
-} from "lucide-react";
+  InformationCircleIcon as Info,
+  LockClosedIcon as Lock,
+} from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -28,18 +17,16 @@ import {
 } from "@workspace/ui/components/ui/dialog";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
-import {
-  closeReasons,
-  messageTemplates,
-} from "../data/workspace-options";
-import { initials, shouldShowSessionDivider } from "../utils/format";
+import { closeReasons } from "../data/workspace-options";
 import {
   participantName,
   type WorkspaceMessage,
   type WorkspaceRoom,
 } from "../types/workspace";
 import { RoomDetails } from "./RoomDetails";
-import { MessageBubble, SessionTimeDivider } from "./MessageBubble";
+import { ConversationComposer } from "./ConversationComposer";
+import { ConversationHeader } from "./ConversationHeader";
+import { ConversationTimeline } from "./ConversationTimeline";
 import { ConsultantWidgetTools } from "./ConsultantWidgetTools";
 
 interface ConversationPanelProps {
@@ -76,14 +63,13 @@ export function ConversationPanel({
   onBack,
 }: ConversationPanelProps) {
   const [draft, setDraft] = useState("");
-  const [showTemplates, setShowTemplates] = useState(false);
   const [showWidgets, setShowWidgets] = useState(false);
+  const [widgetDialogElement, setWidgetDialogElement] = useState<HTMLDivElement | null>(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showClose, setShowClose] = useState(false);
   const [reason, setReason] = useState<string>("OTHER");
   const [note, setNote] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const readOnly = room.status !== "ACTIVE";
 
   const learner = participantName(room, "LEARNER");
@@ -105,21 +91,6 @@ export function ConversationPanel({
         ? "Hỗ trợ riêng cho gia sư"
         : "Hỗ trợ riêng cho học viên";
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length, room.id]);
-
-  function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    if (
-      event.key === "Enter" &&
-      !event.shiftKey &&
-      !event.nativeEvent.isComposing
-    ) {
-      event.preventDefault();
-      void submitMessage();
-    }
-  }
-
   async function submitMessage() {
     const content = draft.trim();
     if (!content || sending || readOnly) return;
@@ -127,7 +98,6 @@ export function ConversationPanel({
     try {
       await onSend(content);
       setDraft("");
-      setShowTemplates(false);
     } catch (caught) {
       setActionError(getApiErrorMessage(caught, "Không gửi được tin nhắn."));
     }
@@ -151,81 +121,21 @@ export function ConversationPanel({
 
   return (
     <section
-      className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xs"
+      className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft"
       aria-label="Nội dung cuộc trò chuyện"
     >
-      {/* Top Header */}
-      <header className="flex shrink-0 items-center justify-between gap-3 border-b border-border/80 bg-card px-4 py-3 sm:px-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted lg:hidden"
-            aria-label="Quay lại danh sách"
-          >
-            <ArrowLeft className="size-5" />
-          </button>
-
-          <span
-            className={`flex size-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${
-              room.kind === "group"
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary/15 text-secondary"
-            }`}
-          >
-            {room.kind === "group" ? (
-              <UsersRound className="size-5" />
-            ) : (
-              initials(title)
-            )}
-          </span>
-
-          <div className="min-w-0">
-            <h2 className="truncate font-nunito text-sm font-extrabold text-foreground sm:text-base">
-              {title}
-            </h2>
-            <p className="truncate text-xs text-muted-foreground">{subtitle}</p>
-          </div>
-        </div>
-
-        <div className="flex shrink-0 items-center gap-2">
-          <span
-            className={`hidden rounded-full px-2.5 py-1 text-[11px] font-bold sm:inline-flex ${
-              readOnly
-                ? "bg-muted text-muted-foreground"
-                : "bg-secondary/15 text-secondary"
-            }`}
-          >
-            {readOnly ? "Đã đóng" : "Đang hỗ trợ"}
-          </span>
-
-          {/* Button mở Modal Thông tin hỗ trợ */}
-          <button
-            type="button"
-            onClick={() => setShowInfoModal(true)}
-            aria-label="Xem thông tin hỗ trợ"
-            title="Xem thông tin hỗ trợ"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-foreground transition hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
-          >
-            <Info className="size-3.5 text-primary" />
-            <span className="hidden sm:inline">Thông tin hỗ trợ</span>
-          </button>
-
-          {!readOnly && (
-            <button
-              type="button"
-              onClick={() => {
-                setActionError(null);
-                setShowClose(true);
-              }}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-foreground transition hover:border-destructive/40 hover:bg-destructive/5 hover:text-destructive"
-            >
-              <XCircle className="size-4" />
-              <span className="hidden sm:inline">Đóng chat</span>
-            </button>
-          )}
-        </div>
-      </header>
+      <ConversationHeader
+        room={room}
+        title={title}
+        subtitle={subtitle}
+        readOnly={readOnly}
+        onBack={onBack}
+        onInfo={() => setShowInfoModal(true)}
+        onClose={() => {
+          setActionError(null);
+          setShowClose(true);
+        }}
+      />
 
       {/* Info alerts */}
       {room.isMock && (
@@ -236,243 +146,68 @@ export function ConversationPanel({
 
       {readOnly && (
         <div className="flex shrink-0 items-center gap-2 border-b border-border bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
-          <Lock className="size-3.5" /> Phòng đã đóng. Bạn có thể xem lại lịch
+           <Lock width={14} height={14} /> Phòng đã đóng. Bạn có thể xem lại lịch
           sử tin nhắn nhưng không thể gửi thêm.
         </div>
       )}
 
-      {/* Messages area */}
-      <div className="min-h-0 flex-1 overflow-y-auto bg-muted/30 px-3 py-4 sm:px-6">
-        <div className="mx-auto max-w-3xl space-y-1">
-          {hasOlder && (
-            <div className="flex justify-center pb-2">
-              <button
-                type="button"
-                disabled={loadingOlder}
-                onClick={onLoadOlder}
-                className="rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-primary shadow-xs disabled:opacity-50"
-              >
-                {loadingOlder ? "Đang tải..." : "Xem tin nhắn cũ hơn"}
-              </button>
-            </div>
-          )}
+      <ConversationTimeline
+        room={room}
+        messages={messages}
+        consultantId={consultantId}
+        loading={loading}
+        error={error}
+        hasOlder={hasOlder}
+        loadingOlder={loadingOlder}
+        onLoadOlder={onLoadOlder}
+        onRetry={onRetry}
+      />
 
-          {loading && (
-            <p className="py-10 text-center text-xs text-muted-foreground">
-              Đang tải tin nhắn...
-            </p>
-          )}
-
-          {error ? (
-            <div
-              role="alert"
-              className="rounded-xl border border-destructive/20 bg-card p-3 text-center text-xs text-destructive"
-            >
-              {getApiErrorMessage(error)}{" "}
-              <button
-                type="button"
-                onClick={onRetry}
-                className="ml-1 font-semibold underline"
-              >
-                Thử lại
-              </button>
-            </div>
-          ) : null}
-
-          {!loading && !error && messages.length === 0 && (
-            <div className="py-14 text-center text-xs text-muted-foreground">
-              <span className="mx-auto mb-3 flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <UsersRound className="size-5" />
-              </span>
-              Chưa có tin nhắn trong phòng này.
-            </div>
-          )}
-
-          {messages.map((message, idx) => {
-            const prev = messages[idx - 1];
-            const next = messages[idx + 1];
-
-            const isNewSession =
-              !prev ||
-              prev.isSystem ||
-              shouldShowSessionDivider(message.createdAt, prev.createdAt, 2);
-
-            const isConsecutive =
-              !isNewSession &&
-              prev &&
-              prev.senderId === message.senderId &&
-              !prev.isSystem &&
-              !message.isSystem;
-
-            const isNextNewSession =
-              next &&
-              shouldShowSessionDivider(next.createdAt, message.createdAt, 2);
-
-            const isLastInTurn =
-              !next ||
-              next.isSystem ||
-              next.senderId !== message.senderId ||
-              isNextNewSession;
-
-            const sender = room.participants.find(
-              (person) => person.id === message.senderId,
-            );
-
-            return (
-              <div key={message.id}>
-                {isNewSession && !message.isSystem && (
-                  <SessionTimeDivider timestamp={message.createdAt} />
-                )}
-
-                <MessageBubble
-                  message={message}
-                  consultantId={consultantId}
-                  sender={sender}
-                  isConsecutive={isConsecutive}
-                  showTime={isLastInTurn}
-                />
-              </div>
-            );
-          })}
-
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
-
-      {/* Input area */}
       {!readOnly && (
-        <div className="shrink-0 border-t border-border bg-card px-4 py-3 sm:px-5">
-          <div className="mx-auto max-w-3xl">
-            {showTemplates && (
-              <div className="mb-3 max-h-[45dvh] overflow-y-auto rounded-xl border border-border bg-muted/40 p-3">
-                <div className="mb-2.5 flex items-start justify-between gap-3">
-                  <div>
-                    <strong className="text-xs font-bold text-foreground">Tin nhắn mẫu</strong>
-                    <p className="mt-0.5 text-[11px] text-muted-foreground">Chọn mẫu để chỉnh sửa trước khi gửi.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowTemplates(false)}
-                    className="shrink-0 text-xs text-muted-foreground hover:text-primary"
-                  >
-                    Thu gọn
-                  </button>
-                </div>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {messageTemplates.map((template) => (
-                    <button
-                      type="button"
-                      key={template.id}
-                      onClick={() => {
-                        setDraft(template.content);
-                        setShowTemplates(false);
-                      }}
-                      className="group rounded-xl border border-border bg-card p-3 text-left transition hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-primary"
-                    >
-                      <span className="flex items-center justify-between gap-2">
-                        <strong className="text-xs font-bold text-foreground group-hover:text-primary">{template.title}</strong>
-                        <span className="text-[10px] font-semibold text-primary">Dùng mẫu</span>
-                      </span>
-                      <span className="mt-0.5 block text-[11px] text-muted-foreground">{template.description}</span>
-                      <span className="mt-2 line-clamp-2 block text-xs leading-5 text-foreground/80">{template.content}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-center gap-2 pb-2">
-              <span className="mr-auto text-xs font-semibold text-muted-foreground">
-                Soạn tin nhắn
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowTemplates((open) => !open)}
-                aria-expanded={showTemplates}
-                className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
-                  showTemplates
-                    ? "border-primary/30 bg-primary/10 text-primary"
-                    : "border-border text-foreground hover:border-primary/30"
-                }`}
-              >
-                <LayoutTemplate className="size-3.5" /> Tin nhắn mẫu{" "}
-                <ChevronDown className="size-3" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowWidgets(true)}
-                aria-haspopup="dialog"
-                className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
-                  showWidgets
-                    ? "border-primary/30 bg-primary/10 text-primary"
-                    : "border-border text-foreground hover:border-primary/30"
-                }`}
-              >
-                <Sparkles className="size-3.5" /> Widget{" "}
-              </button>
-            </div>
-
-            <form
-              onSubmit={(event) => {
-                event.preventDefault();
-                void submitMessage();
-              }}
-              className="flex items-end gap-2 rounded-xl border border-input bg-card p-2 shadow-xs focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10"
-            >
-              <label className="min-w-0 flex-1">
-                <span className="sr-only">Nội dung tin nhắn</span>
-                <textarea
-                  value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
-                  onKeyDown={handleKeyDown}
-                  rows={2}
-                  placeholder="Nhập tin nhắn hỗ trợ..."
-                  className="max-h-36 min-h-12 w-full resize-none bg-transparent px-2 py-1 text-sm outline-none placeholder:text-muted-foreground"
-                />
-              </label>
-              <button
-                type="submit"
-                disabled={!draft.trim() || sending}
-                aria-label="Gửi tin nhắn"
-                className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Send className="size-4" />
-              </button>
-            </form>
-
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              Nhấn Enter để gửi · Shift + Enter để xuống dòng
-              {room.isMock ? " · Bản xem thử không lưu dữ liệu" : ""}
-            </p>
-
-            {actionError ? (
-              <p role="alert" className="mt-2 text-xs text-destructive">
-                {actionError}
-              </p>
-            ) : null}
-          </div>
-        </div>
+        <ConversationComposer
+          draft={draft}
+          onDraftChange={setDraft}
+          onSend={() => void submitMessage()}
+          onOpenWidgets={() => setShowWidgets(true)}
+          sending={sending}
+          isMock={room.isMock}
+          error={actionError}
+        />
       )}
 
       <Dialog open={showWidgets} onOpenChange={setShowWidgets}>
-        <DialogContent className="max-h-[85dvh] max-w-2xl overflow-y-auto p-5">
-          <DialogHeader>
-            <DialogTitle className="font-nunito">Widget cho phòng chat</DialogTitle>
-            <DialogDescription>
-              Chọn nội dung cần gửi vào cuộc trò chuyện này.
-            </DialogDescription>
+        <DialogContent ref={setWidgetDialogElement} className="flex max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-[900px] flex-col gap-0 overflow-visible rounded-3xl border-border bg-background p-0 shadow-soft [&>button]:right-4 [&>button]:top-4 [&>button]:rounded-xl [&>button]:border [&>button]:border-border [&>button]:bg-background [&>button]:p-2 [&>button]:transition-all [&>button]:active:scale-[0.98]">
+          <DialogHeader className="shrink-0 rounded-t-3xl border-b border-border bg-card px-4 py-3 pr-16 text-left sm:px-6 sm:py-4 sm:pr-16">
+            <div className="flex items-start gap-3">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                <SparklesIcon className="size-5" aria-hidden="true" />
+              </span>
+              <div>
+                <DialogTitle className="font-nunito text-base font-extrabold leading-[1.2] text-foreground">
+                  Widget cho phòng chat
+                </DialogTitle>
+                <DialogDescription className="text-xs leading-relaxed">
+                  Chọn nội dung cần gửi vào cuộc trò chuyện này.
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
-          {room.isMock || room.kind !== "group" ? (
-            <p className="text-sm text-muted-foreground">Widget chỉ dùng trong phòng chat kết nối ba bên.</p>
-          ) : (
-            <ConsultantWidgetTools
-              roomId={room.id}
-              onSent={() => {
-                onRetry();
-                setShowWidgets(false);
-              }}
-            />
-          )}
+          <div className="min-h-0 overflow-y-auto rounded-b-3xl p-3 sm:p-5">
+            {room.isMock || room.kind !== "group" ? (
+              <p className="rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground shadow-soft">
+                Widget chỉ dùng trong phòng chat kết nối ba bên.
+              </p>
+            ) : (
+              <ConsultantWidgetTools
+                roomId={room.id}
+                calendarPortalContainer={widgetDialogElement}
+                onSent={() => {
+                  onRetry();
+                  setShowWidgets(false);
+                }}
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -514,7 +249,7 @@ export function ConversationPanel({
               <select
                 value={reason}
                 onChange={(event) => setReason(event.target.value)}
-                className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                className="mt-1.5 w-full rounded-xl border border-input bg-card px-3 py-2 text-sm outline-none transition-all focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
               >
                 {closeReasons.map(([val, label]) => (
                   <option key={val} value={val}>
@@ -529,7 +264,7 @@ export function ConversationPanel({
                 value={note}
                 onChange={(event) => setNote(event.target.value)}
                 rows={3}
-                className="mt-1.5 w-full resize-none rounded-lg border border-input bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+                className="mt-1.5 w-full resize-none rounded-xl border border-input bg-card px-3 py-2 text-sm outline-none transition-all focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
                 placeholder="Thêm bối cảnh cho lần hỗ trợ sau..."
               />
             </label>
@@ -539,20 +274,21 @@ export function ConversationPanel({
               </p>
             ) : null}
             <DialogFooter>
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => setShowClose(false)}
-                className="rounded-lg border border-border px-4 py-2 text-sm font-semibold"
+                className="h-9 rounded-xl px-4 text-sm font-semibold transition-all active:scale-[0.98]"
               >
                 Hủy
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={closing}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+                className="h-9 rounded-xl px-4 text-sm font-semibold transition-all active:scale-[0.98]"
               >
                 {closing ? "Đang đóng..." : "Xác nhận đóng"}
-              </button>
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

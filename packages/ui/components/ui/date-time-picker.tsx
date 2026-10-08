@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Popover } from "radix-ui";
 import {
-  CalendarBlank,
-  CaretLeft,
-  CaretRight,
-  Check,
-  Clock,
-  X,
-} from "@phosphor-icons/react";
+  CalendarDaysIcon,
+  CheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ClockIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 export interface DateTimePickerProps {
   value?: string | Date | null;
@@ -26,6 +26,7 @@ export interface DateTimePickerProps {
   error?: string;
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
+  portalContainer?: HTMLElement | null;
 }
 
 const MONTH_NAMES = [
@@ -116,6 +117,7 @@ export function DateTimePicker({
   error,
   side = "right",
   align = "start",
+  portalContainer,
 }: DateTimePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const parsedDate = useMemo(() => parseToDate(value), [value]);
@@ -132,21 +134,21 @@ export function DateTimePicker({
     () => parsedDate?.getMinutes() ?? 0,
   );
 
-  // Sync internal state when external value changes
-  useEffect(() => {
-    const updated = parseToDate(value);
-    if (updated) {
-      setSelectedDay(updated);
-      setHours(updated.getHours());
-      setMinutes(updated.getMinutes());
-      setViewDate(new Date(updated.getFullYear(), updated.getMonth(), 1));
-    } else {
-      setSelectedDay(null);
+  const [previousValue, setPreviousValue] = useState(value);
+  if (value !== previousValue) {
+    setPreviousValue(value);
+    setSelectedDay(parsedDate);
+    if (parsedDate) {
+      setHours(parsedDate.getHours());
+      setMinutes(parsedDate.getMinutes());
+      setViewDate(new Date(parsedDate.getFullYear(), parsedDate.getMonth(), 1));
     }
-  }, [value]);
+  }
 
   const min = useMemo(() => (minDate ? parseToDate(minDate) : null), [minDate]);
   const max = useMemo(() => (maxDate ? parseToDate(maxDate) : null), [maxDate]);
+  const earliest = min ? new Date(Math.ceil(min.getTime() / 60_000) * 60_000) : null;
+  const latest = max ? new Date(Math.floor(max.getTime() / 60_000) * 60_000) : null;
 
   // Calendar matrix calculations
   const calendarDays = useMemo(() => {
@@ -241,7 +243,7 @@ export function DateTimePicker({
   }
 
   function commitDateTime(date: Date, h: number, m: number) {
-    const finalDate = new Date(
+    let finalDate = new Date(
       date.getFullYear(),
       date.getMonth(),
       date.getDate(),
@@ -249,7 +251,13 @@ export function DateTimePicker({
       m,
       0,
     );
+    if (earliest && finalDate < earliest) finalDate = earliest;
+    if (latest && finalDate > latest) finalDate = latest;
+    if (earliest && latest && earliest > latest) return;
     setSelectedDay(finalDate);
+    setHours(finalDate.getHours());
+    setMinutes(finalDate.getMinutes());
+    setViewDate(new Date(finalDate.getFullYear(), finalDate.getMonth(), 1));
     onChange?.(formatToDatetimeLocalValue(finalDate));
   }
 
@@ -277,19 +285,19 @@ export function DateTimePicker({
     const [h, m] = timeStr.split(":").map(Number);
     setHours(h);
     setMinutes(m);
-    const targetDay = selectedDay ?? new Date();
-    commitDateTime(targetDay, h, m);
+    if (selectedDay) commitDateTime(selectedDay, h, m);
   }
 
   function handleSelectToday() {
     const now = new Date();
-    setViewDate(new Date(now.getFullYear(), now.getMonth(), 1));
-    commitDateTime(
-      now,
-      now.getHours(),
-      (Math.ceil(now.getMinutes() / 5) * 5) % 60,
-    );
+    const rounded = new Date(Math.ceil(now.getTime() / 300_000) * 300_000);
+    commitDateTime(rounded, rounded.getHours(), rounded.getMinutes());
   }
+
+  const today = new Date();
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  const canSelectToday = (!earliest || earliest < todayEnd) && (!latest || latest >= todayStart);
 
   function handleClear() {
     setSelectedDay(null);
@@ -319,7 +327,13 @@ export function DateTimePicker({
         </label>
       )}
 
-      <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+      <Popover.Root open={isOpen} onOpenChange={(open) => {
+        if (open) {
+          const target = selectedDay ?? earliest ?? new Date();
+          setViewDate(new Date(target.getFullYear(), target.getMonth(), 1));
+        }
+        setIsOpen(open);
+      }}>
         <Popover.Trigger asChild>
           <button
             id={id}
@@ -335,11 +349,7 @@ export function DateTimePicker({
             } ${disabled ? "opacity-50 cursor-not-allowed bg-muted/40" : ""}`}
           >
             <div className="flex items-center gap-2 min-w-0">
-              <CalendarBlank
-                size={16}
-                weight="bold"
-                className="shrink-0 text-primary"
-              />
+              <CalendarDaysIcon className="size-4 shrink-0 text-primary" />
               <span
                 className={`truncate font-medium ${
                   displayString
@@ -363,16 +373,15 @@ export function DateTimePicker({
                   className="p-0.5 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                   title="Xóa ngày giờ"
                 >
-                  <X size={12} weight="bold" />
+                    <XMarkIcon className="size-3" />
                 </span>
               )}
-              <Clock size={14} className="text-muted-foreground/60" />
+              <ClockIcon className="size-3.5 text-muted-foreground/60" />
             </div>
           </button>
         </Popover.Trigger>
 
-        {/* Portal ensures calendar is rendered above modals/dialogs without overflow clipping */}
-        <Popover.Portal>
+        <Popover.Portal container={portalContainer ?? undefined}>
           <Popover.Content
             side={side}
             align={align}
@@ -399,7 +408,7 @@ export function DateTimePicker({
                   aria-label="Tháng trước"
                   className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/40 active:scale-95 transition-all cursor-pointer"
                 >
-                  <CaretLeft size={13} weight="bold" />
+                  <ChevronLeftIcon className="size-3.5" />
                 </button>
                 <button
                   type="button"
@@ -407,7 +416,7 @@ export function DateTimePicker({
                   aria-label="Tháng sau"
                   className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/40 active:scale-95 transition-all cursor-pointer"
                 >
-                  <CaretRight size={13} weight="bold" />
+                  <ChevronRightIcon className="size-3.5" />
                 </button>
               </div>
             </div>
@@ -446,7 +455,7 @@ export function DateTimePicker({
             <div className="mt-3 pt-2.5 border-t border-border/80 space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-                  <Clock size={14} weight="bold" className="text-primary" />
+                  <ClockIcon className="size-3.5 text-primary" />
                   <span>Giờ học (hh:mm)</span>
                 </div>
 
@@ -504,7 +513,8 @@ export function DateTimePicker({
               <button
                 type="button"
                 onClick={handleSelectToday}
-                className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
+                disabled={!canSelectToday}
+                className="rounded-lg px-2 py-1 text-[11px] font-bold text-primary transition-all hover:bg-primary/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               >
                 Hôm nay
               </button>
@@ -514,7 +524,7 @@ export function DateTimePicker({
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-1 rounded-xl bg-primary px-3 py-1 text-xs font-nunito font-extrabold text-primary-foreground hover:bg-primary/95 active:scale-95 transition-all cursor-pointer"
               >
-                <Check size={12} weight="bold" />
+                <CheckIcon className="size-3.5" />
                 <span>Xong</span>
               </button>
             </div>

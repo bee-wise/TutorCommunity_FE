@@ -1,6 +1,8 @@
 "use client";
 
-import { ChatsCircleIcon } from "@phosphor-icons/react";
+import {
+  ChatBubbleLeftRightIcon as ChatsCircleIcon,
+} from "@heroicons/react/24/outline";
 import { ChatSidebar } from "./ChatSidebar";
 
 export function MessagesScreen() {
@@ -11,7 +13,7 @@ export function MessagesScreen() {
       <div className="hidden min-w-0 flex-1 items-center justify-center rounded-2xl border border-border bg-card lg:flex">
         <div className="max-w-sm px-8 text-center">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-            <ChatsCircleIcon size={30} weight="duotone" aria-hidden="true" />
+            <ChatsCircleIcon width={30} height={30} aria-hidden="true" />
           </div>
           <h2 className="font-nunito text-xl font-black text-foreground">Chọn cuộc trò chuyện</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MessageCircleMore } from "lucide-react";
+import {
+  ChatBubbleOvalLeftEllipsisIcon as MessageCircleMore,
+} from "@heroicons/react/24/outline";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import {
   privatePreviewMessages,
@@ -49,45 +51,27 @@ export function ConsultantWorkspaceScreen() {
     }
   });
 
-  // Khởi tạo timestamp đọc ban đầu cho các phòng chưa có
-  useEffect(() => {
-    setLastReadMap((prev) => {
-      let changed = false;
-      const next = { ...prev };
-      const allRaw = [...roomsQuery.rooms, ...privatePreviewRooms];
-      for (const r of allRaw) {
-        if (!next[r.id]) {
-          next[r.id] = r.updatedAt || r.createdAt || new Date().toISOString();
-          changed = true;
-        }
-      }
-      if (changed) {
-        try {
-          localStorage.setItem(READ_STORAGE_KEY, JSON.stringify(next));
-        } catch {}
-        return next;
-      }
-      return prev;
-    });
-  }, [roomsQuery.rooms]);
+  const effectiveLastReadMap = { ...lastReadMap };
+  for (const room of [...roomsQuery.rooms, ...privatePreviewRooms]) {
+    effectiveLastReadMap[room.id] ??= room.updatedAt || room.createdAt || new Date().toISOString();
+  }
+  const serializedLastReadMap = JSON.stringify(effectiveLastReadMap);
 
-  // Cập nhật timestamp khi phòng được xem
   useEffect(() => {
-    if (!selectedId) return;
-    setLastReadMap((prev) => {
-      const next = { ...prev, [selectedId]: new Date().toISOString() };
-      try {
-        localStorage.setItem(READ_STORAGE_KEY, JSON.stringify(next));
-      } catch {}
-      return next;
-    });
-  }, [selectedId, kind]);
+    try {
+      localStorage.setItem(READ_STORAGE_KEY, serializedLastReadMap);
+    } catch {}
+  }, [serializedLastReadMap]);
+
+  function markRoomRead(id: string) {
+    setLastReadMap((prev) => ({ ...prev, [id]: new Date().toISOString() }));
+  }
 
   const previewRooms = privatePreviewRooms.map((room): WorkspaceRoom => {
     const list = previewMessages[room.id] ?? [];
     const latestMsg = list.at(-1);
     const updated = latestMsg?.createdAt ?? room.updatedAt;
-    const lastRead = lastReadMap[room.id];
+    const lastRead = effectiveLastReadMap[room.id];
     const isUnread =
       Boolean(lastRead) &&
       Boolean(updated) &&
@@ -110,7 +94,7 @@ export function ConsultantWorkspaceScreen() {
   });
 
   const groupRooms = roomsQuery.rooms.map((room): WorkspaceRoom => {
-    const lastRead = lastReadMap[room.id];
+    const lastRead = effectiveLastReadMap[room.id];
     const isUnread =
       Boolean(lastRead) &&
       Boolean(room.updatedAt) &&
@@ -224,6 +208,7 @@ export function ConsultantWorkspaceScreen() {
             onQueryChange={setQuery}
             onSelect={(id) => {
               setSelectedId(id);
+              markRoomRead(id);
               setShowConversationOnMobile(true);
             }}
             kind={kind}

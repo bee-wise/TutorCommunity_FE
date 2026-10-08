@@ -41,11 +41,10 @@ export function useChatRoom(roomId: string) {
   const messageQuery = useInfiniteQuery({
     queryKey: [...chatRoomKeys.messages(roomId), currentUserId],
     queryFn: ({ pageParam }) => chatRoomsService.messages(roomId, pageParam),
-    initialPageParam: "",
-    getNextPageParam: (lastPage) => {
-      const items = lastPage.items ?? [];
-      return items.length === 50 ? items[items.length - 1]?.createdAt : undefined;
-    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.pagination.page < lastPage.pagination.totalPages
+      ? lastPage.pagination.page + 1
+      : undefined,
     enabled: authenticated && !!user && !!roomQuery.data,
     staleTime: 10_000,
     refetchInterval: isRealtimeSubscribed ? false : 5_000,
@@ -54,8 +53,9 @@ export function useChatRoom(roomId: string) {
     ? mapChatRoom(roomQuery.data, currentUserId, currentUserRole, user.fullName || user.displayName || "Bạn")
     : null;
   const messages = room
-    ? (messageQuery.data?.pages.flatMap((page) => page.items ?? []).reverse() ?? [])
-      .map((message) => mapChatMessage(message, room, currentUserId, currentUserRole))
+    ? [...new Map((messageQuery.data?.pages.flatMap((page) => page.items ?? []) ?? [])
+      .map((message) => [message.id, mapChatMessage(message, room, currentUserId, currentUserRole)] as const)).values()]
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
     : [];
 
   const sendMutation = useMutation({

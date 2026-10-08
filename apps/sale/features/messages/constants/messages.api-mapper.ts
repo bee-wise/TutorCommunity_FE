@@ -1,5 +1,5 @@
 import type { ApiChatMessage, ApiChatRoom } from "../services/chat-rooms.service";
-import { toChatBusinessMessage } from "@workspace/core/services/chat-business-message";
+import { toChatHistoryBusinessMessage } from "@workspace/core/services/chat-business-message";
 import type { ChatMessage, ChatParticipant, ChatParticipantRole, ChatRoom } from "../types/messages.types";
 
 function participant(id: string, name: string, role: ChatParticipantRole): ChatParticipant {
@@ -51,8 +51,8 @@ export function mapChatRoom(raw: ApiChatRoom, userId: string, userRole: ChatPart
 export function mapChatMessage(raw: ApiChatMessage, room: ChatRoom, userId: string, userRole: ChatParticipantRole): ChatMessage {
   const sender = [room.learner, room.tutor, room.consultant].find((item) => item.id === raw.senderId);
   const senderRole = sender?.role ?? (raw.senderId === userId ? userRole : userRole === "LEARNER" ? "TUTOR" : "LEARNER");
-  const isSystem = raw.messageType?.toUpperCase() === "SYSTEM" || raw.senderId === "00000000-0000-0000-0000-000000000000";
-  const business = toChatBusinessMessage(raw.businessType || raw.messageType, raw.businessReferenceId, raw.businessPayload);
+  const isSystem = raw.type === "SYSTEM" || (!raw.type && (raw.messageType?.toUpperCase() === "SYSTEM" || raw.senderId === "00000000-0000-0000-0000-000000000000"));
+  const business = toChatHistoryBusinessMessage(raw);
   return {
     id: raw.id,
     chatRoomId: raw.chatRoomId,

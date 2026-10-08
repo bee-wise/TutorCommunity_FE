@@ -40,12 +40,20 @@ Tất cả các AI Agent khi làm việc trong repository này **BẮT BUỘC** 
 Khi phát triển hoặc sửa đổi BẤT KỲ giao diện người dùng, button, form, chip, badge, card nào trong BeeWise:
 
 1. **GOLDEN UI BENCHMARK**: Luôn tuân theo tiêu chuẩn thiết kế trực quan tại [.agents/skills/design-taste-frontend/references/beewise-ui-standards.html](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/references/beewise-ui-standards.html).
-2. **FORBIDDEN BUTTON / ACTION PATTERNS**:
+2. **ICON USAGE STANDARDS**:
+   - **Ưu tiên sử dụng Heroicons (`@heroicons/react`)** làm thư viện icon chính cho toàn bộ UI components, buttons, navigation, badges, cards, tables và status indicators.
+   - Bắt buộc import đúng subpath tương ứng với kích thước/style:
+     - 24x24 Outline: `@heroicons/react/24/outline` (mặc định cho các nút, menu, card, standard actions)
+     - 24x24 Solid: `@heroicons/react/24/solid` (cho active/filled state, rating, high-emphasis)
+     - 20x20 Mini Solid: `@heroicons/react/20/solid` (cho input icons, dropdown select, compact buttons)
+     - 16x16 Micro: `@heroicons/react/16/solid` (cho badges, action chips, tags)
+   - Đảm bảo tính đồng bộ kích thước và phong cách xuyên suốt màn hình (stroke/solid nhất quán).
+3. **FORBIDDEN BUTTON / ACTION PATTERNS**:
    - **CẤM HOÀN TOÀN** tạo các button/link hành động dạng text trần có gạch chân (`hover:underline`, `underline`) kèm icon mũi tên thô sơ (ví dụ: `← Đổi email`, `← Quay lại`).
    - Mọi nút bấm/action chips bắt buộc phải là:
      - **Action Chips / Badges**: Đóng gói trong container (`rounded-xl border bg-muted/40 px-3.5 py-2.5`) kèm nút chip/badge tinh tế (`rounded-lg border bg-background px-2.5 py-1 text-xs font-bold hover:bg-muted active:scale-95`).
      - **Standard Button Variants**: Dùng Button chuẩn từ `@workspace/ui` (`variant="default" | "accent" | "secondary" | "outline" | "ghost" | "destructive"`).
      - **Interactive Text Links**: Dùng `transition-colors hover:text-primary/80` (KHÔNG dùng `hover:underline` trừ nội dung chính sách pháp lý).
-3. **MANDATORY MICRO-INTERACTIONS**: Mọi nút tương tác phải có `active:scale-[0.98]` hoặc `active:scale-95`, `transition-all`, và hiệu ứng bo góc mượt mà theo đúng triết lý Edutech Soft-Modern của BeeWise.
+4. **MANDATORY MICRO-INTERACTIONS**: Mọi nút tương tác phải có `active:scale-[0.98]` hoặc `active:scale-95`, `transition-all`, và hiệu ứng bo góc mượt mà theo đúng triết lý Edutech Soft-Modern của BeeWise.
 
 <!-- END:beewise-ui-standards -->

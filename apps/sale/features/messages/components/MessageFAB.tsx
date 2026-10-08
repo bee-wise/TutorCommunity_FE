@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import { motion, useAnimation, type PanInfo } from "motion/react";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
@@ -144,16 +144,7 @@ function DraggableFAB({ unreadChatCount }: { unreadChatCount: number }) {
         }}
         draggable={false}
       >
-        {/* Icon */}
-        <Image
-          src="/icons/beewise-message-icon.svg"
-          alt="Tin nhắn"
-          width={36}
-          height={36}
-          className="object-contain pointer-events-none"
-          priority
-          draggable={false}
-        />
+        <ChatBubbleLeftRightIcon className="size-9 text-white pointer-events-none" aria-hidden="true" />
 
         {/* Unread badge */}
         {unreadChatCount > 0 && (
