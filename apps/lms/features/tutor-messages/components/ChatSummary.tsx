@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle, ChevronRight } from "lucide-react";
+import {
+  ChatBubbleLeftRightIcon as MessageCircle,
+  ChevronRightIcon as ChevronRight,
+} from "@heroicons/react/24/outline";
 import { useMessages } from "../hooks/useMessages";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import type { ChatRoom } from "../types/messages.types";
@@ -54,7 +57,7 @@ export function ChatRow({ room }: { room: ChatRoom }) {
       </div>
       <div className="flex items-center gap-1.5 text-xs text-[#716c83]">
         {room.lastMessageAt ? formatRelativeTime(room.lastMessageAt) : ""}
-        <ChevronRight size={14} />
+        <ChevronRight width={14} height={14} />
       </div>
     </Link>
   );

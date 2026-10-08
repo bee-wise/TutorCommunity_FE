@@ -1,4 +1,9 @@
-import { CalendarDays, Hash, Info, UsersRound } from "lucide-react";
+import {
+  CalendarDaysIcon as CalendarDays,
+  HashtagIcon as Hash,
+  InformationCircleIcon as Info,
+  UserGroupIcon as UsersRound,
+} from "@heroicons/react/24/outline";
 import { closeReasons } from "../data/workspace-options";
 import { formatWorkspaceTime, initials } from "../utils/format";
 import type { WorkspaceRoom } from "../types/workspace";

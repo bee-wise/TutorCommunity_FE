@@ -2,16 +2,17 @@
 
 import type { ReactNode, ElementType } from "react";
 import {
-  CalendarCheckIcon,
+  CalendarDaysIcon as CalendarCheckIcon,
   CheckCircleIcon,
   ClockIcon,
   CreditCardIcon,
-  ListChecksIcon,
+  ClipboardDocumentCheckIcon as ListChecksIcon,
   MapPinIcon,
-  MonitorIcon,
-  WarningCircleIcon,
-  ArrowSquareOutIcon,
-} from "@phosphor-icons/react";
+  ComputerDesktopIcon as MonitorIcon,
+  ExclamationCircleIcon as WarningCircleIcon,
+  ArrowRightIcon,
+} from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
 import type {
   ChatWidget as ChatWidgetType,
   ChatParticipantRole,
@@ -69,20 +70,26 @@ function WidgetFrame({
   children: ReactNode;
   footer?: ReactNode;
 }) {
-  const statusStyle =
+  const iconStyle =
     tone === "success"
       ? "bg-secondary text-secondary-foreground"
       : tone === "warning"
         ? "bg-accent text-accent-foreground"
         : "bg-primary text-primary-foreground";
+  const statusStyle =
+    tone === "success"
+      ? "border-secondary/20 bg-secondary/15 text-secondary"
+      : tone === "warning"
+        ? "border-accent/30 bg-accent/25 text-amber-900"
+        : "border-primary/25 bg-card text-primary";
 
   return (
-    <section className="w-full max-w-[440px] overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm">
+    <section className="w-full max-w-[440px] overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-soft">
       <header className="flex flex-wrap items-start gap-3 border-b border-border px-4 py-3.5 sm:px-5">
         <span
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${statusStyle}`}
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${iconStyle}`}
         >
-          <Icon size={19} aria-hidden="true" />
+          <Icon width={19} height={19} aria-hidden="true" />
         </span>
         <div className="min-w-[120px] flex-1">
           <h3 className="font-nunito text-sm font-extrabold text-foreground">
@@ -93,7 +100,7 @@ function WidgetFrame({
           </p>
         </div>
         <span
-          className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold ${statusStyle}`}
+          className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold ${statusStyle}`}
         >
           {status}
         </span>
@@ -135,9 +142,9 @@ function Confirmation({
       }`}
     >
       {confirmed ? (
-        <CheckCircleIcon size={14} aria-hidden="true" />
+        <CheckCircleIcon width={14} height={14} aria-hidden="true" />
       ) : (
-        <ClockIcon size={14} aria-hidden="true" />
+        <ClockIcon width={14} height={14} aria-hidden="true" />
       )}
       {label}: {confirmed ? "Đã xác nhận" : "Chờ xác nhận"}
     </span>
@@ -146,15 +153,17 @@ function Confirmation({
 
 function MockAction({ label }: { label: string }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2">
-      <span className="text-[11px] text-muted-foreground"></span>
-      <button
+    <div className="space-y-2">
+      <p className="text-center text-[11px] text-muted-foreground">
+        Tính năng đang được cập nhật
+      </p>
+      <Button
         type="button"
         disabled
-        className="rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground opacity-55 disabled:cursor-not-allowed"
+        className="h-12 w-full rounded-full font-nunito text-xs font-bold transition-all active:scale-[0.98]"
       >
         {label}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -204,14 +213,12 @@ function TrialSessionWidget({
       {(data.location || data.meetingInfo) && (
         <p className="flex items-start gap-2 text-xs leading-5 text-foreground">
           {data.teachingMode === "ONLINE" ? (
-            <MonitorIcon
-              size={16}
+            <MonitorIcon width={16} height={16}
               className="mt-0.5 shrink-0 text-primary"
               aria-hidden="true"
             />
           ) : (
-            <MapPinIcon
-              size={16}
+            <MapPinIcon width={16} height={16}
               className="mt-0.5 shrink-0 text-primary"
               aria-hidden="true"
             />
@@ -331,15 +338,19 @@ function PaymentRequestWidget({
       footer={
         data.status === "PENDING" && currentRole === "LEARNER" ? (
           canPay ? (
-            <a
-              href={data.checkoutUrl!}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground"
+            <Button
+              asChild
+              className="h-12 w-full rounded-full font-nunito text-xs font-bold transition-all active:scale-[0.98]"
             >
-              Thanh toán qua PayOS{" "}
-              <ArrowSquareOutIcon size={14} aria-hidden="true" />
-            </a>
+              <a
+                href={data.checkoutUrl!}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Thanh toán qua PayOS{" "}
+                <ArrowRightIcon width={16} height={16} aria-hidden="true" />
+              </a>
+            </Button>
           ) : (
             <MockAction label="Thanh toán qua PayOS" />
           )
@@ -359,7 +370,7 @@ function PaymentRequestWidget({
       </div>
       {data.status === "PAID" ? (
         <p className="flex items-center gap-2 text-xs font-semibold text-secondary">
-          <CheckCircleIcon size={17} aria-hidden="true" /> Thanh toán thành công
+          <CheckCircleIcon width={17} height={17} aria-hidden="true" /> Thanh toán thành công
           lúc {data.paidAt ? dateTime(data.paidAt) : "—"}
         </p>
       ) : (
@@ -368,7 +379,7 @@ function PaymentRequestWidget({
           {data.status === "PENDING" && !data.checkoutUrl && (
             <div className="flex items-center gap-3 rounded-xl border border-dashed border-border bg-muted px-3 py-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-primary">
-                <CreditCardIcon size={22} aria-hidden="true" />
+                <CreditCardIcon width={22} height={22} aria-hidden="true" />
               </div>
               <div>
                 <p className="text-xs font-bold text-foreground">

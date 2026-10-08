@@ -9,7 +9,8 @@ import {
 } from "@tanstack/react-query";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { chatRoomsService } from "@workspace/core/services/chat-rooms.service";
-import { toChatBusinessMessage } from "@workspace/core/services/chat-business-message";
+import { toChatHistoryBusinessMessage } from "@workspace/core/services/chat-business-message";
+import { queryKeys } from "@workspace/core/sys-libs/queryKeys";
 import { subscribeToChatRoom } from "@workspace/core/sys-libs/centrifugo";
 import { toWorkspaceRoom, type WorkspaceMessage } from "../types/workspace";
 
@@ -40,7 +41,7 @@ export function useConsultantConversation(roomId: string | null) {
     if (!userId || !roomId) return;
     return subscribeToChatRoom(userId, roomId, () => {
       void queryClient.invalidateQueries({
-        queryKey: ["consultant-workspace", "messages", roomId],
+        queryKey: queryKeys.consultantWorkspace.messages(roomId),
       });
       void queryClient.invalidateQueries({
         queryKey: ["consultant-workspace", "rooms"],
@@ -48,17 +49,14 @@ export function useConsultantConversation(roomId: string | null) {
     });
   }, [userId, roomId, queryClient]);
   const history = useInfiniteQuery({
-    queryKey: ["consultant-workspace", "messages", roomId],
+    queryKey: queryKeys.consultantWorkspace.messages(roomId),
     enabled: Boolean(roomId),
-    initialPageParam: undefined as string | undefined,
+    initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       chatRoomsService.listMessages(roomId!, pageParam, MESSAGE_PAGE_SIZE),
-    getNextPageParam: (page) => {
-      const items = page.items ?? [];
-      return items.length === MESSAGE_PAGE_SIZE
-        ? items.at(-1)?.createdAt
-        : undefined;
-    },
+    getNextPageParam: (page) => page.pagination.page < page.pagination.totalPages
+      ? page.pagination.page + 1
+      : undefined,
     refetchInterval: 10_000,
   });
   const send = useMutation({
@@ -67,7 +65,7 @@ export function useConsultantConversation(roomId: string | null) {
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ["consultant-workspace", "messages", roomId],
+          queryKey: queryKeys.consultantWorkspace.messages(roomId),
         }),
         queryClient.invalidateQueries({
           queryKey: ["consultant-workspace", "rooms"],
@@ -94,8 +92,8 @@ export function useConsultantConversation(roomId: string | null) {
             senderId: item.senderId ?? "",
             content: item.content ?? "",
             createdAt: item.createdAt ?? new Date().toISOString(),
-            isSystem: item.messageType?.toUpperCase() === "SYSTEM" && !item.businessType,
-            business: toChatBusinessMessage(item.businessType || item.messageType, item.businessReferenceId, item.businessPayload),
+            isSystem: item.type === "SYSTEM" || (!item.type && item.messageType?.toUpperCase() === "SYSTEM" && !item.businessType),
+            business: toChatHistoryBusinessMessage(item),
           },
         ],
       ),

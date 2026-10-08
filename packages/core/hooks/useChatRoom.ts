@@ -7,6 +7,7 @@ import { chatRoomsService } from "../services/chat-rooms.service";
 import { toChatMessage, type ParticipantRole } from "../services/chat-rooms.mapper";
 import { useChatRooms } from "./useChatRooms";
 import { useChatRoomRealtime } from "./useChatRoomRealtime";
+import { queryKeys } from "../sys-libs/queryKeys";
 
 const PAGE_SIZE = 50;
 
@@ -21,22 +22,21 @@ export function useChatRoom(roomId: string) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const history = useInfiniteQuery({
-    queryKey: ["chat-rooms", roomId, "messages"],
+    queryKey: queryKeys.chatRooms.messages(roomId),
     enabled: Boolean(room),
-    initialPageParam: undefined as string | undefined,
+    initialPageParam: 1,
     queryFn: ({ pageParam }) => chatRoomsService.listMessages(roomId, pageParam, PAGE_SIZE),
-    getNextPageParam: (lastPage) => {
-      const items = lastPage.items ?? [];
-      return items.length === PAGE_SIZE ? items[items.length - 1]?.createdAt : undefined;
-    },
+    getNextPageParam: (lastPage) => lastPage.pagination.page < lastPage.pagination.totalPages
+      ? lastPage.pagination.page + 1
+      : undefined,
     refetchInterval: 10_000,
   });
 
   const send = useMutation({
     mutationFn: (content: string) => chatRoomsService.sendMessage(roomId, content.trim()),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["chat-rooms", roomId, "messages"] });
-      await queryClient.invalidateQueries({ queryKey: ["chat-rooms", "list"] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.messages(roomId) });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.list });
     },
   });
 

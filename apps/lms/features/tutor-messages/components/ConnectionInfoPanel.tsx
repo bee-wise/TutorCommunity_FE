@@ -1,18 +1,18 @@
 "use client";
 
 import {
-  Clock,
-  MessageCircle,
-  CalendarCheck2,
-  Hourglass,
-  User,
-  BookOpen,
-  MonitorSmartphone,
-  Home,
-  CircleDollarSign,
-  CheckCircle2,
-  Lock,
-} from "lucide-react";
+  ClockIcon as Clock,
+  ChatBubbleLeftRightIcon as MessageCircle,
+  CalendarDaysIcon as CalendarCheck2,
+  ClockIcon as Hourglass,
+  UserIcon as User,
+  BookOpenIcon as BookOpen,
+  DevicePhoneMobileIcon as MonitorSmartphone,
+  HomeIcon as Home,
+  CurrencyDollarIcon as CircleDollarSign,
+  CheckCircleIcon as CheckCircle2,
+  LockClosedIcon as Lock,
+} from "@heroicons/react/24/outline";
 import type { ChatRoom } from "../types/messages.types";
 
 const STAGE_STEPS = [
@@ -42,7 +42,7 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-start gap-3 border-b border-border py-2.5 last:border-0">
-      <Icon size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
+      <Icon width={16} height={16} className="mt-0.5 shrink-0 text-muted-foreground" />
       <div className="min-w-0 flex-1">
         <p className="text-[11px] text-muted-foreground">{label}</p>
         <p className="text-sm font-semibold text-foreground">{value}</p>
@@ -63,7 +63,7 @@ export function ConnectionInfoPanel({ room }: ConnectionInfoPanelProps) {
       {/* Read-only banner */}
       {isReadOnly && (
         <div className="mb-4 flex items-center gap-2 rounded-xl bg-muted px-4 py-3">
-          <Lock size={14} className="text-muted-foreground" />
+          <Lock width={14} height={14} className="text-muted-foreground" />
           <p className="text-xs text-muted-foreground">
             {room.status === "CONVERTED_TO_CLASS"
               ? "Phòng chat đã chuyển thành lớp học."
@@ -99,8 +99,7 @@ export function ConnectionInfoPanel({ room }: ConnectionInfoPanelProps) {
                         : "border-border bg-card"
                   }`}
                 >
-                  <Icon
-                    size={12}
+                  <Icon width={12} height={12}
                     className={
                       isDone || isActive ? "text-primary-foreground" : "text-muted-foreground"
                     }

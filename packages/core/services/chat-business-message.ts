@@ -1,4 +1,6 @@
 import { z } from "zod";
+import type { ChatMessageRecord } from "./chat-rooms.service";
+import type { ClassConfirmation, ClassSchedule, PaymentRequest, TrialSession } from "./connection-widgets.service";
 
 export type ChatBusinessKind = "TRIAL_SESSION" | "CLASS_CONFIRMATION" | "PAYMENT_REQUEST" | "CLASS_SESSIONS";
 
@@ -6,6 +8,12 @@ export interface ChatBusinessMessage {
   kind: ChatBusinessKind;
   referenceId?: string;
   payload: Record<string, unknown>;
+  roomId?: string;
+  current?:
+    | { kind: "TRIAL_SESSION"; data: TrialSession }
+    | { kind: "CLASS_CONFIRMATION"; data: ClassConfirmation }
+    | { kind: "PAYMENT_REQUEST"; data: PaymentRequest }
+    | { kind: "CLASS_SCHEDULE"; data: ClassSchedule };
 }
 
 const objectSchema = z.record(z.string(), z.unknown());
@@ -48,6 +56,49 @@ export function toChatBusinessMessage(
     referenceId: businessReferenceId ?? undefined,
     payload,
   };
+}
+
+export function toChatHistoryBusinessMessage(message: ChatMessageRecord): ChatBusinessMessage | null {
+  if (message.type === "TEXT" || message.type === "SYSTEM") return null;
+  if (message.type !== "WIDGET") {
+    if (message.type) return null;
+    const legacy = toChatBusinessMessage(
+      message.businessType || message.messageType,
+      message.businessReferenceId,
+      message.businessPayload,
+    );
+    return legacy ? { ...legacy, roomId: message.chatRoomId } : null;
+  }
+
+  const widget = message.widget;
+  if (!widget?.referenceId) return null;
+  const base = {
+    referenceId: widget.referenceId,
+    roomId: message.chatRoomId,
+    payload: parseBusinessPayload(message.businessPayload),
+  };
+  switch (widget.type) {
+    case "TRIAL_SESSION":
+      return widget.trialSession?.id === widget.referenceId &&
+        widget.trialSession.chatRoomId === message.chatRoomId
+        ? { ...base, kind: "TRIAL_SESSION", current: { kind: "TRIAL_SESSION", data: widget.trialSession } }
+        : null;
+    case "CLASS_CONFIRMATION":
+      return widget.classConfirmation?.id === widget.referenceId &&
+        widget.classConfirmation.chatRoomId === message.chatRoomId
+        ? { ...base, kind: "CLASS_CONFIRMATION", current: { kind: "CLASS_CONFIRMATION", data: widget.classConfirmation } }
+        : null;
+    case "PAYMENT_REQUEST":
+      return widget.payment?.id === widget.referenceId
+        ? { ...base, kind: "PAYMENT_REQUEST", current: { kind: "PAYMENT_REQUEST", data: widget.payment } }
+        : null;
+    case "CLASS_SCHEDULE":
+      return widget.schedule?.classId === widget.referenceId
+        ? { ...base, kind: "CLASS_SESSIONS", current: { kind: "CLASS_SCHEDULE", data: widget.schedule } }
+        : null;
+    default:
+      return null;
+  }
 }
 
 export function payloadString(payload: Record<string, unknown>, key: string): string | undefined {

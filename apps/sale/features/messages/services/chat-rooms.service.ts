@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { apiClient } from "@workspace/core/configs/client";
+import { messageSchema } from "@workspace/core/services/chat-rooms.service";
 
 const paginationSchema = z.object({
   page: z.number().int(),
@@ -24,18 +25,6 @@ const roomSchema = z.object({
   recipientUserId: z.string().nullable().optional(),
   recipientName: z.string().nullable().optional(),
   participants: z.array(participantSchema).nullable().optional(),
-});
-
-const messageSchema = z.object({
-  id: z.string(),
-  chatRoomId: z.string(),
-  senderId: z.string(),
-  content: z.string().nullable().optional(),
-  createdAt: z.string(),
-  messageType: z.string().nullable().optional(),
-  businessType: z.string().nullable().optional(),
-  businessReferenceId: z.string().nullable().optional(),
-  businessPayload: z.unknown().optional(),
 });
 
 const pageSchema = <T extends z.ZodType>(item: T) => z.object({
@@ -69,9 +58,9 @@ export const chatRoomsService = {
     return parseResponse(raw, roomSchema);
   },
 
-  async messages(id: string, before?: string): Promise<ChatMessagePage> {
+  async messages(id: string, page = 1, before?: string): Promise<ChatMessagePage> {
     const raw: unknown = await apiClient.get(`/chat-rooms/${encodeURIComponent(id)}/messages`, {
-      params: { page: 1, pageSize: 50, ...(before ? { before } : {}) },
+      params: { page, pageSize: 50, ...(before ? { before } : {}) },
     });
     return parseResponse(raw, messagePageSchema);
   },

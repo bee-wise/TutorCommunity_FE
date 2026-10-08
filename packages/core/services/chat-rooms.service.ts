@@ -1,5 +1,11 @@
 import { z } from "zod";
 import { apiClient } from "../configs/client";
+import {
+  classConfirmationSchema,
+  classScheduleSchema,
+  paymentRequestSchema,
+  trialSessionSchema,
+} from "./connection-widgets.service";
 
 const paginationSchema = z.object({
   page: z.number().int().optional().default(1),
@@ -47,7 +53,16 @@ const roomListSchema = z.object({
   pagination: paginationSchema,
 }).passthrough();
 
-const messageSchema = z.object({
+export const chatHistoryWidgetSchema = z.object({
+  type: z.string(),
+  referenceId: z.string(),
+  trialSession: trialSessionSchema.nullish(),
+  classConfirmation: classConfirmationSchema.nullish(),
+  payment: paymentRequestSchema.nullish(),
+  schedule: classScheduleSchema.nullish(),
+}).passthrough();
+
+export const messageSchema = z.object({
   id: z.string(),
   chatRoomId: z.string().default(""),
   senderId: z.string().default(""),
@@ -57,6 +72,8 @@ const messageSchema = z.object({
   businessType: z.string().nullable().optional(),
   businessReferenceId: z.string().nullable().optional(),
   businessPayload: z.unknown().optional(),
+  type: z.enum(["TEXT", "WIDGET", "SYSTEM"]).optional(),
+  widget: chatHistoryWidgetSchema.nullish(),
 }).passthrough();
 
 const requestListSchema = z.object({
@@ -157,10 +174,10 @@ export const chatRoomsService = {
     return [first, ...rest].flatMap((page) => page.items ?? []);
   },
 
-  async listMessages(id: string, before?: string, pageSize = 50) {
+  async listMessages(id: string, page = 1, pageSize = 50, before?: string) {
     const response: unknown = await apiClient.get(
       `/chat-rooms/${encodeURIComponent(id)}/messages`,
-      { params: { before, page: 1, pageSize } },
+      { params: { before, page, pageSize } },
     );
     return dataOf(messageListSchema, response);
   },

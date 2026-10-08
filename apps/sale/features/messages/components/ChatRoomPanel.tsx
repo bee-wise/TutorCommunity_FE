@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, type FormEvent, type KeyboardEvent } from "react";
-import { Send, Zap, ArrowLeft, Lock, MoreVertical } from "lucide-react";
+import {
+  PaperAirplaneIcon as Send,
+  BoltIcon as Zap,
+  ArrowLeftIcon as ArrowLeft,
+  LockClosedIcon as Lock,
+  EllipsisVerticalIcon as MoreVertical,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { MessageBubble, SessionTimeDivider } from "./MessageBubble";
 import { MessageDetailsDialog } from "./MessageDetailsDialog";
@@ -11,6 +17,7 @@ import { AutoMessageLibrary } from "./AutoMessageLibrary";
 import { ConsultantActions } from "./ConsultantActions";
 import { ConnectionInfoPanel } from "./ConnectionInfoPanel";
 import { useChatRoom } from "../hooks/useChatRoom";
+import { selectTrialWidgetTimelineMessages } from "@workspace/core/services/trial-widget-timeline";
 import {
   STAGE_LABELS,
   STAGE_COLORS,
@@ -77,6 +84,10 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
       </div>
     );
   const isSupport = room.category === "SUPPORT";
+  const visibleMessages = selectTrialWidgetTimelineMessages(
+    messages,
+    (message) => message.senderRole === "CONSULTANT",
+  );
   const peer = isSupport
     ? room.consultant
     : currentUserRole === "LEARNER"
@@ -119,7 +130,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-primary lg:hidden"
             aria-label="Quay lại"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft width={18} height={18} />
           </Link>
 
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
@@ -192,7 +203,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
               aria-label="Thông tin kết nối"
               aria-pressed={showInfo}
             >
-              <MoreVertical size={20} />
+              <MoreVertical width={20} height={20} />
             </button>
           )}
         </header>
@@ -207,7 +218,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         {/* Read-only banner */}
         {isReadOnly && (
           <div className="flex shrink-0 items-center gap-2 border-b border-border bg-muted px-4 py-2.5 text-xs text-muted-foreground">
-            <Lock size={13} />
+            <Lock width={13} height={13} />
             {room.status === "CONVERTED_TO_CLASS"
               ? "Phòng chat đã chuyển thành lớp học. Chỉ đọc."
               : isSupport
@@ -254,9 +265,9 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                 Chưa có tin nhắn nào.
               </p>
             )}
-            {messages.map((msg, idx) => {
-              const prev = messages[idx - 1];
-              const next = messages[idx + 1];
+            {visibleMessages.map((msg, idx) => {
+              const prev = visibleMessages[idx - 1];
+              const next = visibleMessages[idx + 1];
 
               const isNewSession =
                 !prev ||
@@ -353,8 +364,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                         aria-label="Kho tin nhắn tự động"
                         aria-pressed={showAutoLib}
                       >
-                        <Zap
-                          size={17}
+                        <Zap width={17} height={17}
                           className={showAutoLib ? "fill-current" : ""}
                         />
                       </button>
@@ -369,7 +379,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                     aria-label="Gửi tin nhắn"
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]"
                   >
-                    <Send size={16} aria-hidden="true" />
+                    <Send width={16} height={16} aria-hidden="true" />
                   </button>
                 </div>
               </form>

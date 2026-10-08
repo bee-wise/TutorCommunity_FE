@@ -2,7 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CalendarPlusIcon, InfoIcon, XCircleIcon } from "@phosphor-icons/react";
+import {
+  CalendarDaysIcon as CalendarPlusIcon,
+  InformationCircleIcon as InfoIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
 import { chatRoomsService } from "@workspace/core/services/chat-rooms.service";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import {
@@ -39,15 +43,15 @@ export function ConsultantActions({ currentRole, roomId }: { currentRole: ChatPa
   return (
     <div className="flex min-w-max items-center gap-2 text-xs">
       <span className="mr-1 inline-flex items-center gap-1.5 font-bold text-foreground">
-        <InfoIcon size={15} aria-hidden="true" /> Công cụ tư vấn
+        <InfoIcon width={15} height={15} aria-hidden="true" /> Công cụ tư vấn
       </span>
       <button type="button" disabled title="Chưa kết nối API lịch học thử" className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 font-semibold text-muted-foreground disabled:cursor-not-allowed">
-        <CalendarPlusIcon size={15} aria-hidden="true" /> Đề xuất học thử
+        <CalendarPlusIcon width={15} height={15} aria-hidden="true" /> Đề xuất học thử
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 font-semibold text-foreground hover:border-primary">
-            <XCircleIcon size={15} aria-hidden="true" /> Đóng kết nối
+            <XCircleIcon width={15} height={15} aria-hidden="true" /> Đóng kết nối
           </button>
         </DialogTrigger>
         <DialogContent>

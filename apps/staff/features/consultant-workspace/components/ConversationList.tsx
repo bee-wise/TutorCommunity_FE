@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import {
-  ArrowLeft,
-  LockKeyhole,
-  MessageCircleMore,
-  Search,
-  UsersRound,
-} from "lucide-react";
+  ArrowLeftIcon as ArrowLeft,
+  LockClosedIcon as LockKeyhole,
+  ChatBubbleOvalLeftEllipsisIcon as MessageCircleMore,
+  MagnifyingGlassIcon as Search,
+  UserGroupIcon as UsersRound,
+} from "@heroicons/react/24/outline";
 import { formatWorkspaceTime, initials } from "../utils/format";
 import { participantName, type WorkspaceRoom } from "../types/workspace";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";

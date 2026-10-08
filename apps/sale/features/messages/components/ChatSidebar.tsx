@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, MessageCircleIcon, ArrowLeft } from "lucide-react";
+import {
+  MagnifyingGlassIcon as Search,
+  ChatBubbleLeftRightIcon as MessageCircleIcon,
+  ArrowLeftIcon as ArrowLeft,
+} from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMessages } from "../hooks/useMessages";
@@ -157,7 +161,7 @@ export function ChatSidebar() {
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition hover:brightness-95"
             aria-label="Quay lại Trang chủ"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft width={18} height={18} />
           </Link>
           <div>
             <h2 className="font-nunito text-lg font-extrabold text-foreground">Tin nhắn</h2>
@@ -169,8 +173,7 @@ export function ChatSidebar() {
       {/* Search */}
       <div className="shrink-0 border-b border-border px-3 py-2.5">
         <div className="relative">
-          <Search
-            size={14}
+          <Search width={14} height={14}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           />
           <input
@@ -235,7 +238,7 @@ export function ChatSidebar() {
 
         {loading ? <p className="px-4 py-10 text-center text-xs text-muted-foreground">Đang tải cuộc trò chuyện...</p> : error ? <div className="px-4 py-10 text-center text-xs text-muted-foreground"><p role="alert">{getApiErrorMessage(error, "Không tải được danh sách trò chuyện.")}</p><button type="button" onClick={() => void refetch()} className="mt-2 font-semibold text-primary underline">Thử lại</button></div> : filtered.length === 0 ? (
           <div className="flex flex-col items-center px-4 py-12 text-center">
-            <MessageCircleIcon size={32} className="mb-3 text-muted-foreground" />
+            <MessageCircleIcon width={32} height={32} className="mb-3 text-muted-foreground" />
             <strong className="text-sm text-foreground">
               {query ? "Không tìm thấy" : "Chưa có cuộc trò chuyện"}
             </strong>

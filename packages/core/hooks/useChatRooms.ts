@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "../sys-libs/queryKeys";
 import { useAuthStore } from "../store/useAuthStore";
 import { chatRoomsService, type ConnectRequest, type ConnectionDirection } from "../services/chat-rooms.service";
 import { toChatRoom } from "../services/chat-rooms.mapper";
@@ -16,7 +17,7 @@ export function useChatRooms() {
 
   // GET /chat-rooms is the source of truth for rooms the user participates in.
   const query = useQuery({
-    queryKey: ["chat-rooms", "list", user?.id],
+    queryKey: [...queryKeys.chatRooms.list, user?.id],
     enabled: Boolean(user?.id),
     queryFn: () => chatRoomsService.listAllRooms(),
     staleTime: 15_000,
