@@ -3,23 +3,22 @@
 import { useState, useRef, useEffect, type FormEvent } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft,
-  ArrowSquareOut,
-  ArrowsCounterClockwise,
-  CalendarCheck,
-  CalendarPlus,
-  Check,
-  CheckCircle,
-  CircleNotch,
-  Clock,
-  CreditCard,
-  FileText,
-  GraduationCap,
-  MapPin,
-  PaperPlaneTilt,
-  Receipt,
-  VideoCamera,
-} from "@phosphor-icons/react";
+  ArrowLeftIcon as ArrowLeft,
+  ArrowTopRightOnSquareIcon as ArrowSquareOut,
+  ArrowPathIcon as ArrowsCounterClockwise,
+  CalendarDaysIcon as CalendarCheck,
+  CalendarDaysIcon as CalendarPlus,
+  CheckIcon as Check,
+  CheckCircleIcon as CheckCircle,
+  ArrowPathIcon as CircleNotch,
+  ClockIcon as Clock,
+  CreditCardIcon as CreditCard,
+  DocumentTextIcon as FileText,
+  AcademicCapIcon as GraduationCap,
+  PaperAirplaneIcon as PaperPlaneTilt,
+  ReceiptPercentIcon as Receipt,
+  VideoCameraIcon as VideoCamera,
+} from "@heroicons/react/24/outline";
 import { DateTimePicker } from "@workspace/ui/components/ui/date-time-picker";
 
 type FlowStep = 1 | 2 | 3 | 4;
@@ -37,7 +36,6 @@ export function TVCChatDemoScreen() {
   const [showSessionsForm, setShowSessionsForm] = useState(false);
   const [sessionStart, setSessionStart] = useState("");
   const [sessionEnd, setSessionEnd] = useState("");
-  const [sessionLocation, setSessionLocation] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -111,7 +109,7 @@ export function TVCChatDemoScreen() {
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-primary lg:hidden"
             aria-label="Quay lại"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft width={18} height={18} />
           </Link>
 
           {/* Avatar */}
@@ -123,7 +121,7 @@ export function TVCChatDemoScreen() {
               className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-card ring-2 ring-card"
               title="Đã xác minh"
             >
-              <CheckCircle size={14} weight="fill" className="text-secondary" />
+              <CheckCircle width={14} height={14} className="text-secondary" />
             </span>
           </div>
 
@@ -156,7 +154,7 @@ export function TVCChatDemoScreen() {
             title="Làm mới hội thoại"
             className="flex h-8 w-8 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground hover:text-primary hover:border-primary/40 transition-all cursor-pointer"
           >
-            <ArrowsCounterClockwise size={15} weight="bold" />
+            <ArrowsCounterClockwise width={15} height={15} />
           </button>
         </div>
       </header>
@@ -214,7 +212,7 @@ export function TVCChatDemoScreen() {
             <header className="flex items-center justify-between gap-3 border-b border-border/80 px-4 py-3">
               <div className="flex items-center gap-2 min-w-0">
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <GraduationCap size={16} weight="bold" />
+                  <GraduationCap width={16} height={16} />
                 </div>
                 <h3 className="font-nunito text-sm font-extrabold text-foreground truncate">
                   Đề xuất lịch học thử
@@ -248,7 +246,7 @@ export function TVCChatDemoScreen() {
                 <div className="flex justify-between gap-2">
                   <span className="text-muted-foreground">Hình thức</span>
                   <span className="inline-flex items-center gap-1 font-semibold text-primary">
-                    <VideoCamera size={13} weight="bold" /> Trực tuyến qua Zoom
+                    <VideoCamera width={13} height={13} /> Trực tuyến qua Zoom
                   </span>
                 </div>
                 <div className="flex justify-between gap-2">
@@ -262,7 +260,7 @@ export function TVCChatDemoScreen() {
               {/* Dual Confirmation indicator */}
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <div className="flex items-center gap-1.5 rounded-xl border border-secondary/30 bg-secondary/10 px-2.5 py-1.5 text-[11px] font-medium text-secondary">
-                  <CheckCircle size={14} weight="fill" className="shrink-0" />
+                  <CheckCircle width={14} height={14} className="shrink-0" />
                   <span>Gia sư: Đã duyệt</span>
                 </div>
 
@@ -274,9 +272,9 @@ export function TVCChatDemoScreen() {
                   }`}
                 >
                   {trialConfirmed ? (
-                    <CheckCircle size={14} weight="fill" className="shrink-0" />
+                    <CheckCircle width={14} height={14} className="shrink-0" />
                   ) : (
-                    <Clock size={14} weight="bold" className="shrink-0 opacity-70" />
+                    <Clock width={14} height={14} className="shrink-0 opacity-70" />
                   )}
                   <span>Học viên: {trialConfirmed ? "Đã duyệt" : "Chờ bạn duyệt"}</span>
                 </div>
@@ -292,12 +290,12 @@ export function TVCChatDemoScreen() {
                 >
                   {isProcessing ? (
                     <>
-                      <CircleNotch size={14} className="animate-spin" />
+                      <CircleNotch width={14} height={14} className="animate-spin" />
                       <span>Đang xác nhận...</span>
                     </>
                   ) : (
                     <>
-                      <Check size={14} weight="bold" />
+                      <Check width={14} height={14} />
                       <span>Xác nhận lịch học thử</span>
                     </>
                   )}
@@ -372,7 +370,7 @@ export function TVCChatDemoScreen() {
                 <header className="flex items-center justify-between gap-3 border-b border-border/80 px-4 py-3">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <FileText size={16} weight="bold" />
+                      <FileText width={16} height={16} />
                     </div>
                     <h3 className="font-nunito text-sm font-extrabold text-foreground truncate">
                       Xác nhận điều khoản lớp học
@@ -400,7 +398,7 @@ export function TVCChatDemoScreen() {
                     <div className="flex justify-between gap-2">
                       <span className="text-muted-foreground">Hình thức</span>
                       <span className="inline-flex items-center gap-1 font-semibold text-primary">
-                        <VideoCamera size={13} weight="bold" /> Trực tuyến
+                        <VideoCamera width={13} height={13} /> Trực tuyến
                       </span>
                     </div>
                     <div className="flex justify-between gap-2">
@@ -438,7 +436,7 @@ export function TVCChatDemoScreen() {
                   {/* Dual Confirmation Indicator */}
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <div className="flex items-center gap-1.5 rounded-xl border border-secondary/30 bg-secondary/10 px-2.5 py-1.5 text-[11px] font-medium text-secondary">
-                      <CheckCircle size={14} weight="fill" className="shrink-0" />
+                      <CheckCircle width={14} height={14} className="shrink-0" />
                       <span>Gia sư: Đã duyệt</span>
                     </div>
                     <div
@@ -449,9 +447,9 @@ export function TVCChatDemoScreen() {
                       }`}
                     >
                       {classConfirmed ? (
-                        <CheckCircle size={14} weight="fill" className="shrink-0" />
+                        <CheckCircle width={14} height={14} className="shrink-0" />
                       ) : (
-                        <Clock size={14} weight="bold" className="shrink-0 opacity-70" />
+                        <Clock width={14} height={14} className="shrink-0 opacity-70" />
                       )}
                       <span>
                         Học viên: {classConfirmed ? "Đã duyệt" : "Chờ bạn duyệt"}
@@ -469,12 +467,12 @@ export function TVCChatDemoScreen() {
                     >
                       {isProcessing ? (
                         <>
-                          <CircleNotch size={14} className="animate-spin" />
+                          <CircleNotch width={14} height={14} className="animate-spin" />
                           <span>Đang xác nhận...</span>
                         </>
                       ) : (
                         <>
-                          <Check size={14} weight="bold" />
+                          <Check width={14} height={14} />
                           <span>Xác nhận điều khoản lớp học</span>
                         </>
                       )}
@@ -526,7 +524,7 @@ export function TVCChatDemoScreen() {
                 <header className="flex items-center justify-between gap-3 border-b border-border/80 px-4 py-3">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Receipt size={16} weight="bold" />
+                      <Receipt width={16} height={16} />
                     </div>
                     <h3 className="font-nunito text-sm font-extrabold text-foreground truncate">
                       Học viên thanh toán
@@ -587,14 +585,14 @@ export function TVCChatDemoScreen() {
                     >
                       {isProcessing ? (
                         <>
-                          <CircleNotch size={14} className="animate-spin" />
+                          <CircleNotch width={14} height={14} className="animate-spin" />
                           <span>Đang xác nhận thanh toán...</span>
                         </>
                       ) : (
                         <>
-                          <CreditCard size={15} weight="bold" />
+                          <CreditCard width={15} height={15} />
                           <span>Thanh toán ngay qua PayOS</span>
-                          <ArrowSquareOut size={13} weight="bold" />
+                          <ArrowSquareOut width={13} height={13} />
                         </>
                       )}
                     </button>
@@ -611,7 +609,7 @@ export function TVCChatDemoScreen() {
             {/* System Success Banner */}
             <div className="flex justify-center py-1" role="status">
               <span className="rounded-full border border-secondary/30 bg-secondary/10 px-4 py-1.5 text-center text-xs font-semibold text-secondary flex items-center gap-1.5 shadow-2xs">
-                <CheckCircle size={14} weight="fill" />
+                <CheckCircle width={14} height={14} />
                 <span>
                   Thanh toán thành công 3.750.000 ₫ qua PayOS. Lớp học đã được kích hoạt!
                 </span>
@@ -643,7 +641,7 @@ export function TVCChatDemoScreen() {
                 <header className="flex items-center justify-between gap-3 border-b border-border/80 px-4 py-3">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <CalendarCheck size={16} weight="bold" />
+                      <CalendarCheck width={16} height={16} />
                     </div>
                     <h3 className="font-nunito text-sm font-extrabold text-foreground truncate">
                       Lịch các buổi học chính thức
@@ -707,13 +705,13 @@ export function TVCChatDemoScreen() {
                           </span>
                         </div>
                         <div className="mt-1.5 flex items-center gap-1 text-muted-foreground text-[11px]">
-                          <Clock size={12} weight="bold" />
+                          <Clock width={12} height={12} />
                           <span>
                             {session.date} · {session.time}
                           </span>
                         </div>
                         <div className="mt-1 flex items-center gap-1 text-[11px] text-primary font-medium truncate">
-                          <VideoCamera size={12} weight="bold" className="shrink-0" />
+                          <VideoCamera width={12} height={12} className="shrink-0" />
                           <span className="truncate">{session.room}</span>
                         </div>
                       </li>
@@ -730,7 +728,7 @@ export function TVCChatDemoScreen() {
                       <span>Đóng biểu mẫu xếp lịch</span>
                     ) : (
                       <>
-                        <CalendarPlus size={14} weight="bold" />
+                        <CalendarPlus width={14} height={14} />
                         <span>Xếp thêm buổi học mới</span>
                       </>
                     )}
@@ -843,7 +841,7 @@ export function TVCChatDemoScreen() {
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs transition-all hover:bg-primary/95 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             aria-label="Gửi tin nhắn"
           >
-            <PaperPlaneTilt size={16} weight="bold" />
+            <PaperPlaneTilt width={16} height={16} />
           </button>
         </form>
       </footer>

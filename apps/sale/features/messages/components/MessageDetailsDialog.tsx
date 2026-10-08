@@ -10,15 +10,15 @@ import {
   DialogFooter,
 } from "@workspace/ui/components/ui/dialog";
 import {
-  Clock,
-  User,
-  Check,
-  Copy,
-  Info,
-  CheckCheck,
-  Hash,
-  FileText,
-} from "lucide-react";
+  ClockIcon as Clock,
+  UserIcon as User,
+  CheckIcon as Check,
+  DocumentDuplicateIcon as Copy,
+  InformationCircleIcon as Info,
+  CheckBadgeIcon as CheckCheck,
+  HashtagIcon as Hash,
+  DocumentTextIcon as FileText,
+} from "@heroicons/react/24/outline";
 import type { ChatMessage, ChatParticipantRole } from "../types/messages.types";
 import { formatFullDateTime, formatRelativeTime, formatFileSize } from "../constants/messages.utils";
 
@@ -82,7 +82,7 @@ export function MessageDetailsDialog({
       <DialogContent className="max-w-md gap-4 sm:rounded-2xl">
         <DialogHeader className="text-left">
           <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
-            <Info size={18} className="text-primary" />
+            <Info width={18} height={18} className="text-primary" />
             Chi tiết tin nhắn
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
@@ -95,7 +95,7 @@ export function MessageDetailsDialog({
           <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 p-3">
             <div className="flex items-center gap-2.5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                <User size={15} />
+                <User width={15} height={15} />
               </div>
               <div>
                 <p className="font-semibold text-foreground">
@@ -114,7 +114,7 @@ export function MessageDetailsDialog({
           {/* Time info */}
           <div className="rounded-xl border border-border bg-card p-3 space-y-1.5">
             <div className="flex items-start gap-2 text-xs">
-              <Clock size={15} className="mt-0.5 shrink-0 text-muted-foreground" />
+              <Clock width={15} height={15} className="mt-0.5 shrink-0 text-muted-foreground" />
               <div className="flex-1">
                 <p className="font-medium text-foreground">{formatFullDateTime(message.createdAt)}</p>
                 <p className="text-muted-foreground">{formatRelativeTime(message.createdAt)}</p>
@@ -127,7 +127,7 @@ export function MessageDetailsDialog({
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-                  <FileText size={13} />
+                  <FileText width={13} height={13} />
                   Nội dung:
                 </span>
                 <button
@@ -137,11 +137,11 @@ export function MessageDetailsDialog({
                 >
                   {copiedText ? (
                     <>
-                      <Check size={12} className="text-emerald-500" /> Đã sao chép
+                      <Check width={12} height={12} className="text-emerald-500" /> Đã sao chép
                     </>
                   ) : (
                     <>
-                      <Copy size={12} /> Sao chép
+                      <Copy width={12} height={12} /> Sao chép
                     </>
                   )}
                 </button>
@@ -177,7 +177,7 @@ export function MessageDetailsDialog({
           {/* Status & Message ID */}
           <div className="flex items-center justify-between border-t border-border pt-2.5 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <CheckCheck size={14} className={message.isRead ? "text-primary" : "text-muted-foreground"} />
+              <CheckCheck width={14} height={14} className={message.isRead ? "text-primary" : "text-muted-foreground"} />
               <span>{message.isRead ? "Đã xem" : "Đã gửi"}</span>
             </div>
             <button
@@ -186,7 +186,7 @@ export function MessageDetailsDialog({
               title={`Mã tin nhắn: ${message.id}`}
               className="flex items-center gap-1 text-[11px] hover:text-foreground"
             >
-              <Hash size={12} />
+              <Hash width={12} height={12} />
               {copiedId ? "Đã copy ID" : "Copy ID"}
             </button>
           </div>

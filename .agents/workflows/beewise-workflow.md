@@ -20,7 +20,7 @@ BeeWise is built using:
 - **Server State**: TanStack Query (React Query)
 - **Global UI State**: Zustand
 - **Form & Validation**: React Hook Form + Zod
-- **Icons**: `@phosphor-icons/react`
+- **Icons**: `@heroicons/react` (Primary) / `@phosphor-icons/react`
 - **Animation**: `motion/react`
 - **Real-Time**: Centrifugo
 

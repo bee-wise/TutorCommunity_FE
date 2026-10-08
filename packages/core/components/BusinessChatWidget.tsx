@@ -1,27 +1,24 @@
 "use client";
 
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import {
-  CalendarBlank,
-  CalendarCheck,
-  CalendarPlus,
-  ChalkboardTeacher,
-  Check,
-  CheckCircle,
-  CircleNotch,
-  Clock,
-  CreditCard,
-  GraduationCap,
-  MapPin,
-  Sparkle,
-  User,
-  VideoCamera,
-  WarningCircle,
-  ArrowSquareOut,
-  FileText,
-  Receipt,
-} from "@phosphor-icons/react";
+  CalendarDaysIcon as CalendarCheck,
+  CalendarDaysIcon as CalendarPlus,
+  CheckIcon as Check,
+  CheckCircleIcon as CheckCircle,
+  ArrowPathIcon as CircleNotch,
+  ClockIcon as Clock,
+  CreditCardIcon as CreditCard,
+  AcademicCapIcon as GraduationCap,
+  MapPinIcon as MapPin,
+  SparklesIcon as Sparkle,
+  VideoCameraIcon as VideoCamera,
+  ExclamationCircleIcon as WarningCircle,
+  ArrowRightIcon as ArrowRight,
+  DocumentTextIcon as FileText,
+  ReceiptPercentIcon as Receipt,
+} from "@heroicons/react/24/outline";
 import { getApiErrorMessage } from "../sys-libs/error-handler";
 import {
   connectionWidgetsService,
@@ -32,9 +29,21 @@ import {
   type ChatBusinessMessage,
 } from "../services/chat-business-message";
 import { DateTimePicker } from "@workspace/ui/components/ui/date-time-picker";
+import { Button } from "@workspace/ui/components/ui/button";
+import { queryKeys } from "../sys-libs/queryKeys";
+import { TrialJoinButton } from "./TrialJoinButton";
 
 type Role = "CONSULTANT" | "LEARNER" | "TUTOR";
 type Props = { business: ChatBusinessMessage; currentRole: Role };
+
+async function refreshChatHistory(queryClient: QueryClient, roomId?: string) {
+  if (!roomId) return;
+  await Promise.all([
+    queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.messages(roomId) }),
+    queryClient.invalidateQueries({ queryKey: queryKeys.consultantWorkspace.messages(roomId) }),
+    queryClient.invalidateQueries({ queryKey: queryKeys.saleChatRooms.messages(roomId) }),
+  ]);
+}
 
 const dateTime = (value?: string | null) => {
   if (!value) return "Chưa xác định";
@@ -59,7 +68,7 @@ const money = (value?: number | null) =>
 const statusConfig: Record<string, { label: string; className: string }> = {
   PROPOSED: {
     label: "Chờ xác nhận",
-    className: "bg-amber-500/10 text-amber-700 border-amber-500/30",
+    className: "bg-accent/25 text-amber-900 border-accent/30",
   },
   CONFIRMED: {
     label: "Đã xác nhận",
@@ -83,15 +92,15 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   },
   WAITING_CONFIRMATION: {
     label: "Chờ xác nhận",
-    className: "bg-amber-500/10 text-amber-700 border-amber-500/30",
+    className: "bg-accent/25 text-amber-900 border-accent/30",
   },
   PENDING_CONFIRMATION: {
     label: "Chờ xác nhận",
-    className: "bg-amber-500/10 text-amber-700 border-amber-500/30",
+    className: "bg-accent/25 text-amber-900 border-accent/30",
   },
   PENDING: {
     label: "Chờ thanh toán",
-    className: "bg-amber-500/10 text-amber-700 border-amber-500/30",
+    className: "bg-accent/25 text-amber-900 border-accent/30",
   },
   PAID: {
     label: "Đã thanh toán",
@@ -107,11 +116,11 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   },
   SCHEDULED: {
     label: "Đã xếp lịch",
-    className: "bg-primary/10 text-primary border-primary/25",
+    className: "bg-card text-primary border-primary/25",
   },
   RESCHEDULED: {
     label: "Đã dời lịch",
-    className: "bg-amber-500/10 text-amber-700 border-amber-500/30",
+    className: "bg-accent/25 text-amber-900 border-accent/30",
   },
 };
 
@@ -119,6 +128,16 @@ const safeCheckout = (value?: string | null) => {
   if (!value) return undefined;
   try {
     return new URL(value).protocol === "https:" ? value : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const meetingUrl = (value?: string | null) => {
+  if (!value) return undefined;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : undefined;
   } catch {
     return undefined;
   }
@@ -138,11 +157,11 @@ function Frame({
   const currentStatus = status ? statusConfig[status] : undefined;
 
   return (
-    <section className="w-full max-w-[440px] rounded-2xl border border-border bg-card text-card-foreground shadow-sm transition-all hover:border-border/80">
+    <section className="w-full max-w-[440px] overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-soft">
       <header className="flex items-center justify-between gap-3 border-b border-border/80 px-4 py-3">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Icon size={16} weight="bold" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <Icon width={16} height={16} />
           </div>
           <h3 className="font-nunito text-sm font-extrabold text-foreground truncate">
             {title}
@@ -152,7 +171,7 @@ function Frame({
           <span
             className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[11px] font-bold tracking-tight ${
               currentStatus?.className ??
-              "bg-primary/10 text-primary border-primary/20"
+              "bg-card text-primary border-primary/25"
             }`}
           >
             {currentStatus?.label ?? status}
@@ -206,9 +225,9 @@ function ConfirmationStatusGroup({
         }`}
       >
         {tutorConfirmedAt ? (
-          <CheckCircle size={14} weight="fill" className="shrink-0" />
+          <CheckCircle width={14} height={14} className="shrink-0" />
         ) : (
-          <Clock size={14} weight="bold" className="shrink-0 opacity-70" />
+          <Clock width={14} height={14} className="shrink-0 opacity-70" />
         )}
         <span className="truncate">
           Gia sư: {tutorConfirmedAt ? "Đã duyệt" : "Chờ"}
@@ -223,9 +242,9 @@ function ConfirmationStatusGroup({
         }`}
       >
         {learnerConfirmedAt ? (
-          <CheckCircle size={14} weight="fill" className="shrink-0" />
+          <CheckCircle width={14} height={14} className="shrink-0" />
         ) : (
-          <Clock size={14} weight="bold" className="shrink-0 opacity-70" />
+          <Clock width={14} height={14} className="shrink-0 opacity-70" />
         )}
         <span className="truncate">
           Học viên: {learnerConfirmedAt ? "Đã duyệt" : "Chờ"}
@@ -241,7 +260,7 @@ function ErrorBanner({ message }: { message: string }) {
       role="alert"
       className="flex items-start gap-2 rounded-xl border border-destructive/20 bg-destructive/10 p-2.5 text-xs text-destructive"
     >
-      <WarningCircle size={16} weight="bold" className="shrink-0 mt-0.5" />
+      <WarningCircle width={16} height={16} className="shrink-0 mt-0.5" />
       <span className="leading-snug">{message}</span>
     </div>
   );
@@ -253,15 +272,16 @@ function TrialWidget({ business, currentRole }: Props) {
   const query = useQuery({
     queryKey: ["connection-widget", "trial", id],
     queryFn: () => connectionWidgetsService.getTrial(id!),
-    enabled: !!id,
+    enabled: !!id && !business.current,
     staleTime: 15_000,
     refetchInterval: 30_000,
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const data = query.data;
+  const data = business.current?.kind === "TRIAL_SESSION" ? business.current.data : query.data;
   const payload = business.payload;
-  const status = data?.status ?? payloadString(payload, "status");
+  const status = data?.status;
+  const joinUrl = meetingUrl(data?.zoomUrl ?? data?.locationOrMeetingInfo);
   const confirmed =
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
 
@@ -274,6 +294,7 @@ function TrialWidget({ business, currentRole }: Props) {
       await queryClient.invalidateQueries({
         queryKey: ["connection-widget", "trial", id],
       });
+      await refreshChatHistory(queryClient, business.roomId);
     } catch (caught) {
       setError(getApiErrorMessage(caught));
     } finally {
@@ -286,19 +307,19 @@ function TrialWidget({ business, currentRole }: Props) {
       <div className="space-y-2 border-b border-border/60 pb-3">
         <Row
           label="Môn học"
-          value={data?.subject ?? payloadString(payload, "subject") ?? "—"}
+          value={data?.subject ?? (business.current ? undefined : payloadString(payload, "subject")) ?? "—"}
         />
         <Row
           label="Bắt đầu"
           value={dateTime(
             data?.scheduledStartAt ??
-              payloadString(payload, "scheduledStartAt"),
+              (business.current ? undefined : payloadString(payload, "scheduledStartAt")),
           )}
         />
         <Row
           label="Kết thúc"
           value={dateTime(
-            data?.scheduledEndAt ?? payloadString(payload, "scheduledEndAt"),
+            data?.scheduledEndAt ?? (business.current ? undefined : payloadString(payload, "scheduledEndAt")),
           )}
         />
         <Row
@@ -306,11 +327,11 @@ function TrialWidget({ business, currentRole }: Props) {
           value={
             data?.teachingMode === "ONLINE" ? (
               <span className="inline-flex items-center gap-1 text-primary">
-                <VideoCamera size={13} weight="bold" /> Trực tuyến
+                <VideoCamera width={13} height={13} /> Trực tuyến
               </span>
             ) : data?.teachingMode === "OFFLINE" ? (
               <span className="inline-flex items-center gap-1">
-                <MapPin size={13} weight="bold" /> Trực tiếp
+                <MapPin width={13} height={13} /> Trực tiếp
               </span>
             ) : (
               "—"
@@ -321,17 +342,10 @@ function TrialWidget({ business, currentRole }: Props) {
           <Row
             label="Địa điểm / Liên kết"
             value={
-              data.zoomUrl ? (
-                <a
-                  href={data.zoomUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
-                >
-                  Tham gia phòng học <ArrowSquareOut size={12} />
-                </a>
+              joinUrl ? (
+                <TrialJoinButton trial={data} href={joinUrl} />
               ) : (
-                data.locationOrMeetingInfo
+                data.locationOrMeetingInfo ?? data.zoomUrl
               )
             }
           />
@@ -355,24 +369,24 @@ function TrialWidget({ business, currentRole }: Props) {
       {status === "PROPOSED" &&
         (currentRole === "TUTOR" || currentRole === "LEARNER") &&
         !confirmed && (
-          <button
+          <Button
             type="button"
             onClick={() => void confirm()}
             disabled={busy || !data}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 font-nunito font-extrabold text-xs text-primary-foreground shadow-xs transition-all hover:bg-primary/95 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
           >
             {busy ? (
               <>
-                <CircleNotch size={14} className="animate-spin" />
+                <CircleNotch width={14} height={14} className="animate-spin" />
                 <span>Đang xác nhận...</span>
               </>
             ) : (
               <>
-                <Check size={14} weight="bold" />
+                <Check width={14} height={14} />
                 <span>Xác nhận lịch học thử</span>
               </>
             )}
-          </button>
+          </Button>
         )}
 
       {query.error && <ErrorBanner message={getApiErrorMessage(query.error)} />}
@@ -387,14 +401,14 @@ function ConfirmationWidget({ business, currentRole }: Props) {
   const query = useQuery({
     queryKey: ["connection-widget", "confirmation", id],
     queryFn: () => connectionWidgetsService.getClassConfirmation(id!),
-    enabled: !!id,
+    enabled: !!id && !business.current,
     staleTime: 15_000,
     refetchInterval: 30_000,
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const data = query.data;
-  const status = data?.status ?? payloadString(business.payload, "status");
+  const data = business.current?.kind === "CLASS_CONFIRMATION" ? business.current.data : query.data;
+  const status = data?.status;
   const confirmed =
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
 
@@ -407,6 +421,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
       await queryClient.invalidateQueries({
         queryKey: ["connection-widget", "confirmation", id],
       });
+      await refreshChatHistory(queryClient, business.roomId);
     } catch (caught) {
       setError(getApiErrorMessage(caught));
     } finally {
@@ -421,7 +436,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
           label="Môn học"
           value={
             data?.subjectName ??
-            payloadString(business.payload, "subjectName") ??
+            (business.current ? undefined : payloadString(business.payload, "subjectName")) ??
             "—"
           }
         />
@@ -430,11 +445,11 @@ function ConfirmationWidget({ business, currentRole }: Props) {
           value={
             data?.teachingMode === "ONLINE" ? (
               <span className="inline-flex items-center gap-1 text-primary">
-                <VideoCamera size={13} weight="bold" /> Trực tuyến
+                <VideoCamera width={13} height={13} /> Trực tuyến
               </span>
             ) : data?.teachingMode === "OFFLINE" ? (
               <span className="inline-flex items-center gap-1">
-                <MapPin size={13} weight="bold" /> Trực tiếp
+                <MapPin width={13} height={13} /> Trực tiếp
               </span>
             ) : (
               "—"
@@ -471,24 +486,24 @@ function ConfirmationWidget({ business, currentRole }: Props) {
         status === "PROPOSED") &&
         (currentRole === "TUTOR" || currentRole === "LEARNER") &&
         !confirmed && (
-          <button
+          <Button
             type="button"
             onClick={() => void confirm()}
             disabled={busy || !data}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 font-nunito font-extrabold text-xs text-primary-foreground shadow-xs transition-all hover:bg-primary/95 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
           >
             {busy ? (
               <>
-                <CircleNotch size={14} className="animate-spin" />
+                <CircleNotch width={14} height={14} className="animate-spin" />
                 <span>Đang xác nhận...</span>
               </>
             ) : (
               <>
-                <Check size={14} weight="bold" />
+                <Check width={14} height={14} />
                 <span>Xác nhận điều khoản lớp học</span>
               </>
             )}
-          </button>
+          </Button>
         )}
 
       {query.error && <ErrorBanner message={getApiErrorMessage(query.error)} />}
@@ -504,7 +519,7 @@ function PaymentWidget({ business, currentRole }: Props) {
   const query = useQuery({
     queryKey: ["connection-widget", "payment", id],
     queryFn: () => connectionWidgetsService.getPayment(id!),
-    enabled: !!id,
+    enabled: !!id && !business.current,
     staleTime: 15_000,
     refetchInterval: 30_000,
   });
@@ -512,13 +527,13 @@ function PaymentWidget({ business, currentRole }: Props) {
   const createdQuery = useQuery({
     queryKey: ["connection-widget", "payment", createdId],
     queryFn: () => connectionWidgetsService.getPayment(createdId!),
-    enabled: !!createdId,
+    enabled: !!createdId && !business.current,
     refetchInterval: 30_000,
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const data = createdQuery.data ?? query.data;
-  const classId = data?.classId ?? classIdFromPayload;
+  const data = business.current?.kind === "PAYMENT_REQUEST" ? business.current.data : createdQuery.data ?? query.data;
+  const classId = data?.classId ?? (business.current ? undefined : classIdFromPayload);
   const checkout = safeCheckout(data?.checkoutUrl);
 
   async function create() {
@@ -527,10 +542,11 @@ function PaymentWidget({ business, currentRole }: Props) {
     setError("");
     try {
       const created = await connectionWidgetsService.createPayment(classId);
-      setCreatedId(created.id);
+      if (!business.current) setCreatedId(created.id);
       await queryClient.invalidateQueries({
         queryKey: ["connection-widget", "payment"],
       });
+      await refreshChatHistory(queryClient, business.roomId);
     } catch (caught) {
       setError(getApiErrorMessage(caught));
     } finally {
@@ -542,7 +558,7 @@ function PaymentWidget({ business, currentRole }: Props) {
     <Frame
       icon={Receipt}
       title="Học viên thanh toán"
-      status={data?.status ?? payloadString(business.payload, "status")}
+      status={data?.status}
     >
       <div className="rounded-xl border border-border/80 bg-background p-3.5 space-y-2">
         <Row label="Lớp học" value={classId ?? "—"} />
@@ -562,37 +578,41 @@ function PaymentWidget({ business, currentRole }: Props) {
         data?.status !== "PAID" &&
         (data?.status === "EXPIRED" || !checkout) &&
         classId && (
-          <button
+          <Button
             type="button"
             onClick={() => void create()}
             disabled={busy}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 font-nunito font-extrabold text-xs text-primary-foreground shadow-xs transition-all hover:bg-primary/95 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
           >
             {busy ? (
               <>
-                <CircleNotch size={14} className="animate-spin" />
+                <CircleNotch width={14} height={14} className="animate-spin" />
                 <span>Đang tạo liên kết...</span>
               </>
             ) : (
               <>
-                <CreditCard size={15} weight="bold" />
+                <CreditCard width={15} height={15} />
                 <span>Lấy liên kết thanh toán</span>
               </>
             )}
-          </button>
+          </Button>
         )}
 
       {currentRole === "LEARNER" && checkout && data?.status === "PENDING" && (
-        <a
-          href={checkout}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 font-nunito font-extrabold text-xs text-primary-foreground shadow-xs transition-all hover:bg-primary/95 active:scale-[0.98]"
+        <Button
+          asChild
+          className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
         >
-          <CreditCard size={15} weight="bold" />
-          <span>Thanh toán ngay qua PayOS</span>
-          <ArrowSquareOut size={13} weight="bold" />
-        </a>
+          <a
+            href={checkout}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <CreditCard width={15} height={15} />
+            <span>Thanh toán ngay qua PayOS</span>
+            <ArrowRight width={16} height={16} />
+          </a>
+        </Button>
       )}
 
       {(query.error || createdQuery.error) && (
@@ -606,13 +626,14 @@ function PaymentWidget({ business, currentRole }: Props) {
 }
 
 function SessionsWidget({ business, currentRole }: Props) {
-  const classId =
-    payloadString(business.payload, "classId") ?? business.referenceId;
+  const classId = business.current?.kind === "CLASS_SCHEDULE"
+    ? business.current.data.classId
+    : payloadString(business.payload, "classId") ?? business.referenceId;
   const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ["connection-widget", "sessions", classId],
     queryFn: () => connectionWidgetsService.getSessions(classId!),
-    enabled: !!classId,
+    enabled: !!classId && !business.current,
     staleTime: 15_000,
     refetchInterval: 30_000,
   });
@@ -623,6 +644,8 @@ function SessionsWidget({ business, currentRole }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const submitKey = useRef<string | null>(null);
+  const schedule = business.current?.kind === "CLASS_SCHEDULE" ? business.current.data : undefined;
+  const sessions = schedule?.sessions ?? query.data;
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -668,6 +691,7 @@ function SessionsWidget({ business, currentRole }: Props) {
       await queryClient.invalidateQueries({
         queryKey: ["connection-widget", "sessions", classId],
       });
+      await refreshChatHistory(queryClient, business.roomId);
       setShowForm(false);
       setStartAt("");
       setEndAt("");
@@ -683,13 +707,21 @@ function SessionsWidget({ business, currentRole }: Props) {
     <Frame
       icon={CalendarCheck}
       title="Lịch các buổi học"
-      status={query.data?.length ? `${query.data.length} buổi` : "Chờ xếp lịch"}
+      status={sessions?.length ? `${sessions.length} buổi` : "Chờ xếp lịch"}
     >
       <Row label="Mã lớp học" value={classId ?? "—"} />
+      {schedule && (
+        <div className="space-y-1 rounded-xl border border-border/80 bg-background p-3">
+          <Row label="Môn học" value={schedule.subjectName ?? "—"} />
+          <Row label="Trạng thái lớp" value={schedule.status ?? "—"} />
+          <Row label="Số buổi dự kiến" value={schedule.numberOfSessions ?? "—"} />
+          <Row label="Thời lượng mỗi buổi" value={schedule.sessionDurationMinutes ? `${schedule.sessionDurationMinutes} phút` : "—"} />
+        </div>
+      )}
 
-      {query.data?.length ? (
+      {sessions?.length ? (
         <ol className="space-y-2 pt-1">
-          {query.data.map((session, index) => (
+          {sessions.map((session, index) => (
             <li
               key={session.id}
               className="rounded-xl border border-border/80 bg-background p-3 text-xs transition-colors hover:border-border"
@@ -698,19 +730,19 @@ function SessionsWidget({ business, currentRole }: Props) {
                 <span className="font-nunito font-extrabold text-foreground">
                   Buổi {index + 1}
                 </span>
-                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+                <span className="rounded-full border border-primary/25 bg-card px-2 py-0.5 text-[10px] font-bold text-primary">
                   {session.status ?? "Đã xếp lịch"}
                 </span>
               </div>
               <div className="mt-1.5 flex items-center gap-1 text-muted-foreground text-[11px]">
-                <Clock size={12} weight="bold" />
+                <Clock width={12} height={12} />
                 <span>
                   {dateTime(session.startAt)} – {dateTime(session.endAt)}
                 </span>
               </div>
               {session.locationOrMeetingInfo && (
                 <div className="mt-1 flex items-center gap-1 text-[11px] text-foreground/80 font-medium truncate">
-                  <MapPin size={12} weight="bold" className="shrink-0" />
+                  <MapPin width={12} height={12} className="shrink-0" />
                   <span className="truncate">
                     {session.locationOrMeetingInfo}
                   </span>
@@ -725,21 +757,22 @@ function SessionsWidget({ business, currentRole }: Props) {
         </p>
       )}
 
-      {currentRole === "TUTOR" && classId && (
-        <button
+      {currentRole === "TUTOR" && classId && (!schedule || schedule.status === "ACTIVE") && (
+        <Button
           type="button"
+          variant="outline"
           onClick={() => setShowForm((value) => !value)}
-          className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-primary/40 bg-card px-4 py-2 font-nunito font-bold text-xs text-primary shadow-2xs transition-all hover:bg-primary/5 hover:border-primary active:scale-[0.98] cursor-pointer"
+          className="h-12 w-full rounded-full border-primary/40 font-nunito text-xs font-bold text-primary transition-all hover:border-primary hover:bg-muted active:scale-[0.98]"
         >
           {showForm ? (
             <span>Đóng biểu mẫu</span>
           ) : (
             <>
-              <CalendarPlus size={14} weight="bold" />
+              <CalendarPlus width={14} height={14} />
               <span>Xếp thêm buổi học</span>
             </>
           )}
-        </button>
+        </Button>
       )}
 
       {showForm && (
@@ -787,27 +820,27 @@ function SessionsWidget({ business, currentRole }: Props) {
                 submitKey.current = null;
                 setLocation(event.target.value);
               }}
-              className="w-full rounded-lg border border-input bg-card px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 transition-all"
+              className="w-full rounded-2xl border border-input bg-card px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 transition-all"
             />
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={busy}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 font-nunito font-extrabold text-xs text-primary-foreground shadow-xs transition-all hover:bg-primary/95 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
           >
             {busy ? (
               <>
-                <CircleNotch size={14} className="animate-spin" />
+                <CircleNotch width={14} height={14} className="animate-spin" />
                 <span>Đang kiểm tra trùng lịch...</span>
               </>
             ) : (
               <>
-                <Check size={14} weight="bold" />
+                <Check width={14} height={14} />
                 <span>Xác nhận & Thêm buổi học</span>
               </>
             )}
-          </button>
+          </Button>
         </form>
       )}
 

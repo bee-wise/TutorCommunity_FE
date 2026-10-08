@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Info, Copy, Download, Hash } from "lucide-react";
+import {
+  InformationCircleIcon as Info,
+  DocumentDuplicateIcon as Copy,
+  ArrowDownTrayIcon as Download,
+  HashtagIcon as Hash,
+} from "@heroicons/react/24/outline";
 import type { ChatMessage } from "../types/messages.types";
 
 interface MessageContextMenuProps {
@@ -94,7 +99,7 @@ export function MessageContextMenu({
         className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-foreground transition hover:bg-accent hover:text-accent-foreground"
         role="menuitem"
       >
-        <Info size={14} className="text-primary" />
+        <Info width={14} height={14} className="text-primary" />
         <span>Xem chi tiết</span>
       </button>
 
@@ -105,7 +110,7 @@ export function MessageContextMenu({
           className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-foreground transition hover:bg-accent hover:text-accent-foreground"
           role="menuitem"
         >
-          <Copy size={14} className="text-muted-foreground" />
+          <Copy width={14} height={14} className="text-muted-foreground" />
           <span>Sao chép tin nhắn</span>
         </button>
       )}
@@ -120,7 +125,7 @@ export function MessageContextMenu({
           className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-foreground transition hover:bg-accent hover:text-accent-foreground"
           role="menuitem"
         >
-          <Download size={14} className="text-muted-foreground" />
+          <Download width={14} height={14} className="text-muted-foreground" />
           <span>Tải tệp đính kèm</span>
         </a>
       )}
@@ -133,7 +138,7 @@ export function MessageContextMenu({
         className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground"
         role="menuitem"
       >
-        <Hash size={13} />
+        <Hash width={13} height={13} />
         <span>Sao chép Message ID</span>
       </button>
     </div>

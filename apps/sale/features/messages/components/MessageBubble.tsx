@@ -1,16 +1,15 @@
 "use client";
 
 import {
-  Download,
-  FileIcon,
-} from "lucide-react";
+  ArrowDownTrayIcon as Download,
+  DocumentIcon as FileIcon,
+} from "@heroicons/react/24/outline";
 import NextImage from "next/image";
 import {
   Message,
   MessageAvatar,
   MessageContent,
   MessageHeader,
-  MessageFooter,
 } from "@workspace/ui/components/ui/message";
 import type { ChatMessage, ChatParticipantRole } from "../types/messages.types";
 import { formatMessageTime, formatSessionTime, formatFileSize } from "../constants/messages.utils";
@@ -150,13 +149,13 @@ function FileBubble({
         className="flex items-center gap-3"
       >
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted">
-          <FileIcon size={18} className="text-primary" />
+          <FileIcon width={18} height={18} className="text-primary" />
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-foreground">{name}</p>
           <p className="text-xs text-muted-foreground">{formatFileSize(size)}</p>
         </div>
-        <Download size={14} className="shrink-0 text-primary" />
+        <Download width={14} height={14} className="shrink-0 text-primary" />
       </a>
       {time && (
         <div className={`mt-1.5 flex ${isMine ? "justify-end" : "justify-start"}`}>

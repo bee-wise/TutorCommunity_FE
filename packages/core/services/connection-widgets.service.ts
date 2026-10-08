@@ -71,6 +71,18 @@ export const classSessionSchema = z
   })
   .passthrough();
 
+export const classScheduleSchema = z.object({
+  classId: z.string(),
+  tutorId: nullableString,
+  learnerId: nullableString,
+  subjectName: nullableString,
+  teachingMode: nullableString,
+  status: nullableString,
+  numberOfSessions: z.number().nullish(),
+  sessionDurationMinutes: z.number().nullish(),
+  sessions: z.array(classSessionSchema),
+}).passthrough();
+
 export const learningClassSchema = z
   .object({
     id: z.string(),
@@ -84,6 +96,7 @@ export type TrialSession = z.infer<typeof trialSessionSchema>;
 export type ClassConfirmation = z.infer<typeof classConfirmationSchema>;
 export type PaymentRequest = z.infer<typeof paymentRequestSchema>;
 export type ClassSession = z.infer<typeof classSessionSchema>;
+export type ClassSchedule = z.infer<typeof classScheduleSchema>;
 export type ClassSessionSlot = {
   startAt: string;
   endAt: string;
