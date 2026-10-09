@@ -26,9 +26,11 @@ export function useChatRoom(roomId: string) {
     enabled: Boolean(room),
     initialPageParam: 1,
     queryFn: ({ pageParam }) => chatRoomsService.listMessages(roomId, pageParam, PAGE_SIZE),
-    getNextPageParam: (lastPage) => lastPage.pagination.page < lastPage.pagination.totalPages
-      ? lastPage.pagination.page + 1
-      : undefined,
+    getNextPageParam: (lastPage) => {
+      const page = lastPage.pagination?.page ?? 1;
+      const totalPages = lastPage.pagination?.totalPages ?? 1;
+      return page < totalPages ? page + 1 : undefined;
+    },
     refetchInterval: 10_000,
   });
 
@@ -45,7 +47,7 @@ export function useChatRoom(roomId: string) {
   }, []);
   const messages = room
     ? [...new Map(
-        (history.data?.pages.flatMap((page) => page.items ?? []) ?? [])
+        (history.data?.pages.flatMap((page) => page?.items ?? []) ?? [])
           .map((message) => [message.id, toChatMessage(message, room)]),
       ).values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt))
     : [];
@@ -58,16 +60,12 @@ export function useChatRoom(roomId: string) {
   return {
     room,
     messages,
-    sending: send.isPending,
-    isReadOnly: room?.status !== "ACTIVE",
-    currentUserId: user?.id ?? "",
     currentUserRole,
+    isPending: roomsPending || history.isPending,
+    error: roomsError || history.error,
     sendMessage: send.mutateAsync,
+    isSending: send.isPending,
     messagesEndRef,
-    error: roomsError ?? history.error ?? send.error,
-    loading: roomsPending || Boolean(room && history.isPending),
-    hasOlderMessages: history.hasNextPage,
-    loadingOlderMessages: history.isFetchingNextPage,
-    loadOlderMessages: history.fetchNextPage,
+    scrollToBottom,
   };
 }

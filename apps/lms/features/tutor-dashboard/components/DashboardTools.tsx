@@ -6,7 +6,7 @@ import { DashboardLink } from "./DashboardLink";
 const TOOLS = [
   { title: "Quản lý lớp học", description: "Theo dõi lớp và điểm danh buổi học", href: "/lms/tutor/classes" },
   { title: "Thu nhập & thanh toán", description: "Tra cứu thu nhập, theo dõi quyết toán", href: "/lms/tutor/earnings" },
-  { title: "Tin nhắn", description: "Trao đổi với học viên và tư vấn viên", href: "/lms/tutor/messages" },
+  { title: "Chat kết nối & tư vấn", description: "Trao đổi trước khi vào lớp và nhận hỗ trợ", href: "/lms/tutor/messages" },
 ] as const;
 
 export function DashboardTools() {
@@ -16,7 +16,7 @@ export function DashboardTools() {
         <div className="flex items-center gap-2 text-sm font-bold"><SparklesIcon className="size-4" aria-hidden="true" />BeeWise AI</div>
         <h2 className="mt-3 font-nunito text-xl font-extrabold leading-[1.3]">Chuẩn bị bài học nhẹ nhàng hơn</h2>
         <p className="mt-2 text-sm leading-relaxed">Tạo tài liệu từ nội dung buổi học, xem lại và chỉnh sửa trước khi xuất bản.</p>
-        <DashboardLink href="/lms/tutor/materials" className="mt-5">Mở kho tài liệu</DashboardLink>
+        <DashboardLink href="/lms/tutor/classes" className="mt-5">Chọn lớp soạn tài liệu</DashboardLink>
       </div>
       <div className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6">
         <h2 className="font-nunito text-xl font-extrabold leading-[1.3] text-primary">Công việc giảng dạy</h2>

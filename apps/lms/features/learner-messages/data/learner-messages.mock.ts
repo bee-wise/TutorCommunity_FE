@@ -62,7 +62,7 @@ export const LEARNER_CONVERSATIONS: LearnerConversation[] = [
     tutor: { id: "tutor-mai-lan", name: "Cô Vũ Mai Lan", initials: "ML", isOnline: false },
     status: "CLOSED",
     closeReason: "ENROLLMENT_ENDED",
-    lastMessage: "Các tài liệu cũ vẫn còn trong Kho tài liệu của em.",
+    lastMessage: "Các tài liệu cũ vẫn còn trong Tài liệu lớp học của em.",
     lastMessageAt: "2026-05-12T18:25:00+07:00",
     unreadCount: 0,
   },
@@ -89,7 +89,7 @@ export const LEARNER_MESSAGES: Record<string, LearnerMessage[]> = {
     { id: "chemistry-message-2", conversationId: "conversation-chemistry-9", sender: "SYSTEM", senderName: "BeeWise", text: "Lớp học đã kết thúc. Cuộc trò chuyện được chuyển sang chế độ chỉ đọc.", sentAt: "2026-06-30T08:00:00+07:00", isRead: true },
   ],
   "conversation-literature-10": [
-    { id: "literature-message-1", conversationId: "conversation-literature-10", sender: "TUTOR", senderName: "Cô Vũ Mai Lan", text: "Các tài liệu cũ vẫn còn trong Kho tài liệu của em.", sentAt: "2026-05-12T18:25:00+07:00", isRead: true },
+    { id: "literature-message-1", conversationId: "conversation-literature-10", sender: "TUTOR", senderName: "Cô Vũ Mai Lan", text: "Các tài liệu cũ vẫn còn trong Tài liệu lớp học của em.", sentAt: "2026-05-12T18:25:00+07:00", isRead: true },
     { id: "literature-message-2", conversationId: "conversation-literature-10", sender: "SYSTEM", senderName: "BeeWise", text: "Bạn không còn tham gia lớp học này. Cuộc trò chuyện được chuyển sang chế độ chỉ đọc.", sentAt: "2026-05-13T08:00:00+07:00", isRead: true },
   ],
 };

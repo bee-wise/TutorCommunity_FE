@@ -65,12 +65,12 @@ test("summaries scope documents to each class, retain counts/new flags and selec
 
 test("class filters compose kinds, subjects, statuses, codes and accent-insensitive tutor search without mutation", () => {
   const before = structuredClone(summaries);
-  assert.deepEqual(filterClassSummaries(summaries, DEFAULT_CLASS_FILTERS).map((item) => item.classInfo.id), ["class-physics-10", "class-math-10"]);
-  assert.deepEqual(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, sort: "oldest" }).map((item) => item.classInfo.id), ["class-math-10", "class-physics-10"]);
+  assert.deepEqual(filterClassSummaries(summaries, DEFAULT_CLASS_FILTERS).map((item) => item.classInfo.id), ["class-physics-10", "class-math-10", "class-literature-10"]);
+  assert.deepEqual(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, sort: "oldest" }).map((item) => item.classInfo.id), ["class-literature-10", "class-math-10", "class-physics-10"]);
   assert.equal(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, search: "nguyen thu ha", subject: "Toán" }).length, 1);
-  assert.equal(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, search: "BW-PHY10-014" })[0].classInfo.id, "class-physics-10");
-  assert.equal(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, kind: "group", search: "Speaking" })[0].classInfo.id, "class-ielts-65");
-  assert.equal(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, status: "completed" }).length, 0);
+  assert.equal(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, search: "BW-PHY-0821" })[0].classInfo.id, "class-physics-10");
+  assert.equal(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, kind: "group", search: "Writing" })[0].classInfo.id, "class-ielts-65");
+  assert.equal(filterClassSummaries(summaries, { ...DEFAULT_CLASS_FILTERS, status: "completed" }).length, 1);
   const statuses = ["completed", "active", "upcoming"].map((status, index) => ({ ...summaries[0], classInfo: { ...summaries[0].classInfo, id: String(index), status } }));
   assert.deepEqual(filterClassSummaries(statuses, { ...DEFAULT_CLASS_FILTERS, sort: "status" }).map((item) => item.classInfo.status), ["active", "upcoming", "completed"]);
   assert.deepEqual(summaries, before);
@@ -128,10 +128,10 @@ test("class filter controls have pressed-kind semantics, explicit labels, custom
 
 test("class listing renders compact cards, restores group kind and exposes one empty-state reset", () => {
   const html = render(ClassLibraryScreen);
-  assert.ok(html.includes("Kho tài liệu"));
+  assert.ok(html.includes("Tài liệu lớp học"));
   assert.ok(html.includes("Dữ liệu minh họa"));
   assert.ok(html.includes("md:grid-cols-2 xl:grid-cols-3"));
-  assert.equal((html.match(/<a /g) ?? []).length, 2);
+  assert.equal((html.match(/<a /g) ?? []).length, 3);
   assert.doesNotMatch(html, /Tổng quan|Xuất bản|Tạo tài liệu AI|Upload|underline/);
   const group = render(ClassLibraryScreen, { initialKind: "group" });
   assert.equal((group.match(/<a /g) ?? []).length, 1);
@@ -141,7 +141,7 @@ test("class listing renders compact cards, restores group kind and exposes one e
   assert.equal((empty.match(/Đặt lại bộ lọc/g) ?? []).length, 1);
 });
 
-test("sessions without shared materials have no fake view link; group Back restores its originating tab", () => {
+test("sessions without shared materials have no fake view link; Back returns to the class workspace", () => {
   const sessions = buildSessionSummaries("class-math-10", LEARNER_CLASS_SESSIONS, LEARNER_SHARED_MATERIALS);
   const unavailable = render(LearnerSessionCard, { classId: "class-math-10", ...sessions[2] });
   assert.ok(unavailable.includes("Chưa có tài liệu được chia sẻ"));
@@ -150,7 +150,7 @@ test("sessions without shared materials have no fake view link; group Back resto
   const available = render(LearnerSessionCard, { classId: "class/maths", ...sessions[0] });
   assert.ok(available.includes("class%2Fmaths/sessions/math-session-01"));
   const group = render(ClassSessionsScreen, { classId: "class-ielts-65" });
-  assert.ok(group.includes("/lms/learner/materials?kind=group"));
+  assert.ok(group.includes("/lms/learner/classes/class-ielts-65"));
 });
 
 test("wrong-class session and unknown identifiers expose only a missing state, no documents", () => {

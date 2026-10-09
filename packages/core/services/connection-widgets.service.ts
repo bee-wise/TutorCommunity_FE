@@ -6,7 +6,9 @@ const nullableString = z.string().nullish();
 export const trialSessionSchema = z
   .object({
     id: z.string(),
-    chatRoomId: z.string(),
+    chatRoomId: nullableString,
+    createdById: nullableString,
+    tutorOfferingId: nullableString,
     subject: nullableString,
     scheduledStartAt: nullableString,
     scheduledEndAt: nullableString,
@@ -15,7 +17,19 @@ export const trialSessionSchema = z
     zoomUrl: nullableString,
     note: nullableString,
     status: nullableString,
-    version: z.number().optional(),
+    version: z.number().nullish(),
+    proposedStartAt: nullableString,
+    proposedEndAt: nullableString,
+    proposedById: nullableString,
+    proposedAt: nullableString,
+    completedAt: nullableString,
+    completedById: nullableString,
+    completionNote: nullableString,
+    cancelledAt: nullableString,
+    cancelledById: nullableString,
+    cancellationReason: nullableString,
+    createdAt: nullableString,
+    updatedAt: nullableString,
     tutorConfirmedAt: nullableString,
     learnerConfirmedAt: nullableString,
   })
@@ -24,8 +38,11 @@ export const trialSessionSchema = z
 export const classConfirmationSchema = z
   .object({
     id: z.string(),
-    chatRoomId: z.string(),
+    chatRoomId: nullableString,
     trialSessionId: nullableString,
+    tutorId: nullableString,
+    learnerId: nullableString,
+    tutorProfileId: nullableString,
     subjectId: nullableString,
     subjectName: nullableString,
     tutorOfferingId: nullableString,
@@ -34,19 +51,22 @@ export const classConfirmationSchema = z
     sessionDurationMinutes: z.number().nullish(),
     numberOfSessions: z.number().nullish(),
     totalAmount: z.number().nullish(),
-    proposedSchedule: nullableString,
+    proposedSchedule: z.any().nullish(),
     status: nullableString,
-    version: z.number().optional(),
+    version: z.number().nullish(),
     classId: nullableString,
     learnerConfirmedAt: nullableString,
     tutorConfirmedAt: nullableString,
+    offeringSnapshot: z.any().nullish(),
+    skippedTrialReason: z.any().nullish(),
   })
   .passthrough();
 
 export const paymentRequestSchema = z
   .object({
     id: z.string(),
-    classId: z.string(),
+    classId: nullableString,
+    learnerId: nullableString,
     orderCode: z.union([z.string(), z.number()]).nullish(),
     amount: z.number().nullish(),
     currency: nullableString,
@@ -62,26 +82,31 @@ export const paymentRequestSchema = z
 export const classSessionSchema = z
   .object({
     id: z.string(),
-    classId: z.string(),
-    startAt: z.string(),
-    endAt: z.string(),
+    classId: nullableString,
+    tutorId: nullableString,
+    learnerId: nullableString,
+    startAt: nullableString,
+    endAt: nullableString,
     teachingMode: nullableString,
     locationOrMeetingInfo: nullableString,
     status: nullableString,
+    replacesSessionId: nullableString,
   })
   .passthrough();
 
-export const classScheduleSchema = z.object({
-  classId: z.string(),
-  tutorId: nullableString,
-  learnerId: nullableString,
-  subjectName: nullableString,
-  teachingMode: nullableString,
-  status: nullableString,
-  numberOfSessions: z.number().nullish(),
-  sessionDurationMinutes: z.number().nullish(),
-  sessions: z.array(classSessionSchema),
-}).passthrough();
+export const classScheduleSchema = z
+  .object({
+    classId: nullableString,
+    tutorId: nullableString,
+    learnerId: nullableString,
+    subjectName: nullableString,
+    teachingMode: nullableString,
+    status: nullableString,
+    numberOfSessions: z.number().nullish(),
+    sessionDurationMinutes: z.number().nullish(),
+    sessions: z.array(classSessionSchema).nullish().default([]),
+  })
+  .passthrough();
 
 export const learningClassSchema = z
   .object({
@@ -125,11 +150,18 @@ function dataOf<T extends z.ZodType>(schema: T, value: unknown): z.infer<T> {
   const envelope = z
     .object({ success: z.literal(true), data: z.unknown() })
     .safeParse(value);
-  if (!envelope.success)
+  if (!envelope.success) {
+    const directParsed = schema.safeParse(value);
+    if (directParsed.success) return directParsed.data;
     throw new Error("Phản hồi widget từ máy chủ không hợp lệ.");
+  }
   const parsed = schema.safeParse(envelope.data.data);
-  if (!parsed.success)
+  if (!parsed.success) {
+    console.error("Widget data parsing error:", parsed.error);
+    const fallbackParsed = schema.safeParse(envelope.data);
+    if (fallbackParsed.success) return fallbackParsed.data;
     throw new Error("Dữ liệu widget từ máy chủ không hợp lệ.");
+  }
   return parsed.data;
 }
 

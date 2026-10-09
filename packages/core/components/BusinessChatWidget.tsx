@@ -256,13 +256,13 @@ function ConfirmationStatusGroup({
 
 function ErrorBanner({ message }: { message: string }) {
   return (
-    <div
+    <p
       role="alert"
-      className="flex items-start gap-2 rounded-xl border border-destructive/20 bg-destructive/10 p-2.5 text-xs text-destructive"
+      className="flex items-center gap-1.5 rounded-xl border border-destructive/25 bg-destructive/10 p-2.5 text-[11px] font-medium text-destructive"
     >
-      <WarningCircle width={16} height={16} className="shrink-0 mt-0.5" />
-      <span className="leading-snug">{message}</span>
-    </div>
+      <WarningCircle width={14} height={14} className="shrink-0" />
+      <span>{message}</span>
+    </p>
   );
 }
 
@@ -286,7 +286,7 @@ function TrialWidget({ business, currentRole }: Props) {
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
 
   async function confirm() {
-    if (!id || data?.version === undefined) return;
+    if (!id || data?.version === undefined || data?.version === null) return;
     setBusy(true);
     setError("");
     try {
@@ -319,7 +319,8 @@ function TrialWidget({ business, currentRole }: Props) {
         <Row
           label="Kết thúc"
           value={dateTime(
-            data?.scheduledEndAt ?? (business.current ? undefined : payloadString(payload, "scheduledEndAt")),
+            data?.scheduledEndAt ??
+              (business.current ? undefined : payloadString(payload, "scheduledEndAt")),
           )}
         />
         <Row
@@ -340,23 +341,18 @@ function TrialWidget({ business, currentRole }: Props) {
         />
         {(data?.locationOrMeetingInfo || data?.zoomUrl) && (
           <Row
-            label="Địa điểm / Liên kết"
-            value={
-              joinUrl ? (
-                <TrialJoinButton trial={data} href={joinUrl} />
-              ) : (
-                data.locationOrMeetingInfo ?? data.zoomUrl
-              )
-            }
+            label="Địa điểm / Phòng học"
+            value={data.locationOrMeetingInfo ?? data.zoomUrl}
           />
         )}
       </div>
 
+      {data && joinUrl && <TrialJoinButton trial={data} href={joinUrl} />}
+
       {data?.note && (
-        <div className="rounded-xl border border-border/80 bg-background p-2.5 text-foreground leading-relaxed">
-          <span className="font-semibold text-muted-foreground block text-[11px] mb-0.5">
-            Ghi chú:
-          </span>
+
+        <div className="rounded-xl border border-border/80 bg-background p-2.5 text-muted-foreground text-[11px] leading-relaxed">
+          <span className="font-semibold text-foreground">Ghi chú: </span>
           {data.note}
         </div>
       )}
@@ -413,7 +409,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
 
   async function confirm() {
-    if (!id || data?.version === undefined) return;
+    if (!id || data?.version === undefined || data?.version === null) return;
     setBusy(true);
     setError("");
     try {

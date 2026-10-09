@@ -8,9 +8,11 @@ import { Topbar } from "./Topbar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
+  sidebar?: React.ReactNode;
+  breadcrumb?: React.ReactNode;
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({ children, sidebar, breadcrumb }: DashboardLayoutProps) {
   const pathname = usePathname();
   const exerciseRoute = pathname.match(/^\/lms\/learner\/exercises\/([^/]+)$/);
   const isFullscreenExercise = Boolean(exerciseRoute && exerciseRoute[1] !== "classes");
@@ -30,10 +32,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className={isFullscreenMaterialPreview ? "flex h-dvh w-full overflow-hidden bg-background" : "flex min-h-screen w-full bg-background"}>
-        {!isFullscreenMaterialPreview && <AppSidebar />}
+      <div className={isFullscreenMaterialPreview ? "flex h-dvh w-full overflow-hidden bg-background" : "flex min-h-dvh w-full bg-background"}>
+        {!isFullscreenMaterialPreview && (sidebar ?? <AppSidebar />)}
         <div className="relative flex min-w-0 flex-1 flex-col">
-          {!isFullscreenMaterialPreview && <Topbar />}
+          {!isFullscreenMaterialPreview && <Topbar breadcrumb={breadcrumb} />}
           <main className={`min-w-0 min-h-0 flex-1 ${isFullscreenMaterialPreview ? "overflow-hidden" : ""}`}>
             <div className={`min-w-0 w-full ${isFullscreenMaterialPreview ? "h-full" : ""}`}>{children}</div>
           </main>

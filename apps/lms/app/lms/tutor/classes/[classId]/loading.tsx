@@ -1,2 +1,2 @@
-import { ClassesSkeleton } from "@/features/tutor-classes/components/ClassesSkeleton";
-export default function Loading() { return <ClassesSkeleton detail />; }
+import { ClassWorkspaceSkeleton } from "@/features/tutor-classes/components/ClassWorkspaceSkeleton";
+export default function Loading() { return <ClassWorkspaceSkeleton />; }

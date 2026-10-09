@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import {
+  getLmsRoleFromToken,
+  getLmsRoleRedirectPath,
+} from "./features/lms-workspace/utils/lms-role";
 
 const publicPaths = ["/", "/login", "/robots.txt", "/sitemap.xml"];
 
@@ -11,6 +15,7 @@ export function proxy(request: NextRequest) {
 
   const isPublicPath = publicPaths.includes(pathname);
   const tokenToParse = token || refreshToken;
+  const role = getLmsRoleFromToken(token) ?? getLmsRoleFromToken(refreshToken);
 
   if (!isPublicPath && !token && !refreshToken) {
     const loginUrl = new URL("/login", request.url);
@@ -18,26 +23,20 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Nếu truy cập trang login hoặc trang chủ /lms mà đã có token -> phân luồng theo role
+  // Phân luồng sớm theo role trong cookie; /auth/me sẽ xác minh lại ở client.
   if ((pathname === "/" || pathname === "/lms") && (token || refreshToken)) {
-    let role = "LEARNER";
-
-    // Ưu tiên lấy role từ token, nếu không có thì thử lấy từ refreshToken
-
-    if (tokenToParse) {
-      try {
-        const payload = JSON.parse(atob(tokenToParse.split(".")[1]));
-        if (payload?.role) role = payload.role;
-      } catch {
-        // ignore parsing error
-      }
-    }
-
     const targetUrl =
-      role.toUpperCase() === "TUTOR"
+      role === "TUTOR"
         ? "/lms/tutor/dashboard"
-        : "/lms/learner/schedule";
+        : "/lms/learner";
     return NextResponse.redirect(new URL(targetUrl, request.url));
+  }
+
+  if (role) {
+    const targetPath = getLmsRoleRedirectPath(pathname, role);
+    if (targetPath) {
+      return NextResponse.redirect(new URL(targetPath, request.url));
+    }
   }
 
   const response = NextResponse.next();

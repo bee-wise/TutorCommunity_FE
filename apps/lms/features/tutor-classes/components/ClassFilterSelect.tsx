@@ -14,9 +14,9 @@ interface ClassFilterSelectProps {
 export function ClassFilterSelect({ id, value, options, onValueChange }: ClassFilterSelectProps) {
   return (
     <Select.Root value={value} onValueChange={onValueChange}>
-      <Select.Trigger id={id} className={`${classInput} flex items-center justify-between gap-3 text-left active:scale-[0.98]`}>
+      <Select.Trigger id={id} className={`${classInput} flex items-center justify-between gap-2 text-left text-sm active:scale-[0.98] [&>span:first-child]:truncate`}>
         <Select.Value />
-        <Select.Icon><ChevronDownIcon className="size-4 text-muted-foreground" aria-hidden="true" /></Select.Icon>
+        <Select.Icon className="shrink-0"><ChevronDownIcon className="size-4 text-muted-foreground" aria-hidden="true" /></Select.Icon>
       </Select.Trigger>
       <Select.Portal>
         <Select.Content position="popper" sideOffset={6} className="z-50 max-h-[var(--radix-select-content-available-height)] min-w-[var(--radix-select-trigger-width)] overflow-y-auto rounded-2xl border border-border bg-popover p-1.5 shadow-soft">

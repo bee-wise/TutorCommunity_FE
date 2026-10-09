@@ -54,8 +54,8 @@ const roomListSchema = z.object({
 }).passthrough();
 
 export const chatHistoryWidgetSchema = z.object({
-  type: z.string(),
-  referenceId: z.string(),
+  type: z.string().nullish(),
+  referenceId: z.string().nullish(),
   trialSession: trialSessionSchema.nullish(),
   classConfirmation: classConfirmationSchema.nullish(),
   payment: paymentRequestSchema.nullish(),
@@ -72,7 +72,7 @@ export const messageSchema = z.object({
   businessType: z.string().nullable().optional(),
   businessReferenceId: z.string().nullable().optional(),
   businessPayload: z.unknown().optional(),
-  type: z.enum(["TEXT", "WIDGET", "SYSTEM"]).optional(),
+  type: z.string().nullable().optional(),
   widget: chatHistoryWidgetSchema.nullish(),
 }).passthrough();
 
@@ -82,8 +82,13 @@ const requestListSchema = z.object({
 }).passthrough();
 
 const messageListSchema = z.object({
-  items: z.array(messageSchema).nullable().optional(),
-  pagination: paginationSchema,
+  items: z.array(messageSchema).nullish(),
+  pagination: paginationSchema.nullish().default({
+    page: 1,
+    pageSize: 50,
+    totalItems: 0,
+    totalPages: 1,
+  }),
 }).passthrough();
 
 const centrifugoTokenSchema = z.object({
@@ -106,19 +111,57 @@ export type ConnectionDirection = "outbound" | "inbound" | "consultant";
 
 function dataOf<T extends z.ZodType>(schema: T, value: unknown): z.infer<T> {
   const envelope = z.object({ success: z.literal(true), data: z.unknown() }).safeParse(value);
-  if (!envelope.success) {
-    const directParsed = schema.safeParse(value);
-    if (directParsed.success) return directParsed.data;
-    throw new Error("Phản hồi từ máy chủ không hợp lệ. Vui lòng thử lại.");
+  const targetData = envelope.success ? envelope.data.data : value;
+
+  const parsed = schema.safeParse(targetData);
+  if (parsed.success) {
+    return parsed.data;
   }
-  const parsed = schema.safeParse(envelope.data.data);
-  if (!parsed.success) {
-    console.error("Chat rooms service parsing error:", parsed.error);
+
+  if (envelope.success) {
     const fallbackParsed = schema.safeParse(envelope.data);
     if (fallbackParsed.success) return fallbackParsed.data;
-    throw new Error("Dữ liệu chat chưa đúng định dạng. Vui lòng thử lại.");
   }
-  return parsed.data;
+
+  console.error("Chat rooms service parsing error:", parsed.error, "Payload:", targetData);
+
+  if (targetData && typeof targetData === "object" && "items" in targetData && Array.isArray((targetData as Record<string, unknown>).items)) {
+    const rawItems = (targetData as Record<string, unknown>).items as unknown[];
+    const safeItems = rawItems.map((item) => {
+      const itemParsed = messageSchema.safeParse(item);
+      if (itemParsed.success) return itemParsed.data;
+      const rec = (item && typeof item === "object" ? item : {}) as Record<string, unknown>;
+      return {
+        id: String(rec.id || (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `msg-${Date.now()}`)),
+        chatRoomId: String(rec.chatRoomId || ""),
+        senderId: String(rec.senderId || ""),
+        content: typeof rec.content === "string" ? rec.content : null,
+        createdAt: typeof rec.createdAt === "string" ? rec.createdAt : new Date().toISOString(),
+        messageType: typeof rec.messageType === "string" ? rec.messageType : typeof rec.type === "string" ? rec.type : "TEXT",
+        businessType: typeof rec.businessType === "string" ? rec.businessType : null,
+        businessReferenceId: typeof rec.businessReferenceId === "string" ? rec.businessReferenceId : null,
+        type: typeof rec.type === "string" ? rec.type : null,
+        widget: (rec.widget as z.infer<typeof messageSchema>["widget"]) || null,
+      };
+    });
+
+    const rawPagination = (targetData as Record<string, unknown>).pagination as Record<string, unknown> | undefined;
+    return {
+      items: safeItems,
+      pagination: {
+        page: typeof rawPagination?.page === "number" ? rawPagination.page : 1,
+        pageSize: typeof rawPagination?.pageSize === "number" ? rawPagination.pageSize : 50,
+        totalItems: typeof rawPagination?.totalItems === "number" ? rawPagination.totalItems : safeItems.length,
+        totalPages: typeof rawPagination?.totalPages === "number" ? rawPagination.totalPages : 1,
+      },
+    } as z.infer<T>;
+  }
+
+  if (targetData && typeof targetData === "object" && "id" in targetData) {
+    return targetData as z.infer<T>;
+  }
+
+  throw new Error("Dữ liệu chat chưa đúng định dạng. Vui lòng thử lại.");
 }
 
 export const chatRoomsService = {

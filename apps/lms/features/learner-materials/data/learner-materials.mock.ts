@@ -7,8 +7,8 @@ import type {
 export const LEARNER_CLASSES: LearnerClass[] = [
   {
     id: "class-math-10",
-    title: "Toán 10 - Củng cố nền tảng",
-    code: "BW-MATH10-021",
+    title: "Toán 10 - Nền tảng",
+    code: "BW-MATH-1042",
     kind: "individual",
     status: "active",
     subject: "Toán",
@@ -20,8 +20,8 @@ export const LEARNER_CLASSES: LearnerClass[] = [
   },
   {
     id: "class-physics-10",
-    title: "Vật lý 10 - Chuyển động cơ học",
-    code: "BW-PHY10-014",
+    title: "Vật lý 10 - Chuyển động",
+    code: "BW-PHY-0821",
     kind: "individual",
     status: "active",
     subject: "Vật lý",
@@ -33,8 +33,8 @@ export const LEARNER_CLASSES: LearnerClass[] = [
   },
   {
     id: "class-ielts-65",
-    title: "IELTS 6.5 - Speaking & Writing",
-    code: "BW-IELTS65-008",
+    title: "IELTS 6.5 - Writing",
+    code: "BW-ENG-0635",
     kind: "group",
     status: "active",
     subject: "Tiếng Anh",
@@ -43,6 +43,19 @@ export const LEARNER_CLASSES: LearnerClass[] = [
     tutorInitials: "AT",
     scheduleLabel: "Thứ Năm và Chủ Nhật",
     startedAt: "2026-05-18T09:00:00+07:00",
+  },
+  {
+    id: "class-literature-10",
+    title: "Ngữ văn 10 - Đọc hiểu",
+    code: "BW-LIT-1014",
+    kind: "individual",
+    status: "completed",
+    subject: "Ngữ văn",
+    level: "Lớp 10",
+    tutorName: "Cô Vũ Mai Lan",
+    tutorInitials: "ML",
+    scheduleLabel: "Thứ Tư hằng tuần",
+    startedAt: "2026-04-12T09:00:00+07:00",
   },
 ];
 
@@ -55,6 +68,7 @@ export const LEARNER_CLASS_SESSIONS: LearnerClassSession[] = [
   { id: "english-session-01", classId: "class-ielts-65", sequence: 18, topic: "Speaking Part 1", taughtAt: "2026-08-16T20:00:00+07:00", durationMinutes: 60, status: "CANCELED" },
   { id: "english-session-02", classId: "class-ielts-65", sequence: 19, topic: "Speaking Part 2 - Describe a person", taughtAt: "2026-08-27T20:00:00+07:00", durationMinutes: 60, status: "UPCOMING" },
   { id: "english-session-03", classId: "class-ielts-65", sequence: 17, topic: "Writing Task 1 - Bar chart", taughtAt: "2026-08-10T20:00:00+07:00", durationMinutes: 90, status: "COMPLETED" },
+  { id: "literature-session-04", classId: "class-literature-10", sequence: 4, topic: "Biện pháp tu từ", taughtAt: "2026-05-01T08:00:00+07:00", durationMinutes: 90, status: "COMPLETED" },
 ];
 
 // Learner data only contains documents already published by the tutor.
@@ -116,6 +130,16 @@ export const LEARNER_SHARED_MATERIALS: LearnerSharedMaterial[] = [
     source: "ai",
     fileType: "BEEWISE",
     sharedAt: "2026-08-11T08:35:00+07:00",
+  },
+  {
+    id: "literature-upload-01",
+    sessionId: "literature-session-04",
+    title: "Phiếu luyện đọc hiểu số 4",
+    description: "Đề luyện đọc hiểu và nhận diện biện pháp tu từ.",
+    source: "upload",
+    fileType: "DOCX",
+    fileSize: "620 KB",
+    sharedAt: "2026-05-01T09:10:00+07:00",
   },
 ];
 

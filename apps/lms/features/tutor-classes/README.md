@@ -2,15 +2,21 @@
 
 Tài liệu này đặc tả toàn bộ luồng giao diện người dùng (UI Logic), quy tắc nghiệp vụ, mô hình dữ liệu (Read/Write Models), API Contracts và kế hoạch tích hợp Backend cho tính năng **Quản lý lớp học của Gia sư** (`tutor-classes`) trong phân hệ LMS của **BeeWise**.
 
+**Bố cục workspace theo lớp và contract chat lớp mới:** xem [WORKSPACE.md](./WORKSPACE.md). Tài liệu này tiếp tục là nguồn quy tắc điểm danh và hợp đồng dữ liệu lớp/buổi học. Các API trong hai tài liệu là đề xuất tích hợp, không phải endpoint FE đã gọi.
+
 ---
 
 ## 1. Trạng thái triển khai & Kiến trúc hiện tại
 
 - **Routes**:
   - `/lms/tutor/classes`: Danh sách lớp học gia sư phụ trách (phân loại Lớp 1:1 và Lớp nhóm).
-  - `/lms/tutor/classes/[classId]`: Chi tiết lớp học, danh sách buổi học, danh sách học viên và modal điểm danh.
+  - `/lms/tutor/classes/[classId]`: Thông tin tổng quan một lớp, buổi tiếp theo và danh sách học viên rút gọn.
+  - `/lms/tutor/classes/[classId]/sessions`: Danh sách buổi học và modal điểm danh.
+  - `/lms/tutor/classes/[classId]/members`: Danh sách học viên, tìm kiếm và phân trang.
+  - `/lms/tutor/classes/[classId]/messages`: Phòng chat chung của lớp, tách biệt chat kết nối/tư vấn.
+  - `/lms/tutor/materials/classes/[classId]`: Tài liệu của lớp, giữ nguyên URL và flow AI/preview.
 - **Vị trí Menu**: Menu bên LMS: **Công Việc → Quản Lý Lớp Học**.
-- **Trạng thái hiện tại**: Đã hoàn thiện toàn bộ UI Components, Form Hook (React Hook Form + Zod), Store quản lý phiên (Zustand), Mock Data Adapter và bộ test tự động (14 unit tests pass).
+- **Trạng thái hiện tại**: UI feature-based, Form Hook (React Hook Form + Zod), mock adapter và bộ test tự động. Điểm danh giữ store phiên minh họa; chat lớp dùng TanStack Query và service mock riêng. Không dùng Zustand để lưu server data khi tích hợp BE.
 - **Nguồn dữ liệu Mock**:
   - `data/classes.mock.ts`: Dùng chung định danh lớp học (`MATERIAL_CLASSES`), học viên (`CLASS_LEARNERS`) và buổi học (`CLASS_SESSIONS`) với module Quản lý tài liệu (`tutor-materials`).
   - Có 2 buổi học demo chuyên biệt để minh họa trạng thái: `demo-group-math-live` (`ongoing` - đang diễn ra) và `demo-ma-math-cancelled` (`cancelled` - đã hủy). Không suy đoán trạng thái dựa trên đồng hồ trình duyệt của client.
@@ -35,7 +41,7 @@ Tài liệu này đặc tả toàn bộ luồng giao diện người dùng (UI L
 
 3. **Card lớp học (`TutorClassCard`)**:
    - Toàn bộ card là một thẻ liên kết (`Link`) duy nhất dẫn đến `/lms/tutor/classes/[classId]`, tuân thủ chuẩn Anti-Slop (không lồng nút con bên trong thẻ link).
-   - **Header card**: Mã lớp (ví dụ: `BW-G201`), Badge trạng thái lớp (`ClassStatusBadge`: màu xanh lá cho `active`, vàng nhạt cho `upcoming`, xám cho `completed`).
+   - **Header card**: Mã lớp (ví dụ: `BW-G201`), Badge trạng thái lớp (`ClassStatusBadge`: secondary xanh lá với chữ tối cho `active`, accent vàng với chữ tối cho `upcoming`, outline cho `completed`).
    - **Tiêu đề & Môn học**: Tên lớp học, Môn học · Cấp độ (ví dụ: `Toán · Lớp 10`).
    - **Khối thông tin học viên**:
      - Stack avatar hiển thị tối đa 3 học viên với chữ cái viết tắt (initials).
@@ -55,20 +61,24 @@ Tài liệu này đặc tả toàn bộ luồng giao diện người dùng (UI L
 
 ### 2.2 Màn hình chi tiết lớp học (`ClassDetailScreen`)
 
-1. **Header & Điều hướng**:
-   - Nút quay lại: `← Danh sách lớp` (Heroicons outline `ArrowLeftIcon`, button variant `outline`).
-   - Thông tin tổng quan: Mã lớp, badge trạng thái lớp, nhãn loại lớp ("Lớp 1:1" / "Lớp nhóm"), tên lớp học, môn học và cấp độ.
-   - Nút liên kết module: Nút "Tài liệu của lớp" (`FolderIcon`) điều hướng trực tiếp sang module Quản lý tài liệu: `/lms/tutor/materials/classes/[classId]`.
+1. **Shell và điều hướng theo lớp**:
+   - Sidebar chung được thay bằng sidebar riêng có Thông tin lớp, Buổi học & điểm danh, Thành viên, Tài liệu và Tin nhắn lớp. Có logo, active state và action **Về danh sách lớp**; trên mobile dùng menu thu gọn.
+   - Breadcrumb hiển thị mã lớp và screen hiện tại. Tên/loại/trạng thái lớp định vị ở sidebar; header nội dung chỉ có tiêu đề chức năng và cảnh báo chỉ xem nếu cần, không lặp tên lớp.
+   - Sidebar chung: Lịch dạy tổng hợp thuộc **Tổng quan**; Quản lý lớp học và Chat kết nối & tư vấn thuộc **Công việc**. Chat theo lớp không nằm trong chat kết nối.
 
-2. **Banner ngữ cảnh trạng thái lớp**:
-   - Nếu lớp `completed`: Hiển thị thông báo *"Lớp đã kết thúc. Bạn có thể xem buổi học, tài liệu và điểm danh đã lưu nhưng không chỉnh sửa điểm danh."*
-   - Nếu lớp `upcoming`: Hiển thị thông báo *"Lớp chưa bắt đầu. Điểm danh sẽ mở khi lớp đang học và buổi học đang diễn ra."*
+2. **Thông tin lớp (overview)**:
+   - Hiển thị mã lớp, môn/cấp độ, ngày thêm lớp, số học viên và số buổi học có trong dữ liệu.
+   - Buổi đang diễn ra hoặc buổi sắp tới được tóm tắt, có action sang danh sách buổi học. Cảnh báo số buổi còn cần xác nhận điểm danh chỉ áp dụng khi được phép điểm danh.
+   - Hiển thị tối đa 3 học viên với avatar, tên và email; action sang danh sách thành viên đầy đủ.
+   - Không nhồi toàn bộ danh sách buổi học và modal điểm danh vào overview.
 
-3. **Bố cục 2 cột (Desktop) / 1 cột (Mobile)**:
-   - **Cột chính (Trái)**: Danh sách các buổi học và công cụ điểm danh (`ClassSessionList`).
-   - **Cột phụ (Phải - Sticky Sidebar)**: Danh sách học viên trong lớp (`Học viên trong lớp` kèm badge đếm số lượng). Mỗi học viên gồm Avatar (ảnh hoặc fallback chữ viết tắt), Họ và tên, Email (hoặc "Chưa có email"), và Khối lớp.
+3. **Các screen con**:
+   - `ClassSessionsScreen`: danh sách buổi học, bộ lọc, phân trang và modal điểm danh tải động.
+   - `ClassMembersScreen`: danh sách học viên dạng card, tìm theo tên/email/trình độ, 12 học viên/trang. Không có action sửa thành viên trong bản mock.
+   - Tài liệu: tái sử dụng workspace upload, AI và preview đang có. Chat: một phòng chung cho gia sư và toàn bộ học viên theo classId.
+   - Lớp `completed`: tin nhắn chỉ xem và ẩn composer; tài liệu/điểm danh chỉ xem, mutation phải bị chặn tại BE. Lớp `upcoming`: chưa cho điểm danh.
 
-4. **Bộ lọc danh sách buổi học (`ClassSessionList`)**:
+4. **Bộ lọc danh sách buổi học (`ClassSessionList`, tại `/sessions`)**:
    - Tìm kiếm buổi học theo chủ đề (`topic`) hoặc mã buổi (`id`).
    - Lọc trạng thái buổi học: Tất cả / Chưa bắt đầu (`scheduled`) / Đang diễn ra (`ongoing`) / Đã hoàn thành (`completed`) / Đã hủy (`cancelled`).
    - Lọc trạng thái điểm danh: Tất cả / Chưa điểm danh (`unmarked`) / Bản nháp (`draft`) / Đã xác nhận (`confirmed`).

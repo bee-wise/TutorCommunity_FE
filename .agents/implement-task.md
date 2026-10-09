@@ -1,3 +1,9 @@
+## LMS sidebar logo 2026-10-09
+
+- [x] Đối chiếu workflow, chuẩn UI và hai sidebar LMS hiện hành.
+- [x] Thay logo theo trạng thái mở/đóng ở sidebar chung và sidebar lớp; bỏ nhãn LMS trùng, giữ nhận diện BeeWise cũ ngoài LMS.
+- [x] 11 regression tests, TypeScript, lint LMS/shared sidebar và production build đạt. Đã rà vị trí logo LMS còn lại theo phạm vi sidebar.
+
 # Consultant widget modal
 
 - [x] Đối chiếu workflow, skill thiết kế và giao diện hiện tại.
@@ -45,3 +51,47 @@
 - [x] Đồng bộ child screens, badge nguồn AI/upload, viewer chỉ đọc, empty/missing states và skeleton theo màn. Không dùng kho nháp TUTOR; file/nội dung thực tế vẫn chờ API như trước.
 - [x] 72 regression tests, TypeScript, lint toàn LMS không warning, production build và diff check đạt. UI TUTOR không thay đổi; browser QA chưa thực hiện.
 - [ ] QA trực quan/Lighthouse (quyền localhost đã bị chặn ở phiên trước).
+
+## LMS TUTOR workspace: badge, nhận diện và toolbar gọn
+
+- [x] Đọc lại workflow, design-taste-frontend và benchmark; đối chiếu ảnh feedback. Redesign-preserve, dials 5/3/6.
+- [x] Badge pill nền nhẹ theo benchmark, metadata riêng; giữ global tokens và tương phản chữ trên secondary hiện tại.
+- [x] Tên/loại/trạng thái lớp chỉ ở sidebar; nút back trước logo BeeWise LMS, vẫn dùng được khi collapse. Bỏ tiêu đề buổi học lặp; giữ chỉnh sửa đồng thời hiện có.
+- [x] Toolbar lớp/buổi/học viên/tài liệu compact, 44px targets, custom select và skeleton cùng grid; không đổi flow AI, preview hoặc nghiệp vụ điểm danh/chat.
+- [x] 84 tests, TypeScript, lint toàn LMS không warning và production build đạt; cập nhật doc và dọn script tạm.
+- [ ] QA trực quan/Lighthouse trên browser chưa thực hiện (quyền localhost bị chặn).
+
+## LMS TUTOR không gian quản lý theo lớp
+
+- [x] Audit workflow, skill mới, benchmark, navigation và contract chat; chốt với người dùng phòng chat chung theo lớp và lớp kết thúc chỉ xem.
+- [x] Refactor sidebar chung: Tổng quan có Lịch dạy; Công việc gồm Quản lý lớp và Chat kết nối/tư vấn. Sidebar lớp riêng, giữ URL tài liệu/preview cũ.
+- [x] Tách thông tin lớp, buổi học/điểm danh và thành viên; thêm chat lớp mock tách biệt chat kết nối thật. Lớp kết thúc chỉ xem, service chặn gửi tin nhắn/ghi điểm danh/tài liệu.
+- [x] Viết WORKSPACE.md và đồng bộ README BE; 82 regression tests, TypeScript, lint toàn LMS/shared layout và production build đạt. git diff --check sạch; bỏ skeleton detail cũ và import dư.
+- [ ] QA trực quan/Lighthouse (quyền localhost đã bị chặn ở phiên trước).
+
+## LMS LEARNER workspace theo lớp
+
+- [x] Đọc workflow, skill thiết kế và benchmark; audit route, navigation và dữ liệu mock giữa tài liệu, bài tập, học phí, chat.
+- [x] Đồng bộ danh mục lớp và tạo dashboard, báo cáo, danh sách lớp cùng không gian lớp có sidebar riêng.
+- [x] Nối deep link tài liệu, bài tập, học phí vào sidebar lớp mà vẫn giữ URL cũ; chat vẫn nằm ngoài. Lịch học thuộc Tổng quan; ẩn tài liệu/bài tập ở sidebar chính theo yêu cầu bổ sung.
+- [x] 90 regression tests, TypeScript, lint LMS/shared navigation, production build và `git diff --check` đạt; có README hợp đồng dữ liệu mock/BE, rà nhãn UI và code dư.
+- [ ] QA trực quan trên browser chưa thực hiện trong phiên này.
+
+## LMS LEARNER danh sách lớp theo UI standards
+
+- [x] Đọc workflow, design-taste-frontend và benchmark; audit trang danh sách lớp, card, filter, skeleton và luồng vào lớp.
+- [x] Tạo toolbar lọc riêng cho lớp và chỉnh phân cấp card gọn, rõ trạng thái, gia sư, tiến độ và bài tập cần làm; không đổi route hoặc dữ liệu mock.
+- [x] Đồng bộ skeleton; 92 regression tests, TypeScript, lint LMS, production build và `git diff --check` đạt. Rà nhãn UI, tương phản badge/CTA, icon và component length.
+- [ ] QA trực quan/Lighthouse trên browser chưa thực hiện trong phiên này.
+
+## LMS LEARNER hợp nhất trang tổng quan
+
+- [x] Dùng `Báo cáo học tập` làm trang chính `/lms/learner`; bỏ mục và màn `Tổng quan` riêng.
+- [x] Giữ URL báo cáo cũ bằng redirect; xóa dashboard/mock service không còn dùng và đồng bộ test, README.
+- [x] 92 regression tests, TypeScript, lint LMS, production build và diff check đạt; còn thiếu QA trực quan trên browser.
+
+## LMS đồng bộ vai trò khi cookie đăng nhập thay đổi giữa các cổng localhost
+
+- [x] Đối chiếu workflow, UI standards, proxy, bootstrap `/auth/me` và cấu hình cache Query.
+- [x] Chặn route sai vai trò ở proxy; xác minh lại `/auth/me` lúc mở LMS và khi quay lại tab, chỉ render workspace đúng vai trò.
+- [x] 4 test phân luồng đạt; ESLint và `git diff --check` đạt. TypeScript toàn LMS còn 5 lỗi sẵn có trong `BusinessChatWidget.tsx` và `useChatRoom.ts` (không thuộc thay đổi này).
