@@ -37,3 +37,11 @@
 - [x] 59 tests, TypeScript, lint toàn LMS/feature (không warning) và production build đạt. git diff --check sạch.
 - [x] Bổ sung: chỉnh class card theo standards, gom thông tin học viên/buổi/tài liệu, badge trạng thái và CTA rõ ràng.
 - [ ] QA trực quan/Lighthouse trên trình duyệt (quyền localhost đang bị chặn).
+
+## LMS LEARNER Kho tài liệu đồng bộ TUTOR
+
+- [x] Đọc workflow, design skill và benchmark; audit 3 màn và đối chiếu Quản lý tài liệu TUTOR. Redesign-preserve, dials 5/3/5; dùng Button/Radix hiện có, Heroicons và semantic tokens.
+- [x] Card lớp 1:1/nhóm, bộ lọc môn/trạng thái/sắp xếp; giữ luồng Lớp -> Buổi học -> Tài liệu và back về đúng tab. Metadata lớp bổ sung trong mock, không đổi API.
+- [x] Đồng bộ child screens, badge nguồn AI/upload, viewer chỉ đọc, empty/missing states và skeleton theo màn. Không dùng kho nháp TUTOR; file/nội dung thực tế vẫn chờ API như trước.
+- [x] 72 regression tests, TypeScript, lint toàn LMS không warning, production build và diff check đạt. UI TUTOR không thay đổi; browser QA chưa thực hiện.
+- [ ] QA trực quan/Lighthouse (quyền localhost đã bị chặn ở phiên trước).
