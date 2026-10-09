@@ -7,6 +7,10 @@ import type {
 export const LEARNER_CLASSES: LearnerClass[] = [
   {
     id: "class-math-10",
+    title: "Toán 10 - Củng cố nền tảng",
+    code: "BW-MATH10-021",
+    kind: "individual",
+    status: "active",
     subject: "Toán",
     level: "Lớp 10",
     tutorName: "Cô Nguyễn Thu Hà",
@@ -16,6 +20,10 @@ export const LEARNER_CLASSES: LearnerClass[] = [
   },
   {
     id: "class-physics-10",
+    title: "Vật lý 10 - Chuyển động cơ học",
+    code: "BW-PHY10-014",
+    kind: "individual",
+    status: "active",
     subject: "Vật lý",
     level: "Lớp 10",
     tutorName: "Thầy Lê Minh Đức",
@@ -25,6 +33,10 @@ export const LEARNER_CLASSES: LearnerClass[] = [
   },
   {
     id: "class-ielts-65",
+    title: "IELTS 6.5 - Speaking & Writing",
+    code: "BW-IELTS65-008",
+    kind: "group",
+    status: "active",
     subject: "Tiếng Anh",
     level: "IELTS 6.5",
     tutorName: "Cô Phạm Anh Thư",

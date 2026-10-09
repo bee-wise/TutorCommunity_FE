@@ -2,6 +2,7 @@ import type {
   LearnerMaterialFileType,
   LearnerMaterialSource,
 } from "../types/learner-materials.types";
+import { libraryBadge } from "./learner-materials-ui";
 
 const SOURCE_LABELS: Record<LearnerMaterialSource, string> = {
   ai: "Tạo bằng AI",
@@ -20,19 +21,15 @@ export function LearnerMaterialBadges({
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <span
-        className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-          source === "ai"
-            ? "bg-[#E8E2FF] text-[#4B2995]"
-            : "bg-[#DDF5E8] text-[#17633D]"
-        }`}
+        className={`${libraryBadge} border-primary bg-card text-primary`}
       >
         {SOURCE_LABELS[source]}
       </span>
-      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
+      <span className={`${libraryBadge} border-border bg-card text-muted-foreground`}>
         {fileType}
       </span>
       {isNew ? (
-        <span className="rounded-full bg-[#FFF1CD] px-2.5 py-1 text-xs font-bold text-[#805512]">
+        <span className={`${libraryBadge} border-accent bg-accent text-accent-foreground`}>
           Mới
         </span>
       ) : null}
