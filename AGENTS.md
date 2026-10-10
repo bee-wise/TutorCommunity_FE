@@ -37,9 +37,10 @@ Tất cả các AI Agent khi làm việc trong repository này **BẮT BUỘC** 
 
 # MANDATORY BEEWISE UI & ANTI-SLOP STANDARDS
 
-Khi phát triển hoặc sửa đổi BẤT KỲ giao diện người dùng, button, form, chip, badge, card nào trong BeeWise:
+Khi phát triển hoặc sửa đổi BẤT KỲ giao diện người dùng, button, form, chip, badge, card, bảng biểu nào trong TOÀN BỘ hệ thống BeeWise (`apps/sale`, `apps/lms`, `apps/staff`, `apps/admin`):
 
-1. **GOLDEN UI BENCHMARK**: Luôn tuân theo tiêu chuẩn thiết kế trực quan tại [.agents/skills/design-taste-frontend/references/beewise-ui-standards.html](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/references/beewise-ui-standards.html).
+1. **GOLDEN UI BENCHMARK & DESIGN SYSTEM**: Luôn tuân theo tiêu chuẩn thiết kế trực quan tại [.agents/skills/design-taste-frontend/references/beewise-ui-standards.html](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/references/beewise-ui-standards.html) và hướng dẫn thiết kế toàn diện tại [.agents/skills/design-taste-frontend/SKILL.md](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/SKILL.md) (áp dụng cho cả Landing, Marketplace, LMS Workspaces, và Staff/Admin Dashboards).
+
 2. **ICON USAGE STANDARDS**:
    - **Ưu tiên sử dụng Heroicons (`@heroicons/react`)** làm thư viện icon chính cho toàn bộ UI components, buttons, navigation, badges, cards, tables và status indicators.
    - Bắt buộc import đúng subpath tương ứng với kích thước/style:
@@ -55,5 +56,7 @@ Khi phát triển hoặc sửa đổi BẤT KỲ giao diện người dùng, but
      - **Standard Button Variants**: Dùng Button chuẩn từ `@workspace/ui` (`variant="default" | "accent" | "secondary" | "outline" | "ghost" | "destructive"`).
      - **Interactive Text Links**: Dùng `transition-colors hover:text-primary/80` (KHÔNG dùng `hover:underline` trừ nội dung chính sách pháp lý).
 4. **MANDATORY MICRO-INTERACTIONS**: Mọi nút tương tác phải có `active:scale-[0.98]` hoặc `active:scale-95`, `transition-all`, và hiệu ứng bo góc mượt mà theo đúng triết lý Edutech Soft-Modern của BeeWise.
+5. **FORBIDDEN REDUNDANT SUBTITLE PARAGRAPHS**: CẤM HOÀN TOÀN việc tự động sinh các đoạn paragraph mô tả sáo rỗng, lặp lại ý tiêu đề (`<p className="text-sm text-muted-foreground">...</p>`) dưới các thẻ `h1`, `h2`, page headers. Mặc định chỉ giữ tiêu đề sạch sẽ, gọn gàng; CHỈ THÊM đoạn mô tả khi mang lại thông tin chỉ dẫn thao tác nghiệp vụ thiết yếu hoặc cảnh báo thực sự hữu ích.
+
 
 <!-- END:beewise-ui-standards -->

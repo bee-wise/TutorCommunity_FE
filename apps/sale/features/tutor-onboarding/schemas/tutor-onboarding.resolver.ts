@@ -18,7 +18,7 @@ const scenarioDefinitions: Record<
   interview: { screen: "INTERVIEW", activeStep: "interview" },
   "pending-review": { screen: "PENDING_REVIEW", activeStep: "verification" },
   rejected: { screen: "REJECTED", activeStep: "verification" },
-  approved: { screen: "APPROVED", activeStep: "postApproval" },
+  approved: { screen: "APPROVED", activeStep: "interview" },
   "post-approval": { screen: "POST_APPROVAL", activeStep: "postApproval" },
   completed: { screen: "COMPLETED", activeStep: "lms" },
 };
@@ -26,8 +26,8 @@ const scenarioDefinitions: Record<
 const stepOrder: TutorOnboardingStepId[] = [
   "account",
   "profile",
-  "interview",
   "verification",
+  "interview",
   "postApproval",
   "lms",
 ];
@@ -59,12 +59,12 @@ const descriptionMap: Record<TutorOnboardingScreen, string> = {
   PROFILE_DRAFT:
     "Bổ sung học vấn, môn dạy, kinh nghiệm và minh chứng trước khi gửi xét duyệt.",
   INTERVIEW:
-    "Tham gia phỏng vấn tự động cùng trợ lý BeeWise AI 24/7 bất kỳ lúc nào bạn sẵn sàng.",
+    "Hồ sơ đã được phê duyệt. Bạn có thể chuẩn bị cho buổi phỏng vấn cùng BeeWise AI.",
   PENDING_REVIEW:
-    "BeeWise đang kiểm tra hồ sơ và kết quả phỏng vấn AI của bạn. Vui lòng chờ trong 1–3 ngày làm việc.",
+    "BeeWise đang xét duyệt hồ sơ của bạn. Phỏng vấn AI sẽ mở sau khi hồ sơ được phê duyệt.",
   REJECTED:
     "Cập nhật các phần cần chỉnh sửa theo phản hồi rồi gửi lại hồ sơ để được xét duyệt.",
-  APPROVED: "Chúc mừng! Hồ sơ gia sư đã đạt yêu cầu xác thực của BeeWise.",
+  APPROVED: "Hồ sơ đã được phê duyệt. Bạn có thể bắt đầu bước Phỏng vấn AI.",
   POST_APPROVAL:
     "Bổ sung tài khoản ngân hàng nhận thanh toán và lịch rảnh để bắt đầu nhận lớp.",
   COMPLETED:
@@ -79,7 +79,7 @@ const primaryActionMap: Partial<Record<TutorOnboardingScreen, string>> = {
   INTERVIEW: "Bắt đầu phỏng vấn AI",
   PENDING_REVIEW: "Liên hệ hỗ trợ",
   REJECTED: "Chỉnh sửa hồ sơ",
-  APPROVED: "Bổ sung thông tin",
+  APPROVED: "Bắt đầu phỏng vấn AI",
   POST_APPROVAL: "Hoàn tất onboarding",
   COMPLETED: "Vào LMS",
   UNKNOWN: "Về tổng quan",
@@ -102,7 +102,7 @@ const actionsMap: Record<TutorOnboardingScreen, TutorOnboardingActionId[]> = {
   ],
   PENDING_REVIEW: [],
   REJECTED: ["edit-rejected-profile", "resubmit-profile"],
-  APPROVED: ["open-post-approval-form"],
+  APPROVED: ["open-approved-interview"],
   POST_APPROVAL: [
     "save-bank-information",
     "save-availability",
@@ -150,19 +150,21 @@ function createStepStatuses(
   }
 
   if (scenario === "pending-review") {
-    statuses.interview = "COMPLETED";
     statuses.verification = "CURRENT";
+    statuses.interview = "BLOCKED";
   }
 
   if (scenario === "rejected") {
     statuses.verification = "ACTION_REQUIRED";
+    statuses.interview = "BLOCKED";
     statuses.postApproval = "BLOCKED";
     statuses.lms = "BLOCKED";
   }
 
   if (scenario === "approved") {
     statuses.verification = "COMPLETED";
-    statuses.postApproval = "CURRENT";
+    statuses.interview = "CURRENT";
+    statuses.postApproval = "BLOCKED";
     statuses.lms = "BLOCKED";
   }
 

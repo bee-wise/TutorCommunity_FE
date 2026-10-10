@@ -77,8 +77,8 @@ function OverviewScreen() {
       </StatusCard>
       <StatusCard title="Sẵn sàng bắt đầu?" tone="success">
         <p>
-          Hãy hoàn thiện hồ sơ trước. Sau khi gửi, BeeWise sẽ sắp xếp phỏng vấn
-          để xác thực chuyên môn của bạn.
+          Hãy hoàn thiện hồ sơ trước. Phỏng vấn AI sẽ mở sau khi BeeWise phê
+          duyệt hồ sơ của bạn.
         </p>
         <div className="mt-4">
           <PrimaryScreenActions />
@@ -150,7 +150,6 @@ function RejectedScreen() {
 }
 
 function ApprovedScreen() {
-  const router = useRouter();
   const { dispatchAction, isPreview } = useTutorOnboardingViewModel();
 
   return (
@@ -161,41 +160,22 @@ function ApprovedScreen() {
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <InfoItem label="Trạng thái hồ sơ" value="Đã phê duyệt" />
-          <InfoItem label="Hồ sơ công khai" value="Sẵn sàng kích hoạt" />
+          <InfoItem label="Phỏng vấn AI" value="Đã mở" />
           {isPreview ? <InfoItem label="Ngày phê duyệt" value="18/07/2026" /> : null}
-          <InfoItem label="Bước tiếp theo" value="Bổ sung thông tin" />
+          <InfoItem label="Bước tiếp theo" value="Phỏng vấn AI" />
         </div>
       </StatusCard>
-      <StatusCard title="Hoàn tất để nhận lớp">
-        <ol className="grid gap-2">
-          <li className="flex items-start gap-2 text-sm text-foreground/80">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
-              1
-            </span>
-            Bổ sung tài khoản ngân hàng nhận thanh toán.
-          </li>
-          <li className="flex items-start gap-2 text-sm text-foreground/80">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
-              2
-            </span>
-            Thiết lập lịch rảnh có thể nhận lớp.
-          </li>
-        </ol>
+      <StatusCard title="Tiếp tục với Phỏng vấn AI">
+        <p>Hồ sơ đã được duyệt. Bạn có thể bắt đầu phỏng vấn khi sẵn sàng.</p>
         <div className="mt-4">
           <Button
-            onClick={() =>
-              isPreview
-                ? dispatchAction("open-post-approval-form")
-                : router.push("/tutor/post-approval")
-            }
-            className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            onClick={() => dispatchAction("open-approved-interview")}
+            disabled={!isPreview}
+            className="w-full rounded-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
           >
-            Bổ sung thông tin
+            Bắt đầu Phỏng vấn AI
           </Button>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Tutor LMS sẽ được mở sau khi hoàn tất bước này.
-        </p>
       </StatusCard>
     </section>
   );

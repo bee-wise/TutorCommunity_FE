@@ -42,9 +42,11 @@ export function useChatRoom(roomId: string) {
     queryKey: [...chatRoomKeys.messages(roomId), currentUserId],
     queryFn: ({ pageParam }) => chatRoomsService.messages(roomId, pageParam),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.pagination.page < lastPage.pagination.totalPages
-      ? lastPage.pagination.page + 1
-      : undefined,
+    getNextPageParam: (lastPage) => {
+      const page = lastPage.pagination?.page ?? 1;
+      const totalPages = lastPage.pagination?.totalPages ?? 1;
+      return page < totalPages ? page + 1 : undefined;
+    },
     enabled: authenticated && !!user && !!roomQuery.data,
     staleTime: 10_000,
     refetchInterval: isRealtimeSubscribed ? false : 5_000,
@@ -53,7 +55,7 @@ export function useChatRoom(roomId: string) {
     ? mapChatRoom(roomQuery.data, currentUserId, currentUserRole, user.fullName || user.displayName || "Bạn")
     : null;
   const messages = room
-    ? [...new Map((messageQuery.data?.pages.flatMap((page) => page.items ?? []) ?? [])
+    ? [...new Map((messageQuery.data?.pages.flatMap((page) => page?.items ?? []) ?? [])
       .map((message) => [message.id, mapChatMessage(message, room, currentUserId, currentUserRole)] as const)).values()]
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
     : [];

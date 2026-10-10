@@ -10,6 +10,7 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
+import type { ChatTeachingOffering } from "@workspace/core/services/chat-rooms.service";
 import { useConsultantWidgetTools, type WidgetTab } from "../hooks/useConsultantWidgetTools";
 import { ConfirmationWidgetPanel } from "./ConfirmationWidgetPanel";
 import { TrialWidgetForm } from "./TrialWidgetForm";
@@ -24,14 +25,16 @@ const tabs = [
 
 export function ConsultantWidgetTools({
   roomId,
+  teachingOfferings,
   onSent,
   calendarPortalContainer,
 }: {
   roomId: string;
+  teachingOfferings: ChatTeachingOffering[];
   onSent: () => void;
   calendarPortalContainer?: HTMLElement | null;
 }) {
-  const model = useConsultantWidgetTools(roomId, onSent);
+  const model = useConsultantWidgetTools(roomId, teachingOfferings, onSent);
 
   function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, current: WidgetTab) {
     const index = tabs.findIndex((item) => item.value === current);

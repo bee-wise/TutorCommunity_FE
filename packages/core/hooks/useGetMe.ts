@@ -3,7 +3,9 @@ import { authService } from "../services/auth.service";
 import { useAuthStore } from "../store/useAuthStore";
 import { queryKeys } from "../sys-libs/queryKeys";
 
-export const useGetMe = () => {
+export const useGetMe = (
+  options: { revalidateOnFocus?: boolean } = {},
+) => {
   const login = useAuthStore((s) => s.login);
   const logout = useAuthStore((s) => s.logout);
   const setAuthLoading = useAuthStore((s) => s.setAuthLoading);
@@ -34,5 +36,7 @@ export const useGetMe = () => {
       }
     },
     retry: false,
+    refetchOnMount: options.revalidateOnFocus ? "always" : undefined,
+    refetchOnWindowFocus: options.revalidateOnFocus ? "always" : undefined,
   });
 };

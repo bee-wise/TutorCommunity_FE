@@ -17,7 +17,7 @@ export function LibraryMissingState({ title, href }: { title: string; href: stri
     <div className={libraryPage}>
       <div className={`${libraryPanel} space-y-4 py-12 text-center`}>
         <h1 className="font-nunito text-xl font-extrabold leading-snug text-primary">{title}</h1>
-        <p className="text-sm text-muted-foreground">Nội dung không tồn tại trong Kho tài liệu của bạn.</p>
+        <p className="text-sm text-muted-foreground">Nội dung không tồn tại trong Tài liệu lớp học của bạn.</p>
         <Link href={href} className={buttonVariants({ variant: "outline", className: libraryOutlineButton })}>Quay lại kho tài liệu</Link>
       </div>
     </div>

@@ -101,7 +101,9 @@ export function Header({
     isAuthenticated,
     role: user?.role,
     tutorOnboardingStatus,
+    tutorProfileStatus: user?.tutorProfileStatus,
     lmsAccessEnabled,
+    isInterviewed: user?.isInterviewed,
   });
 
   const readiness = useQuery({

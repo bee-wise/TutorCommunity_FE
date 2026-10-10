@@ -7,7 +7,7 @@ import { SESSION_LABELS, type TutorClass, type TutorClassSession } from "../type
 import { ClassFilterSelect } from "./ClassFilterSelect";
 import { ClassPagination } from "./ClassPagination";
 import { ClassSessionCard } from "./ClassSessionCard";
-import { classInput, classLabel, classOutlineButton, classPanel } from "./classes-ui";
+import { classInput, classLabel, classOutlineButton, classPanel, classSessionFiltersGrid, classToolbar } from "./classes-ui";
 
 const STATUS_OPTIONS = [{ value: "all", label: "Tất cả buổi học" }, ...Object.entries(SESSION_LABELS).map(([value, label]) => ({ value, label }))];
 const ATTENDANCE_OPTIONS = [{ value: "all", label: "Tất cả điểm danh" }, { value: "unmarked", label: "Chưa điểm danh" }, { value: "draft", label: "Bản nháp" }, { value: "confirmed", label: "Đã xác nhận" }];
@@ -18,30 +18,27 @@ export function ClassSessionList({ classInfo, onAttendance }: {
 }) {
   const list = useClassSessions(classInfo.id);
   return (
-    <section className={`${classPanel} space-y-5`} aria-labelledby="class-sessions-title">
-      <div className="space-y-1">
-        <h2 id="class-sessions-title" className="font-nunito text-lg font-extrabold text-primary">Buổi học & điểm danh</h2>
-        <p aria-live="polite" className="text-xs leading-5 text-muted-foreground">{list.total} buổi phù hợp · Giờ Việt Nam</p>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="grid gap-2 sm:col-span-2">
+    <section className="space-y-4" aria-label="Danh sách buổi học">
+      <div className={`${classToolbar} ${classSessionFiltersGrid}`}>
+        <label className="col-span-2 grid min-w-0 gap-1 lg:col-span-1">
           <span className={classLabel}>Tìm buổi học</span>
           <span className="relative">
             <MagnifyingGlassIcon className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <input type="search" className={`${classInput} pl-10`} value={list.search} onChange={(event) => list.updateSearch(event.target.value)} placeholder="Nội dung hoặc mã buổi học…" />
           </span>
         </label>
-        <div className="grid gap-2">
+        <div className="grid min-w-0 gap-1">
           <label htmlFor="class-session-status" className={classLabel}>Trạng thái buổi</label>
           <ClassFilterSelect id="class-session-status" value={list.status} options={STATUS_OPTIONS} onValueChange={list.updateStatus} />
         </div>
-        <div className="grid gap-2">
+        <div className="grid min-w-0 gap-1">
           <label htmlFor="class-attendance-state" className={classLabel}>Điểm danh</label>
           <ClassFilterSelect id="class-attendance-state" value={list.attendance} options={ATTENDANCE_OPTIONS} onValueChange={list.updateAttendance} />
         </div>
       </div>
+      <p aria-live="polite" className="text-xs leading-5 text-muted-foreground">{list.total} buổi phù hợp · Giờ Việt Nam</p>
       {!list.total ? (
-        <div className="space-y-3 rounded-2xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center">
+        <div className={`${classPanel} space-y-3 border-dashed px-4 py-8 text-center`}>
           <p className="text-sm text-muted-foreground">Không có buổi học phù hợp.</p>
           <Button type="button" variant="outline" className={classOutlineButton} onClick={list.resetFilters}>Đặt lại bộ lọc</Button>
         </div>

@@ -6,6 +6,7 @@ import type {
 export const LEARNER_TUITION_CLASSES: LearnerTuitionClass[] = [
   {
     id: "tuition-math-10",
+    learnerClassId: "class-math-10",
     className: "Toán 10 - Nền tảng",
     subject: "Toán",
     level: "Lớp 10",
@@ -23,6 +24,7 @@ export const LEARNER_TUITION_CLASSES: LearnerTuitionClass[] = [
   },
   {
     id: "tuition-physics-10",
+    learnerClassId: "class-physics-10",
     className: "Vật lý 10 - Chuyển động",
     subject: "Vật lý",
     level: "Lớp 10",
@@ -40,6 +42,7 @@ export const LEARNER_TUITION_CLASSES: LearnerTuitionClass[] = [
   },
   {
     id: "tuition-ielts-65",
+    learnerClassId: "class-ielts-65",
     className: "IELTS 6.5 - Writing",
     subject: "Tiếng Anh",
     level: "IELTS 6.5",
@@ -57,6 +60,7 @@ export const LEARNER_TUITION_CLASSES: LearnerTuitionClass[] = [
   },
   {
     id: "tuition-literature-10",
+    learnerClassId: "class-literature-10",
     className: "Ngữ văn 10 - Đọc hiểu",
     subject: "Ngữ văn",
     level: "Lớp 10",

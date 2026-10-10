@@ -82,6 +82,20 @@ test("ready-state preview links navigate in the same tab", () => {
   assert.doesNotMatch(html, /target="_blank"/);
 });
 
+test("a class sidebar is injected without changing fullscreen preview or learner chrome", () => {
+  const sidebar = React.createElement("aside", null, "CLASS_SIDEBAR");
+  pathname = "/lms/tutor/classes/class-ma-math/messages";
+  const room = render(DashboardLayout, { sidebar, children: "CLASS_CHAT" });
+  assert.match(room, /CLASS_SIDEBAR/);
+  assert.match(room, /CLASS_CHAT/);
+  assert.match(room, /TOPBAR/);
+  assert.doesNotMatch(room, />SIDEBAR</);
+  pathname = "/lms/tutor/materials/session-ma-01/preview";
+  assert.doesNotMatch(render(DashboardLayout, { sidebar, children: "PREVIEW" }), /CLASS_SIDEBAR|TOPBAR/);
+  pathname = "/lms/learner/materials";
+  assert.match(render(DashboardLayout, { children: "LEARNER_LIBRARY" }), />SIDEBAR</);
+});
+
 test("fullscreen shell exposes the logo and Back button and locks controls during exit", () => {
   const props = { children: "DOCUMENT", onBack: () => {}, onTransitionEnd: () => {}, phase: "entered", leaving: false };
   const html = render(MaterialPreviewShell, props);

@@ -5,7 +5,7 @@ export type ExerciseStatus = "not_started" | "in_progress" | "submitted" | "revi
 export type ExerciseStatusFilter = "all" | ExerciseStatus;
 export type ExerciseQuestionType = "multiple_choice" | "true_false" | "short_answer";
 export type ExerciseAvailabilityFilter = "all" | "with_exercises" | "without_exercises";
-export type LearnerExerciseClassStatus = "active" | "paused" | "completed";
+export type LearnerExerciseClassStatus = "active" | "upcoming" | "paused" | "completed";
 
 export interface LearnerExerciseClass {
   id: string;

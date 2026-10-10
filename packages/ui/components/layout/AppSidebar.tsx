@@ -54,46 +54,40 @@ export function AppSidebar({ app }: { app?: string } = {}) {
           <button
             onClick={toggleSidebar}
             aria-label="Mở sidebar"
-            className="relative flex items-center justify-center w-9 h-9 rounded-lg hover:bg-primary/5 transition-colors cursor-pointer"
+            className="relative flex size-11 cursor-pointer items-center justify-center rounded-xl transition-all hover:bg-primary/5 active:scale-[0.98] motion-reduce:transform-none"
           >
-            <div className="relative w-7 h-7 overflow-hidden shrink-0">
+            <div className="relative size-8 shrink-0 overflow-hidden">
               <Image
-                src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"
-                alt="BeeWise"
+                src={isLms
+                  ? "https://res.cloudinary.com/xcrm6ykz/image/upload/v1791528374/BeeWiseLMS-Logo-500x500.svg"
+                  : "https://res.cloudinary.com/xcrm6ykz/image/upload/v1789964842/Logo_1.png"}
+                alt={isLms ? "BeeWise LMS" : "BeeWise"}
                 fill
-                sizes="28px"
+                sizes="32px"
                 className="object-contain"
                 priority
               />
             </div>
-            {isLms && (
-              <span className="absolute -top-1 -right-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-accent px-1 text-[7.5px] font-extrabold uppercase tracking-tight text-primary shadow-2xs">
-                LMS
-              </span>
-            )}
           </button>
         ) : (
           <>
             <Link
               href={isLms ? "/lms" : "/"}
-              className="flex items-center gap-1.5 min-w-0 flex-1 hover:opacity-95 transition-opacity"
+              className="flex min-w-0 flex-1 items-center rounded-lg transition-all hover:opacity-85 active:scale-[0.98] motion-reduce:transform-none"
               aria-label={isLms ? "BeeWise LMS" : "BeeWise"}
             >
-              <div className="relative h-7 w-[96px] shrink-0">
+              <div className={isLms ? "relative h-10 w-32 shrink-0" : "relative h-7 w-[96px] shrink-0"}>
                 <Image
-                  src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
-                  alt="BeeWise"
+                  src={isLms
+                    ? "https://res.cloudinary.com/xcrm6ykz/image/upload/v1791528372/BeeWiseLMS-Logo-500x150.svg"
+                    : "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"}
+                  alt={isLms ? "BeeWise LMS" : "BeeWise"}
                   fill
-                  sizes="96px"
+                  sizes={isLms ? "128px" : "96px"}
                   className="object-contain object-left"
                   priority
                 />
               </div>
-              {isLms && (
-                <span className="rounded-full bg-accent/40 px-1.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-primary shrink-0">
-                  LMS
-                </span>
-              )}
             </Link>
             <SidebarTrigger />
           </>
@@ -129,7 +123,7 @@ export function AppSidebar({ app }: { app?: string } = {}) {
                 <SidebarMenu>
                   {group.items.map((item) => {
                     const isRootUrl =
-                      item.url === "/admin" || item.url === "/consultant";
+                      item.url === "/admin" || item.url === "/consultant" || item.url === "/lms/learner";
                     const isActive =
                       !item.openInNewTab &&
                       (pathname === item.url ||

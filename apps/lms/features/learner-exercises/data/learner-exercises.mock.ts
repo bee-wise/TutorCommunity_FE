@@ -4,13 +4,20 @@ import type {
   LearnerExerciseSession,
   LearnerExercise,
 } from "../types/learner-exercises.types";
+import { LEARNER_CLASSES } from "../../learner-materials/data/learner-materials.mock";
 
-export const LEARNER_EXERCISE_CLASSES: LearnerExerciseClass[] = [
-  { id: "class-math-10", classCode: "BW-MATH-1042", name: "Toán 10 - Nền tảng", subject: "Toán", level: "Lớp 10", tutorName: "Cô Nguyễn Thu Hà", tutorInitials: "TH", scheduleLabel: "Thứ Hai và Thứ Bảy", startedAt: "2026-06-02T09:00:00+07:00", status: "active" },
-  { id: "class-physics-10", classCode: "BW-PHY-0821", name: "Vật lý 10 - Chuyển động", subject: "Vật lý", level: "Lớp 10", tutorName: "Thầy Lê Minh Đức", tutorInitials: "MĐ", scheduleLabel: "Thứ Ba hằng tuần", startedAt: "2026-07-05T09:00:00+07:00", status: "active" },
-  { id: "class-ielts-65", classCode: "BW-ENG-0635", name: "IELTS 6.5 - Writing", subject: "Tiếng Anh", level: "IELTS 6.5", tutorName: "Cô Phạm Anh Thư", tutorInitials: "AT", scheduleLabel: "Thứ Năm và Chủ Nhật", startedAt: "2026-05-18T09:00:00+07:00", status: "active" },
-  { id: "class-literature-10", classCode: "BW-LIT-1014", name: "Ngữ văn 10 - Đọc hiểu", subject: "Ngữ văn", level: "Lớp 10", tutorName: "Cô Vũ Mai Lan", tutorInitials: "ML", scheduleLabel: "Thứ Tư hằng tuần", startedAt: "2026-04-12T09:00:00+07:00", status: "active" },
-];
+export const LEARNER_EXERCISE_CLASSES: LearnerExerciseClass[] = LEARNER_CLASSES.map((classInfo) => ({
+  id: classInfo.id,
+  classCode: classInfo.code,
+  name: classInfo.title,
+  subject: classInfo.subject,
+  level: classInfo.level,
+  tutorName: classInfo.tutorName,
+  tutorInitials: classInfo.tutorInitials,
+  scheduleLabel: classInfo.scheduleLabel,
+  startedAt: classInfo.startedAt,
+  status: classInfo.status,
+}));
 
 export const LEARNER_EXERCISE_SESSIONS: LearnerExerciseSession[] = [
   { id: "math-session-01", classId: "class-math-10", sequence: 12, topic: "Hệ phương trình bậc nhất", taughtAt: "2026-08-20T18:00:00+07:00", durationMinutes: 90 },

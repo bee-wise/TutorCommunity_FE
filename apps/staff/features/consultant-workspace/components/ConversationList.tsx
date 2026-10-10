@@ -75,7 +75,7 @@ export function ConversationList({
             type="button"
             aria-pressed={kind === "group"}
             onClick={() => onKindChange("group")}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-bold transition ${
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-bold transition-all active:scale-[0.98] ${
               kind === "group"
                 ? "bg-card text-primary shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -84,7 +84,7 @@ export function ConversationList({
             <UsersRound className="size-3.5" />
             <span>Chat 3 bên</span>
             {groupUnreadCount > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-extrabold text-white shadow-xs">
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-extrabold text-destructive-foreground shadow-xs">
                 {groupUnreadCount > 99 ? "99+" : groupUnreadCount}
               </span>
             )}
@@ -93,7 +93,7 @@ export function ConversationList({
             type="button"
             aria-pressed={kind === "private"}
             onClick={() => onKindChange("private")}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-bold transition ${
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-bold transition-all active:scale-[0.98] ${
               kind === "private"
                 ? "bg-card text-primary shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -102,7 +102,7 @@ export function ConversationList({
             <MessageCircleMore className="size-3.5" />
             <span>Chat riêng</span>
             {privateUnreadCount > 0 ? (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-extrabold text-white shadow-xs">
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-extrabold text-destructive-foreground shadow-xs">
                 {privateUnreadCount > 99 ? "99+" : privateUnreadCount}
               </span>
             ) : (
@@ -248,14 +248,14 @@ export function ConversationList({
               type="button"
               onClick={() => onSelect(room.id)}
               aria-current={active ? "true" : undefined}
-              className={`mb-1.5 flex w-full items-start gap-3 rounded-xl border p-3 text-left transition ${
+              className={`mb-1.5 flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-all active:scale-[0.98] ${
                 active
                   ? "border-primary/30 bg-primary/8 shadow-xs"
                   : "border-transparent hover:border-border hover:bg-muted/50"
               }`}
             >
               <span
-                className={`relative flex size-10 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold ${
+                className={`flex size-10 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold ${
                   room.kind === "group"
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary/15 text-secondary"
@@ -265,11 +265,6 @@ export function ConversationList({
                   <UsersRound className="size-5" aria-hidden="true" />
                 ) : (
                   initials(title)
-                )}
-                {hasUnread && (
-                  <span className="absolute -top-1 -right-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold text-white shadow-xs">
-                    {room.unreadCount! > 9 ? "9+" : room.unreadCount}
-                  </span>
                 )}
               </span>
               <span className="min-w-0 flex-1">
@@ -303,7 +298,7 @@ export function ConversationList({
                   </span>
 
                   {hasUnread && (
-                    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-xs">
+                    <span aria-label={`${room.unreadCount} tin nhắn chưa đọc`} className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground shadow-xs">
                       {room.unreadCount! > 99 ? "99+" : room.unreadCount}
                     </span>
                   )}

@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
-import { Bell, ChevronDown, Moon, Sun, Monitor } from "lucide-react";
+import { Bell, ChevronDown } from "lucide-react";
 
-import { useAuthStore, UserRole } from "@workspace/core/store/useAuthStore";
+import { useAuthStore } from "@workspace/core/store/useAuthStore";
 
 import { SidebarTrigger } from "@workspace/ui/components/ui/sidebar";
 import { Separator } from "@workspace/ui/components/ui/separator";
@@ -33,7 +33,7 @@ import { useLogout } from "@workspace/core/hooks/useLogout";
 import { useNotificationDrawerStore } from "@workspace/core/store/useNotificationDrawerStore";
 import { cn } from "@workspace/core/helpers/utils";
 
-export function Topbar() {
+export function Topbar({ breadcrumb }: { breadcrumb?: React.ReactNode } = {}) {
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
   const openDrawer = useNotificationDrawerStore((state) => state.openDrawer);
@@ -53,7 +53,7 @@ export function Topbar() {
       </div>
 
       {/* Dynamic Breadcrumbs */}
-      <Breadcrumb className="hidden md:flex">
+      {breadcrumb ?? <Breadcrumb className="hidden md:flex">
         <BreadcrumbList>
           {paths.map((path, index) => {
             const isLast = index === paths.length - 1;
@@ -82,7 +82,7 @@ export function Topbar() {
             );
           })}
         </BreadcrumbList>
-      </Breadcrumb>
+      </Breadcrumb>}
 
       <div className="ml-auto flex items-center gap-4">
         {/* Notifications */}

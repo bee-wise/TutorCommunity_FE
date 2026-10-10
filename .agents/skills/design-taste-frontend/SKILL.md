@@ -1,12 +1,12 @@
 ---
 name: design-taste-frontend
-description: Anti-slop frontend skill for landing pages, portfolios, and redesigns. The agent reads the brief, infers the right design direction, and ships interfaces that do not look templated. Real design systems when applicable, audit-first on redesigns, strict pre-flight check.
+description: Comprehensive anti-slop frontend design standards for ALL BeeWise screens (Landing pages, Marketplaces, LMS, Tutor Workspaces, Staff & Admin Dashboards, and Data Tables). Enforces anti-default discipline, strict card hierarchy, design tokens, and Edutech Soft-Modern aesthetics across apps.
 ---
 
-# tasteskill: Anti-Slop Frontend Skill
+# tasteskill: Anti-Slop Frontend Skill & BeeWise Design Standards
 
-> Landing pages, portfolios, and redesigns. Not dashboards, not data tables, not multi-step product UI.
-> Every rule below is **contextual**. None of it fires automatically. First read the brief, then pull only what fits.
+> **Scope:** Toàn bộ hệ sinh thái giao diện BeeWise — bao gồm **Landing pages, Marketplace (Tìm gia sư, Hồ sơ), LMS (Quản lý lớp học, Lịch dạy, Tin nhắn), Staff & Admin Dashboards (Tư vấn viên, Quản trị), và Form/Workflow phức tạp**.
+> Every rule below is **contextual**. First read the brief, then tune density, motion, and layout variance to fit the specific surface.
 
 ---
 
@@ -16,10 +16,14 @@ Before touching code or tweaking dials, **infer what the user actually wants**. 
 
 ### 0.A Read these signals first
 
-1. **Page kind** - landing (SaaS / consumer / agency / event), portfolio (dev / designer / creative studio), redesign (preserve vs overhaul), editorial / blog.
-2. **Vibe words** the user used - "minimalist", "calm", "Linear-style", "Awwwards", "brutalist", "premium consumer", "Apple-y", "playful", "serious B2B", "editorial", "agency-y", "glassy", "dark tech".
+1. **Page / Screen kind** -
+   - **Landing / Marketing:** `apps/sale` (SaaS / consumer / campaign / about-us).
+   - **Marketplace & Profiles:** `apps/sale` (Tutor search, AI search results, Tutor detail, registration flow).
+   - **LMS & Workspaces:** `apps/lms` (Tutor classes, teaching schedules, document management, chat rooms).
+   - **Staff & Admin Dashboards:** `apps/staff` & `apps/admin` (Consultant workspace, user management, audit logs, data tables).
+2. **Vibe words** the user used - "minimalist", "calm", "Linear-style", "premium consumer", "playful", "serious B2B", "editorial", "compact & dense dashboard", "soft-modern".
 3. **Reference signals** - URLs they linked, screenshots they pasted, products they named, brands they're competing with.
-4. **Audience** - B2B procurement panel vs. design-conscious consumer vs. recruiter scanning a portfolio. The audience picks the aesthetic, not your taste.
+4. **Audience** - Learners, Parents, Tutors, Consultants/Staff, or System Admins. The audience picks the aesthetic and density, not your taste.
 5. **Brand assets that already exist** - logo, color, type, photography. For redesigns, these are starting material, not optional input (see Section 11).
 6. **Quiet constraints** - accessibility-first audiences, public-sector, regulated industries, trust-first commerce, kids' products. These constraints OVERRIDE aesthetic preference.
 
@@ -31,7 +35,7 @@ Example reads:
 
 - _"Reading this as: B2B SaaS landing for technical buyers, with a Linear-style minimalist language, leaning toward Tailwind utilities + Geist + restrained motion."_
 - _"Reading this as: solo designer portfolio for hiring managers, with an editorial / kinetic-type language, leaning toward native CSS + scroll-driven animation + custom typography."_
-- _"Reading this as: redesign of a public-sector service site, with a trust-first language, leaning toward GOV.UK Frontend or USWDS."_
+- _"Reading this as: **BeeWise LMS Tutor Class Management** - Tutor workspace screen for managing classes & teaching schedules; high information density, clear status indicators, scannable data hierarchy, soft-modern card surfaces with Nunito headlines + Google Sans body, royal blue primary and bee-amber accents."_
 - _"Reading this as: **BeeWise** - Vietnamese tutor-learner marketplace for learners, tutors, staff, and admin; soft-modern Edutech SaaS language (rounded, layered, mascot-led, solid color-blocked sections), mobile-first, Nunito headlines + Google Sans body, 2 core brand colors: primary royal blue (`#0C1EAA`) and accent bee-amber (`#FFC500`), with supporting secondary forest-green (`#447353`) for verification/success states, VND currency, Vietnamese UX conventions."_
 
 ### 0.C If the brief is ambiguous, ask one question, do not guess
@@ -50,7 +54,14 @@ Do not default to: AI-purple gradients, centered hero over dark mesh, three equa
   1. **Action Chips / Badges:** Khi hiển thị thông tin kèm hành động phụ (như đổi email, đổi thông tin), phải đóng gói trong container sạch sẽ (`rounded-xl border bg-muted/40 px-3.5 py-2.5`) kèm nút chip/badge sắc nét (`rounded-lg border bg-background px-2.5 py-1 text-xs font-bold hover:bg-muted active:scale-95`).
   2. **Ghost / Outline Buttons:** Dùng component Button chuẩn (`variant="ghost"` hoặc `variant="outline"`) với padding, radius và hover/active state chỉn chu từ `@workspace/ui`.
   3. **Text Links tương tác:** Chỉ dùng `transition-colors hover:text-primary/80` (KHÔNG dùng `hover:underline` trừ liên kết trong văn bản pháp lý/Terms & Privacy).
+
+#### 🚫 CẤM TỰ ĐỘNG CHÈN ĐOẠN MÔ TẢ VÔ NGHĨA DƯỚI TIÊU ĐỀ (Strict Ban on Redundant Subtitle Paragraphs):
+- **CẤM HOÀN TOÀN** thói quen tự động sinh một đoạn paragraph `<p className="text-sm text-muted-foreground">...</p>` dưới mỗi tiêu đề `h1`, `h2`, header trang nếu đoạn text đó chỉ lặp lại ý của tiêu đề (ví dụ: Dưới `<h1>Quản lý lớp học</h1>` chèn `Các lớp bạn phụ trách, buổi học và điểm danh ở cùng một nơi.`, hoặc dưới `<h1>Tin nhắn</h1>` chèn `Trò chuyện cùng học viên`).
+- **Quy tắc:**
+  - **Mặc định:** Chỉ dùng thẻ Tiêu đề (`<h1>`, `<h2>`) sạch sẽ, không kèm subtitle.
+  - **CHỈ ĐƯỢC TẠO đoạn mô tả phụ khi:** Nó mang lại **thông tin chỉ dẫn thao tác bắt buộc (actionable instructions), cảnh báo quan trọng, hoặc giải thích nghiệp vụ thiết yếu** mà tiêu đề không thể truyền tải được.
 - **Golden UI Benchmark Reference:** Mọi thành phần mẫu đã được chuẩn hóa trực quan trong file tham chiếu [.agents/skills/design-taste-frontend/references/beewise-ui-standards.html](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/references/beewise-ui-standards.html).
+
 
 ---
 
@@ -78,19 +89,22 @@ After the design read, set three dials. Every layout, motion, and density decisi
 
 ### 1.B Use-Case Presets
 
-| Use case                        | VARIANCE | MOTION  | DENSITY |
-| ------------------------------- | -------- | ------- | ------- |
-| Landing (SaaS, mainstream)      | 7        | 6       | 4       |
-| Landing (Agency / creative)     | 9        | 8       | 3       |
-| Landing (Premium consumer)      | 7        | 6       | 3       |
-| Portfolio (Designer / studio)   | 8        | 7       | 3       |
-| Portfolio (Developer)           | 6        | 5       | 4       |
-| Editorial / Blog                | 6        | 4       | 3       |
-| Public-sector service           | 3        | 2       | 5       |
-| Redesign - preserve             | match    | match+1 | match   |
-| Redesign - overhaul             | +2       | +2      | match   |
-| **BeeWise landing / marketing** | **7**    | **6**   | **3**   |
-| **BeeWise marketplace screens** | **6**    | **5**   | **5**   |
+| Use case                                          | VARIANCE | MOTION  | DENSITY |
+| ------------------------------------------------- | -------- | ------- | ------- |
+| Landing (SaaS, mainstream)                        | 7        | 6       | 4       |
+| Landing (Agency / creative)                       | 9        | 8       | 3       |
+| Landing (Premium consumer)                        | 7        | 6       | 3       |
+| Portfolio (Designer / studio)                     | 8        | 7       | 3       |
+| Portfolio (Developer)                             | 6        | 5       | 4       |
+| Editorial / Blog                                  | 6        | 4       | 3       |
+| Public-sector service                             | 3        | 2       | 5       |
+| Redesign - preserve                               | match    | match+1 | match   |
+| Redesign - overhaul                               | +2       | +2      | match   |
+| **BeeWise landing / marketing (`apps/sale`)**     | **7**    | **6**   | **3**   |
+| **BeeWise marketplace & profiles (`apps/sale`)**  | **6**    | **5**   | **5**   |
+| **BeeWise LMS & workspaces (`apps/lms`)**         | **5**    | **4**   | **6**   |
+| **BeeWise Staff & Admin dashboards (`apps/staff`)**| **4**   | **3**   | **7**   |
+
 
 ### 1.C How the Dials Drive Output
 

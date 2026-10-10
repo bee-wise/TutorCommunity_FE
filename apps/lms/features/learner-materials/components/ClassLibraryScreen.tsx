@@ -12,7 +12,7 @@ export function ClassLibraryScreen({ initialKind }: { initialKind?: string } = {
 
   return (
     <div className={libraryPage}>
-      <LibraryPageHeader title="Kho tài liệu" description="Xem tài liệu được gia sư tạo bằng AI hoặc tải lên theo từng lớp và buổi học." />
+      <LibraryPageHeader title="Tài liệu lớp học" description="Xem tài liệu gia sư đã chia sẻ theo từng lớp và buổi học." />
       <ClassLibraryFilters filters={library.filters} subjects={library.subjects} counts={library.counts} onChange={library.updateFilters} />
       <section aria-labelledby="class-library-title" className="space-y-4">
         <LibraryResultsHeader id="class-library-title" title="Lớp học của tôi" count={library.filteredClasses.length} unit="lớp" onReset={library.hasFilters ? library.resetFilters : undefined} />
