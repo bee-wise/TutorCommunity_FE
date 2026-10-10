@@ -57,7 +57,9 @@ test("schedule exposes labelled day filters and all five demo sessions, with a u
 
 test("tools preserve functional LMS routes and use styled links without underline/upward-arrow patterns", () => {
   const html = renderToStaticMarkup(React.createElement(DashboardTools));
-  for (const route of ["materials", "classes", "earnings", "messages"]) assert.ok(html.includes(`/lms/tutor/${route}`));
+  for (const route of ["classes", "earnings", "messages"]) assert.ok(html.includes(`/lms/tutor/${route}`));
+  assert.ok(html.includes("Chọn lớp soạn tài liệu"));
+  assert.ok(!html.includes("/lms/tutor/materials"));
   assert.ok(!html.includes("underline"));
   assert.ok(html.includes('data-slot="button"'));
 });

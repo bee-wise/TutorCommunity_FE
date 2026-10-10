@@ -1,7 +1,7 @@
 import { ClassLibraryScreen } from "@/features/learner-materials/components/ClassLibraryScreen";
 
 export const metadata = {
-  title: "Kho tài liệu | BeeWise Learner",
+  title: "Tài liệu lớp học | BeeWise Learner",
 };
 
 export default async function LearnerMaterialsPage({ searchParams }: { searchParams: Promise<{ kind?: string | string[] }> }) {

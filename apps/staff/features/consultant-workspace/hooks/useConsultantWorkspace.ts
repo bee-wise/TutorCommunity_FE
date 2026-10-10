@@ -8,6 +8,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import { useChatRoomListRealtime } from "@workspace/core/hooks/useChatRoomListRealtime";
 import { chatRoomsService } from "@workspace/core/services/chat-rooms.service";
 import { toChatHistoryBusinessMessage } from "@workspace/core/services/chat-business-message";
 import { queryKeys } from "@workspace/core/sys-libs/queryKeys";
@@ -20,13 +21,19 @@ export function useConsultantRooms() {
   const userId = useAuthStore((state) => state.user?.id);
   const authLoading = useAuthStore((state) => state.isAuthLoading);
   const query = useQuery({
-    queryKey: ["consultant-workspace", "rooms", userId],
+    queryKey: queryKeys.consultantWorkspace.rooms(userId ?? ""),
     enabled: Boolean(userId),
     queryFn: async () => (await chatRoomsService.listAllRooms())
       .map((room) => toWorkspaceRoom(room, userId ?? "")),
     staleTime: 15_000,
     refetchInterval: 30_000,
   });
+  useChatRoomListRealtime(
+    userId,
+    (query.data ?? []).map((room) => room.id),
+    queryKeys.consultantWorkspace.rooms,
+  );
+
   return {
     ...query,
     rooms: query.data ?? [],
@@ -43,9 +50,6 @@ export function useConsultantConversation(roomId: string | null) {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.consultantWorkspace.messages(roomId),
       });
-      void queryClient.invalidateQueries({
-        queryKey: ["consultant-workspace", "rooms"],
-      });
     });
   }, [userId, roomId, queryClient]);
   const history = useInfiniteQuery({
@@ -54,7 +58,7 @@ export function useConsultantConversation(roomId: string | null) {
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       chatRoomsService.listMessages(roomId!, pageParam, MESSAGE_PAGE_SIZE),
-    getNextPageParam: (page) => page.pagination.page < page.pagination.totalPages
+    getNextPageParam: (page) => page.pagination && page.pagination.page < page.pagination.totalPages
       ? page.pagination.page + 1
       : undefined,
     refetchInterval: 10_000,
@@ -68,7 +72,7 @@ export function useConsultantConversation(roomId: string | null) {
           queryKey: queryKeys.consultantWorkspace.messages(roomId),
         }),
         queryClient.invalidateQueries({
-          queryKey: ["consultant-workspace", "rooms"],
+          queryKey: queryKeys.consultantWorkspace.rooms(userId ?? ""),
         }),
       ]);
     },
@@ -78,7 +82,7 @@ export function useConsultantConversation(roomId: string | null) {
       chatRoomsService.closeRoom(roomId!, reason, note),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ["consultant-workspace", "rooms"],
+        queryKey: queryKeys.consultantWorkspace.rooms(userId ?? ""),
       });
     },
   });

@@ -5,6 +5,7 @@ import { formatExerciseDay } from "../utils/learner-exercises.utils";
 
 const CLASS_STATUS: Record<LearnerExerciseClassStatus, { label: string; className: string }> = {
   active: { label: "Đang học", className: "bg-[#DDF1E5] text-[#365D43]" },
+  upcoming: { label: "Sắp khai giảng", className: "bg-[#FFF3CB] text-[#805512]" },
   paused: { label: "Tạm dừng", className: "bg-[#FFF3CB] text-[#805512]" },
   completed: { label: "Đã hoàn thành", className: "bg-slate-100 text-slate-600" },
 };

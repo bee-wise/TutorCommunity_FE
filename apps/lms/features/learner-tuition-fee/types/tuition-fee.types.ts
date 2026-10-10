@@ -5,6 +5,7 @@ export type TuitionSessionFilter = "all" | TuitionSessionStatus;
 
 export interface LearnerTuitionClass {
   id: string;
+  learnerClassId: string;
   className: string;
   subject: string;
   level: string;

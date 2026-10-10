@@ -56,16 +56,27 @@ test("tutor with LMS access goes to tutor LMS", () => {
   );
 });
 
-test("approved tutor missing post-approval information completes onboarding", () => {
+test("approved tutor waits in onboarding until the AI interview is completed", () => {
   assert.equal(
     getRoleRedirectPath({ role: "TUTOR", tutorProfileStatus: "APPROVED", canAccessTutorLms: false }),
+    "/tutor/onboarding",
+  );
+  assert.equal(
+    getRoleRedirectPath({ role: "TUTOR", tutorProfileStatus: "APPROVED", isInterviewed: false, bankInformationCompleted: true, availabilityCompleted: true }),
+    "/tutor/onboarding",
+  );
+});
+
+test("interviewed tutor missing post-approval information completes onboarding", () => {
+  assert.equal(
+    getRoleRedirectPath({ role: "TUTOR", tutorProfileStatus: "APPROVED", isInterviewed: true, canAccessTutorLms: false }),
     "/tutor/post-approval",
   );
 });
 
 test("approved tutor with completed post-approval information goes to Tutor Home", () => {
   assert.equal(
-    getRoleRedirectPath({ role: "TUTOR", tutorProfileStatus: "APPROVED", bankInformationCompleted: true, availabilityCompleted: true }),
+    getRoleRedirectPath({ role: "TUTOR", tutorProfileStatus: "APPROVED", isInterviewed: true, bankInformationCompleted: true, availabilityCompleted: true }),
     "/tutor/home",
   );
 });

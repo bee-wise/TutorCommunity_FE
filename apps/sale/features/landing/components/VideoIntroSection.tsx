@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   PlayCircle,
   CheckCircle,
@@ -10,6 +11,8 @@ import {
 import Image from "next/image";
 
 export function VideoIntroSection() {
+  const [isPlaying, setIsPlaying] = useState(false);
+
   return (
     <section className="py-16 lg:py-24 bg-background relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
@@ -77,39 +80,56 @@ export function VideoIntroSection() {
           </div>
 
           <div className="flex-1 w-full max-w-2xl lg:max-w-none mx-auto">
-            <div className="relative aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-muted shadow-2xl shadow-primary/10 group cursor-pointer border-[10px] border-card">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10">
-                <Image
-                  src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783571337/Banner-1_uob9l0.png"
-                  alt="Video thumbnail"
-                  fill
-                  className="object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-out"
+            <div className="relative aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-black shadow-2xl shadow-primary/10 group border-[10px] border-card">
+              {isPlaying ? (
+                <iframe
+                  className="w-full h-full rounded-[1.8rem]"
+                  src="https://www.youtube-nocookie.com/embed/tloqwqWWQmQ?autoplay=1&rel=0&modestbranding=1"
+                  title="Edtech TVC | BeeWise - Nền Tảng Kết Nối Gia Sư Và Quản Lý Học Tập"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
                 />
-              </div>
-
-              <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300" />
-
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative group-hover:scale-110 transition-transform duration-300 ease-out">
-                  <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-40 duration-1000" />
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl relative z-10">
-                    <PlayCircle
-                      size={48}
-                      weight="fill"
-                      className="text-primary sm:w-[56px] sm:h-[56px]"
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsPlaying(true)}
+                  aria-label="Phát TVC giới thiệu BeeWise"
+                  className="absolute inset-0 w-full h-full text-left cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/40"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10">
+                    <Image
+                      src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783571337/Banner-1_uob9l0.png"
+                      alt="BeeWise TVC Thumbnail"
+                      fill
+                      className="object-cover opacity-75 group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                   </div>
-                </div>
-              </div>
 
-              {/* Cute floating badge */}
-              <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm px-5 py-2.5 rounded-2xl font-bold text-sm shadow-xl flex items-center gap-2.5 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out text-foreground">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                </span>
-                Xem giới thiệu nền tảng
-              </div>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
+
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative group-hover:scale-110 transition-transform duration-300 ease-out">
+                      <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-40 duration-1000" />
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl relative z-10 transition-all group-active:scale-95">
+                        <PlayCircle
+                          size={48}
+                          weight="fill"
+                          className="text-primary sm:w-[56px] sm:h-[56px]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cute floating badge */}
+                  <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm px-5 py-2.5 rounded-2xl font-bold text-sm shadow-xl flex items-center gap-2.5 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out text-foreground">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                    Xem TVC giới thiệu nền tảng
+                  </div>
+                </button>
+              )}
             </div>
           </div>
         </div>

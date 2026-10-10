@@ -1,31 +1,36 @@
-import { UserPlusIcon } from "@phosphor-icons/react";
+import type { ComponentType } from "react";
 import {
-  Calendar,
-  CalendarDays,
-  FolderOpen,
+  AcademicCapIcon,
+  BanknotesIcon,
+  CalendarDaysIcon,
+  ChartBarIcon,
+  ChatBubbleLeftRightIcon,
+  ClockIcon,
+  CreditCardIcon,
+  HomeIcon,
+  UserCircleIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "@heroicons/react/24/outline";
+import {
   MessageCircle,
-  CreditCard,
   History,
   LayoutDashboard,
-  MessageSquare,
-  FolderCog,
   BookOpenCheck,
-  Wallet,
   UserCircle,
   PieChart,
   UserCheck,
   Users,
   MonitorPlay,
   Receipt,
-  LucideIcon,
-  NotebookPen,
   UsersRound,
+  FolderCog,
 } from "lucide-react";
 
 export interface NavItem {
   title: string;
   url: string;
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   isActive?: boolean;
   openInNewTab?: boolean;
 }
@@ -40,27 +45,24 @@ export type RoleNavigation = Record<string, NavGroup[]>;
 export const navigationConfig: RoleNavigation = {
   LEARNER: [
     {
+      groupName: "Tổng Quan",
+      items: [
+        { title: "Báo cáo học tập", url: "/lms/learner", icon: ChartBarIcon },
+        { title: "Lịch học của tôi", url: "/lms/learner/schedule", icon: CalendarDaysIcon },
+      ],
+    },
+    {
       groupName: "Học Tập",
       items: [
         {
-          title: "Quản Lý Lịch Học",
-          url: "/lms/learner/schedule",
-          icon: Calendar,
+          title: "Lớp học",
+          url: "/lms/learner/classes",
+          icon: AcademicCapIcon,
         },
         {
-          title: "Kho Tài Liệu",
-          url: "/lms/learner/materials",
-          icon: FolderOpen,
-        },
-        {
-          title: "Làm bài tập",
-          url: "/lms/learner/exercises",
-          icon: NotebookPen,
-        },
-        {
-          title: "Tin nhắn với gia sư",
+          title: "Tin nhắn lớp học",
           url: "/lms/learner/chat",
-          icon: MessageCircle,
+          icon: ChatBubbleLeftRightIcon,
         },
       ],
     },
@@ -81,12 +83,12 @@ export const navigationConfig: RoleNavigation = {
         {
           title: "Theo dõi học phí",
           url: "/lms/learner/tuition-fee",
-          icon: CreditCard,
+          icon: CreditCardIcon,
         },
         {
           title: "Lịch Sử Kết Nối",
           url: "/lms/learner/history",
-          icon: History,
+          icon: ClockIcon,
         },
       ],
     },
@@ -98,7 +100,12 @@ export const navigationConfig: RoleNavigation = {
         {
           title: "Tổng Quan",
           url: "/lms/tutor/dashboard",
-          icon: LayoutDashboard,
+          icon: HomeIcon,
+        },
+        {
+          title: "Lịch Dạy",
+          url: "/lms/tutor/schedule",
+          icon: CalendarDaysIcon,
         },
       ],
     },
@@ -106,24 +113,14 @@ export const navigationConfig: RoleNavigation = {
       groupName: "Công Việc",
       items: [
         {
-          title: "Lịch Dạy",
-          url: "/lms/tutor/schedule",
-          icon: CalendarDays,
-        },
-        {
           title: "Quản Lý Lớp Học",
           url: "/lms/tutor/classes",
-          icon: UsersRound,
+          icon: UsersIcon,
         },
         {
-          title: "Quản Lý Tin Nhắn",
+          title: "Chat kết nối & tư vấn",
           url: "/lms/tutor/messages",
-          icon: MessageSquare,
-        },
-        {
-          title: "Quản Lý Tài Liệu",
-          url: "/lms/tutor/materials",
-          icon: FolderCog,
+          icon: ChatBubbleLeftRightIcon,
         },
       ],
     },
@@ -133,17 +130,17 @@ export const navigationConfig: RoleNavigation = {
         {
           title: "Thu Nhập & Thanh Toán",
           url: "/lms/tutor/earnings",
-          icon: Wallet,
+          icon: BanknotesIcon,
         },
         {
           title: "Lịch Sử Kết Nối",
           url: "/lms/tutor/history",
-          icon: History,
+          icon: ClockIcon,
         },
         {
           title: "Hồ Sơ Của Tôi",
           url: "/lms/tutor/profile",
-          icon: UserCircle,
+          icon: UserCircleIcon,
         },
       ],
     },

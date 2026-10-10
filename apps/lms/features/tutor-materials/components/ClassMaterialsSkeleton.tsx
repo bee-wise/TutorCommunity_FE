@@ -12,7 +12,7 @@ export function ClassMaterialsSkeleton({
       <span className="sr-only">Đang tải tài liệu...</span>
       <div aria-hidden="true" className="space-y-6 motion-safe:animate-pulse">
         <div className="h-9 w-64 max-w-full rounded-full bg-border" />
-        <div className="h-20 rounded-3xl border border-border bg-card shadow-soft" />
+        {!workspace && <div className="h-20 rounded-3xl border border-border bg-card shadow-soft" />}
         <div
           className={`grid gap-6 ${workspace ? "lg:grid-cols-[minmax(0,3fr)_minmax(240px,1fr)]" : "md:grid-cols-2 xl:grid-cols-3"}`}
         >

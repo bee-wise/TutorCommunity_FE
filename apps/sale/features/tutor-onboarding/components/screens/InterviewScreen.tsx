@@ -53,7 +53,7 @@ export function InterviewScreen() {
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${isPreview ? "bg-primary" : "bg-muted-foreground"}`}
                 />
-                {isPreview ? "Phỏng vấn AI · Mở 24/7" : "Phỏng vấn AI · Sắp mở"}
+                {isPreview ? "Phỏng vấn AI · Mở 24/7" : "Hồ sơ đã được duyệt"}
               </span>
 
               {isPreview && (
@@ -86,7 +86,7 @@ export function InterviewScreen() {
               <p className="mt-2.5 max-w-xl text-sm leading-6 text-muted-foreground">
                 {isPreview
                   ? "Hệ thống phỏng vấn AI của BeeWise hoạt động liên tục 24/7. Bạn không cần đặt lịch hẹn — hãy bắt đầu ngay khi cảm thấy sẵn sàng."
-                  : "Hồ sơ của bạn đã được ghi nhận. Phỏng vấn AI là bước tiếp theo; BeeWise sẽ thông báo khi bạn có thể bắt đầu."}
+                  : "Hồ sơ đã được phê duyệt. Hãy chuẩn bị camera, micro và không gian yên tĩnh cho bước phỏng vấn AI."}
               </p>
             </div>
 

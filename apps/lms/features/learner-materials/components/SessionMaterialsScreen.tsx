@@ -19,7 +19,7 @@ export function SessionMaterialsScreen({ classId, sessionId }: { classId: string
 
   return (
     <div className={libraryPage}>
-      <LibraryPageHeader title={library.session.topic} description={`Buổi ${library.session.sequence} của lớp ${library.classInfo.title}`} backHref={`/lms/learner/materials/classes/${encodeURIComponent(classId)}`} backLabel="Danh sách buổi học" />
+      <LibraryPageHeader title={library.session.topic} description={`Tài liệu của buổi ${library.session.sequence}`} backHref={`/lms/learner/materials/classes/${encodeURIComponent(classId)}`} backLabel="Danh sách buổi học" />
       <div className={`${libraryPanel} flex flex-wrap items-center justify-between gap-3 text-sm`}>
         <p className="font-semibold [overflow-wrap:anywhere]">{library.classInfo.tutorName}</p><p className="text-muted-foreground">{formatLibraryDate(library.session.taughtAt)} · {library.session.durationMinutes} phút</p>
       </div>

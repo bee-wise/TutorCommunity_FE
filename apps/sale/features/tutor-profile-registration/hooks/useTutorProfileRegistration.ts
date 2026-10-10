@@ -75,7 +75,7 @@ export function useTutorProfileRegistration() {
       allowNavigationRef.current = true;
       const meResponse = await authService.getMe();
       if (meResponse.success && meResponse.data) login(meResponse.data);
-      toast.success("Đã gửi hồ sơ", { description: "Tiếp theo, hãy hoàn thành phỏng vấn năng lực cùng Trợ lý AI.", position: "top-right" });
+      toast.success("Đã gửi hồ sơ", { description: "BeeWise sẽ xét duyệt hồ sơ trước khi mở Phỏng vấn AI.", position: "top-right" });
       router.replace("/tutor/onboarding");
     },
     onError: (error) => toast.error("Chưa thể gửi hồ sơ", { description: getApiErrorMessage(error), position: "top-right" }),

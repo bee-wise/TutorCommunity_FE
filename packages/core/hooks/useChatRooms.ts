@@ -6,7 +6,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { chatRoomsService, type ConnectRequest, type ConnectionDirection } from "../services/chat-rooms.service";
 import { toChatRoom } from "../services/chat-rooms.mapper";
 
-export function useChatRooms() {
+export function useChatRooms(options?: { refetchIntervalMs?: number }) {
   const user = useAuthStore((state) => state.user);
   const authLoading = useAuthStore((state) => state.isAuthLoading);
   const direction: ConnectionDirection = user?.role?.toUpperCase() === "TUTOR"
@@ -17,11 +17,12 @@ export function useChatRooms() {
 
   // GET /chat-rooms is the source of truth for rooms the user participates in.
   const query = useQuery({
-    queryKey: [...queryKeys.chatRooms.list, user?.id],
+    queryKey: queryKeys.chatRooms.listForUser(user?.id ?? ""),
     enabled: Boolean(user?.id),
     queryFn: () => chatRoomsService.listAllRooms(),
     staleTime: 15_000,
-    refetchInterval: 30_000,
+    refetchInterval: options?.refetchIntervalMs ?? 30_000,
+    refetchOnWindowFocus: "always",
   });
   // Connection details enrich the list; lack of CONNECT_REQUEST_READ cannot hide chats.
   const connections = useQuery({

@@ -207,36 +207,19 @@ export function ChatSidebar() {
 
       {/* Room list */}
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
-        {/* Pinned Demo Room for photoshoot / recording */}
-        <Link
-          href="/learner/messages/tvc-demo"
-          className="group flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 transition hover:border-primary/40 hover:bg-primary/10"
-        >
-          <div className="relative shrink-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-xs font-black text-primary-foreground">
-              MĐ
-            </div>
-            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-card bg-secondary" />
+        {loading ? (
+          <p className="px-4 py-10 text-center text-xs text-muted-foreground">
+            Đang tải cuộc trò chuyện...
+          </p>
+        ) : error ? (
+          <div className="px-4 py-10 text-center text-xs text-muted-foreground">
+            <p role="alert">{getApiErrorMessage(error, "Không tải được danh sách trò chuyện.")}</p>
+            <button type="button" onClick={() => void refetch()} className="mt-2 font-semibold text-primary underline">
+              Thử lại
+            </button>
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-baseline justify-between gap-1">
-              <span className="truncate text-xs font-bold text-foreground group-hover:text-primary">
-                Thầy Trần Minh Đức
-              </span>
-              <span className="shrink-0 rounded-full bg-secondary/15 px-2 py-0.5 text-[9px] font-bold text-secondary border border-secondary/25">
-                Đang hoạt động
-              </span>
-            </div>
-            <p className="text-[10px] font-semibold text-primary truncate">
-              Toán 12 - Ôn thi THPT Quốc Gia
-            </p>
-            <p className="truncate text-[10px] text-muted-foreground">
-              Thầy đã lên lịch chi tiết cho 10 buổi học...
-            </p>
-          </div>
-        </Link>
+        ) : filtered.length === 0 ? (
 
-        {loading ? <p className="px-4 py-10 text-center text-xs text-muted-foreground">Đang tải cuộc trò chuyện...</p> : error ? <div className="px-4 py-10 text-center text-xs text-muted-foreground"><p role="alert">{getApiErrorMessage(error, "Không tải được danh sách trò chuyện.")}</p><button type="button" onClick={() => void refetch()} className="mt-2 font-semibold text-primary underline">Thử lại</button></div> : filtered.length === 0 ? (
           <div className="flex flex-col items-center px-4 py-12 text-center">
             <MessageCircleIcon width={32} height={32} className="mb-3 text-muted-foreground" />
             <strong className="text-sm text-foreground">

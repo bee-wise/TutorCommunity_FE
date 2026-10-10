@@ -21,7 +21,6 @@ export function LearnerMessagesRoute({
   const loading = useAuthStore((state) => state.isAuthLoading);
 
   useEffect(() => {
-    if (chatRoomId === "tvc-demo") return;
     if (loading) return;
     if (!authenticated || !user) {
       router.replace(`/login?returnUrl=${encodeURIComponent(pathname || "")}`);
@@ -32,17 +31,17 @@ export function LearnerMessagesRoute({
     if (role !== "LEARNER") {
       router.replace("/");
     }
-  }, [loading, authenticated, user, router, pathname, chatRoomId]);
+  }, [loading, authenticated, user, router, pathname]);
 
   if (
-    chatRoomId !== "tvc-demo" &&
-    (loading ||
-      !authenticated ||
-      !user ||
-      user.role?.trim().toUpperCase() !== "LEARNER")
+    loading ||
+    !authenticated ||
+    !user ||
+    user.role?.trim().toUpperCase() !== "LEARNER"
   ) {
     return null;
   }
+
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-muted text-foreground">

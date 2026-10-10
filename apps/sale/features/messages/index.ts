@@ -5,8 +5,8 @@ export * from "./components/ChatRoomPanel";
 export * from "./components/ChatSidebar";
 export * from "./components/LearnerMessagesRoute";
 export * from "./components/MessageFAB";
-export * from "./components/TVCChatDemoScreen";
 
 export * from "./hooks/useMessages";
+
 export * from "./hooks/useChatRoom";
 export * from "./types/messages.types";

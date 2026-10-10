@@ -43,8 +43,8 @@ export function toChatBusinessMessage(
   const kinds: Record<string, ChatBusinessKind> = {
     TRIAL_SESSION: "TRIAL_SESSION", TRIAL_SESSIONS: "TRIAL_SESSION",
     CLASS_CONFIRMATION: "CLASS_CONFIRMATION", CLASS_CONFIRMATIONS: "CLASS_CONFIRMATION",
-    PAYMENT_REQUEST: "PAYMENT_REQUEST", LEARNER_PAYMENT: "PAYMENT_REQUEST", LEARNER_PAYMENTS: "PAYMENT_REQUEST",
-    CLASS_SESSION: "CLASS_SESSIONS", CLASS_SESSIONS: "CLASS_SESSIONS", SCHEDULE_CLASSES: "CLASS_SESSIONS",
+    PAYMENT_REQUEST: "PAYMENT_REQUEST", LEARNER_PAYMENT: "PAYMENT_REQUEST", LEARNER_PAYMENTS: "PAYMENT_REQUEST", PAYMENT: "PAYMENT_REQUEST",
+    CLASS_SESSION: "CLASS_SESSIONS", CLASS_SESSIONS: "CLASS_SESSIONS", SCHEDULE_CLASSES: "CLASS_SESSIONS", CLASS_SCHEDULE: "CLASS_SESSIONS", SCHEDULE: "CLASS_SESSIONS",
   };
   const kind = [businessType, payloadString(payload, "widgetType")]
     .filter((value): value is string => typeof value === "string")
@@ -59,46 +59,69 @@ export function toChatBusinessMessage(
 }
 
 export function toChatHistoryBusinessMessage(message: ChatMessageRecord): ChatBusinessMessage | null {
-  if (message.type === "TEXT" || message.type === "SYSTEM") return null;
-  if (message.type !== "WIDGET") {
-    if (message.type) return null;
-    const legacy = toChatBusinessMessage(
-      message.businessType || message.messageType,
-      message.businessReferenceId,
-      message.businessPayload,
-    );
-    return legacy ? { ...legacy, roomId: message.chatRoomId } : null;
-  }
+  const msgTypeUpper = message.type?.toUpperCase();
+  if (msgTypeUpper === "TEXT" || msgTypeUpper === "SYSTEM") return null;
 
   const widget = message.widget;
-  if (!widget?.referenceId) return null;
-  const base = {
-    referenceId: widget.referenceId,
-    roomId: message.chatRoomId,
-    payload: parseBusinessPayload(message.businessPayload),
-  };
-  switch (widget.type) {
-    case "TRIAL_SESSION":
-      return widget.trialSession?.id === widget.referenceId &&
-        widget.trialSession.chatRoomId === message.chatRoomId
-        ? { ...base, kind: "TRIAL_SESSION", current: { kind: "TRIAL_SESSION", data: widget.trialSession } }
-        : null;
-    case "CLASS_CONFIRMATION":
-      return widget.classConfirmation?.id === widget.referenceId &&
-        widget.classConfirmation.chatRoomId === message.chatRoomId
-        ? { ...base, kind: "CLASS_CONFIRMATION", current: { kind: "CLASS_CONFIRMATION", data: widget.classConfirmation } }
-        : null;
-    case "PAYMENT_REQUEST":
-      return widget.payment?.id === widget.referenceId
-        ? { ...base, kind: "PAYMENT_REQUEST", current: { kind: "PAYMENT_REQUEST", data: widget.payment } }
-        : null;
-    case "CLASS_SCHEDULE":
-      return widget.schedule?.classId === widget.referenceId
-        ? { ...base, kind: "CLASS_SESSIONS", current: { kind: "CLASS_SCHEDULE", data: widget.schedule } }
-        : null;
-    default:
-      return null;
+  if (widget) {
+    const widgetTypeUpper = widget.type?.toUpperCase() ?? "";
+    const refId = widget.referenceId || message.businessReferenceId || "";
+    const base = {
+      referenceId: refId,
+      roomId: message.chatRoomId,
+      payload: parseBusinessPayload(message.businessPayload),
+    };
+
+    if (widget.trialSession) {
+      return {
+        ...base,
+        kind: "TRIAL_SESSION",
+        current: { kind: "TRIAL_SESSION", data: widget.trialSession },
+      };
+    }
+    if (widget.classConfirmation) {
+      return {
+        ...base,
+        kind: "CLASS_CONFIRMATION",
+        current: { kind: "CLASS_CONFIRMATION", data: widget.classConfirmation },
+      };
+    }
+    if (widget.payment) {
+      return {
+        ...base,
+        kind: "PAYMENT_REQUEST",
+        current: { kind: "PAYMENT_REQUEST", data: widget.payment },
+      };
+    }
+    if (widget.schedule) {
+      return {
+        ...base,
+        kind: "CLASS_SESSIONS",
+        current: { kind: "CLASS_SCHEDULE", data: widget.schedule },
+      };
+    }
+
+    if (widgetTypeUpper.includes("TRIAL") && widget.trialSession) {
+      return { ...base, kind: "TRIAL_SESSION", current: { kind: "TRIAL_SESSION", data: widget.trialSession } };
+    }
+    if (widgetTypeUpper.includes("CONFIRM") && widget.classConfirmation) {
+      return { ...base, kind: "CLASS_CONFIRMATION", current: { kind: "CLASS_CONFIRMATION", data: widget.classConfirmation } };
+    }
+    if (widgetTypeUpper.includes("PAY") && widget.payment) {
+      return { ...base, kind: "PAYMENT_REQUEST", current: { kind: "PAYMENT_REQUEST", data: widget.payment } };
+    }
+    if ((widgetTypeUpper.includes("SCHEDULE") || widgetTypeUpper.includes("SESSION")) && widget.schedule) {
+      return { ...base, kind: "CLASS_SESSIONS", current: { kind: "CLASS_SCHEDULE", data: widget.schedule } };
+    }
   }
+
+  // Fallback for legacy messages
+  const legacy = toChatBusinessMessage(
+    message.businessType || message.messageType,
+    message.businessReferenceId,
+    message.businessPayload,
+  );
+  return legacy ? { ...legacy, roomId: message.chatRoomId } : null;
 }
 
 export function payloadString(payload: Record<string, unknown>, key: string): string | undefined {

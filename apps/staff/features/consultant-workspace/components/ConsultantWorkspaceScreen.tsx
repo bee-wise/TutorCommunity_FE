@@ -13,6 +13,7 @@ import {
   useConsultantConversation,
   useConsultantRooms,
 } from "../hooks/useConsultantWorkspace";
+import { useConsultantUnread } from "../hooks/useConsultantUnread";
 import type { WorkspaceMessage, WorkspaceRoom } from "../types/workspace";
 import {
   ConversationList,
@@ -20,8 +21,6 @@ import {
   type ChatKind,
 } from "./ConversationList";
 import { ConversationPanel } from "./ConversationPanel";
-
-const READ_STORAGE_KEY = "beewise_consultant_last_read";
 
 export function ConsultantWorkspaceScreen() {
   const [kind, setKind] = useState<ChatKind>("group");
@@ -39,71 +38,31 @@ export function ConsultantWorkspaceScreen() {
   >({});
   const consultantId = useAuthStore((state) => state.user?.id) ?? "";
   const roomsQuery = useConsultantRooms();
-
-  // Lưu vết thời gian đọc tin nhắn từng phòng
-  const [lastReadMap, setLastReadMap] = useState<Record<string, string>>(() => {
-    if (typeof window === "undefined") return {};
-    try {
-      const stored = localStorage.getItem(READ_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : {};
-    } catch {
-      return {};
-    }
-  });
-
-  const effectiveLastReadMap = { ...lastReadMap };
-  for (const room of [...roomsQuery.rooms, ...privatePreviewRooms]) {
-    effectiveLastReadMap[room.id] ??= room.updatedAt || room.createdAt || new Date().toISOString();
-  }
-  const serializedLastReadMap = JSON.stringify(effectiveLastReadMap);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(READ_STORAGE_KEY, serializedLastReadMap);
-    } catch {}
-  }, [serializedLastReadMap]);
-
-  function markRoomRead(id: string) {
-    setLastReadMap((prev) => ({ ...prev, [id]: new Date().toISOString() }));
-  }
+  const { unreadCounts, markRead } = useConsultantUnread(
+    consultantId,
+    roomsQuery.rooms,
+    privatePreviewRooms,
+    previewMessages,
+  );
 
   const previewRooms = privatePreviewRooms.map((room): WorkspaceRoom => {
     const list = previewMessages[room.id] ?? [];
     const latestMsg = list.at(-1);
     const updated = latestMsg?.createdAt ?? room.updatedAt;
-    const lastRead = effectiveLastReadMap[room.id];
-    const isUnread =
-      Boolean(lastRead) &&
-      Boolean(updated) &&
-      new Date(updated).getTime() > new Date(lastRead!).getTime() + 1000;
-    const unreadCount = isUnread
-      ? list.filter(
-          (m) =>
-            new Date(m.createdAt).getTime() > new Date(lastRead!).getTime(),
-        ).length || 1
-      : 0;
-
     return {
       ...room,
       updatedAt: updated,
       status: closedPreviewIds.includes(room.id) ? "CLOSED" : room.status,
       closeReason: previewClosure[room.id]?.reason,
       closeNote: previewClosure[room.id]?.note,
-      unreadCount,
+      unreadCount: unreadCounts[room.id] ?? 0,
     };
   });
 
-  const groupRooms = roomsQuery.rooms.map((room): WorkspaceRoom => {
-    const lastRead = effectiveLastReadMap[room.id];
-    const isUnread =
-      Boolean(lastRead) &&
-      Boolean(room.updatedAt) &&
-      new Date(room.updatedAt).getTime() > new Date(lastRead!).getTime() + 1000;
-    return {
-      ...room,
-      unreadCount: isUnread ? 1 : 0,
-    };
-  });
+  const groupRooms = roomsQuery.rooms.map((room): WorkspaceRoom => ({
+    ...room,
+    unreadCount: unreadCounts[room.id] ?? 0,
+  }));
 
   const allRooms = kind === "group" ? groupRooms : previewRooms;
   const normalizedQuery = query.trim().toLocaleLowerCase("vi");
@@ -133,6 +92,26 @@ export function ConsultantWorkspaceScreen() {
   const messages = selectedRoom?.isMock
     ? (previewMessages[selectedRoom.id] ?? [])
     : conversation.messages;
+  const latestMessageAt = messages.at(-1)?.createdAt;
+  const selectedRoomId = selectedRoom?.id;
+  const selectedRoomIsMock = selectedRoom?.isMock ?? false;
+
+  useEffect(() => {
+    if (!selectedRoomId || !latestMessageAt || (!selectedRoomIsMock && conversation.history.isLoading)) return;
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const markVisibleRoomRead = () => {
+      if (document.visibilityState === "visible" && (showConversationOnMobile || desktop.matches)) {
+        markRead(selectedRoomId, latestMessageAt);
+      }
+    };
+    markVisibleRoomRead();
+    desktop.addEventListener("change", markVisibleRoomRead);
+    document.addEventListener("visibilitychange", markVisibleRoomRead);
+    return () => {
+      desktop.removeEventListener("change", markVisibleRoomRead);
+      document.removeEventListener("visibilitychange", markVisibleRoomRead);
+    };
+  }, [selectedRoomId, selectedRoomIsMock, latestMessageAt, conversation.history.isLoading, showConversationOnMobile, markRead]);
 
   const activeCount = allRooms.filter(
     (room) => room.status === "ACTIVE",
@@ -150,24 +129,22 @@ export function ConsultantWorkspaceScreen() {
   async function sendMessage(content: string) {
     if (!selectedRoom) return;
     if (selectedRoom.isMock) {
+      const createdAt = new Date().toISOString();
       const next: WorkspaceMessage = {
-        id: `preview-${Date.now()}`,
+        id: `preview-${createdAt}`,
         senderId: "preview-consultant",
         content,
-        createdAt: new Date().toISOString(),
+        createdAt,
       };
       setPreviewMessages((current) => ({
         ...current,
         [selectedRoom.id]: [...(current[selectedRoom.id] ?? []), next],
       }));
-      // Cập nhật timestamp đọc ngay cho phòng hiện tại
-      setLastReadMap((prev) => ({
-        ...prev,
-        [selectedRoom.id]: new Date().toISOString(),
-      }));
+      markRead(selectedRoom.id, next.createdAt);
       return;
     }
-    await conversation.sendMessage(content);
+    const sent = await conversation.sendMessage(content);
+    markRead(selectedRoom.id, sent.createdAt);
   }
 
   async function closeRoom(reason: string, note?: string) {
@@ -208,7 +185,11 @@ export function ConsultantWorkspaceScreen() {
             onQueryChange={setQuery}
             onSelect={(id) => {
               setSelectedId(id);
-              markRoomRead(id);
+              const room = allRooms.find((item) => item.id === id);
+              const throughAt = room?.isMock
+                ? previewMessages[id]?.at(-1)?.createdAt
+                : room?.lastMessageAt;
+              if (throughAt) markRead(id, throughAt);
               setShowConversationOnMobile(true);
             }}
             kind={kind}

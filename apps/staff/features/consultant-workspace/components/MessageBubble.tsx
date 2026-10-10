@@ -161,7 +161,6 @@ export function MessageBubble({
 
         {message.business ? (
           <div className="mt-1 w-full max-w-[440px]">
-            {message.content && <p className="mb-2 max-w-[440px] text-xs text-muted-foreground">{message.content}</p>}
             <BusinessChatWidget business={message.business} currentRole="CONSULTANT" />
             {bubbleTime && <time className="mt-1 block text-right text-[10px] text-muted-foreground">{bubbleTime}</time>}
           </div>

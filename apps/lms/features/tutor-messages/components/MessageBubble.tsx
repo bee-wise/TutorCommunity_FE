@@ -271,7 +271,6 @@ export function MessageBubble({
             title="Nhấn chuột phải để xem tùy chọn"
             onContextMenu={handleContextMenu}
           >
-            {message.text && <p className="mb-2 text-xs leading-5 text-muted-foreground">{message.text}</p>}
             {message.business ? (
               <BusinessChatWidget business={message.business} currentRole={currentRole} />
             ) : message.widget ? (

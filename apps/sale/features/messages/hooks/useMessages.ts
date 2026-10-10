@@ -15,8 +15,11 @@ export function useMessages() {
     queryKey: [...chatRoomKeys.list, user?.id],
     queryFn: ({ pageParam }) => chatRoomsService.list(pageParam),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.pagination.page < lastPage.pagination.totalPages
-      ? lastPage.pagination.page + 1 : undefined,
+    getNextPageParam: (lastPage) => {
+      const page = lastPage.pagination?.page ?? 1;
+      const totalPages = lastPage.pagination?.totalPages ?? 1;
+      return page < totalPages ? page + 1 : undefined;
+    },
     enabled: authenticated && !!user,
     staleTime: 15_000,
     refetchInterval: 30_000,
@@ -24,7 +27,7 @@ export function useMessages() {
 
   const role = user?.role?.toUpperCase();
   const currentRole = role === "TUTOR" || role === "CONSULTANT" ? role : "LEARNER";
-  const rooms = query.data?.pages.flatMap((page) => (page.items ?? []).map((room) =>
+  const rooms = query.data?.pages.flatMap((page) => (page?.items ?? []).map((room) =>
     mapChatRoom(room, user?.id ?? "", currentRole, user?.fullName || user?.displayName || "Bạn"),
   )) ?? [];
 

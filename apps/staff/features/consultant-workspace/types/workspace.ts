@@ -1,4 +1,4 @@
-import type { ChatRoomRecord } from "@workspace/core/services/chat-rooms.service";
+import type { ChatRoomRecord, ChatTeachingOffering } from "@workspace/core/services/chat-rooms.service";
 import type { ChatBusinessMessage } from "@workspace/core/services/chat-business-message";
 
 export type RoomStatus = "ACTIVE" | "CLOSED" | "CONVERTED_TO_CLASS";
@@ -8,6 +8,7 @@ export interface WorkspaceParticipant {
   id: string;
   name: string;
   role: ParticipantRole;
+  teachingOfferings?: ChatTeachingOffering[];
 }
 
 export interface WorkspaceRoom {
@@ -17,6 +18,7 @@ export interface WorkspaceRoom {
   status: RoomStatus;
   connectRequestId?: string;
   participants: WorkspaceParticipant[];
+  lastMessageAt?: string;
   updatedAt: string;
   createdAt: string;
   closedAt?: string;
@@ -58,6 +60,9 @@ export function toWorkspaceRoom(
       id: person.userId,
       name: person.name?.trim() || fallback,
       role: resolvedRole,
+      teachingOfferings: resolvedRole === "TUTOR"
+        ? (person.teachingOfferings ?? []).filter((offering) => !offering.status || offering.status === "APPROVED")
+        : undefined,
     };
   });
 
@@ -71,6 +76,7 @@ export function toWorkspaceRoom(
         : "CLOSED",
     connectRequestId: room.connectRequestId ?? undefined,
     participants,
+    lastMessageAt: room.lastMessageAt ?? undefined,
     updatedAt:
       room.lastMessageAt ??
       room.updatedAt ??

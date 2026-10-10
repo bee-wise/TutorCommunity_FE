@@ -91,9 +91,9 @@ export function ConfirmationWidgetPanel({
                 <Button
                   type="button"
                   variant="outline"
-                  disabled={busy || selectedTrial.version === undefined}
+                  disabled={busy || selectedTrial.version == null}
                   onClick={() => {
-                    if (selectedTrial.version !== undefined) void model.completeTrial(selectedTrial.id, selectedTrial.version);
+                    if (selectedTrial.version != null) void model.completeTrial(selectedTrial.id, selectedTrial.version);
                   }}
                   className="h-9 min-w-0 flex-1 rounded-xl px-2 text-[11px] font-bold text-primary transition-all active:scale-[0.98]"
                 >

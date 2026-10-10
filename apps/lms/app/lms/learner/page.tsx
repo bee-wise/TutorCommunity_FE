@@ -1,8 +1,8 @@
-﻿export default function LMSDashboard() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Learning Management System</h1>
-      <p>Trang chủ dành cho Học viên và Gia sư.</p>
-    </div>
-  );
+import type { Metadata } from "next";
+import { LearnerReportScreen } from "@/features/learner-overview/components/LearnerReportScreen";
+
+export const metadata: Metadata = { title: "Báo cáo học tập | BeeWise Learner" };
+
+export default function LearnerOverviewPage() {
+  return <LearnerReportScreen />;
 }

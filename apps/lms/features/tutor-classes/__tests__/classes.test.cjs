@@ -452,14 +452,10 @@ test("pagination disables boundary actions and loading states mirror responsive 
     ),
     "",
   );
-  for (const detail of [false, true]) {
-    const loading = renderToStaticMarkup(
-      React.createElement(ClassesSkeleton, { detail }),
-    );
-    assert.ok(loading.includes('role="status"'));
-    assert.ok(loading.includes('aria-hidden="true"'));
-    assert.ok(loading.includes("motion-safe:animate-pulse"));
-  }
+  const loading = renderToStaticMarkup(React.createElement(ClassesSkeleton));
+  assert.ok(loading.includes('role="status"'));
+  assert.ok(loading.includes('aria-hidden="true"'));
+  assert.ok(loading.includes("motion-safe:animate-pulse"));
 });
 
 after(() => {

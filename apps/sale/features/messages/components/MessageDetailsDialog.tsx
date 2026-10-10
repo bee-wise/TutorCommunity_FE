@@ -123,7 +123,7 @@ export function MessageDetailsDialog({
           </div>
 
           {/* Content info */}
-          {message.text && (
+          {message.type !== "WIDGET" && message.text && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">

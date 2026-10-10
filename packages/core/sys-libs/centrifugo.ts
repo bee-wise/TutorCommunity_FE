@@ -6,11 +6,37 @@ type RoomListener = () => void;
 type RoomSubscription = {
   subscription: Subscription;
   listeners: Set<RoomListener>;
+  isSubscribed: boolean;
 };
 
 let client: Centrifuge | null = null;
 let clientUserId: string | null = null;
+let clientConnected = false;
+const connectionListeners = new Set<() => void>();
 const roomSubscriptions = new Map<string, RoomSubscription>();
+
+function notifyConnectionListeners() {
+  connectionListeners.forEach((listener) => listener());
+}
+
+function setConnectionStatus(connected: boolean) {
+  if (clientConnected === connected) return;
+  clientConnected = connected;
+  notifyConnectionListeners();
+}
+
+export function isChatRealtimeReady(userId: string | undefined): boolean {
+  return Boolean(
+    userId && clientUserId === userId && clientConnected &&
+    roomSubscriptions.size > 0 &&
+    [...roomSubscriptions.values()].every((room) => room.isSubscribed),
+  );
+}
+
+export function subscribeToChatRealtimeStatus(listener: () => void): () => void {
+  connectionListeners.add(listener);
+  return () => connectionListeners.delete(listener);
+}
 
 function websocketUrl(): string | null {
   if (typeof window === "undefined") return null;
@@ -32,6 +58,7 @@ function notifyRoom(roomId: string) {
 }
 
 function disconnectClient() {
+  setConnectionStatus(false);
   roomSubscriptions.forEach(({ subscription }) => {
     subscription.unsubscribe();
     subscription.removeAllListeners();
@@ -73,8 +100,15 @@ function getClient(userId: string): Centrifuge | null {
     if (channel.startsWith("chat:room:")) notifyRoom(channel.slice("chat:room:".length));
   });
   client.on("connected", () => {
+    setConnectionStatus(true);
     roomSubscriptions.forEach((_, roomId) => notifyRoom(roomId));
   });
+  const markUnavailable = () => {
+    roomSubscriptions.forEach((room) => { room.isSubscribed = false; });
+    setConnectionStatus(false);
+  };
+  client.on("connecting", markUnavailable);
+  client.on("disconnected", markUnavailable);
   client.connect();
   return client;
 }
@@ -102,10 +136,20 @@ export function subscribeToChatRoom(userId: string, roomId: string, listener: Ro
         }
       },
     });
-    room = { subscription, listeners: new Set() };
-    roomSubscriptions.set(roomId, room);
+    const entry: RoomSubscription = { subscription, listeners: new Set(), isSubscribed: false };
+    room = entry;
+    roomSubscriptions.set(roomId, entry);
+    notifyConnectionListeners();
     subscription.on("publication", () => notifyRoom(roomId));
-    subscription.on("subscribed", () => notifyRoom(roomId));
+    subscription.on("subscribed", () => {
+      entry.isSubscribed = true;
+      notifyConnectionListeners();
+      notifyRoom(roomId);
+    });
+    subscription.on("unsubscribed", () => {
+      entry.isSubscribed = false;
+      notifyConnectionListeners();
+    });
     subscription.subscribe();
   }
   room.listeners.add(listener);
@@ -119,6 +163,7 @@ export function subscribeToChatRoom(userId: string, roomId: string, listener: Ro
     current.subscription.removeAllListeners();
     instance.removeSubscription(current.subscription);
     roomSubscriptions.delete(roomId);
+    notifyConnectionListeners();
     if (roomSubscriptions.size === 0) disconnectClient();
   };
 }
