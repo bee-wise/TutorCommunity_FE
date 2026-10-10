@@ -1,20 +1,22 @@
 "use client";
 
 import { Button } from "@workspace/ui/components/ui/button";
+import { useTutorOnboardingViewModel } from "../TutorOnboardingProvider";
 
 const reviewSteps = [
-  { label: "Hồ sơ đã gửi", date: "12/07/2026", done: true },
-  { label: "Phỏng vấn AI hoàn tất", date: "Đã hoàn thành", done: true },
+  { label: "Hồ sơ đã gửi", date: "Đã hoàn thành", done: true },
   {
     label: "Đang xét duyệt",
     date: "1–3 ngày làm việc",
     done: false,
     current: true,
   },
-  { label: "Nhận kết quả", date: "", done: false },
+  { label: "Phỏng vấn AI được mở", date: "Sau khi được duyệt", done: false },
 ];
 
 export function PendingReviewScreen() {
+  const { dispatchAction, isPreview } = useTutorOnboardingViewModel();
+
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_320px]">
       {/* Main: waiting state */}
@@ -29,8 +31,8 @@ export function PendingReviewScreen() {
             Đang xét duyệt hồ sơ
           </h2>
           <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-            Đội ngũ BeeWise đang thẩm định hồ sơ và kết quả phỏng vấn AI của
-            bạn. Dự kiến có kết quả trong{" "}
+            BeeWise đang thẩm định hồ sơ của bạn. Phỏng vấn AI sẽ mở sau khi
+            hồ sơ được phê duyệt. Dự kiến có kết quả trong{" "}
             <strong className="text-primary">1–3 ngày làm việc</strong>.
           </p>
         </div>
@@ -85,6 +87,23 @@ export function PendingReviewScreen() {
             ))}
           </ol>
         </div>
+
+        {isPreview && (
+          <div className="mt-5 rounded-xl border border-dashed border-border bg-muted p-3">
+            <p className="mb-2 text-xs font-semibold text-muted-foreground">
+              [Preview] Mô phỏng BeeWise phê duyệt hồ sơ
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => dispatchAction("approve-mock-profile")}
+              className="w-full rounded-lg border-primary/30 text-xs text-primary transition-all hover:bg-primary/5 active:scale-[0.98]"
+            >
+              Phê duyệt hồ sơ (mock)
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Sidebar: info + support */}

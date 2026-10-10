@@ -16,26 +16,30 @@ export function applyTutorOnboardingAction(
         selectedStepId: payload?.stepId ?? state.selectedStepId,
       };
     case "submit-profile":
-      // Submit goes directly to interview (no listing-waived step)
-      return {
-        ...state,
-        scenario: "interview",
-        selectedStepId: "interview",
-        lastActionMessage: "Hồ sơ đã được gửi thành công.",
-      };
-    case "complete-mock-interview":
       return {
         ...state,
         scenario: "pending-review",
         selectedStepId: "verification",
+        lastActionMessage: "Hồ sơ đã được gửi và đang chờ phê duyệt.",
+      };
+    case "complete-mock-interview":
+      if (state.scenario !== "interview") return state;
+      return {
+        ...state,
+        scenario: "post-approval",
+        selectedStepId: "postApproval",
       };
     case "approve-mock-profile":
+      if (state.scenario !== "pending-review") return state;
       return {
         ...state,
         scenario: "approved",
-        selectedStepId: "postApproval",
+        selectedStepId: "interview",
         lastActionMessage: "Hồ sơ đã được phê duyệt.",
       };
+    case "open-approved-interview":
+      if (state.scenario !== "approved") return state;
+      return { ...state, scenario: "interview", selectedStepId: "interview" };
     case "edit-rejected-profile":
       return {
         ...state,
@@ -60,7 +64,6 @@ export function applyTutorOnboardingAction(
       return { ...state, scenario: "completed", selectedStepId: "lms" };
     case "save-draft":
     case "preview-profile":
-    case "join-mock-interview":
     case "request-mock-reschedule":
     case "save-bank-information":
     case "save-availability":
@@ -69,6 +72,9 @@ export function applyTutorOnboardingAction(
         ...state,
         lastActionMessage: "Thao tác đã được ghi nhận.",
       };
+    case "join-mock-interview":
+      if (state.scenario !== "interview") return state;
+      return { ...state, lastActionMessage: "Thao tác đã được ghi nhận." };
     default:
       return state;
   }

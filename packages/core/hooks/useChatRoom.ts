@@ -60,12 +60,23 @@ export function useChatRoom(roomId: string) {
   return {
     room,
     messages,
+    currentUserId: user?.id ?? "",
     currentUserRole,
     isPending: roomsPending || history.isPending,
+    loading: roomsPending || history.isPending,
     error: roomsError || history.error,
     sendMessage: send.mutateAsync,
     isSending: send.isPending,
+    sending: send.isPending,
+    isReadOnly: Boolean(room?.status && room.status !== "ACTIVE"),
+    hasOlderMessages: Boolean(history.hasNextPage),
+    hasOlder: Boolean(history.hasNextPage),
+    loadingOlderMessages: history.isFetchingNextPage,
+    loadingOlder: history.isFetchingNextPage,
+    loadOlderMessages: history.fetchNextPage,
+    loadOlder: history.fetchNextPage,
     messagesEndRef,
     scrollToBottom,
+    refetch: () => history.refetch(),
   };
 }

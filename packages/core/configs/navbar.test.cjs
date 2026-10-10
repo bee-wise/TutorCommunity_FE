@@ -125,13 +125,52 @@ test("completed tutor sees LMS CTA when LMS access is enabled", () => {
   assert.equal(config.rightItems.some((item) => item.label === "Vào LMS"), true);
 });
 
-test("approved tutor uses post-approval navbar when LMS access is disabled", () => {
+test("approved tutor stays in onboarding until AI interview is completed", () => {
   assert.equal(
     resolveNavbarState({
       isAuthenticated: true,
       role: "TUTOR",
       tutorOnboardingStatus: "APPROVED",
+      tutorProfileStatus: "APPROVED",
+      isInterviewed: false,
       lmsAccessEnabled: false,
+    }),
+    "TUTOR_ONBOARDING",
+  );
+});
+
+test("interviewed tutor uses post-approval navbar when LMS access is disabled", () => {
+  assert.equal(
+    resolveNavbarState({
+      isAuthenticated: true,
+      role: "TUTOR",
+      tutorOnboardingStatus: "APPROVED",
+      tutorProfileStatus: "APPROVED",
+      isInterviewed: true,
+      lmsAccessEnabled: false,
+    }),
+    "TUTOR_APPROVED",
+  );
+});
+
+test("stale onboarding status cannot bypass profile approval", () => {
+  assert.equal(
+    resolveNavbarState({
+      isAuthenticated: true,
+      role: "TUTOR",
+      tutorOnboardingStatus: "APPROVED",
+      tutorProfileStatus: "PENDING_REVIEW",
+      isInterviewed: true,
+    }),
+    "TUTOR_ONBOARDING",
+  );
+  assert.equal(
+    resolveNavbarState({
+      isAuthenticated: true,
+      role: "TUTOR",
+      tutorOnboardingStatus: "PROFILE_SUBMITTED",
+      tutorProfileStatus: "APPROVED",
+      isInterviewed: true,
     }),
     "TUTOR_APPROVED",
   );

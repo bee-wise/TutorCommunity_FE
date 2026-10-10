@@ -8,19 +8,25 @@ import {
   type ClassConfirmation,
   type CreateTrialSession,
 } from "@workspace/core/services/connection-widgets.service";
+import type { ChatTeachingOffering } from "@workspace/core/services/chat-rooms.service";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import { consultantWidgetKeys } from "../queryKeys";
 
 export type WidgetTab = "trial" | "confirmation" | "payment" | "sessions";
 type TeachingMode = "ONLINE" | "OFFLINE";
 
-export function useConsultantWidgetTools(roomId: string, onSent: () => void) {
+export function useConsultantWidgetTools(
+  roomId: string,
+  teachingOfferings: ChatTeachingOffering[],
+  onSent: () => void,
+) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<WidgetTab>("trial");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const [subject, setSubject] = useState("");
+  const [selectedOfferingId, setSelectedOfferingId] = useState("");
+  const selectedOffering = teachingOfferings.find((item) => item.id === selectedOfferingId);
   const [startAt, setStartAt] = useState("");
   const [endAt, setEndAt] = useState("");
   const [teachingMode, setTeachingMode] = useState<TeachingMode>("ONLINE");
@@ -112,16 +118,23 @@ export function useConsultantWidgetTools(roomId: string, onSent: () => void) {
 
   async function createTrial(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!selectedOffering) {
+      setError("Hãy chọn tổ hợp giảng dạy của gia sư.");
+      return;
+    }
+    if (!z.guid().safeParse(selectedOffering.id).success) {
+      setError("Mã tổ hợp giảng dạy không hợp lệ. Hãy tải lại phòng chat rồi thử lại.");
+      return;
+    }
     const start = new Date(startAt);
     const end = new Date(endAt);
     if (
-      !subject.trim() ||
       Number.isNaN(start.getTime()) ||
       Number.isNaN(end.getTime()) ||
       start <= new Date() ||
       end <= start
     ) {
-      setError("Hãy nhập môn học và chọn thời gian học thử trong tương lai (giờ kết thúc phải sau giờ bắt đầu).");
+      setError("Hãy chọn thời gian học thử trong tương lai (giờ kết thúc phải sau giờ bắt đầu).");
       return;
     }
     if (!location.trim()) {
@@ -133,7 +146,7 @@ export function useConsultantWidgetTools(roomId: string, onSent: () => void) {
       return;
     }
     const input: CreateTrialSession = {
-      subject: subject.trim(),
+      tutorOfferingId: selectedOffering.id,
       scheduledStartAt: start.toISOString(),
       scheduledEndAt: end.toISOString(),
       teachingMode,
@@ -150,7 +163,7 @@ export function useConsultantWidgetTools(roomId: string, onSent: () => void) {
       await createTrialMutation.mutateAsync(input);
       await queryClient.invalidateQueries({ queryKey: consultantWidgetKeys.trials(roomId) });
       onSent();
-      setSubject("");
+      setSelectedOfferingId("");
       setStartAt("");
       setEndAt("");
       setLocation("");
@@ -179,18 +192,18 @@ export function useConsultantWidgetTools(roomId: string, onSent: () => void) {
 
   async function updateConfirmation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!selected || selected.version === undefined) return;
+    if (!selected || selected.version == null) return;
     const minutes = Number(duration);
     const count = Number(sessions);
     if (
-      !z.uuid().safeParse(subjectId.trim()).success ||
-      !z.uuid().safeParse(offeringId.trim()).success ||
+      !z.guid().safeParse(subjectId.trim()).success ||
+      !z.guid().safeParse(offeringId.trim()).success ||
       !Number.isInteger(minutes) ||
       minutes <= 0 ||
       !Number.isInteger(count) ||
       count <= 0
     ) {
-      setError("Hãy nhập mã UUID hợp lệ của môn học và gói giảng dạy, cùng thời lượng và số buổi học.");
+      setError("Hãy nhập mã GUID hợp lệ của môn học và gói giảng dạy, cùng thời lượng và số buổi học.");
       return;
     }
     setError("");
@@ -224,7 +237,8 @@ export function useConsultantWidgetTools(roomId: string, onSent: () => void) {
     error,
     success,
     trial: {
-      subject, setSubject, startAt, setStartAt: chooseTrialStart, endAt, setEndAt,
+      teachingOfferings, selectedOfferingId, setSelectedOfferingId,
+      startAt, setStartAt: chooseTrialStart, endAt, setEndAt,
       teachingMode, setTeachingMode, location, setLocation, note, setNote, createTrial,
     },
     confirmation: {

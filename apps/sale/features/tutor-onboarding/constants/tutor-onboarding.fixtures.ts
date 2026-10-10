@@ -64,33 +64,32 @@ export const onboardingSteps: TutorOnboardingStep[] = [
     primaryAction: "Hoàn thiện hồ sơ",
   },
   {
-    id: "interview",
+    id: "verification",
     order: 3,
+    title: "Xác thực hồ sơ",
+    shortTitle: "Xác thực",
+    description: "BeeWise xét duyệt hồ sơ trước khi mở Phỏng vấn AI.",
+    statusLabel: "Đang xét duyệt",
+    tasks: [
+      "Hồ sơ đã gửi thành công",
+      "Chờ BeeWise xét duyệt hồ sơ",
+      "Phỏng vấn AI mở sau khi hồ sơ được phê duyệt",
+    ],
+  },
+  {
+    id: "interview",
+    order: 4,
     title: "Phỏng vấn AI",
     shortTitle: "Phỏng vấn AI",
     description:
-      "Tham gia phỏng vấn tự động cùng trợ lý AI 24/7 để đánh giá chuyên môn và phương pháp giảng dạy.",
-    statusLabel: "Mở 24/7",
+      "Sau khi hồ sơ được phê duyệt, tham gia phỏng vấn tự động cùng trợ lý AI.",
+    statusLabel: "Mở sau khi duyệt",
     tasks: [
       "Kiểm tra camera, micro và kết nối Internet",
       "Trả lời câu hỏi tình huống từ trợ lý AI",
       "Kết quả phỏng vấn được tự động ghi nhận ngay sau khi hoàn thành",
     ],
     primaryAction: "Bắt đầu phỏng vấn AI",
-  },
-  {
-    id: "verification",
-    order: 4,
-    title: "Xác thực hồ sơ",
-    shortTitle: "Xác thực",
-    description:
-      "Hệ thống và đội ngũ BeeWise đánh giá hồ sơ cùng kết quả phỏng vấn AI.",
-    statusLabel: "Đang xét duyệt",
-    tasks: [
-      "Hồ sơ đã gửi thành công",
-      "Phỏng vấn AI đã hoàn tất",
-      "Chờ hệ thống phê duyệt",
-    ],
   },
   {
     id: "postApproval",

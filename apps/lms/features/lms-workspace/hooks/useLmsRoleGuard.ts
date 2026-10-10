@@ -11,12 +11,11 @@ import {
 export function useLmsRoleGuard() {
   const pathname = usePathname();
   const router = useRouter();
-  const { data: user, isPending, isFetching } = useGetMe({
-    revalidateOnFocus: true,
-  });
-  const isChecking = isPending || isFetching;
+  const { data: user, isPending } = useGetMe();
+  
+  const isInitialLoading = isPending && !user;
   const role = normalizeLmsRole(user?.role);
-  const redirectPath = isChecking
+  const redirectPath = isInitialLoading
     ? null
     : getLmsRoleRedirectPath(pathname, role);
 
@@ -27,6 +26,6 @@ export function useLmsRoleGuard() {
   return {
     pathname,
     role,
-    canRender: !isChecking && !redirectPath,
+    canRender: !isInitialLoading && !redirectPath,
   };
 }

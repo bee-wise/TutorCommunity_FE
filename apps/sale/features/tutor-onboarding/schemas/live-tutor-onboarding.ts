@@ -5,9 +5,9 @@ const statusScenarioMap = {
   ACCOUNT_CREATED: "journey",
   DRAFT: "journey",
   PROFILE_DRAFT: "journey",
-  PROFILE_SUBMITTED: "interview",
-  INTERVIEW_PENDING: "interview",
-  PENDING_REVIEW: "interview",
+  PROFILE_SUBMITTED: "pending-review",
+  INTERVIEW_PENDING: "pending-review",
+  PENDING_REVIEW: "pending-review",
   INTERVIEW_COMPLETED: "pending-review",
   PENDING_VERIFICATION: "pending-review",
   REJECTED: "rejected",
@@ -65,16 +65,28 @@ export function resolveLiveTutorOnboardingScenario(
     // A stale COMPLETED status must not unlock the LMS while BE denies access.
     if (status === "COMPLETED") return "post-approval";
 
+    if (profileStatus === "REJECTED" || status === "REJECTED") {
+      return "rejected";
+    }
+
+    if (status === "POST_APPROVAL_INFO_REQUIRED") return "post-approval";
+
+    // Profile approval is the prerequisite for entering the AI interview.
+    // An onboarding status alone must not unlock it while the profile is pending.
+    if (profileStatus === "APPROVED") {
+      return user.isInterviewed === true ? "post-approval" : "interview";
+    }
+
     const isInterviewStageStatus =
       status === "PROFILE_SUBMITTED" ||
       status === "INTERVIEW_PENDING" ||
       status === "PENDING_REVIEW" ||
       status === "INTERVIEW_COMPLETED" ||
-      status === "PENDING_VERIFICATION";
+      status === "PENDING_VERIFICATION" ||
+      status === "APPROVED";
 
     if (isInterviewStageStatus) {
-      // Chỉ khi isInterviewed === true thì mới chuyển sang screen xác thực (pending-review)
-      return user.isInterviewed === true ? "pending-review" : "interview";
+      return "pending-review";
     }
 
     return statusScenarioMap[status];

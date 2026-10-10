@@ -7,7 +7,7 @@ import {
   ChatBubbleLeftRightIcon as MessageCircleIcon,
   ArrowLeftIcon as ArrowLeft,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMessages } from "../hooks/useMessages";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
@@ -43,7 +43,7 @@ function RoomRow({
     <Link
       href={`${basePath}/${room.id}`}
       aria-current={pathname === `${basePath}/${room.id}` ? "page" : undefined}
-      className={`group flex items-start gap-3 rounded-xl border px-3 py-3.5 transition ${pathname === `${basePath}/${room.id}` ? "border-primary bg-muted" : "border-transparent hover:border-border hover:bg-muted"}`}
+      className={`group flex items-start gap-3 rounded-xl border px-3 py-3.5 transition-all active:scale-[0.98] ${pathname === `${basePath}/${room.id}` ? "border-primary bg-muted" : "border-transparent hover:border-border hover:bg-muted"}`}
     >
       {/* Avatar */}
       <div className="relative shrink-0">
@@ -78,8 +78,8 @@ function RoomRow({
             {room.lastMessage ?? "Mở cuộc trò chuyện"}
           </p>
           {room.unreadCount > 0 && (
-            <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-black text-primary-foreground">
-              {room.unreadCount}
+            <span aria-label={`${room.unreadCount} tin nhắn chưa đọc`} className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-black text-destructive-foreground">
+              {room.unreadCount > 99 ? "99+" : room.unreadCount}
             </span>
           )}
         </div>
@@ -90,9 +90,9 @@ function RoomRow({
             room.category === "SUPPORT" && !isReadOnly
               ? "border-secondary/20 bg-secondary/10 text-secondary"
               : isReadOnly
-              ? "border-gray-200 bg-gray-100 text-gray-500"
+              ? "border-border bg-muted text-muted-foreground"
               : (STAGE_COLORS[room.connectionStage] ??
-                "bg-gray-100 text-gray-600 border-gray-200")
+                "border-border bg-muted text-muted-foreground")
           }`}
         >
           {room.category === "SUPPORT" && !isReadOnly
@@ -107,19 +107,32 @@ function RoomRow({
 }
 
 export function ChatSidebar() {
-  const { rooms, loading, error, refetch } = useMessages();
+  const { rooms, loading, error, refetch, markRead } = useMessages({ live: true });
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const currentUserRole: ChatParticipantRole = "TUTOR";
   const activeRoom = rooms.find((room) => pathname?.endsWith(`/${room.id}`));
-  const [category, setCategory] = useState<ChatRoomCategory>(activeRoom?.category ?? "CONNECTION");
+  const activeRoomId = activeRoom?.id;
+  const activeLastMessageAt = activeRoom?.lastMessageAt;
+
+  useEffect(() => {
+    if (!activeRoomId || !activeLastMessageAt) return;
+    const markVisibleRoomRead = () => {
+      if (document.visibilityState === "visible") markRead(activeRoomId, activeLastMessageAt);
+    };
+    markVisibleRoomRead();
+    document.addEventListener("visibilitychange", markVisibleRoomRead);
+    return () => document.removeEventListener("visibilitychange", markVisibleRoomRead);
+  }, [activeRoomId, activeLastMessageAt, markRead]);
+  const [selectedCategory, setSelectedCategory] = useState<ChatRoomCategory | null>(null);
+  const category = selectedCategory ?? activeRoom?.category ?? "CONNECTION";
 
   const availableRooms = rooms.filter(
     (room) => room.category === "CONNECTION" || room.supportFor === currentUserRole,
   );
   const normalizedQuery = query.trim().toLowerCase();
   const selectCategory = (nextCategory: ChatRoomCategory) => {
-    setCategory(nextCategory);
+    setSelectedCategory(nextCategory);
     setQuery("");
   };
 
@@ -155,14 +168,13 @@ export function ChatSidebar() {
         <div className="flex items-center gap-3">
           <Link
             href="/lms/tutor/dashboard"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition hover:brightness-95"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition-all hover:brightness-95 active:scale-[0.98]"
             aria-label="Quay lại Trang chủ"
           >
             <ArrowLeft width={18} height={18} />
           </Link>
           <div>
             <h2 className="font-nunito text-lg font-extrabold text-foreground">Tin nhắn</h2>
-            <p className="text-xs text-muted-foreground">Kết nối cùng học viên và tư vấn viên</p>
           </div>
         </div>
       </div>
@@ -191,12 +203,15 @@ export function ChatSidebar() {
               type="button"
               aria-pressed={category === item}
               onClick={() => selectCategory(item)}
-              className={`flex items-center justify-center gap-2 rounded-lg px-2 py-2 text-xs font-bold transition ${category === item ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              className={`flex items-center justify-center gap-2 rounded-lg px-2 py-2 text-xs font-bold transition-all active:scale-[0.98] ${category === item ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
             >
               {item === "CONNECTION" ? "Kết nối" : "Hỗ trợ"}
               <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${category === item ? "bg-muted text-primary" : "bg-card text-muted-foreground"}`}>
                 {availableRooms.filter((room) => room.category === item).length}
               </span>
+              {availableRooms.some((room) => room.category === item && room.unreadCount > 0) && (
+                <span className="h-2 w-2 rounded-full bg-destructive" aria-label="Có tin nhắn chưa đọc" />
+              )}
             </button>
           ))}
         </div>
@@ -209,7 +224,7 @@ export function ChatSidebar() {
         ) : error ? (
           <div role="alert" className="px-4 py-12 text-center text-sm text-destructive">
             <p>{getApiErrorMessage(error)}</p>
-            <button type="button" onClick={() => void refetch()} className="mt-3 font-semibold text-primary underline">Thử lại</button>
+            <button type="button" onClick={() => void refetch()} className="mt-3 rounded-lg border border-border bg-background px-3 py-1.5 font-semibold text-primary transition-all hover:bg-muted active:scale-[0.98]">Thử lại</button>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center px-4 py-12 text-center">

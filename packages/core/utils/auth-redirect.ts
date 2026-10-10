@@ -72,7 +72,10 @@ export function resolveTutorLoginDestination(user: MeType) {
     return "/tutor/home";
   }
 
-  if (user.tutorProfileStatus === "APPROVED") {
+  if (user.tutorProfileStatus?.trim().toUpperCase() === "APPROVED") {
+    if (user.isInterviewed !== true) {
+      return "/tutor/onboarding";
+    }
     if (user.bankInformationCompleted && user.availabilityCompleted) {
       return "/tutor/home";
     }

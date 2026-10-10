@@ -564,7 +564,7 @@ export function PrimaryScreenActions() {
   const { view, dispatchAction } = useTutorOnboardingViewModel();
   const primaryAction =
     view.currentScreen === "APPROVED"
-      ? "open-post-approval-form"
+      ? "open-approved-interview"
       : view.currentScreen === "POST_APPROVAL"
         ? "complete-onboarding"
         : view.currentScreen === "COMPLETED"

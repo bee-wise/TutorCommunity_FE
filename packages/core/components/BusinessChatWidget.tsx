@@ -1,7 +1,11 @@
 "use client";
 
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  type QueryClient,
+} from "@tanstack/react-query";
 import {
   CalendarDaysIcon as CalendarCheck,
   CalendarDaysIcon as CalendarPlus,
@@ -39,9 +43,15 @@ type Props = { business: ChatBusinessMessage; currentRole: Role };
 async function refreshChatHistory(queryClient: QueryClient, roomId?: string) {
   if (!roomId) return;
   await Promise.all([
-    queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.messages(roomId) }),
-    queryClient.invalidateQueries({ queryKey: queryKeys.consultantWorkspace.messages(roomId) }),
-    queryClient.invalidateQueries({ queryKey: queryKeys.saleChatRooms.messages(roomId) }),
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.chatRooms.messages(roomId),
+    }),
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.consultantWorkspace.messages(roomId),
+    }),
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.saleChatRooms.messages(roomId),
+    }),
   ]);
 }
 
@@ -137,7 +147,9 @@ const meetingUrl = (value?: string | null) => {
   if (!value) return undefined;
   try {
     const url = new URL(value);
-    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : undefined;
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? url.toString()
+      : undefined;
   } catch {
     return undefined;
   }
@@ -278,12 +290,39 @@ function TrialWidget({ business, currentRole }: Props) {
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const data = business.current?.kind === "TRIAL_SESSION" ? business.current.data : query.data;
+  const data =
+    business.current?.kind === "TRIAL_SESSION"
+      ? business.current.data
+      : query.data;
   const payload = business.payload;
   const status = data?.status;
-  const joinUrl = meetingUrl(data?.zoomUrl ?? data?.locationOrMeetingInfo);
+  const joinUrl =
+    meetingUrl(data?.zoomUrl) ?? meetingUrl(data?.locationOrMeetingInfo);
+  const meetingInfo =
+    data?.teachingMode === "OFFLINE"
+      ? (data.locationOrMeetingInfo ?? data.zoomUrl)
+      : (data?.zoomUrl ?? data?.locationOrMeetingInfo);
+  const isOnlineRoom =
+    data?.teachingMode === "ONLINE" ||
+    (data?.teachingMode !== "OFFLINE" && !!joinUrl);
   const confirmed =
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
+
+  const subjectDisplay = (() => {
+    const context = data?.contextName || payloadString(payload, "contextName");
+    const item =
+      data?.teachingItemName || payloadString(payload, "teachingItemName");
+    if (context && item) {
+      return `${context} - ${item}`;
+    }
+    if (item) return item;
+    if (context) return context;
+    return (
+      data?.subject ??
+      (business.current ? undefined : payloadString(payload, "subject")) ??
+      "—"
+    );
+  })();
 
   async function confirm() {
     if (!id || data?.version === undefined || data?.version === null) return;
@@ -305,22 +344,23 @@ function TrialWidget({ business, currentRole }: Props) {
   return (
     <Frame icon={GraduationCap} title="Đề xuất lịch học thử" status={status}>
       <div className="space-y-2 border-b border-border/60 pb-3">
-        <Row
-          label="Môn học"
-          value={data?.subject ?? (business.current ? undefined : payloadString(payload, "subject")) ?? "—"}
-        />
+        <Row label="Môn học" value={subjectDisplay} />
         <Row
           label="Bắt đầu"
           value={dateTime(
             data?.scheduledStartAt ??
-              (business.current ? undefined : payloadString(payload, "scheduledStartAt")),
+              (business.current
+                ? undefined
+                : payloadString(payload, "scheduledStartAt")),
           )}
         />
         <Row
           label="Kết thúc"
           value={dateTime(
             data?.scheduledEndAt ??
-              (business.current ? undefined : payloadString(payload, "scheduledEndAt")),
+              (business.current
+                ? undefined
+                : payloadString(payload, "scheduledEndAt")),
           )}
         />
         <Row
@@ -339,18 +379,27 @@ function TrialWidget({ business, currentRole }: Props) {
             )
           }
         />
-        {(data?.locationOrMeetingInfo || data?.zoomUrl) && (
-          <Row
-            label="Địa điểm / Phòng học"
-            value={data.locationOrMeetingInfo ?? data.zoomUrl}
-          />
+        {meetingInfo && !isOnlineRoom && (
+          <Row label="Địa điểm" value={meetingInfo} />
         )}
       </div>
 
-      {data && joinUrl && <TrialJoinButton trial={data} href={joinUrl} />}
+      {data && meetingInfo && isOnlineRoom && (
+        <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5">
+          <div className="flex items-center gap-1.5 font-semibold text-primary">
+            <VideoCamera width={14} height={14} aria-hidden="true" />
+            <span>Phòng học trực tuyến</span>
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span className="min-w-0 basis-40 flex-1 break-all font-medium leading-5 text-foreground/80 select-text">
+              {meetingInfo}
+            </span>
+            {joinUrl && <TrialJoinButton trial={data} href={joinUrl} />}
+          </div>
+        </div>
+      )}
 
       {data?.note && (
-
         <div className="rounded-xl border border-border/80 bg-background p-2.5 text-muted-foreground text-[11px] leading-relaxed">
           <span className="font-semibold text-foreground">Ghi chú: </span>
           {data.note}
@@ -403,7 +452,10 @@ function ConfirmationWidget({ business, currentRole }: Props) {
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const data = business.current?.kind === "CLASS_CONFIRMATION" ? business.current.data : query.data;
+  const data =
+    business.current?.kind === "CLASS_CONFIRMATION"
+      ? business.current.data
+      : query.data;
   const status = data?.status;
   const confirmed =
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
@@ -432,7 +484,9 @@ function ConfirmationWidget({ business, currentRole }: Props) {
           label="Môn học"
           value={
             data?.subjectName ??
-            (business.current ? undefined : payloadString(business.payload, "subjectName")) ??
+            (business.current
+              ? undefined
+              : payloadString(business.payload, "subjectName")) ??
             "—"
           }
         />
@@ -528,8 +582,12 @@ function PaymentWidget({ business, currentRole }: Props) {
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const data = business.current?.kind === "PAYMENT_REQUEST" ? business.current.data : createdQuery.data ?? query.data;
-  const classId = data?.classId ?? (business.current ? undefined : classIdFromPayload);
+  const data =
+    business.current?.kind === "PAYMENT_REQUEST"
+      ? business.current.data
+      : (createdQuery.data ?? query.data);
+  const classId =
+    data?.classId ?? (business.current ? undefined : classIdFromPayload);
   const checkout = safeCheckout(data?.checkoutUrl);
 
   async function create() {
@@ -551,11 +609,7 @@ function PaymentWidget({ business, currentRole }: Props) {
   }
 
   return (
-    <Frame
-      icon={Receipt}
-      title="Học viên thanh toán"
-      status={data?.status}
-    >
+    <Frame icon={Receipt} title="Học viên thanh toán" status={data?.status}>
       <div className="rounded-xl border border-border/80 bg-background p-3.5 space-y-2">
         <Row label="Lớp học" value={classId ?? "—"} />
         <Row label="Số tiền cần đóng" value={money(data?.amount)} highlight />
@@ -599,11 +653,7 @@ function PaymentWidget({ business, currentRole }: Props) {
           asChild
           className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
         >
-          <a
-            href={checkout}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={checkout} target="_blank" rel="noopener noreferrer">
             <CreditCard width={15} height={15} />
             <span>Thanh toán ngay qua PayOS</span>
             <ArrowRight width={16} height={16} />
@@ -622,9 +672,10 @@ function PaymentWidget({ business, currentRole }: Props) {
 }
 
 function SessionsWidget({ business, currentRole }: Props) {
-  const classId = business.current?.kind === "CLASS_SCHEDULE"
-    ? business.current.data.classId
-    : payloadString(business.payload, "classId") ?? business.referenceId;
+  const classId =
+    business.current?.kind === "CLASS_SCHEDULE"
+      ? business.current.data.classId
+      : (payloadString(business.payload, "classId") ?? business.referenceId);
   const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ["connection-widget", "sessions", classId],
@@ -640,7 +691,10 @@ function SessionsWidget({ business, currentRole }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const submitKey = useRef<string | null>(null);
-  const schedule = business.current?.kind === "CLASS_SCHEDULE" ? business.current.data : undefined;
+  const schedule =
+    business.current?.kind === "CLASS_SCHEDULE"
+      ? business.current.data
+      : undefined;
   const sessions = schedule?.sessions ?? query.data;
 
   async function submit(event: FormEvent) {
@@ -710,8 +764,18 @@ function SessionsWidget({ business, currentRole }: Props) {
         <div className="space-y-1 rounded-xl border border-border/80 bg-background p-3">
           <Row label="Môn học" value={schedule.subjectName ?? "—"} />
           <Row label="Trạng thái lớp" value={schedule.status ?? "—"} />
-          <Row label="Số buổi dự kiến" value={schedule.numberOfSessions ?? "—"} />
-          <Row label="Thời lượng mỗi buổi" value={schedule.sessionDurationMinutes ? `${schedule.sessionDurationMinutes} phút` : "—"} />
+          <Row
+            label="Số buổi dự kiến"
+            value={schedule.numberOfSessions ?? "—"}
+          />
+          <Row
+            label="Thời lượng mỗi buổi"
+            value={
+              schedule.sessionDurationMinutes
+                ? `${schedule.sessionDurationMinutes} phút`
+                : "—"
+            }
+          />
         </div>
       )}
 
@@ -753,23 +817,25 @@ function SessionsWidget({ business, currentRole }: Props) {
         </p>
       )}
 
-      {currentRole === "TUTOR" && classId && (!schedule || schedule.status === "ACTIVE") && (
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setShowForm((value) => !value)}
-          className="h-12 w-full rounded-full border-primary/40 font-nunito text-xs font-bold text-primary transition-all hover:border-primary hover:bg-muted active:scale-[0.98]"
-        >
-          {showForm ? (
-            <span>Đóng biểu mẫu</span>
-          ) : (
-            <>
-              <CalendarPlus width={14} height={14} />
-              <span>Xếp thêm buổi học</span>
-            </>
-          )}
-        </Button>
-      )}
+      {currentRole === "TUTOR" &&
+        classId &&
+        (!schedule || schedule.status === "ACTIVE") && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowForm((value) => !value)}
+            className="h-12 w-full rounded-full border-primary/40 font-nunito text-xs font-bold text-primary transition-all hover:border-primary hover:bg-muted active:scale-[0.98]"
+          >
+            {showForm ? (
+              <span>Đóng biểu mẫu</span>
+            ) : (
+              <>
+                <CalendarPlus width={14} height={14} />
+                <span>Xếp thêm buổi học</span>
+              </>
+            )}
+          </Button>
+        )}
 
       {showForm && (
         <form

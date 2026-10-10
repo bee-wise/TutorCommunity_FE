@@ -1,6 +1,7 @@
 import { AcademicCapIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
 import { DateTimePicker } from "@workspace/ui/components/ui/date-time-picker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/ui/select";
 import type { ConsultantWidgetModel } from "../hooks/useConsultantWidgetTools";
 import { TeachingModeToggle, WidgetField, widgetFieldClass } from "./WidgetFormParts";
 
@@ -37,14 +38,29 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
 
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-x-4">
         <WidgetField id="trial-subject" label="Môn học" required>
-          <input
-            id="trial-subject"
+          <Select
+            value={model.selectedOfferingId}
+            onValueChange={model.setSelectedOfferingId}
+            disabled={model.teachingOfferings.length === 0}
             required
-            value={model.subject}
-            onChange={(event) => model.setSubject(event.target.value)}
-            placeholder="Ví dụ: Toán lớp 10, IELTS Speaking"
-            className={widgetFieldClass}
-          />
+            name="tutorOfferingId"
+          >
+            <SelectTrigger id="trial-subject" aria-label="Môn học">
+              <SelectValue placeholder="Chọn tổ hợp giảng dạy" />
+            </SelectTrigger>
+            <SelectContent portalContainer={calendarPortalContainer}>
+              {model.teachingOfferings.map((offering) => (
+                <SelectItem key={offering.id} value={offering.id}>
+                  {offering.contextName} - {offering.teachingItemName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {model.teachingOfferings.length === 0 && (
+            <p className="text-xs text-muted-foreground">
+              Gia sư chưa có tổ hợp giảng dạy trong phòng chat này.
+            </p>
+          )}
         </WidgetField>
 
         <TeachingModeToggle
@@ -118,7 +134,7 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
         </p>
         <Button
           type="submit"
-          disabled={busy}
+          disabled={busy || model.teachingOfferings.length === 0}
           className="h-10 w-full rounded-xl px-5 font-nunito text-xs font-extrabold transition-all active:scale-[0.98] sm:w-auto"
         >
           {busy ? "Đang gửi đề xuất..." : "Gửi đề xuất học thử"}

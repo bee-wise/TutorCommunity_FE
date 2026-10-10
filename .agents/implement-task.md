@@ -1,3 +1,22 @@
+## Onboarding: gate Phỏng vấn AI by APPROVED profile 2026-10-10
+
+- [x] Đối chiếu workflow, các trạng thái hồ sơ, resolver Onboarding và luồng preview.
+- [x] Đổi thứ tự thành gửi hồ sơ → chờ duyệt → Phỏng vấn AI sau khi `tutorProfileStatus` là `APPROVED`.
+- [x] Đồng bộ header và redirect sau đăng nhập theo `isInterviewed`; 33 regression tests, TypeScript Sale, ESLint các file Sale và diff check trong phạm vi tác vụ đạt.
+
+## Consultant message composer 2026-10-09
+
+- [x] Đối chiếu ảnh feedback, workflow, design skill và benchmark BeeWise.
+- [x] Gom ô nhập, Mẫu, Widget và Gửi vào một thanh đồng bộ; giữ nhãn công cụ trên mobile và tự tăng chiều cao khi nhập nhiều dòng.
+- [x] TypeScript, ESLint, production build staff và `git diff --check` đạt.
+- [ ] QA trực quan trên trình duyệt chưa thực hiện vì công cụ browser bị lỗi khởi tạo.
+
+## Consultant trial widget GUID validation 2026-10-09
+
+- [x] Đối chiếu ID `tutorOfferingId` từ `GET /chat-rooms` với schema request học thử; xác định `z.uuid()` loại GUID hợp lệ của backend có nhóm phiên bản `9`.
+- [x] Dùng `z.guid()` cho payload học thử và các mã GUID trong cùng widget; báo lỗi dễ hiểu nếu offering ID sai định dạng.
+- [x] Kiểm tra payload mẫu bằng schema thật, TypeScript, ESLint, production build staff và `git diff --check`.
+
 ## LMS sidebar logo 2026-10-09
 
 - [x] Đối chiếu workflow, chuẩn UI và hai sidebar LMS hiện hành.
@@ -95,3 +114,35 @@
 - [x] Đối chiếu workflow, UI standards, proxy, bootstrap `/auth/me` và cấu hình cache Query.
 - [x] Chặn route sai vai trò ở proxy; xác minh lại `/auth/me` lúc mở LMS và khi quay lại tab, chỉ render workspace đúng vai trò.
 - [x] 4 test phân luồng đạt; ESLint và `git diff --check` đạt. TypeScript toàn LMS còn 5 lỗi sẵn có trong `BusinessChatWidget.tsx` và `useChatRoom.ts` (không thuộc thay đổi này).
+
+## Widget message content 2026-10-10
+
+- [x] Đối chiếu workflow và các renderer chat Staff, Sale, LMS.
+- [x] Ẩn content của tin nhắn widget trong timeline và chi tiết; bỏ thao tác sao chép content ẩn, giữ nguyên payload và tin nhắn thường.
+- [x] TypeScript cả ba app và ESLint các file thay đổi đạt; `git diff --check` trên các file của tác vụ đạt.
+
+## Trial widget room link and action 2026-10-10
+
+- [x] Đối chiếu ảnh phản hồi, workflow, design skill và widget dùng chung.
+- [x] Gom link phòng học trực tuyến và nút tham gia vào cùng một cụm; giữ địa điểm học trực tiếp ở hàng thông tin.
+- [x] TypeScript Staff, Sale, LMS; ESLint file widget; và `git diff --check` trên các file của tác vụ đều đạt.
+
+## Consultant chat unread badges 2026-10-10
+
+- [x] Điều tra dữ liệu `GET /chat-rooms`, luồng Centrifugo và cách tính badge; xác định `updatedAt`, mốc cộng 1 giây, tin tự gửi và chỉ subscribe phòng đang mở gây sai/chậm.
+- [x] Dùng `lastMessageAt`, đếm tin mới từ người khác bằng TanStack Query, lưu mốc đã đọc theo user/phòng, đồng bộ giữa tab và theo dõi realtime cho danh sách phòng.
+- [x] Chỉ đánh dấu đã đọc khi phòng hiển thị; gom badge trùng và dùng token màu `destructive`.
+- [x] 3 regression tests, TypeScript, ESLint, production build Staff và diff check đạt.
+
+## LMS tutor chat unread badges 2026-10-10
+
+- [x] Điều tra mapper đặt `unreadCount: 0`, danh sách chỉ polling 30 giây và chưa subscribe realtime cho các phòng chưa mở.
+- [x] Dùng hook chung tính tin đến theo mốc đã đọc, subscribe realtime toàn danh sách, thêm polling 5 giây khi mở trang và refresh lúc quay lại tab; hiện badge đỏ ở phòng/tab có tin mới.
+- [x] Đánh dấu đã đọc khi phòng đang hiển thị; sửa đường dẫn từ thẻ chat tóm tắt về đúng `/lms/tutor/messages`.
+- [x] 3 regression tests, TypeScript LMS/Staff, ESLint, production build tuần tự cho cả hai app và diff check đạt.
+
+## LMS tutor chat polling performance 2026-10-10
+
+- [x] Rà nhịp gọi `GET /chat-rooms` 5 giây và trạng thái kết nối Centrifugo.
+- [x] Dùng realtime làm nguồn cập nhật chính; chuyển polling dự phòng sang 30 giây khi socket và các kênh phòng sẵn sàng, 15 giây khi chưa sẵn sàng.
+- [x] TypeScript, ESLint và production build LMS/Staff đạt; diff check đạt.

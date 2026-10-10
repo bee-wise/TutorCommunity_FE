@@ -48,7 +48,9 @@ export type NavbarContext = {
   isAuthenticated: boolean;
   role?: string | null;
   tutorOnboardingStatus?: TutorOnboardingStatus | null;
+  tutorProfileStatus?: string | null;
   lmsAccessEnabled?: boolean | null;
+  isInterviewed?: boolean | null;
 };
 
 export function normalizeRole(role?: string | null) {
@@ -73,7 +75,9 @@ export function resolveNavbarState({
   isAuthenticated,
   role,
   tutorOnboardingStatus,
+  tutorProfileStatus,
   lmsAccessEnabled,
+  isInterviewed,
 }: NavbarContext): NavbarState {
   if (!isAuthenticated) return "GUEST";
 
@@ -83,9 +87,10 @@ export function resolveNavbarState({
 
   if (normalizedRole === "TUTOR") {
     const status = normalizeTutorStatus(tutorOnboardingStatus);
+    const profileStatus = normalizeTutorStatus(tutorProfileStatus);
     if (
       lmsAccessEnabled === true ||
-      status === "APPROVED" ||
+      (profileStatus === "APPROVED" && isInterviewed === true) ||
       status === "COMPLETED" ||
       status === "POST_APPROVAL_INFO_REQUIRED"
     ) {

@@ -103,7 +103,7 @@ export function MessageContextMenu({
         <span>Xem chi tiết</span>
       </button>
 
-      {message.text && (
+      {message.type !== "WIDGET" && message.text && (
         <button
           type="button"
           onClick={handleCopyText}

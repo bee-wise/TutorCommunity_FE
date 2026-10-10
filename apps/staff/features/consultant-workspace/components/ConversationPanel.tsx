@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { SparklesIcon } from "@heroicons/react/24/outline";
+import { RectangleStackIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import {
   InformationCircleIcon as Info,
   LockClosedIcon as Lock,
@@ -64,7 +64,8 @@ export function ConversationPanel({
 }: ConversationPanelProps) {
   const [draft, setDraft] = useState("");
   const [showWidgets, setShowWidgets] = useState(false);
-  const [widgetDialogElement, setWidgetDialogElement] = useState<HTMLDivElement | null>(null);
+  const [widgetDialogElement, setWidgetDialogElement] =
+    useState<HTMLDivElement | null>(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showClose, setShowClose] = useState(false);
   const [reason, setReason] = useState<string>("OTHER");
@@ -82,7 +83,7 @@ export function ConversationPanel({
   const title =
     room.kind === "group"
       ? `${learner} · ${tutor}`
-      : peer?.name ?? "Tư vấn riêng";
+      : (peer?.name ?? "Tư vấn riêng");
 
   const subtitle =
     room.kind === "group"
@@ -113,9 +114,7 @@ export function ConversationPanel({
         room.isMock ? "Đã đóng phiên minh họa" : "Đã đóng phòng chat",
       );
     } catch (caught) {
-      setActionError(
-        getApiErrorMessage(caught, "Không đóng được phòng chat."),
-      );
+      setActionError(getApiErrorMessage(caught, "Không đóng được phòng chat."));
     }
   }
 
@@ -146,7 +145,7 @@ export function ConversationPanel({
 
       {readOnly && (
         <div className="flex shrink-0 items-center gap-2 border-b border-border bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
-           <Lock width={14} height={14} /> Phòng đã đóng. Bạn có thể xem lại lịch
+          <Lock width={14} height={14} /> Phòng đã đóng. Bạn có thể xem lại lịch
           sử tin nhắn nhưng không thể gửi thêm.
         </div>
       )}
@@ -176,11 +175,14 @@ export function ConversationPanel({
       )}
 
       <Dialog open={showWidgets} onOpenChange={setShowWidgets}>
-        <DialogContent ref={setWidgetDialogElement} className="flex max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-[900px] flex-col gap-0 overflow-visible rounded-3xl border-border bg-background p-0 shadow-soft [&>button]:right-4 [&>button]:top-4 [&>button]:rounded-xl [&>button]:border [&>button]:border-border [&>button]:bg-background [&>button]:p-2 [&>button]:transition-all [&>button]:active:scale-[0.98]">
+        <DialogContent
+          ref={setWidgetDialogElement}
+          className="flex max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-[900px] flex-col gap-0 overflow-visible rounded-3xl border-border bg-background p-0 shadow-soft [&>button]:right-4 [&>button]:top-4 [&>button]:rounded-xl [&>button]:border [&>button]:border-border [&>button]:bg-background [&>button]:p-2 [&>button]:transition-all [&>button]:active:scale-[0.98]"
+        >
           <DialogHeader className="shrink-0 rounded-t-3xl border-b border-border bg-card px-4 py-3 pr-16 text-left sm:px-6 sm:py-4 sm:pr-16">
             <div className="flex items-start gap-3">
               <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <SparklesIcon className="size-5" aria-hidden="true" />
+                <RectangleStackIcon className="size-5" aria-hidden="true" />
               </span>
               <div>
                 <DialogTitle className="font-nunito text-base font-extrabold leading-[1.2] text-foreground">
@@ -200,6 +202,10 @@ export function ConversationPanel({
             ) : (
               <ConsultantWidgetTools
                 roomId={room.id}
+                teachingOfferings={
+                  room.participants.find((person) => person.role === "TUTOR")
+                    ?.teachingOfferings ?? []
+                }
                 calendarPortalContainer={widgetDialogElement}
                 onSent={() => {
                   onRetry();

@@ -14,11 +14,19 @@ const paginationSchema = z.object({
   totalPages: z.number().int().optional().default(1),
 }).passthrough();
 
+const teachingOfferingSchema = z.object({
+  id: z.string(),
+  contextName: z.string(),
+  teachingItemName: z.string(),
+  status: z.string().nullish(),
+}).passthrough();
+
 const participantSchema = z.object({
   userId: z.string(),
   joinedAt: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
   role: z.string().nullable().optional(),
+  teachingOfferings: z.array(teachingOfferingSchema).nullish(),
 }).passthrough();
 
 const connectRequestSchema = z.object({
@@ -104,6 +112,7 @@ const centrifugoSubscriptionTokenSchema = z.object({
 }).passthrough();
 
 export type ConnectRequest = z.infer<typeof connectRequestSchema>;
+export type ChatTeachingOffering = z.infer<typeof teachingOfferingSchema>;
 export type ChatRoomRecord = z.infer<typeof roomSchema>;
 export type ChatMessageRecord = z.infer<typeof messageSchema>;
 export type ChatMessagePage = z.infer<typeof messageListSchema>;

@@ -1,5 +1,11 @@
 import { z } from "zod";
 import { apiClient } from "../configs/client";
+import {
+  createTrialSessionRequestSchema,
+  type CreateTrialSession,
+} from "../schemas/trial-session.schema";
+
+export type { CreateTrialSession } from "../schemas/trial-session.schema";
 
 const nullableString = z.string().nullish();
 
@@ -10,6 +16,8 @@ export const trialSessionSchema = z
     createdById: nullableString,
     tutorOfferingId: nullableString,
     subject: nullableString,
+    contextName: nullableString,
+    teachingItemName: nullableString,
     scheduledStartAt: nullableString,
     scheduledEndAt: nullableString,
     teachingMode: nullableString,
@@ -127,15 +135,6 @@ export type ClassSessionSlot = {
   endAt: string;
   locationOrMeetingInfo?: string;
 };
-export type CreateTrialSession = {
-  subject: string;
-  scheduledStartAt: string;
-  scheduledEndAt: string;
-  teachingMode: "ONLINE" | "OFFLINE";
-  zoomUrl?: string | null;
-  locationOrMeetingInfo?: string | null;
-  note?: string | null;
-};
 export type UpdateClassConfirmation = {
   subjectId: string;
   teachingMode: "ONLINE" | "OFFLINE";
@@ -178,9 +177,10 @@ export const connectionWidgetsService = {
     return dataOf(trialListSchema, response).items ?? [];
   },
   async createTrial(roomId: string, input: CreateTrialSession) {
+    const payload = createTrialSessionRequestSchema.parse(input);
     const response: unknown = await apiClient.post(
       `/chat-rooms/${idPath(roomId)}/trial-sessions`,
-      input,
+      payload,
     );
     return dataOf(trialSessionSchema, response);
   },
