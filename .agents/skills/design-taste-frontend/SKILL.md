@@ -60,6 +60,21 @@ Do not default to: AI-purple gradients, centered hero over dark mesh, three equa
 - **Quy tắc:**
   - **Mặc định:** Chỉ dùng thẻ Tiêu đề (`<h1>`, `<h2>`) sạch sẽ, không kèm subtitle.
   - **CHỈ ĐƯỢC TẠO đoạn mô tả phụ khi:** Nó mang lại **thông tin chỉ dẫn thao tác bắt buộc (actionable instructions), cảnh báo quan trọng, hoặc giải thích nghiệp vụ thiết yếu** mà tiêu đề không thể truyền tải được.
+#### 🚫 CẤM SỬ DỤNG CHECKBOX MẶC ĐỊNH THÔ CỦA TRÌNH DUYỆT (Zero-Native-Default Checkbox & Interactive Toggles):
+- **CẤM HOÀN TOÀN** để lộ thẻ `<input type="checkbox">` mặc định thô sơ không có styling.
+- **Quy chuẩn Checkbox tùy biến BeeWise:**
+  - **Base Container:** `w-5 h-5 rounded-md border-2 border-border bg-white transition-all duration-150 flex items-center justify-center active:scale-95`
+  - **Checked (Primary):** `bg-primary border-primary text-primary-foreground shadow-xs` kèm icon check sắc nét.
+  - **Checked (Brand Accent Amber):** `bg-accent border-accent text-accent-foreground shadow-xs` (dành cho ưu đãi, VIP, đề xuất đặc biệt).
+  - **Accessibility / Form Integration:** Luôn ẩn input gốc bằng class `sr-only` (`<input type="checkbox" className="sr-only" {...register("fieldName")} />`).
+
+#### 🚫 CẤM DÙNG TOGGLE HÌNH TAM GIÁC THÔ SƠ (<details><summary> Triangle Slop):
+- **CẤM HOÀN TOÀN** sử dụng thẻ `<details><summary>` mặc định của trình duyệt để lộ glyph hình tam giác đen (`▶`, `▼`) thô sơ, không có card hierarchy và hiệu ứng chuyển động.
+- **Quy chuẩn Collapsible, Disclosure & Accordion BeeWise:**
+  - **Single Expandable / Details:** Bắt buộc dùng `DisclosureCard` hoặc `Collapsible` từ `@workspace/ui/components/ui/collapsible`.
+  - **Multi-Item Groups / FAQ:** Dùng `Accordion` (`AccordionItem`, `AccordionTrigger`, `AccordionContent`) từ `@workspace/ui/components/ui/accordion`.
+  - **Icon & Micro-interactions:** Dùng Heroicons `ChevronDownIcon` có container bo góc, xoay mượt mà 180° (`group-data-[state=open]:rotate-180`), header có `active:scale-[0.99]`.
+
 - **Golden UI Benchmark Reference:** Mọi thành phần mẫu đã được chuẩn hóa trực quan trong file tham chiếu [.agents/skills/design-taste-frontend/references/beewise-ui-standards.html](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/references/beewise-ui-standards.html).
 
 

@@ -1,5 +1,6 @@
-import { CheckIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, DocumentTextIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@workspace/ui/components/ui/collapsible";
 import type { ConsultantWidgetModel } from "../hooks/useConsultantWidgetTools";
 import { TeachingModeToggle, WidgetField, widgetFieldClass } from "./WidgetFormParts";
 
@@ -94,10 +95,20 @@ export function ConfirmationDetailsForm({
       </div>
 
       <div className="flex flex-col gap-2 border-t border-border pt-2 sm:flex-row sm:items-center sm:justify-between">
-        <details className="text-[11px] text-muted-foreground sm:hidden">
-          <summary className="w-fit cursor-pointer rounded-lg border border-border bg-background px-2 py-1 font-semibold transition-all active:scale-95">Cách tính học phí</summary>
-          <p className="mt-1 leading-relaxed">Học phí được tính theo gói giảng dạy. Sau khi cập nhật, Gia sư và Học viên cần xác nhận lại.</p>
-        </details>
+        <Collapsible className="sm:hidden text-[11px] text-muted-foreground">
+          <CollapsibleTrigger asChild>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-1 font-semibold transition-all active:scale-95 text-foreground hover:bg-muted"
+            >
+              <InformationCircleIcon className="size-3.5 text-primary" />
+              <span>Cách tính học phí</span>
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-1.5 rounded-xl border border-border/70 bg-muted/40 p-2.5 leading-relaxed">
+            Học phí được tính theo gói giảng dạy. Sau khi cập nhật, Gia sư và Học viên cần xác nhận lại.
+          </CollapsibleContent>
+        </Collapsible>
         <p className="hidden max-w-md text-xs leading-relaxed text-muted-foreground sm:block">
           Học phí được tính theo gói giảng dạy. Sau khi cập nhật, Gia sư và Học viên cần xác nhận lại.
         </p>

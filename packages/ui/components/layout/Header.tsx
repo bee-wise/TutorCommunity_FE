@@ -319,32 +319,31 @@ export function Header({
               /* ── Loading Skeleton cho cụm bên phải ── */
               <div className="flex items-center gap-2" aria-hidden="true">
                 <div className="hidden h-8 w-20 rounded-full bg-white/10 animate-pulse md:block" />
-                <div className="h-8 w-24 rounded-full bg-accent/30 animate-pulse" />
+                <div className="h-8 w-24 rounded-full bg-white/15 animate-pulse" />
               </div>
             ) : (
               <>
-                {navbarConfig.showNotifications &&
-                  navbarState !== "GUEST" && (
-                    <button
-                      type="button"
-                      onClick={openDrawer}
-                      aria-label="Thông báo"
-                      className="relative hidden h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:inline-flex"
-                    >
-                      <Bell
-                        className={cn(
-                          "h-4.5 w-4.5 transition-transform duration-200 hover:scale-105",
-                          unreadNotificationCount > 0 && "text-accent",
-                        )}
-                        aria-hidden="true"
-                      />
-                      {unreadNotificationCount > 0 && (
-                        <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground shadow-xs animate-pulse">
-                          {unreadNotificationCount}
-                        </span>
+                {navbarConfig.showNotifications && navbarState !== "GUEST" && (
+                  <button
+                    type="button"
+                    onClick={openDrawer}
+                    aria-label="Thông báo"
+                    className="relative hidden h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:inline-flex"
+                  >
+                    <Bell
+                      className={cn(
+                        "h-4.5 w-4.5 transition-transform duration-200 hover:scale-105",
+                        unreadNotificationCount > 0 && "text-accent",
                       )}
-                    </button>
-                  )}
+                      aria-hidden="true"
+                    />
+                    {unreadNotificationCount > 0 && (
+                      <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground shadow-xs animate-pulse">
+                        {unreadNotificationCount}
+                      </span>
+                    )}
+                  </button>
+                )}
 
                 {navbarConfig.rightItems.map((action) => (
                   <Link
@@ -402,11 +401,17 @@ export function Header({
                           <p className="font-sans text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                             Tài khoản
                           </p>
-                          <p className="mt-1 truncate text-sm font-extrabold text-primary" title={displayName}>
+                          <p
+                            className="mt-1 truncate text-sm font-extrabold text-primary"
+                            title={displayName}
+                          >
                             {displayName}
                           </p>
                           {user?.email && (
-                            <p className="mt-0.5 truncate font-sans text-xs text-muted-foreground" title={user.email}>
+                            <p
+                              className="mt-0.5 truncate font-sans text-xs text-muted-foreground"
+                              title={user.email}
+                            >
                               {user.email}
                             </p>
                           )}
@@ -432,7 +437,8 @@ export function Header({
                                 onClick={() => setAccountOpen(false)}
                                 className={cn(
                                   "rounded-lg px-3 py-2.5 text-sm font-bold text-popover-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                                  isActiveLink(item.href) && "bg-muted text-primary",
+                                  isActiveLink(item.href) &&
+                                    "bg-muted text-primary",
                                 )}
                               >
                                 {item.label}

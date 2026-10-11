@@ -146,3 +146,8 @@
 - [x] Rà nhịp gọi `GET /chat-rooms` 5 giây và trạng thái kết nối Centrifugo.
 - [x] Dùng realtime làm nguồn cập nhật chính; chuyển polling dự phòng sang 30 giây khi socket và các kênh phòng sẵn sàng, 15 giây khi chưa sẵn sàng.
 - [x] TypeScript, ESLint và production build LMS/Staff đạt; diff check đạt.
+## AI Interviews: Tutor, Consultant, Admin 2026-10-10
+
+- [x] Đọc API reference, workflow và chuẩn UI; xác nhận phạm vi cả ba vai trò.
+- [/] Triển khai contract/schema, service/query hooks, ghi âm/video và các màn hình theo vai trò.
+- [ ] Kiểm tra regression, TypeScript, ESLint, build và luồng UI.

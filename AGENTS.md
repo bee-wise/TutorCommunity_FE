@@ -57,6 +57,7 @@ Khi phát triển hoặc sửa đổi BẤT KỲ giao diện người dùng, but
      - **Interactive Text Links**: Dùng `transition-colors hover:text-primary/80` (KHÔNG dùng `hover:underline` trừ nội dung chính sách pháp lý).
 4. **MANDATORY MICRO-INTERACTIONS**: Mọi nút tương tác phải có `active:scale-[0.98]` hoặc `active:scale-95`, `transition-all`, và hiệu ứng bo góc mượt mà theo đúng triết lý Edutech Soft-Modern của BeeWise.
 5. **FORBIDDEN REDUNDANT SUBTITLE PARAGRAPHS**: CẤM HOÀN TOÀN việc tự động sinh các đoạn paragraph mô tả sáo rỗng, lặp lại ý tiêu đề (`<p className="text-sm text-muted-foreground">...</p>`) dưới các thẻ `h1`, `h2`, page headers. Mặc định chỉ giữ tiêu đề sạch sẽ, gọn gàng; CHỈ THÊM đoạn mô tả khi mang lại thông tin chỉ dẫn thao tác nghiệp vụ thiết yếu hoặc cảnh báo thực sự hữu ích.
+6. **FORBIDDEN NATIVE TRIANGLE DISCLOSURE (<details><summary> / ▶)**: CẤM TUYỆT ĐỐI dùng thẻ `<details><summary>` mặc định của trình duyệt để lộ glyph hình tam giác đen thô sơ (`▶`). Mọi tính năng mở rộng/thu gọn nội dung bắt buộc dùng component `DisclosureCard`, `Collapsible` từ `@workspace/ui/components/ui/collapsible` hoặc `Accordion` từ `@workspace/ui/components/ui/accordion`.
 
 
 <!-- END:beewise-ui-standards -->
