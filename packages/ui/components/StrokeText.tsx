@@ -45,7 +45,7 @@ interface StrokeTextBox {
   height: number;
 }
 
-const DEFAULT_TEXT = "Beewise 2026";
+const DEFAULT_TEXT = "BeeWise 2026";
 
 const StrokeText = ({
   text = DEFAULT_TEXT,

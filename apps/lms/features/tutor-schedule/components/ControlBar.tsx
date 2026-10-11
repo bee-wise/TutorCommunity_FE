@@ -2,7 +2,7 @@
 
 import { CalendarDays, List, ChevronDown, Check } from "lucide-react";
 import { useState } from "react";
-import { cn } from '@workspace/core/helpers/utils';
+import { cn } from "@workspace/core/helpers/utils";
 import type { ViewMode, FilterState } from "../types/schedule.types";
 import { SUBJECT_OPTIONS, STATUS_OPTIONS } from "../types/schedule.types";
 
@@ -34,7 +34,7 @@ function FilterDropdown({
       <button
         type="button"
         onClick={() => setOpen((p) => !p)}
-        className="flex items-center gap-2 h-9 pl-3 pr-2 rounded-xl border border-border/60 bg-white text-sm font-medium text-foreground shadow-xs hover:bg-muted/50 hover:border-[#280f91]/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40 select-none min-w-[160px]"
+        className="flex items-center gap-2 h-9 pl-3 pr-2 rounded-xl border border-border/60 bg-white text-sm font-medium text-foreground shadow-xs hover:bg-muted/50 hover:border-primary/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 select-none min-w-[160px]"
       >
         <span className="flex-1 text-left truncate">
           {selected?.label ?? placeholder}
@@ -51,10 +51,7 @@ function FilterDropdown({
       {open && (
         <>
           {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setOpen(false)}
-          />
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute top-full mt-1.5 right-0 z-20 w-full min-w-[160px] bg-white border border-border/60 rounded-xl shadow-lg py-1 overflow-hidden">
             {options.map((opt) => (
               <button
@@ -67,13 +64,16 @@ function FilterDropdown({
                 className={cn(
                   "flex items-center gap-2 w-full text-left px-3 py-2 text-sm transition-colors hover:bg-muted/60",
                   value === opt.value
-                    ? "text-[#280f91] font-semibold"
+                    ? "text-primary font-semibold"
                     : "text-foreground",
                 )}
               >
                 <span className="flex-1">{opt.label}</span>
                 {value === opt.value && (
-                  <Check className="size-3.5 text-[#280f91] shrink-0" strokeWidth={2.5} />
+                  <Check
+                    className="size-3.5 text-primary shrink-0"
+                    strokeWidth={2.5}
+                  />
                 )}
               </button>
             ))}
@@ -101,7 +101,7 @@ export function ControlBar({
           className={cn(
             "flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 select-none",
             viewMode === "calendar"
-              ? "bg-white text-[#280f91] shadow-sm border border-border/50"
+              ? "bg-white text-primary shadow-sm border border-border/50"
               : "text-muted-foreground hover:text-foreground",
           )}
         >
@@ -114,7 +114,7 @@ export function ControlBar({
           className={cn(
             "flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 select-none",
             viewMode === "list"
-              ? "bg-white text-[#280f91] shadow-sm border border-border/50"
+              ? "bg-white text-primary shadow-sm border border-border/50"
               : "text-muted-foreground hover:text-foreground",
           )}
         >

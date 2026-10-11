@@ -47,11 +47,16 @@ export function SectionShell({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3 sm:justify-start sm:items-center">
             <div className="flex min-w-0 items-start gap-2.5">
-              <span className="mt-1 h-5 w-1.5 shrink-0 rounded-full bg-[#280f91]" aria-hidden="true" />
-              <h2 className="text-lg font-extrabold text-[#0c0c0b] sm:text-xl">{title}</h2>
+              <span
+                className="mt-1 h-5 w-1.5 shrink-0 rounded-full bg-primary"
+                aria-hidden="true"
+              />
+              <h2 className="text-lg font-extrabold text-[#0c0c0b] sm:text-xl">
+                {title}
+              </h2>
             </div>
             {badge ? (
-              <span className="shrink-0 whitespace-nowrap rounded-full bg-[#280f91]/10 px-2.5 py-0.5 text-xs font-bold text-[#280f91]">
+              <span className="shrink-0 whitespace-nowrap rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary">
                 {badge}
               </span>
             ) : null}
@@ -69,9 +74,15 @@ export function SectionShell({
   );
 }
 
-export function InfoPill({ children, tone = "neutral", size = "md" }: InfoPillProps) {
+export function InfoPill({
+  children,
+  tone = "neutral",
+  size = "md",
+}: InfoPillProps) {
   const sizeClasses =
-    size === "sm" ? "px-2.5 py-1 text-xs font-semibold" : "px-3 py-1.5 text-xs font-bold";
+    size === "sm"
+      ? "px-2.5 py-1 text-xs font-semibold"
+      : "px-3 py-1.5 text-xs font-bold";
 
   return (
     <span
@@ -122,4 +133,3 @@ export function getInitials(name: string) {
     .join("")
     .toUpperCase();
 }
-

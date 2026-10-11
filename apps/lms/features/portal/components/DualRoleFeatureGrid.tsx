@@ -1,39 +1,17 @@
 import { RoleFeatureShowcase } from "./RoleFeatureShowcase";
+import { PortalReveal } from "./PortalReveal";
+import { PortalTitle } from "./PortalTitle";
 import { learnerFeatures, tutorFeatures } from "../data/roleFeatures";
 
 export function DualRoleFeatureGrid() {
   return (
-    <section className="overflow-x-clip bg-[#fbfaf7] py-20 sm:py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto mb-14 max-w-3xl text-center lg:mb-20">
-          <h2
-            className="text-3xl font-extrabold tracking-[-0.035em] text-primary sm:text-4xl lg:text-5xl"
-            style={{ fontFamily: "var(--font-nunito-family)" }}
-          >
-            <span className="text-accent">BeeWise LMS</span> có gì nổi bật?
-          </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#37333d]">
-            Một không gian học tập rõ ràng cho học viên và công cụ quản lý gọn
-            gàng cho gia sư.
-          </p>
-        </div>
-
-        <RoleFeatureShowcase
-          id="learner"
-          roleLabel="Không gian học viên"
-          heading="Tính năng dành cho học viên"
-          imageSide="left"
-          features={learnerFeatures}
-        />
-
-        <RoleFeatureShowcase
-          id="tutor"
-          roleLabel="Không gian gia sư"
-          heading="Tính năng dành cho gia sư"
-          imageSide="right"
-          features={tutorFeatures}
-          className="mt-20 sm:mt-28"
-        />
+    <section className="bg-background py-16 sm:py-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <PortalReveal className="mb-12 max-w-2xl lg:mb-16">
+          <PortalTitle primary="Một nơi để theo dõi " accent="lớp học." className="text-[clamp(2rem,3.5vw,3rem)]" />
+        </PortalReveal>
+        <RoleFeatureShowcase id="learner" roleLabel="Học viên" heading="Bạn học, " accentHeading="LMS giúp theo dõi." imageSide="left" features={learnerFeatures} />
+        <RoleFeatureShowcase id="tutor" roleLabel="Gia sư" heading="Quản lý lớp, " accentHeading="chuẩn bị bài dạy." imageSide="right" features={tutorFeatures} className="mt-20 border-t border-border pt-20 sm:mt-24 sm:pt-24" />
       </div>
     </section>
   );

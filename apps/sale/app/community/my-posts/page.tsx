@@ -20,7 +20,7 @@ export default function MyPostsPage() {
     }
   }, [currentUser.role, router]);
 
-  const myPosts = posts.filter(post => post.author.id === currentUser.id);
+  const myPosts = posts.filter((post) => post.author.id === currentUser.id);
 
   if (currentUser.role !== "LEARNER") {
     return null;
@@ -29,7 +29,7 @@ export default function MyPostsPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#280f91]">Bài đăng của tôi</h1>
+        <h1 className="text-2xl font-bold text-primary">Bài đăng của tôi</h1>
         <Link href="/community">
           <Button variant="outline" size="sm">
             <PlusCircle className="w-4 h-4 mr-2" />
@@ -45,16 +45,12 @@ export default function MyPostsPage() {
             description="Hãy quay lại Trang chủ để tạo bài đăng tìm gia sư đầu tiên của bạn nhé!"
             action={
               <Link href="/community">
-                <Button>
-                  Quay lại Trang chủ
-                </Button>
+                <Button>Quay lại Trang chủ</Button>
               </Link>
             }
           />
         ) : (
-          myPosts.map(post => (
-            <PostCard key={post.id} post={post} />
-          ))
+          myPosts.map((post) => <PostCard key={post.id} post={post} />)
         )}
       </div>
     </main>

@@ -30,24 +30,31 @@ export function WidgetGuidance({ tab }: { tab: Extract<WidgetTab, "payment" | "s
       id={`consultant-widget-panel-${tab}`}
       role="tabpanel"
       aria-labelledby={`consultant-widget-tab-${tab}`}
-      className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7"
+      className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6"
     >
-      <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-        <Icon className="size-5" aria-hidden="true" />
-      </span>
-      <h3 className="mt-4 font-nunito text-lg font-extrabold leading-[1.2] text-foreground">
-        {item.title}
-      </h3>
-      <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-        {item.description}
-      </p>
-      <ol className="mt-5 space-y-3 border-t border-border pt-5">
+      <div className="flex items-center gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
+          <Icon className="size-4.5" aria-hidden="true" />
+        </span>
+        <div className="min-w-0">
+          <h3 className="font-nunito text-base font-extrabold leading-tight text-foreground sm:text-lg">
+            {item.title}
+          </h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {item.description}
+          </p>
+        </div>
+      </div>
+      <ol className="mt-4 space-y-2 border-t border-border pt-4">
         {item.steps.map((step, index) => (
-          <li key={step} className="flex items-start gap-3 text-sm leading-relaxed text-foreground">
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-extrabold text-accent-foreground">
+          <li
+            key={step}
+            className="flex items-start gap-3 rounded-2xl border border-border/70 bg-muted/30 p-3 text-xs leading-relaxed text-foreground transition-colors hover:bg-muted/50 sm:text-sm"
+          >
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-black text-accent-foreground shadow-2xs font-nunito">
               {index + 1}
             </span>
-            <span>{step}</span>
+            <span className="pt-0.5">{step}</span>
           </li>
         ))}
       </ol>

@@ -34,7 +34,7 @@ export function TutorConnectCard({
         <div className="space-y-5 p-5 sm:p-6">
           <div className="rounded-2xl border border-[#cfe1fa] bg-white p-4 shadow-sm">
             <div className="flex items-start gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#280f91] shadow-sm">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-primary shadow-sm">
                 <CalendarClock size={18} aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
@@ -47,7 +47,7 @@ export function TutorConnectCard({
                       key={`${slot.day}-${slot.time}`}
                       className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl bg-white px-3 py-2 text-sm"
                     >
-                      <span className="min-w-0 font-semibold text-[#280f91]">
+                      <span className="min-w-0 font-semibold text-primary">
                         {slot.day}
                       </span>
                       <span className="whitespace-nowrap text-right text-[#0c0c0b]/65">
@@ -75,7 +75,7 @@ export function TutorConnectCard({
               className={`flex w-full items-center justify-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold transition active:scale-[0.99] ${
                 isSaved
                   ? "border-[#447353] bg-[#447353] text-white hover:bg-[#3b6348]"
-                  : "border-[#280f91]/18 bg-white text-[#280f91] hover:bg-[#280f91]/5"
+                  : "border-primary/18 bg-white text-primary hover:bg-primary/5"
               }`}
             >
               <Heart

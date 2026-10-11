@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
-import { LmsHeader } from "@/features/portal/components/LmsHeader";
-import { LmsHeroSection } from "@/features/portal/components/LmsHeroSection";
-import { DualRoleFeatureGrid } from "@/features/portal/components/DualRoleFeatureGrid";
-import { LmsAIFeaturesSection } from "@/features/portal/components/LmsAIFeaturesSection";
-import { ClassActivationShowcase } from "@/features/portal/components/ConsultantShowcase";
-import { FaqAndCtaSection } from "@/features/portal/components/FaqAndCtaSection";
+import { LmsPortal } from "@/features/portal/components/LmsPortal";
 
 export const metadata: Metadata = {
   title: "BeeWise LMS | Hệ Thống Quản Lý Học Tập Thông Minh",
@@ -15,14 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function LmsHomePage() {
-  return (
-    <main className="overflow-x-hidden">
-      <LmsHeader />
-      <LmsHeroSection />
-      <DualRoleFeatureGrid />
-      <LmsAIFeaturesSection />
-      <ClassActivationShowcase />
-      <FaqAndCtaSection />
-    </main>
-  );
+  return <LmsPortal />;
 }

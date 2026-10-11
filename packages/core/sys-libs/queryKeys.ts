@@ -2,6 +2,16 @@ export const queryKeys = {
   authKey: {
     getMe: "me",
   },
+  googleAuth: {
+    challenge: (application: "SALE" | "LMS") => ["google-auth", application, "challenge"] as const,
+    exchange: (application: "SALE" | "LMS") => ["google-auth", application, "exchange"] as const,
+    register: (application: "SALE" | "LMS") => ["google-auth", application, "register"] as const,
+    link: (application: "SALE" | "LMS") => ["google-auth", application, "link"] as const,
+  },
+  passwordRecovery: {
+    requestCode: ["auth", "password-recovery", "request-code"] as const,
+    reset: ["auth", "password-recovery", "reset"] as const,
+  },
   connectRequests: {
     eligibility: (userId: string) => ["connect-requests", "eligibility", userId] as const,
     outbound: (userId: string) => ["connect-requests", "outbound", userId] as const,

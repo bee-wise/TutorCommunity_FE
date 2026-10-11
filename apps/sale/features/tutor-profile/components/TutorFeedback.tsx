@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { Quote, ChevronDown, ChevronUp } from "lucide-react";
-import type { TutorProfileData, TutorReviewItem } from "../types/mockTutorProfile";
+import type {
+  TutorProfileData,
+  TutorReviewItem,
+} from "../types/mockTutorProfile";
 import {
   getInitials,
   RatingStars,
@@ -16,7 +19,15 @@ interface TutorFeedbackProps {
 const INITIAL_VISIBLE = 4;
 
 /** Rating distribution bar */
-function RatingBar({ star, count, total }: { star: number; count: number; total: number }) {
+function RatingBar({
+  star,
+  count,
+  total,
+}: {
+  star: number;
+  count: number;
+  total: number;
+}) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
   return (
     <div className="flex items-center gap-2">
@@ -37,7 +48,13 @@ function RatingBar({ star, count, total }: { star: number; count: number; total:
 }
 
 /** Compact aggregate block shown at the top */
-function RatingSummary({ reviews, rating }: { reviews: TutorReviewItem[]; rating: number }) {
+function RatingSummary({
+  reviews,
+  rating,
+}: {
+  reviews: TutorReviewItem[];
+  rating: number;
+}) {
   const dist = [5, 4, 3, 2, 1].map((star) => ({
     star,
     count: reviews.filter((r) => Math.round(r.rating) === star).length,
@@ -47,7 +64,9 @@ function RatingSummary({ reviews, rating }: { reviews: TutorReviewItem[]; rating
     <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-[#e8edf5] bg-[#f8faff] p-4 sm:flex-row sm:items-center sm:gap-6">
       {/* Big score */}
       <div className="flex shrink-0 flex-col items-center justify-center gap-1 sm:min-w-[88px]">
-        <span className="text-4xl font-black text-[#0c0c0b]">{rating.toFixed(1)}</span>
+        <span className="text-4xl font-black text-[#0c0c0b]">
+          {rating.toFixed(1)}
+        </span>
         <RatingStars value={rating} size={15} />
         <span className="mt-0.5 text-[11px] font-medium text-[#0c0c0b]/50">
           {reviews.length} nhận xét
@@ -57,7 +76,12 @@ function RatingSummary({ reviews, rating }: { reviews: TutorReviewItem[]; rating
       {/* Distribution bars */}
       <div className="flex flex-1 flex-col gap-1.5">
         {dist.map(({ star, count }) => (
-          <RatingBar key={star} star={star} count={count} total={reviews.length} />
+          <RatingBar
+            key={star}
+            star={star}
+            count={count}
+            total={reviews.length}
+          />
         ))}
       </div>
     </div>
@@ -67,10 +91,10 @@ function RatingSummary({ reviews, rating }: { reviews: TutorReviewItem[]; rating
 /** Individual review card */
 function ReviewCard({ review }: { review: TutorReviewItem }) {
   return (
-    <article className="flex flex-col justify-between rounded-2xl border border-[#e8edf5] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-[#280f91]/25 hover:shadow-md hover:shadow-[#280f91]/6">
+    <article className="flex flex-col justify-between rounded-2xl border border-[#e8edf5] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md hover:shadow-primary/6">
       {/* Author row */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#280f91] to-[#447353] text-sm font-black text-white shadow-xs">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#447353] text-sm font-black text-white shadow-xs">
           {getInitials(review.author)}
         </div>
         <div className="min-w-0 flex-1">
@@ -86,7 +110,11 @@ function ReviewCard({ review }: { review: TutorReviewItem }) {
 
       {/* Quote */}
       <div className="mt-3.5 rounded-xl border border-[#e8edf5]/80 bg-[#f8faff] p-3.5">
-        <Quote size={18} className="mb-1 text-[#ffc500]/60" aria-hidden="true" />
+        <Quote
+          size={18}
+          className="mb-1 text-[#ffc500]/60"
+          aria-hidden="true"
+        />
         <blockquote className="text-sm leading-relaxed text-[#0c0c0b]/75">
           &ldquo;{review.quote}&rdquo;
         </blockquote>
@@ -127,7 +155,7 @@ export function TutorFeedback({ tutor }: TutorFeedbackProps) {
             <button
               type="button"
               onClick={() => setShowAll((prev) => !prev)}
-              className="mt-5 flex w-full items-center justify-center gap-1.5 rounded-full border border-[#280f91]/18 bg-white py-3 text-sm font-bold text-[#280f91] transition hover:bg-[#280f91]/5 active:scale-[0.99]"
+              className="mt-5 flex w-full items-center justify-center gap-1.5 rounded-full border border-primary/18 bg-white py-3 text-sm font-bold text-primary transition hover:bg-primary/5 active:scale-[0.99]"
             >
               {showAll ? (
                 <>

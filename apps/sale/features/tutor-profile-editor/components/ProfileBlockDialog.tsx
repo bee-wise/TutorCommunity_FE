@@ -65,10 +65,18 @@ export function ProfileBlockDialog({
               <div className="grid gap-5">{children}</div>
             </div>
             <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-[#dce7f7] bg-white px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
-              <Button type="button" variant="outline" onClick={onClose} className="h-10 rounded-full px-5">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="h-10 rounded-full px-5"
+              >
                 Hủy
               </Button>
-              <Button type="submit" className="h-10 rounded-full bg-[#280f91] px-5 text-white hover:bg-[#200c76]">
+              <Button
+                type="submit"
+                className="h-10 rounded-full bg-primary px-5 text-white hover:bg-[#200c76]"
+              >
                 Lưu thay đổi
               </Button>
             </div>

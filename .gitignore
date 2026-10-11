@@ -36,6 +36,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!apps/sale/.env.example
+!apps/lms/.env.example
 
 # vercel
 .vercel
@@ -50,5 +52,7 @@ next-env.d.ts
 
 # Document
 docs
- 
+!docs/
+docs/*
+!docs/google-auth-fe.md
  

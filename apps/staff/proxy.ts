@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const publicPaths = ["/", "/login"];
+const publicPaths = ["/", "/login", "/forgot-password"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -10,6 +10,7 @@ export function proxy(request: NextRequest) {
   const refreshToken = request.cookies.get("beewise_refresh_token")?.value;
 
   const isPublicPath = publicPaths.includes(pathname);
+  const returnedFromPasswordReset = pathname === "/login" && request.nextUrl.searchParams.get("reset") === "1";
 
   if (!isPublicPath && !token && !refreshToken) {
     const loginUrl = new URL("/login", request.url);
@@ -22,7 +23,7 @@ export function proxy(request: NextRequest) {
     try {
       const payload = JSON.parse(atob(tokenToParse.split(".")[1]));
       if (payload?.role) role = payload.role;
-    } catch (e) {
+    } catch {
       // ignore parsing error
     }
   }
@@ -42,7 +43,8 @@ export function proxy(request: NextRequest) {
 
   if (
     (pathname === "/" || pathname === "/login" || pathname === "/staff") &&
-    (token || refreshToken)
+    (token || refreshToken) &&
+    !returnedFromPasswordReset
   ) {
     if (role.toUpperCase() === "ADMIN") {
       return NextResponse.redirect(new URL("/admin", request.url));

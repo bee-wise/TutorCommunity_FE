@@ -17,7 +17,7 @@ interface ProfileFieldProps {
 }
 
 const fieldClassName =
-  "w-full rounded-xl border border-[#c7d6eb] bg-white px-3 py-2.5 text-sm leading-6 text-[#0c0c0b] outline-none transition placeholder:text-[#667085] focus:border-[#280f91] focus:ring-2 focus:ring-[#280f91]/18 aria-[invalid=true]:border-[#b42318] aria-[invalid=true]:ring-[#e1aba7]/35";
+  "w-full rounded-xl border border-[#c7d6eb] bg-white px-3 py-2.5 text-sm leading-6 text-[#0c0c0b] outline-none transition placeholder:text-[#667085] focus:border-primary focus:ring-2 focus:ring-primary/18 aria-[invalid=true]:border-[#b42318] aria-[invalid=true]:ring-[#e1aba7]/35";
 
 export function ProfileField({
   id,
@@ -97,14 +97,18 @@ export function ProfileField({
           aria-describedby={describedBy}
           className={
             type === "file"
-              ? "block w-full text-sm text-[#56516a] file:mr-4 file:rounded-full file:border-0 file:bg-[#280f91]/10 file:px-4 file:py-2.5 file:text-sm file:font-bold file:text-[#280f91] hover:file:bg-[#280f91]/20 cursor-pointer focus:outline-none"
+              ? "block w-full text-sm text-[#56516a] file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-2.5 file:text-sm file:font-bold file:text-primary hover:file:bg-primary/20 cursor-pointer focus:outline-none"
               : fieldClassName
           }
           {...registration}
         />
       )}
       {error ? (
-        <p id={errorId} role="alert" className="text-xs font-semibold text-[#9f2017]">
+        <p
+          id={errorId}
+          role="alert"
+          className="text-xs font-semibold text-[#9f2017]"
+        >
           {error.message}
         </p>
       ) : null}

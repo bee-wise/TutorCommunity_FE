@@ -37,7 +37,7 @@ export function RepeaterHeader({
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 self-start rounded-full border border-[#280f91]/25 bg-white px-3 text-xs font-bold text-[#280f91] transition hover:bg-[#280f91]/5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/25"
+          className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 self-start rounded-full border border-primary/25 bg-white px-3 text-xs font-bold text-primary transition hover:bg-primary/5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
         >
           <PlusIcon size={15} weight="bold" aria-hidden="true" />
           {addLabel}
@@ -67,7 +67,7 @@ export function RepeaterItem({
           onClick={onRemove}
           disabled={!canRemove}
           aria-label={`Xóa ${title.toLowerCase()}`}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#716c83] transition hover:bg-[#e1aba7]/22 hover:text-[#9f2017] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/25"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#716c83] transition hover:bg-[#e1aba7]/22 hover:text-[#9f2017] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
         >
           <TrashIcon size={16} aria-hidden="true" />
         </button>

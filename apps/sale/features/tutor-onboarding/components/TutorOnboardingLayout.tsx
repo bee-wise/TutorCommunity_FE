@@ -91,7 +91,8 @@ export function TutorOnboardingShell({
   toolbar: React.ReactNode;
   useAuthenticatedHeader?: boolean;
 }) {
-  const { session, view } = useTutorOnboardingViewModel();
+  const { session, view, isPreview } = useTutorOnboardingViewModel();
+  const liveInterview = !isPreview && view.currentScreen === "INTERVIEW";
   const previewUser = {
     ...session.user,
     status: view.canAccessTutorLms ? "COMPLETED" : "DRAFT",
@@ -162,6 +163,7 @@ export function TutorOnboardingShell({
           <OnboardingStepper />
         </div>
 
+        {liveInterview ? <div>{children}</div> : <>
         {/* Mobile: 2-column layout (left: vertical step rail, right: step content) */}
         <div className="flex gap-3 md:hidden">
           <MobileStepNav />
@@ -170,6 +172,7 @@ export function TutorOnboardingShell({
 
         {/* Desktop: content */}
         <div className="hidden md:block">{children}</div>
+        </>}
       </main>
     </div>
   );

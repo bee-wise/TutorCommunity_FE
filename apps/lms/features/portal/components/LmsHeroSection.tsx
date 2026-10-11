@@ -1,48 +1,53 @@
+import { Button } from "@workspace/ui/components/ui/button";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { HeroBeeVisual } from "./HeroBeeVisual";
+import { PortalReveal } from "./PortalReveal";
+import { SplitText } from "./react-bits/SplitText";
+import { PortalHeroBackground } from "./PortalHeroBackground";
+import styles from "../styles/portal.module.css";
 
 export function LmsHeroSection() {
   return (
-    <section className="relative isolate overflow-hidden bg-[#fbfaf7] pt-[72px]">
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[37%] bg-[#e9efff] lg:inset-y-0 lg:right-0 lg:left-auto lg:h-auto lg:w-[47%]"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute top-[72px] right-[44%] hidden h-[calc(100%-72px)] w-[9%] -skew-x-[12deg] bg-[#e9efff] lg:block"
-        aria-hidden="true"
-      />
-
-      <div className="relative mx-auto grid min-h-[min(780px,calc(100dvh-72px))] max-w-7xl items-center gap-6 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:gap-8 lg:px-8 lg:py-16">
-        <div className="relative z-10 max-w-[640px]">
-          <h1
-            className="mt-5 text-[clamp(2.75rem,5.4vw,4.2rem)] font-extrabold leading-[1.06] tracking-[-0.055em] text-primary"
-            style={{ fontFamily: "var(--font-nunito-family)" }}
-          >
-            Quản lý lớp học,
-            <br />
-            <span className="text-accent">cùng BeeWise LMS.</span>
-          </h1>
-          <p className="mt-6 max-w-[550px] text-base leading-7 text-[#37333d]/80 sm:text-lg sm:leading-8">
-            Lịch học, tài liệu, bài tập và trao đổi cùng nằm trong một không
-            gian dành cho học viên và gia sư.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a
-              href="#learner"
-              className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl bg-[#280f91] px-6 text-sm font-bold text-white transition-colors hover:bg-[#1e0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2"
-            >
-              Khám phá cho học viên
-            </a>
-            <a
-              href="#tutor"
-              className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl border border-[#280f91]/25 bg-[#fbfaf7] px-6 text-sm font-bold text-[#280f91] transition-colors hover:bg-[#eeeaf9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2"
-            >
-              Dành cho gia sư
-            </a>
-          </div>
+    <section
+      className={`relative isolate overflow-hidden pt-24 sm:pt-28 ${styles.heroAtmosphere}`}
+    >
+      <PortalHeroBackground />
+      <div className="relative mx-auto grid max-w-7xl items-center gap-2 px-5 pb-14 pt-10 sm:px-8 lg:min-h-[min(740px,calc(100dvh-112px))] lg:grid-cols-[1.1fr_1fr] lg:gap-4 lg:pb-20 lg:pt-8">
+        <div className="relative z-10">
+          <SplitText
+            tag="h1"
+            text={"Dạy và học,\n"}
+            accentText="cùng BeeWise LMS."
+            className="max-w-[680px] whitespace-pre-line pb-2 text-[clamp(2.6rem,4.9vw,4.4rem)] font-semibold leading-[1.18] tracking-[-0.045em] text-primary"
+          />
+          <PortalReveal delay={0.25}>
+            <p className="mt-6 max-w-[470px] text-base leading-7 text-muted-foreground sm:text-lg">
+              Giúp gia sư quản lý việc dạy, giúp học viên quản lý việc học dễ
+              dàng hơn
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button
+                asChild
+                className="group h-12 rounded-xl px-5 transition-all hover:-translate-y-0.5 active:scale-[0.98] motion-reduce:transform-none"
+              >
+                <a href="#learner">
+                  Dành cho học viên{" "}
+                  <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />
+                </a>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="h-12 rounded-xl border-primary/25 bg-background/80 px-5 text-primary transition-all hover:-translate-y-0.5 active:scale-[0.98] motion-reduce:transform-none"
+              >
+                <a href="#tutor">Dành cho gia sư</a>
+              </Button>
+            </div>
+          </PortalReveal>
         </div>
-
-        <HeroBeeVisual />
+        <PortalReveal from="right" delay={0.15} className="min-w-0">
+          <HeroBeeVisual />
+        </PortalReveal>
       </div>
     </section>
   );

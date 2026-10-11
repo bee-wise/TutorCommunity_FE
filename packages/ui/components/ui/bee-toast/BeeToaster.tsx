@@ -54,9 +54,9 @@ const VARIANT_CONFIG: Record<
   },
   info: {
     Icon: Info,
-    iconClass: "text-[#280f91]",
+    iconClass: "text-primary",
     bg: "bg-background",
-    iconBg: "bg-[#280f91]/10",
+    iconBg: "bg-primary/10",
   },
 };
 

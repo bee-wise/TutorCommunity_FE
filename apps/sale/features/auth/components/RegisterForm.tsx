@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +18,7 @@ import {
   type RegisterFormValues,
 } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
+import { GoogleAuthEntry } from "./GoogleAuthEntry";
 
 const ROLES = [
   {
@@ -308,9 +308,9 @@ export function RegisterForm({ authPaused = false }: { authPaused?: boolean }) {
           id="register-submit"
           type="submit"
           disabled={isPending || authPaused}
-          className="relative flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-primary text-accent uppercase text-sm font-bold
+          className="relative mx-auto flex h-10 w-full max-w-[400px] items-center justify-center gap-2 rounded-xl bg-primary text-accent uppercase text-sm font-bold
             hover:bg-primary/90 active:scale-[0.98] transition-all duration-200
-            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-primary/25"
+            disabled:opacity-60 disabled:cursor-not-allowed"
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (
@@ -331,20 +331,17 @@ export function RegisterForm({ authPaused = false }: { authPaused?: boolean }) {
           </div>
         </div>
 
-        <button
-          type="button"
-          disabled={authPaused}
-          className="flex h-9 w-full items-center justify-center gap-2 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted"
-        >
-          <Image
-            src="/images/Logos/google.png"
-            alt="Google"
-            width={20}
-            height={20}
-            className="object-contain"
-          />
-          Google
-        </button>
+        {authPaused ? (
+          <button
+            type="button"
+            disabled
+            className="mx-auto h-10 w-full max-w-[400px] rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground"
+          >
+            Google
+          </button>
+        ) : (
+          <GoogleAuthEntry mode="register" returnUrl={returnUrl} />
+        )}
 
         <p className="text-center text-sm text-foreground/60 mt-1">
           Đã có tài khoản?{" "}

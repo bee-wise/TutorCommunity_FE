@@ -4,7 +4,10 @@ import { useEffect, useRef, useState, type MutableRefObject } from "react";
 import Image from "next/image";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import type { TutorProfileEditorValues } from "../../schemas/profile-editor.schema";
-import { isLocalPreviewUrl, validatePreviewFile } from "../../utils/file-preview";
+import {
+  isLocalPreviewUrl,
+  validatePreviewFile,
+} from "../../utils/file-preview";
 import { ProfileBlockDialog } from "../ProfileBlockDialog";
 import { ProfileField } from "../ProfileField";
 import {
@@ -25,7 +28,11 @@ function EvidenceFields({
 }: {
   fileErrors: Record<number, string>;
   onFileChange: (index: number, file?: File) => void;
-  onRemove: (index: number, imageUrl: string, removeField: (index: number) => void) => void;
+  onRemove: (
+    index: number,
+    imageUrl: string,
+    removeField: (index: number) => void,
+  ) => void;
 }) {
   const {
     control,
@@ -33,7 +40,10 @@ function EvidenceFields({
     watch,
     formState: { errors },
   } = useFormContext<TutorProfileEditorValues>();
-  const { fields, append, remove } = useFieldArray({ control, name: "certificates" });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "certificates",
+  });
   const certificates = watch("certificates");
 
   return (
@@ -75,7 +85,10 @@ function EvidenceFields({
                   />
                 </div>
                 <div>
-                  <label htmlFor={`evidence-file-${index}`} className="text-sm font-bold text-[#17142f]">
+                  <label
+                    htmlFor={`evidence-file-${index}`}
+                    className="text-sm font-bold text-[#17142f]"
+                  >
                     Tệp hình ảnh
                   </label>
                   <p className="mt-1 text-xs leading-5 text-[#56516a]">
@@ -85,11 +98,16 @@ function EvidenceFields({
                     id={`evidence-file-${index}`}
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
-                    onChange={(event) => onFileChange(index, event.target.files?.[0])}
-                    className="mt-2 block w-full text-xs text-[#56516a] file:mr-3 file:rounded-full file:border-0 file:bg-[#280f91]/10 file:px-3 file:py-2 file:font-bold file:text-[#280f91]"
+                    onChange={(event) =>
+                      onFileChange(index, event.target.files?.[0])
+                    }
+                    className="mt-2 block w-full text-xs text-[#56516a] file:mr-3 file:rounded-full file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:font-bold file:text-primary"
                   />
                   {fileErrors[index] ? (
-                    <p role="alert" className="mt-2 text-xs font-semibold text-[#9f2017]">
+                    <p
+                      role="alert"
+                      className="mt-2 text-xs font-semibold text-[#9f2017]"
+                    >
                       {fileErrors[index]}
                     </p>
                   ) : null}
@@ -111,8 +129,12 @@ function EvidenceFields({
               </div>
               <div className="rounded-xl border border-[#cfe1fa] bg-white px-3 py-3">
                 <p className="text-xs font-bold text-[#56516a]">Trạng thái</p>
-                <p className="mt-1 text-sm font-extrabold text-[#17142f]">{field.status}</p>
-                <p className="mt-1 text-xs leading-5 text-[#716c83]">Trạng thái do BeeWise cập nhật sau khi xét duyệt.</p>
+                <p className="mt-1 text-sm font-extrabold text-[#17142f]">
+                  {field.status}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[#716c83]">
+                  Trạng thái do BeeWise cập nhật sau khi xét duyệt.
+                </p>
               </div>
               <ProfileField
                 id={`certificate-${index}-description`}

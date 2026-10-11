@@ -49,7 +49,7 @@ function ResultLabel({
     return (
       <div className="flex flex-col gap-1.5 rounded-xl border border-[#dce3f0] bg-[#f8fafc] px-4 py-3">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#280f91]">
+          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary">
             <Image
               src="/icons/BeeWiseAI-icon.svg"
               alt=""
@@ -60,7 +60,7 @@ function ResultLabel({
             />
           </div>
           <span
-            className="text-sm font-bold text-[#280f91]"
+            className="text-sm font-bold text-primary"
             style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             AI tìm được {count} gia sư phù hợp
@@ -170,7 +170,7 @@ function EmptyState({
           <button
             type="button"
             onClick={onTryAI}
-            className="h-10 rounded-xl bg-[#280f91] px-4 text-sm font-bold text-white hover:bg-[#1f0b70]"
+            className="h-10 rounded-xl bg-primary px-4 text-sm font-bold text-white hover:bg-[#1f0b70]"
           >
             Thử tìm bằng AI
           </button>

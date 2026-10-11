@@ -8,6 +8,7 @@ import {
   ClockIcon,
   CreditCardIcon,
   HomeIcon,
+  VideoCameraIcon,
   UserCircleIcon,
   UserPlusIcon,
   UsersIcon,
@@ -174,6 +175,7 @@ export const navigationConfig: RoleNavigation = {
           url: "/consultant/tutors",
           icon: UserCheck,
         },
+        { title: "Phỏng vấn AI", url: "/consultant/ai-interviews", icon: VideoCameraIcon },
         {
           title: "Theo Dõi Lớp Học",
           url: "/consultant/classes",
@@ -226,6 +228,7 @@ export const navigationConfig: RoleNavigation = {
           url: "/admin/learning-programs",
           icon: BookOpenCheck,
         },
+        { title: "Phỏng vấn AI", url: "/admin/ai-interviews", icon: VideoCameraIcon },
         {
           title: "Quản Lý Rủi Ro",
           url: "/admin/risks",

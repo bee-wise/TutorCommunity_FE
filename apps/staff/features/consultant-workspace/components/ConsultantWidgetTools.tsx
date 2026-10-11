@@ -28,13 +28,23 @@ export function ConsultantWidgetTools({
   teachingOfferings,
   onSent,
   calendarPortalContainer,
+  initialTab,
+  initialConfirmationId,
 }: {
   roomId: string;
   teachingOfferings: ChatTeachingOffering[];
   onSent: () => void;
   calendarPortalContainer?: HTMLElement | null;
+  initialTab?: WidgetTab;
+  initialConfirmationId?: string;
 }) {
-  const model = useConsultantWidgetTools(roomId, teachingOfferings, onSent);
+  const model = useConsultantWidgetTools(
+    roomId,
+    teachingOfferings,
+    onSent,
+    initialTab,
+    initialConfirmationId,
+  );
 
   function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, current: WidgetTab) {
     const index = tabs.findIndex((item) => item.value === current);
@@ -67,11 +77,11 @@ export function ConsultantWidgetTools({
               tabIndex={active ? 0 : -1}
               onKeyDown={(event) => handleTabKeyDown(event, value)}
               onClick={() => model.chooseTab(value)}
-              className={`h-9 min-w-0 rounded-xl px-1.5 text-[11px] font-bold transition-all active:scale-[0.98] sm:px-3 sm:text-xs ${
-                active ? "shadow-soft" : "text-foreground hover:bg-card hover:text-primary"
+              className={`h-9 min-w-0 gap-1 rounded-xl px-1 text-[11px] font-bold transition-all active:scale-[0.98] sm:gap-1.5 sm:px-3 sm:text-xs ${
+                active ? "shadow-xs font-bold" : "text-muted-foreground hover:bg-card hover:text-foreground font-semibold"
               }`}
             >
-              <Icon className="hidden size-4 sm:block" aria-hidden="true" />
+              <Icon className="size-3.5 shrink-0 sm:size-4" aria-hidden="true" />
               <span className="truncate sm:hidden">{value === "confirmation" ? "Xác nhận" : label}</span>
               <span className="hidden truncate sm:inline">{label}</span>
             </Button>
@@ -80,21 +90,41 @@ export function ConsultantWidgetTools({
       </div>
 
       {model.error && (
-        <div role="alert" className="flex items-start gap-2 rounded-2xl border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+        <div
+          role="alert"
+          className="flex items-start gap-2.5 rounded-2xl border border-destructive/25 bg-destructive/10 p-3 text-xs sm:text-sm font-medium text-destructive shadow-2xs"
+        >
           <ExclamationCircleIcon className="mt-0.5 size-4.5 shrink-0" aria-hidden="true" />
           <span>{model.error}</span>
         </div>
       )}
       {model.success && (
-        <div role="status" className="flex items-start gap-2 rounded-2xl border border-secondary/30 bg-secondary/10 p-3 text-sm text-secondary">
-          <CheckCircleIcon className="mt-0.5 size-4.5 shrink-0" aria-hidden="true" />
-          <span className="font-semibold">{model.success}</span>
+        <div
+          role="status"
+          className="flex items-start gap-2.5 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs sm:text-sm font-bold text-emerald-800 dark:text-emerald-300 shadow-2xs"
+        >
+          <CheckCircleIcon className="mt-0.5 size-4.5 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+          <span>{model.success}</span>
         </div>
       )}
 
-      {model.tab === "trial" && <TrialWidgetForm model={model.trial} busy={model.busy} calendarPortalContainer={calendarPortalContainer} />}
-      {model.tab === "confirmation" && <ConfirmationWidgetPanel model={model.confirmation} busy={model.busy} />}
-      {(model.tab === "payment" || model.tab === "sessions") && <WidgetGuidance tab={model.tab} />}
+      {model.tab === "trial" && (
+        <TrialWidgetForm
+          model={model.trial}
+          busy={model.busy}
+          calendarPortalContainer={calendarPortalContainer}
+        />
+      )}
+      {model.tab === "confirmation" && (
+        <ConfirmationWidgetPanel
+          model={model.confirmation}
+          busy={model.busy}
+          calendarPortalContainer={calendarPortalContainer}
+        />
+      )}
+      {(model.tab === "payment" || model.tab === "sessions") && (
+        <WidgetGuidance tab={model.tab} />
+      )}
     </div>
   );
 }

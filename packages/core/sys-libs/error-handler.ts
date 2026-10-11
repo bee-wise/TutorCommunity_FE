@@ -1,6 +1,7 @@
-import { AxiosError } from "axios";
+import { isAxiosError } from "axios";
 
 export interface ApiErrorPayload {
+  detail?: { code: string; message: string; errors?: Record<string, unknown>[] | null };
   success?: boolean;
   error?: {
     message: string;
@@ -58,12 +59,12 @@ export function handleApiError(error: unknown): ApiError {
     return error;
   }
 
-  if (error instanceof AxiosError) {
+  if (isAxiosError<ApiErrorPayload>(error)) {
     if (error.response) {
       const data = error.response.data as ApiErrorPayload;
       const status = error.response.status;
 
-      let message = data?.error?.message || data?.message;
+      let message = data?.detail?.message || data?.error?.message || data?.message;
       if (!message) {
         switch (status) {
           case 400:
@@ -93,7 +94,7 @@ export function handleApiError(error: unknown): ApiError {
       return new ApiError(
         message,
         status,
-        data?.error?.code || data?.code,
+        data?.detail?.code || data?.error?.code || data?.code,
         data?.error?.details || data?.errors,
         parseRetryAfter(error.response.headers?.["retry-after"]),
       );

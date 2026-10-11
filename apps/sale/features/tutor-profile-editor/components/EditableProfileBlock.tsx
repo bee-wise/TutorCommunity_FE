@@ -27,7 +27,7 @@ export function EditableProfileBlock({
             type="button"
             onClick={onEdit}
             aria-label={`Chỉnh sửa ${label.toLowerCase()}`}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#280f91]/20 bg-white text-[#280f91] shadow-md transition hover:-translate-y-0.5 hover:bg-[#280f91] hover:text-white active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/30"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary/20 bg-white text-primary shadow-md transition hover:-translate-y-0.5 hover:bg-primary hover:text-white active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
           >
             <PencilSimpleIcon size={18} weight="bold" aria-hidden="true" />
           </button>
