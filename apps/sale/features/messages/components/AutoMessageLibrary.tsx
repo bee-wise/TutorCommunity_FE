@@ -7,7 +7,10 @@ import {
   XMarkIcon as X,
   MagnifyingGlassIcon as Search,
 } from "@heroicons/react/24/outline";
-import type { AutoMessageTemplate, TemplateCategory } from "../types/messages.types";
+import type {
+  AutoMessageTemplate,
+  TemplateCategory,
+} from "../types/messages.types";
 import { mockAutoMessageTemplates } from "../constants/messages.fixtures";
 
 const CATEGORY_LABELS: Record<TemplateCategory, string> = {
@@ -19,7 +22,7 @@ const CATEGORY_LABELS: Record<TemplateCategory, string> = {
 };
 
 const CATEGORY_COLORS: Record<TemplateCategory, string> = {
-  GREETING: "bg-[#cfe1fa] text-[#280f91]",
+  GREETING: "bg-[#cfe1fa] text-primary",
   SCHEDULE: "bg-amber-100 text-amber-800",
   CONFIRM: "bg-green-100 text-[#447353]",
   CLOSE: "bg-red-100 text-red-700",
@@ -36,7 +39,7 @@ interface AutoMessageLibraryProps {
 
 function interpolate(
   template: string,
-  vars: { learnerName?: string; tutorName?: string; subject?: string }
+  vars: { learnerName?: string; tutorName?: string; subject?: string },
 ) {
   return template
     .replace("{learnerName}", vars.learnerName ?? "học viên")
@@ -52,23 +55,41 @@ export function AutoMessageLibrary({
   subject,
 }: AutoMessageLibraryProps) {
   const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState<TemplateCategory | "ALL">("ALL");
+  const [activeCategory, setActiveCategory] = useState<
+    TemplateCategory | "ALL"
+  >("ALL");
 
   const filtered = mockAutoMessageTemplates.filter((t) => {
     const matchCat = activeCategory === "ALL" || t.category === activeCategory;
-    const matchQ = query === "" || t.title.toLowerCase().includes(query.toLowerCase()) || t.content.toLowerCase().includes(query.toLowerCase());
+    const matchQ =
+      query === "" ||
+      t.title.toLowerCase().includes(query.toLowerCase()) ||
+      t.content.toLowerCase().includes(query.toLowerCase());
     return matchCat && matchQ;
   });
 
-  const categories: Array<TemplateCategory | "ALL"> = ["ALL", "GREETING", "SCHEDULE", "CONFIRM", "CLOSE", "GENERAL"];
+  const categories: Array<TemplateCategory | "ALL"> = [
+    "ALL",
+    "GREETING",
+    "SCHEDULE",
+    "CONFIRM",
+    "CLOSE",
+    "GENERAL",
+  ];
 
   return (
     <div className="absolute bottom-full left-0 right-0 mb-2 rounded-2xl border border-[#e5eaf5] bg-white shadow-[0_12px_40px_rgba(40,15,145,0.12)] z-50">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[#f0f3f9] px-4 py-3">
         <div className="flex items-center gap-2">
-          <Zap width={16} height={16} className="text-[#ffc500] fill-[#ffc500]" />
-          <span className="text-sm font-bold text-[#280f91]">Kho tin nhắn tự động</span>
+          <Zap
+            width={16}
+            height={16}
+            className="text-[#ffc500] fill-[#ffc500]"
+          />
+          <span className="text-sm font-bold text-primary">
+            Kho tin nhắn tự động
+          </span>
         </div>
         <button
           type="button"
@@ -83,7 +104,9 @@ export function AutoMessageLibrary({
       {/* Search */}
       <div className="border-b border-[#f0f3f9] px-4 py-2.5">
         <div className="relative">
-          <Search width={14} height={14}
+          <Search
+            width={14}
+            height={14}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[#667085]"
           />
           <input
@@ -91,7 +114,7 @@ export function AutoMessageLibrary({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Tìm mẫu tin nhắn..."
-            className="w-full rounded-xl border border-[#e5eaf5] bg-[#f7f9ff] py-1.5 pl-8 pr-3 text-xs outline-none focus:border-[#280f91] focus:ring-2 focus:ring-[#280f91]/20"
+            className="w-full rounded-xl border border-[#e5eaf5] bg-[#f7f9ff] py-1.5 pl-8 pr-3 text-xs outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
@@ -105,7 +128,7 @@ export function AutoMessageLibrary({
             onClick={() => setActiveCategory(cat)}
             className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-bold transition ${
               activeCategory === cat
-                ? "bg-[#280f91] text-white"
+                ? "bg-primary text-white"
                 : "bg-[#f0f3f9] text-[#667085] hover:bg-[#e5eaf5]"
             }`}
           >
@@ -152,7 +175,11 @@ function TemplateCard({
   tutorName?: string;
   subject?: string;
 }) {
-  const interpolated = interpolate(template.content, { learnerName, tutorName, subject });
+  const interpolated = interpolate(template.content, {
+    learnerName,
+    tutorName,
+    subject,
+  });
 
   return (
     <button
@@ -160,12 +187,16 @@ function TemplateCard({
       onClick={() => onSelect(interpolated)}
       className="group flex w-full items-start gap-3 rounded-xl p-3 text-left transition hover:bg-[#f7f9ff]"
     >
-      <ClipboardList width={16} height={16}
-        className="mt-0.5 shrink-0 text-[#280f91] opacity-60 group-hover:opacity-100"
+      <ClipboardList
+        width={16}
+        height={16}
+        className="mt-0.5 shrink-0 text-primary opacity-60 group-hover:opacity-100"
       />
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-center gap-2">
-          <span className="text-xs font-bold text-[#0c0c0b]">{template.title}</span>
+          <span className="text-xs font-bold text-[#0c0c0b]">
+            {template.title}
+          </span>
           <span
             className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide ${CATEGORY_COLORS[template.category]}`}
           >

@@ -22,7 +22,11 @@ import { EmptyState } from "@workspace/ui/components/ui/empty-state";
 import LoadingGradient from "@workspace/ui/components/LoadingGradient";
 import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
 
-export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?: string }) {
+export function TutorProfilePage({
+  tutorUserIdFromLink,
+}: {
+  tutorUserIdFromLink?: string;
+}) {
   const params = useParams();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -33,8 +37,13 @@ export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?
 
   const { isFavorite, toggleFavorite } = useFavoriteTutors();
   const isSaved = isFavorite(id);
-  const tutorUserId = [resolveTutorUserIdFromCache(queryClient, id), tutorUserIdFromLink, data?.data?.userId]
-    .find((candidate): candidate is string => z.guid().safeParse(candidate).success);
+  const tutorUserId = [
+    resolveTutorUserIdFromCache(queryClient, id),
+    tutorUserIdFromLink,
+    data?.data?.userId,
+  ].find(
+    (candidate): candidate is string => z.guid().safeParse(candidate).success,
+  );
   const connectFlow = useTutorConnectFlow(tutorUserId ?? undefined);
 
   const handleConnect = () => {
@@ -71,9 +80,15 @@ export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?
         aria-live="polite"
       >
         <div className="flex -translate-y-4 flex-col items-center text-center sm:-translate-y-6">
-          <div className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#280f91]/10 bg-[#280f91]/5">
-            <span className="absolute inset-2 animate-ping rounded-xl bg-[#280f91]/10" aria-hidden="true" />
-            <span className="relative h-5 w-5 animate-spin rounded-full border-2 border-[#280f91]/20 border-t-[#280f91]" aria-hidden="true" />
+          <div className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/10 bg-primary/5">
+            <span
+              className="absolute inset-2 animate-ping rounded-xl bg-primary/10"
+              aria-hidden="true"
+            />
+            <span
+              className="relative h-5 w-5 animate-spin rounded-full border-2 border-primary/20 border-t-primary"
+              aria-hidden="true"
+            />
           </div>
           <LoadingGradient
             animationSpeed={2}
@@ -118,7 +133,7 @@ export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?
         <button
           type="button"
           onClick={handleBack}
-          className="group inline-flex h-10 w-fit items-center gap-2 rounded-full border border-[#d9dfea] bg-white/85 px-4 text-sm font-bold text-[#475467] shadow-sm backdrop-blur transition hover:-translate-x-0.5 hover:border-[#280f91]/25 hover:bg-white hover:text-[#280f91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/30"
+          className="group inline-flex h-10 w-fit items-center gap-2 rounded-full border border-[#d9dfea] bg-white/85 px-4 text-sm font-bold text-[#475467] shadow-sm backdrop-blur transition hover:-translate-x-0.5 hover:border-primary/25 hover:bg-white hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
           aria-label="Quay lại trang trước"
         >
           <ArrowLeftIcon
@@ -162,7 +177,6 @@ export function TutorProfilePage({ tutorUserIdFromLink }: { tutorUserIdFromLink?
           </div>
         </div>
       </div>
-
 
       <TutorMobileCTA
         onConnect={handleConnect}

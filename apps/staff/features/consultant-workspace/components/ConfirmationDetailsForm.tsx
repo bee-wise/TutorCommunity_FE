@@ -175,15 +175,13 @@ export function ConfirmationDetailsForm({
           <WidgetField
             id="confirmation-offering-id"
             label="Mã gói giảng dạy (Offering UUID)"
-            required
           >
             <input
               id="confirmation-offering-id"
-              disabled
+              readOnly
               value={model.offeringId}
-              onChange={(event) => model.setOfferingId(event.target.value)}
               placeholder="Mã UUID gói giảng dạy"
-              className={`${widgetFieldClass} font-mono text-xs`}
+              className={`${widgetFieldClass} font-mono text-xs bg-muted/40 cursor-default select-all`}
             />
           </WidgetField>
         </CollapsibleContent>

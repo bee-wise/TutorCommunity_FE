@@ -13,7 +13,6 @@ import {
   LightBulbIcon,
   FlagIcon,
   GlobeAltIcon,
-  RocketLaunchIcon,
 } from "@heroicons/react/24/outline";
 
 if (typeof window !== "undefined") {

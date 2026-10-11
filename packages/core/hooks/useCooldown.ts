@@ -21,5 +21,10 @@ export function useCooldown(initialSeconds = 0) {
     setSecondsLeft(duration);
   }, []);
 
-  return { secondsLeft, start };
+  const clear = useCallback(() => {
+    setDeadline(Date.now());
+    setSecondsLeft(0);
+  }, []);
+
+  return { secondsLeft, start, clear };
 }

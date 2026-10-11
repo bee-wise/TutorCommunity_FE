@@ -1,6 +1,15 @@
 import Image from "next/image";
-import { GraduationCap, BookOpen, Briefcase, Award, CheckCircle2 } from "lucide-react";
-import type { TutorAchievementItem, TutorProfileData } from "../types/mockTutorProfile";
+import {
+  GraduationCap,
+  BookOpen,
+  Briefcase,
+  Award,
+  CheckCircle2,
+} from "lucide-react";
+import type {
+  TutorAchievementItem,
+  TutorProfileData,
+} from "../types/mockTutorProfile";
 import { SectionShell } from "./TutorProfilePrimitives";
 
 interface TutorAchievementsProps {
@@ -13,8 +22,8 @@ const statusColor: Record<string, { badge: string; icon: string }> = {
     icon: "text-[#447353]",
   },
   "Đã duyệt": {
-    badge: "border-[#280f91]/20 bg-[#280f91]/10 text-[#280f91]",
-    icon: "text-[#280f91]",
+    badge: "border-primary/20 bg-primary/10 text-primary",
+    icon: "text-primary",
   },
   "Đã rà soát": {
     badge: "border-[#ffc510]/60 bg-[#fff8e6] text-[#905b0f]",
@@ -23,15 +32,16 @@ const statusColor: Record<string, { badge: string; icon: string }> = {
 };
 
 function AchievementCard({ item }: { item: TutorAchievementItem }) {
-  const statusConfig = item.status && statusColor[item.status]
-    ? statusColor[item.status]
-    : {
-        badge: "border-[#e8edf5] bg-white text-[#0c0c0b]/50",
-        icon: "text-[#0c0c0b]/40",
-      };
+  const statusConfig =
+    item.status && statusColor[item.status]
+      ? statusColor[item.status]
+      : {
+          badge: "border-[#e8edf5] bg-white text-[#0c0c0b]/50",
+          icon: "text-[#0c0c0b]/40",
+        };
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-[#e8edf5] bg-white transition duration-200 hover:-translate-y-0.5 hover:border-[#280f91]/25 hover:shadow-md hover:shadow-[#280f91]/6">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-[#e8edf5] bg-white transition duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md hover:shadow-primary/6">
       {item.imageUrl ? (
         <div className="relative h-40 w-full overflow-hidden bg-[#f5f8ff]">
           <Image
@@ -46,7 +56,11 @@ function AchievementCard({ item }: { item: TutorAchievementItem }) {
             <span
               className={`absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-extrabold backdrop-blur-sm ${statusConfig.badge} bg-white/95`}
             >
-              <CheckCircle2 size={12} className={statusConfig.icon} aria-hidden="true" />
+              <CheckCircle2
+                size={12}
+                className={statusConfig.icon}
+                aria-hidden="true"
+              />
               {item.status}
             </span>
           ) : null}
@@ -59,13 +73,17 @@ function AchievementCard({ item }: { item: TutorAchievementItem }) {
             <span
               className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-extrabold ${statusConfig.badge}`}
             >
-              <CheckCircle2 size={12} className={statusConfig.icon} aria-hidden="true" />
+              <CheckCircle2
+                size={12}
+                className={statusConfig.icon}
+                aria-hidden="true"
+              />
               {item.status}
             </span>
           </div>
         ) : null}
 
-        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#280f91]">
+        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
           <Award size={13} aria-hidden="true" />
           <span>{item.type}</span>
         </div>
@@ -93,12 +111,14 @@ export function TutorAchievements({ tutor }: TutorAchievementsProps) {
       {/* 3-Column Structured Education Credentials */}
       <div className="mb-6 grid gap-3 sm:grid-cols-3">
         {/* University Card */}
-        <div className="flex items-start gap-3 rounded-xl border border-[#e8edf5] bg-[#f8faff] p-4 transition hover:border-[#280f91]/20">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#280f91]/10 text-[#280f91]">
+        <div className="flex items-start gap-3 rounded-xl border border-[#e8edf5] bg-[#f8faff] p-4 transition hover:border-primary/20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <GraduationCap size={20} aria-hidden="true" />
           </div>
           <div className="min-w-0 flex-1">
-            <span className="text-xs font-semibold text-[#0c0c0b]/50">Trường đại học</span>
+            <span className="text-xs font-semibold text-[#0c0c0b]/50">
+              Trường đại học
+            </span>
             <p className="mt-0.5 text-sm font-black leading-snug text-[#0c0c0b]">
               {university || "Đang cập nhật"}
             </p>
@@ -106,12 +126,14 @@ export function TutorAchievements({ tutor }: TutorAchievementsProps) {
         </div>
 
         {/* Major Card */}
-        <div className="flex items-start gap-3 rounded-xl border border-[#e8edf5] bg-[#f8faff] p-4 transition hover:border-[#280f91]/20">
+        <div className="flex items-start gap-3 rounded-xl border border-[#e8edf5] bg-[#f8faff] p-4 transition hover:border-primary/20">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#447353]/10 text-[#447353]">
             <BookOpen size={19} aria-hidden="true" />
           </div>
           <div className="min-w-0 flex-1">
-            <span className="text-xs font-semibold text-[#0c0c0b]/50">Chuyên ngành</span>
+            <span className="text-xs font-semibold text-[#0c0c0b]/50">
+              Chuyên ngành
+            </span>
             <p className="mt-0.5 text-sm font-black leading-snug text-[#0c0c0b]">
               {major || "Đang cập nhật"}
             </p>
@@ -119,12 +141,14 @@ export function TutorAchievements({ tutor }: TutorAchievementsProps) {
         </div>
 
         {/* Experience Card */}
-        <div className="flex items-start gap-3 rounded-xl border border-[#e8edf5] bg-[#f8faff] p-4 transition hover:border-[#280f91]/20">
+        <div className="flex items-start gap-3 rounded-xl border border-[#e8edf5] bg-[#f8faff] p-4 transition hover:border-primary/20">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ffc500]/20 text-[#905b0f]">
             <Briefcase size={19} aria-hidden="true" />
           </div>
           <div className="min-w-0 flex-1">
-            <span className="text-xs font-semibold text-[#0c0c0b]/50">Kinh nghiệm dạy</span>
+            <span className="text-xs font-semibold text-[#0c0c0b]/50">
+              Kinh nghiệm dạy
+            </span>
             <p className="mt-0.5 text-sm font-black leading-snug text-[#0c0c0b]">
               {experienceYears || "Đang cập nhật"}
             </p>
@@ -147,4 +171,3 @@ export function TutorAchievements({ tutor }: TutorAchievementsProps) {
     </SectionShell>
   );
 }
-

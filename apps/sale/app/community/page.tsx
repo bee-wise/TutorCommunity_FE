@@ -16,7 +16,7 @@ export default function CommunityPage() {
     <main className="max-w-7xl mx-auto px-4 py-6">
       {/* Tiêu đề trang */}
       <div className="mb-6">
-        <h1 className="text-2xl font-google-sans font-bold text-[#280f91]">
+        <h1 className="text-2xl font-google-sans font-bold text-primary">
           Cộng đồng tìm gia sư
         </h1>
         <p className="text-slate-500 mt-1">

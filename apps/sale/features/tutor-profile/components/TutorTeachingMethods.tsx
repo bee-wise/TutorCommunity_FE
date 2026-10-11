@@ -18,13 +18,13 @@ export function TutorTeachingMethods({ tutor }: TutorTeachingMethodsProps) {
           {methods.map((method, index) => (
             <article
               key={`${method.title}-${index}`}
-              className="flex flex-col rounded-2xl border border-[#e8edf5] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-[#280f91]/25 hover:shadow-md hover:shadow-[#280f91]/6"
+              className="flex flex-col rounded-2xl border border-[#e8edf5] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md hover:shadow-primary/6"
             >
               <div className="mb-3.5 flex items-center justify-between">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#280f91] to-[#3b17c9] text-xs font-black text-white shadow-xs">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#3b17c9] text-xs font-black text-white shadow-xs">
                   {`0${index + 1}`}
                 </span>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#280f91]/60">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-primary/60">
                   Bước {index + 1}
                 </span>
               </div>
@@ -45,4 +45,3 @@ export function TutorTeachingMethods({ tutor }: TutorTeachingMethodsProps) {
     </SectionShell>
   );
 }
-

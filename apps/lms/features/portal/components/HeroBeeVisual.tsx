@@ -4,7 +4,7 @@ export function HeroBeeVisual() {
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[590px] overflow-hidden lg:max-w-none">
       <div
-        className="absolute inset-[12%] rotate-[-12deg] rounded-[36%] border border-[#280f91]/10 bg-[#dbe7ff]/60"
+        className="absolute inset-[12%] rotate-[-12deg] rounded-[36%] border border-primary/10 bg-[#dbe7ff]/60"
         aria-hidden="true"
       />
       <Image

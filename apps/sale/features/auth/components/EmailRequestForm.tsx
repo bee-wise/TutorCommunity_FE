@@ -9,12 +9,12 @@ import {
   getApiErrorMessage,
   handleApiError,
 } from "@workspace/core/sys-libs/error-handler";
-import { useCooldown } from "../hooks/useCooldown";
+import { useCooldown } from "@workspace/core/hooks/useCooldown";
 import { useForgotPassword } from "../hooks/usePasswordActions";
 import {
   forgotPasswordSchema,
   type ForgotPasswordValues,
-} from "../schemas/password.schema";
+} from "@workspace/core/schemas/password.schema";
 import { FormField, Input } from "./FormField";
 
 interface EmailRequestFormProps {

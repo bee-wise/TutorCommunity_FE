@@ -22,7 +22,7 @@ export function ClassActivationShowcase() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
-          <p className="text-sm font-extrabold text-[#280f91]">
+          <p className="text-sm font-extrabold text-primary">
             BeeWise vận hành lớp học cùng bạn
           </p>
           <h2
@@ -42,7 +42,7 @@ export function ClassActivationShowcase() {
               key={step.title}
               className="rounded-2xl bg-white p-6 shadow-[0_12px_36px_rgba(40,15,145,0.06)]"
             >
-              <span className="text-sm font-extrabold text-[#280f91]/45">
+              <span className="text-sm font-extrabold text-primary/45">
                 0{index + 1}
               </span>
               <h3
@@ -57,7 +57,7 @@ export function ClassActivationShowcase() {
             </li>
           ))}
         </ol>
-        <div className="mt-8 flex flex-col justify-between gap-5 rounded-2xl bg-[#280f91] px-6 py-6 text-white sm:flex-row sm:items-center sm:px-8">
+        <div className="mt-8 flex flex-col justify-between gap-5 rounded-2xl bg-primary px-6 py-6 text-white sm:flex-row sm:items-center sm:px-8">
           <p className="max-w-2xl text-sm font-semibold leading-6 text-white/82 sm:text-base">
             Mỗi khi gặp khó khăn, tư vấn viên BeeWise luôn đồng hành cùng bạn
           </p>

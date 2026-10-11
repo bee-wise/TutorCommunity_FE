@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -17,10 +17,16 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
+
+  useEffect(() => {
+    const email = new URLSearchParams(window.location.search).get("email");
+    if (email) setValue("email", email);
+  }, [setValue]);
 
   const onSubmit = async (data: LoginFormValues) => {
     login(data);
@@ -94,7 +100,7 @@ export function LoginForm() {
         <div className="flex justify-end">
           <Link
             href="/forgot-password"
-            className="text-xs text-[#280f91] hover:text-[#280f91]/80 font-semibold transition-colors"
+            className="text-xs text-primary hover:text-primary/80 font-semibold transition-colors"
           >
             Quên mật khẩu?
           </Link>
@@ -105,10 +111,10 @@ export function LoginForm() {
           id="login-submit"
           type="submit"
           disabled={isPending}
-          className="relative w-full h-12 mt-2 rounded-xl bg-[#280f91] text-white font-bold text-sm
+          className="relative w-full h-12 mt-2 rounded-xl bg-primary text-white font-bold text-sm
             flex items-center justify-center gap-2
             hover:bg-[#1f0c73] active:scale-[0.98] transition-all duration-200
-            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-[#280f91]/30"
+            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-primary/30"
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (

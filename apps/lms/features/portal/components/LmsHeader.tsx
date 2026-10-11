@@ -18,16 +18,16 @@ export function LmsHeader() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#280f91]/8 bg-[#fbfaf7]/92 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-primary/8 bg-[#fbfaf7]/92 backdrop-blur-xl">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="flex shrink-0 items-center gap-1.5"
           aria-label="BeeWise LMS, trang chủ"
         >
-          <div className="relative h-8 w-[108px] sm:h-9 sm:w-[120px]">
+          <div className="relative h-12 w-[120px] sm:h-13 sm:w-[160px]">
             <Image
-              src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1791535277/BeeWiseLMS-Logo-500x150.svg"
               alt="BeeWise LMS"
               fill
               priority
@@ -35,9 +35,6 @@ export function LmsHeader() {
               className="object-contain object-left"
             />
           </div>
-          <span className="rounded-full bg-accent/40 px-1.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-primary">
-            LMS
-          </span>
         </Link>
 
         <nav
@@ -58,14 +55,14 @@ export function LmsHeader() {
         <div className="flex items-center gap-2">
           <Link
             href="/login"
-            className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-xl bg-[#ffc500] px-4 text-sm font-extrabold text-[#201a00] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2 sm:px-5"
+            className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-xl bg-[#ffc500] px-4 text-sm font-extrabold text-[#201a00] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:px-5"
           >
             Đăng nhập
           </Link>
           <button
             type="button"
             onClick={() => setMenuOpen((value) => !value)}
-            className="grid size-10 place-items-center rounded-xl text-[#280f91] transition-colors hover:bg-[#280f91]/7 lg:hidden"
+            className="grid size-10 place-items-center rounded-xl text-primary transition-colors hover:bg-primary/7 lg:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
             aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
@@ -86,7 +83,7 @@ export function LmsHeader() {
             initial={reduceMotion ? false : { height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-[#280f91]/8 bg-[#fbfaf7] lg:hidden"
+            className="overflow-hidden border-t border-primary/8 bg-[#fbfaf7] lg:hidden"
             aria-label="Điều hướng trên di động"
           >
             <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6">
@@ -95,7 +92,7 @@ export function LmsHeader() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-3 text-sm font-semibold text-[#29272f]/75 hover:bg-[#280f91]/6 hover:text-[#280f91]"
+                  className="rounded-lg px-3 py-3 text-sm font-semibold text-[#29272f]/75 hover:bg-primary/6 hover:text-primary"
                 >
                   {link.label}
                 </a>

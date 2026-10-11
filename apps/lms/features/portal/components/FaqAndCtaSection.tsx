@@ -39,7 +39,7 @@ function FaqSection() {
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20 lg:px-8">
         <div>
-          <p className="text-sm font-extrabold text-[#280f91]">
+          <p className="text-sm font-extrabold text-primary">
             Câu hỏi thường gặp
           </p>
           <h2
@@ -59,7 +59,7 @@ function FaqSection() {
             return (
               <div
                 key={item.question}
-                className="border-b border-[#280f91]/9 last:border-0"
+                className="border-b border-primary/9 last:border-0"
               >
                 <button
                   type="button"
@@ -73,7 +73,7 @@ function FaqSection() {
                   <motion.span
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: reduceMotion ? 0 : 0.2 }}
-                    className="shrink-0 text-[#280f91]"
+                    className="shrink-0 text-primary"
                   >
                     <CaretDown size={18} weight="bold" />
                   </motion.span>
@@ -107,7 +107,7 @@ function FinalCta() {
   return (
     <section className="bg-[#fbfaf7] py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[28px] bg-[#280f91] px-6 py-12 text-center sm:px-12 sm:py-16">
+        <div className="relative overflow-hidden rounded-[28px] bg-primary px-6 py-12 text-center sm:px-12 sm:py-16">
           <h2
             className="mx-auto max-w-3xl text-3xl font-extrabold tracking-[-0.035em] text-white sm:text-4xl lg:text-5xl"
             style={{ fontFamily: "var(--font-nunito-family)" }}
@@ -120,7 +120,7 @@ function FinalCta() {
           </p>
           <Link
             href="/login"
-            className="mt-8 inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl bg-[#ffc500] px-7 text-sm font-extrabold text-[#201a00] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#280f91]"
+            className="mt-8 inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl bg-[#ffc500] px-7 text-sm font-extrabold text-[#201a00] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
           >
             Đăng nhập LMS
           </Link>
@@ -132,10 +132,10 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="border-t border-[#280f91]/8 bg-[#fbfaf7] py-8">
+    <footer className="border-t border-primary/8 bg-[#fbfaf7] py-8">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          <span className="relative size-8 overflow-hidden rounded-lg bg-[#280f91]/8">
+          <span className="relative size-8 overflow-hidden rounded-lg bg-primary/8">
             <Image
               src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
               alt=""
@@ -149,10 +149,10 @@ function Footer() {
           </p>
         </div>
         <div className="flex gap-5 text-xs font-semibold text-[#37333d]/55">
-          <a href="#" className="hover:text-[#280f91]">
+          <a href="#" className="hover:text-primary">
             Điều khoản
           </a>
-          <a href="#" className="hover:text-[#280f91]">
+          <a href="#" className="hover:text-primary">
             Bảo mật
           </a>
         </div>

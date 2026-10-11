@@ -51,7 +51,7 @@ export function FavoriteTutorsPage() {
       <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
         <GuestFavoriteModal />
         <div className="overflow-hidden rounded-3xl border border-[#cfe1fa] bg-white p-8 text-center shadow-xl sm:p-12">
-          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-[linear-gradient(135deg,#280f91_0%,#447353_100%)] text-white shadow-lg shadow-[#280f91]/20">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-[linear-gradient(135deg,#280f91_0%,#447353_100%)] text-white shadow-lg shadow-primary/20">
             <Heart className="h-10 w-10 fill-[#ffc500] text-[#ffc500]" />
           </div>
 
@@ -69,7 +69,7 @@ export function FavoriteTutorsPage() {
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
             <Link
               href="/login?redirect=/favorite-tutors"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#280f91] px-7 py-3.5 text-sm font-extrabold text-white shadow-md shadow-[#280f91]/20 transition-all hover:bg-[#1f0b70] hover:shadow-lg active:scale-[0.99]"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-7 py-3.5 text-sm font-extrabold text-white shadow-md shadow-primary/20 transition-all hover:bg-[#1f0b70] hover:shadow-lg active:scale-[0.99]"
               style={{ fontFamily: "var(--font-nunito-family)" }}
             >
               <LogIn className="h-4 w-4" />

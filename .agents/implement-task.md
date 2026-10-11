@@ -151,3 +151,17 @@
 - [x] Đọc API reference, workflow và chuẩn UI; xác nhận phạm vi cả ba vai trò.
 - [/] Triển khai contract/schema, service/query hooks, ghi âm/video và các màn hình theo vai trò.
 - [ ] Kiểm tra regression, TypeScript, ESLint, build và luồng UI.
+
+## Google Authentication Sale/LMS 2026-10-11
+
+- [x] Đọc workflow, contract BE, GIS JavaScript reference và chuẩn UI; xác nhận Staff chưa được BE hỗ trợ.
+- [x] Tích hợp challenge, GIS popup, exchange, đăng ký Sale, liên kết tài khoản và đồng bộ phiên; nút GIS cùng chiều cao/chiều rộng tối đa với CTA Đăng nhập/Đăng ký.
+- [x] Kiểm tra lỗi/expiry/retry, 4 service tests, TypeScript, ESLint và production build Sale/LMS; liên kết quên mật khẩu LMS mở đúng trang Sale.
+- [ ] QA popup với tài khoản Google thật trên các origin đã được Google Cloud và BE cho phép.
+
+## Khôi phục mật khẩu LMS/Staff 2026-10-12
+
+- [x] Đối chiếu workflow, chuẩn UI, flow Sale, AuthLayout và proxy của LMS/Staff.
+- [x] Tạo trang `/forgot-password` công khai cho LMS và Staff, dùng chung schema, OTP và logic API; quay về login đúng app sau reset.
+- [x] Kiểm tra TypeScript, ESLint, production build Sale/LMS/Staff và route công khai; sửa OTP dán một phần mã không làm lệch ô.
+- [ ] QA gửi email và reset với BE thật trên ba origin đã cấu hình.

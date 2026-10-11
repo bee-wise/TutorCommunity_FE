@@ -23,13 +23,17 @@ export function TutorTeachingHistory({ tutor }: TutorTeachingHistoryProps) {
             {history.map((item, index) => (
               <div key={`${item.title}-${index}`} className="relative">
                 {/* Timeline node icon */}
-                <div className="absolute -left-6 top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-[#280f91] text-white shadow-xs sm:-left-8 sm:h-7 sm:w-7">
-                  <CheckCircle size={14} className="hidden sm:block" aria-hidden="true" />
+                <div className="absolute -left-6 top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-primary text-white shadow-xs sm:-left-8 sm:h-7 sm:w-7">
+                  <CheckCircle
+                    size={14}
+                    className="hidden sm:block"
+                    aria-hidden="true"
+                  />
                   <span className="block h-2 w-2 rounded-full bg-white sm:hidden" />
                 </div>
 
                 {/* Content Box */}
-                <div className="rounded-2xl border border-[#e8edf5] bg-white p-4.5 sm:p-5 shadow-xs transition hover:border-[#280f91]/25 hover:shadow-sm">
+                <div className="rounded-2xl border border-[#e8edf5] bg-white p-4.5 sm:p-5 shadow-xs transition hover:border-primary/25 hover:shadow-sm">
                   <h3 className="text-base font-extrabold text-[#0c0c0b]">
                     {item.title}
                   </h3>
@@ -42,7 +46,11 @@ export function TutorTeachingHistory({ tutor }: TutorTeachingHistoryProps) {
 
                   {item.outcome ? (
                     <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#447353]/25 bg-[#447353]/8 p-3 text-xs sm:text-sm font-bold text-[#447353]">
-                      <Trophy size={16} className="shrink-0 text-[#447353]" aria-hidden="true" />
+                      <Trophy
+                        size={16}
+                        className="shrink-0 text-[#447353]"
+                        aria-hidden="true"
+                      />
                       <span>Kết quả: {item.outcome}</span>
                     </div>
                   ) : null}
@@ -59,4 +67,3 @@ export function TutorTeachingHistory({ tutor }: TutorTeachingHistoryProps) {
     </SectionShell>
   );
 }
-

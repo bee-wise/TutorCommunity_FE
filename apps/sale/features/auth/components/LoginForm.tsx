@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +10,7 @@ import { useLogin } from "@workspace/core/hooks/useLogin";
 import { getSafeInternalReturnUrl } from "@workspace/core/utils/auth-redirect";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
+import { GoogleAuthEntry } from "./GoogleAuthEntry";
 
 export function LoginForm({ authPaused = false }: { authPaused?: boolean }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -114,10 +114,10 @@ export function LoginForm({ authPaused = false }: { authPaused?: boolean }) {
           id="login-submit"
           type="submit"
           disabled={isPending || authPaused}
-          className="relative w-full h-10 rounded-xl bg-primary text-accent uppercase font-bold text-sm
+          className="relative mx-auto w-full max-w-[400px] h-10 rounded-xl bg-primary text-accent uppercase font-bold text-sm
             flex items-center justify-center gap-2
             hover:bg-primary/90 active:scale-[0.98] transition-all duration-200
-            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-primary/25"
+            disabled:opacity-60 disabled:cursor-not-allowed"
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (
@@ -132,26 +132,23 @@ export function LoginForm({ authPaused = false }: { authPaused?: boolean }) {
             <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center">
-            <span className="px-3 bg-background text-xs text-foreground/40">
+            <span className="px-3 bg-white text-xs text-foreground/40">
               hoặc tiếp tục với
             </span>
           </div>
         </div>
 
-        <button
-          type="button"
-          disabled={authPaused}
-          className="flex items-center justify-center gap-2 h-10 rounded-xl border border-border bg-background text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
-        >
-          <Image
-            src="/images/Logos/google.png"
-            alt="Google"
-            width={20}
-            height={20}
-            className="object-contain"
-          />
-          Google
-        </button>
+        {authPaused ? (
+          <button
+            type="button"
+            disabled
+            className="mx-auto h-10 w-full max-w-[400px] rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground"
+          >
+            Google
+          </button>
+        ) : (
+          <GoogleAuthEntry mode="login" returnUrl={returnUrl} />
+        )}
 
         <p className="text-center text-sm text-foreground/60 mt-2">
           Chưa có tài khoản?{" "}

@@ -68,7 +68,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
       aria-label={`Hồ sơ gia sư ${tutor.displayName}`}
     >
       {/* Brand gradient accent top bar */}
-      <div className="h-2 bg-gradient-to-r from-[#280f91] via-[#ffc500] to-[#447353]" />
+      <div className="h-2 bg-gradient-to-r from-primary via-[#ffc500] to-[#447353]" />
 
       <div className="p-5 sm:p-7 lg:p-8">
         {/* ── Row layout: avatar left, info right ── */}
@@ -82,7 +82,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
               aria-label={`Xem ảnh gia sư ${tutor.displayName}`}
               className="group relative block"
             >
-              <div className="relative h-24 w-24 overflow-hidden rounded-2xl border-2 border-[#e8edf5] bg-[#f5f8ff] shadow-lg shadow-[#280f91]/5 sm:h-36 sm:w-36 sm:rounded-3xl lg:h-48 lg:w-48 xl:h-52 xl:w-52">
+              <div className="relative h-24 w-24 overflow-hidden rounded-2xl border-2 border-[#e8edf5] bg-[#f5f8ff] shadow-lg shadow-primary/5 sm:h-36 sm:w-36 sm:rounded-3xl lg:h-48 lg:w-48 xl:h-52 xl:w-52">
                 <Image
                   src={avatarSrc}
                   alt={`Ảnh gia sư ${tutor.displayName}`}
@@ -128,7 +128,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
                   <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-bold text-foreground sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-xs">
                     <Eye
                       size={12}
-                      className="text-[#280f91]"
+                      className="text-primary"
                       aria-hidden="true"
                     />
                     {totalViews.toLocaleString("vi-VN")} lượt xem
@@ -160,7 +160,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
             </div>
 
             {/* Headline */}
-            <p className="mt-1 text-sm font-bold text-[#280f91] sm:mt-1.5 sm:text-lg">
+            <p className="mt-1 text-sm font-bold text-primary sm:mt-1.5 sm:text-lg">
               {tutor.headline}
             </p>
 
@@ -185,7 +185,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
           <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#e8edf5] bg-[#f8faff] px-3.5 py-2 text-xs font-semibold text-[#0c0c0b]/80 shadow-xs sm:text-sm">
             <GraduationCap
               size={16}
-              className="shrink-0 text-[#280f91]"
+              className="shrink-0 text-primary"
               aria-hidden="true"
             />
             <span>
@@ -224,11 +224,11 @@ export function TutorHero({ tutor }: TutorHeroProps) {
           </div>
 
           {/* Card 2: Teaching Hours */}
-          <div className="flex flex-col rounded-2xl border border-[#e8edf5] bg-gradient-to-b from-[#f8faff] to-white p-3.5 text-center transition hover:border-[#280f91]/30 hover:shadow-md sm:p-4 sm:text-left">
+          <div className="flex flex-col rounded-2xl border border-[#e8edf5] bg-gradient-to-b from-[#f8faff] to-white p-3.5 text-center transition hover:border-primary/30 hover:shadow-md sm:p-4 sm:text-left">
             <span className="text-xs font-semibold text-[#0c0c0b]/55">
               Thời gian dạy
             </span>
-            <p className="mt-1.5 text-xl font-black text-[#280f91] sm:text-2xl">
+            <p className="mt-1.5 text-xl font-black text-primary sm:text-2xl">
               {tutor.teachingHours ? tutor.teachingHours : "0"}
             </p>
             <span className="mt-1 text-[11px] font-medium text-[#0c0c0b]/45">
@@ -237,11 +237,11 @@ export function TutorHero({ tutor }: TutorHeroProps) {
           </div>
 
           {/* Card 3: Hourly Rate */}
-          <div className="flex flex-col rounded-2xl border border-[#e8edf5] bg-gradient-to-b from-[#f8faff] to-white p-3.5 text-center transition hover:border-[#280f91]/30 hover:shadow-md sm:p-4 sm:text-left">
+          <div className="flex flex-col rounded-2xl border border-[#e8edf5] bg-gradient-to-b from-[#f8faff] to-white p-3.5 text-center transition hover:border-primary/30 hover:shadow-md sm:p-4 sm:text-left">
             <span className="text-xs font-semibold text-[#0c0c0b]/55">
               Học phí từ
             </span>
-            <p className="mt-1.5 text-xl font-black text-[#280f91] sm:text-2xl">
+            <p className="mt-1.5 text-xl font-black text-primary sm:text-2xl">
               {hourlyRateDisplay}
               <span className="text-xs font-semibold text-[#0c0c0b]/50">
                 /h
@@ -275,12 +275,8 @@ export function TutorHero({ tutor }: TutorHeroProps) {
           {tutor.experienceYears ? (
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <Clock
-                  size={15}
-                  className="text-[#280f91]"
-                  aria-hidden="true"
-                />
-                <span className="text-xs font-black uppercase tracking-wider text-[#280f91]">
+                <Clock size={15} className="text-primary" aria-hidden="true" />
+                <span className="text-xs font-black uppercase tracking-wider text-primary">
                   Kinh nghiệm giảng dạy
                 </span>
               </div>
@@ -298,10 +294,10 @@ export function TutorHero({ tutor }: TutorHeroProps) {
               <div className="mb-2 flex items-center gap-2">
                 <BookOpen
                   size={15}
-                  className="text-[#280f91]"
+                  className="text-primary"
                   aria-hidden="true"
                 />
-                <span className="text-xs font-black uppercase tracking-wider text-[#280f91]">
+                <span className="text-xs font-black uppercase tracking-wider text-primary">
                   Tổ hợp giảng dạy
                 </span>
               </div>

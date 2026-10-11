@@ -34,8 +34,13 @@ export function MobileNav({
   const containerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const openDrawer = useNotificationDrawerStore((state) => state.openDrawer);
-  const drawerUnreadCount = useNotificationDrawerStore((state) => state.unreadCount);
-  const actualUnreadCount = Math.max(0, drawerUnreadCount ?? unreadNotificationCount);
+  const drawerUnreadCount = useNotificationDrawerStore(
+    (state) => state.unreadCount,
+  );
+  const actualUnreadCount = Math.max(
+    0,
+    drawerUnreadCount ?? unreadNotificationCount,
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -162,7 +167,7 @@ export function MobileNav({
                     key={`${item.label}-${item.href}`}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-2 py-1 text-sm font-semibold text-[#280f91] transition-colors hover:bg-[#fff3cb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]"
+                    className="rounded-lg px-2 py-1 text-sm font-semibold text-primary transition-colors hover:bg-[#fff3cb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     {item.label}
                   </Link>

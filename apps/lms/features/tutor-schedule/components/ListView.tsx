@@ -1,7 +1,7 @@
 "use client";
 
 import { ExternalLink, Eye } from "lucide-react";
-import { cn } from '@workspace/core/helpers/utils';
+import { cn } from "@workspace/core/helpers/utils";
 import type { Session } from "../types/schedule.types";
 import { STATUS_COLORS, STATUS_LABELS } from "../types/schedule.types";
 
@@ -46,7 +46,10 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
       <div className="rounded-2xl border border-border/60 bg-white shadow-sm">
         <div className="flex flex-col items-center justify-center py-20 gap-3">
           <div className="size-14 rounded-2xl bg-muted/60 flex items-center justify-center">
-            <Eye className="size-7 text-muted-foreground/40" strokeWidth={1.5} />
+            <Eye
+              className="size-7 text-muted-foreground/40"
+              strokeWidth={1.5}
+            />
           </div>
           <p className="text-sm font-semibold text-muted-foreground">
             Không có buổi học nào phù hợp
@@ -120,7 +123,7 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
                 <td className="px-4 py-3.5 whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <div className="size-7 rounded-full bg-[#cfe1fa] flex items-center justify-center shrink-0">
-                      <span className="text-[10px] font-bold text-[#280f91]">
+                      <span className="text-[10px] font-bold text-primary">
                         {session.studentFullName.charAt(0)}
                       </span>
                     </div>
@@ -155,7 +158,7 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#cfe1fa]/60 text-[#280f91] text-xs font-semibold hover:bg-[#280f91] hover:text-white transition-colors border border-[#280f91]/20"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#cfe1fa]/60 text-primary text-xs font-semibold hover:bg-primary hover:text-white transition-colors border border-primary/20"
                     >
                       <ExternalLink className="size-3" strokeWidth={2} />
                       Meet
@@ -178,7 +181,7 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
                       e.stopPropagation();
                       onSessionClick(session);
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground border border-border/50 hover:bg-[#280f91] hover:text-white hover:border-[#280f91] transition-all duration-150"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground border border-border/50 hover:bg-primary hover:text-white hover:border-primary transition-all duration-150"
                   >
                     <Eye className="size-3.5" strokeWidth={1.75} />
                     Chi tiết
@@ -194,7 +197,9 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
       <div className="px-4 py-3 border-t border-border/40 bg-muted/20 flex items-center justify-between">
         <p className="text-xs text-muted-foreground">
           Hiển thị{" "}
-          <span className="font-semibold text-foreground">{sessions.length}</span>{" "}
+          <span className="font-semibold text-foreground">
+            {sessions.length}
+          </span>{" "}
           buổi học
         </p>
       </div>

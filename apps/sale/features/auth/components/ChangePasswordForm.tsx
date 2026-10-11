@@ -6,7 +6,7 @@ import { ShieldCheck } from "@phosphor-icons/react";
 import { useForm } from "react-hook-form";
 import { getApiErrorMessage, handleApiError } from "@workspace/core/sys-libs/error-handler";
 import { useChangePassword } from "../hooks/usePasswordActions";
-import { changePasswordSchema, type ChangePasswordValues } from "../schemas/password.schema";
+import { changePasswordSchema, type ChangePasswordValues } from "@workspace/core/schemas/password.schema";
 import { FormField } from "./FormField";
 import { PasswordInput } from "./PasswordInput";
 

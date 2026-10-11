@@ -5,7 +5,7 @@ import {
   getLmsRoleRedirectPath,
 } from "./features/lms-workspace/utils/lms-role";
 
-const publicPaths = ["/", "/login", "/robots.txt", "/sitemap.xml"];
+const publicPaths = ["/", "/login", "/forgot-password", "/robots.txt", "/sitemap.xml"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

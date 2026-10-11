@@ -29,13 +29,13 @@ export function LmsHeroSection() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <a
               href="#learner"
-              className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl bg-[#280f91] px-6 text-sm font-bold text-white transition-colors hover:bg-[#1e0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2"
+              className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl bg-primary px-6 text-sm font-bold text-white transition-colors hover:bg-[#1e0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               Khám phá cho học viên
             </a>
             <a
               href="#tutor"
-              className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl border border-[#280f91]/25 bg-[#fbfaf7] px-6 text-sm font-bold text-[#280f91] transition-colors hover:bg-[#eeeaf9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2"
+              className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl border border-primary/25 bg-[#fbfaf7] px-6 text-sm font-bold text-primary transition-colors hover:bg-[#eeeaf9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               Dành cho gia sư
             </a>
