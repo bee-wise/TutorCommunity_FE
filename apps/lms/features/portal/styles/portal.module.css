@@ -1,0 +1,59 @@
+.portal {
+  color-scheme: light;
+  background: var(--background);
+  color: var(--foreground);
+  isolation: isolate;
+}
+
+.portal h1, .portal h2, .portal h3 { font-family: var(--font-google-sans), sans-serif; }
+.accentTitle { color: var(--accent); }
+.heroAtmosphere { background: radial-gradient(ellipse at 85% 40%, color-mix(in srgb, var(--primary) 12%, var(--background)), transparent 58%); }
+.heroVisual { perspective: 1000px; }
+.featureVisual { position: relative; display: grid; place-items: center; min-height: 360px; perspective: 900px; }
+.orbit {
+  position: absolute;
+  width: min(84%, 430px);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent);
+  border-radius: 50%;
+  transform: rotateX(64deg) rotateZ(-24deg);
+  pointer-events: none;
+}
+.orbit:nth-child(2) { width: min(68%, 340px); border-color: color-mix(in srgb, var(--accent) 55%, transparent); transform: rotateX(56deg) rotateY(30deg) rotateZ(32deg); }
+.orbit:nth-child(3) { width: min(52%, 260px); transform: rotateX(38deg) rotateY(-42deg); }
+.featureGlyph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--border));
+  border-radius: 28px;
+  background: linear-gradient(145deg, var(--background), var(--muted));
+  box-shadow: 0 24px 70px -30px color-mix(in srgb, var(--primary) 35%, transparent);
+  color: var(--primary);
+  transform: rotate(-9deg);
+}
+.featureGlyph svg { width: 48px; height: 48px; transform: rotate(9deg); }
+.spotlight { position: relative; isolation: isolate; overflow: hidden; border: 1px solid var(--border); border-radius: 24px; background: var(--card); }
+.spotlightLight {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(300px circle at var(--spot-x, 50%) var(--spot-y, 50%), color-mix(in srgb, var(--primary) 12%, transparent), transparent 75%);
+}
+.aiPanel { background: linear-gradient(120deg, var(--muted), var(--background) 68%); }
+@media (max-width: 767px) {
+  .featureVisual { min-height: 300px; }
+  .featureGlyph { width: 96px; height: 96px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portal *, .portal *::before, .portal *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

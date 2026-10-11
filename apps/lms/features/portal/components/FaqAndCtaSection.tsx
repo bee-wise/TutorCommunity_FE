@@ -1,172 +1,56 @@
-"use client";
-
-import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { CaretDown } from "@phosphor-icons/react";
+import { Button } from "@workspace/ui/components/ui/button";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@workspace/ui/components/ui/accordion";
+import { PortalReveal } from "./PortalReveal";
+import { PortalTitle } from "./PortalTitle";
+import { SplitText } from "./react-bits/SplitText";
 
 const FAQ_ITEMS = [
-  {
-    question: "BeeWise LMS dành cho ai?",
-    answer:
-      "LMS dành cho học viên và gia sư đã kết nối thành công qua BeeWise. Mỗi vai trò có một không gian riêng phù hợp với công việc cần thực hiện.",
-  },
-  {
-    question: "Làm thế nào để bắt đầu sử dụng?",
-    answer:
-      "Sau khi gia sư và học viên thống nhất lớp học, Consultant xác nhận kết nối. Hệ thống sẽ tạo lớp và cấp quyền LMS cho cả hai bên.",
-  },
-  {
-    question: "Tài liệu và tiến độ được quản lý như thế nào?",
-    answer:
-      "Tài liệu được lưu theo từng lớp và buổi học. Lịch sử buổi học, trạng thái hoàn thành và thông tin liên quan được cập nhật trong cùng một không gian.",
-  },
-  {
-    question: "Thông tin lớp học có được bảo mật không?",
-    answer:
-      "BeeWise giới hạn quyền truy cập theo vai trò và theo lớp. Chỉ những người tham gia được cấp quyền mới có thể xem nội dung liên quan.",
-  },
+  { question: "BeeWise LMS dành cho ai?", answer: "Dành cho học viên và gia sư có lớp học đã được BeeWise kích hoạt. Mỗi người truy cập các tính năng phù hợp với vai trò của mình." },
+  { question: "Làm thế nào để bắt đầu sử dụng?", answer: "Sau khi thống nhất lớp học, tư vấn viên xác nhận kết nối và kích hoạt LMS. Bạn đăng nhập bằng tài khoản BeeWise để vào lớp." },
+  { question: "Tài liệu được lưu ở đâu?", answer: "Tài liệu và bài tập được lưu theo lớp và từng buổi học. Học viên xem các nội dung đã được gia sư xuất bản." },
+  { question: "Ai có thể xem thông tin lớp học?", answer: "Quyền truy cập được giới hạn theo vai trò và lớp học. Chỉ những tài khoản được cấp quyền mới xem được nội dung của lớp." },
 ] as const;
-
-function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const reduceMotion = useReducedMotion();
-  return (
-    <section
-      id="faq"
-      className="scroll-mt-20 bg-[#f1eef8] py-20 sm:py-24 lg:py-28"
-    >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20 lg:px-8">
-        <div>
-          <p className="text-sm font-extrabold text-primary">
-            Câu hỏi thường gặp
-          </p>
-          <h2
-            className="mt-4 text-3xl font-extrabold tracking-[-0.035em] text-[#17141b] sm:text-4xl"
-            style={{ fontFamily: "var(--font-nunito-family)" }}
-          >
-            Bạn còn thắc mắc?
-          </h2>
-          <p className="mt-5 text-base leading-7 text-[#37333d]/65">
-            Thông tin ngắn gọn về quyền truy cập, vận hành lớp học và dữ liệu
-            trên LMS.
-          </p>
-        </div>
-        <div className="overflow-hidden rounded-2xl bg-white px-5 sm:px-7">
-          {FAQ_ITEMS.map((item, index) => {
-            const isOpen = openIndex === index;
-            return (
-              <div
-                key={item.question}
-                className="border-b border-primary/9 last:border-0"
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="flex w-full items-center justify-between gap-4 py-6 text-left"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-extrabold text-[#17141b]">
-                    {item.question}
-                  </span>
-                  <motion.span
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: reduceMotion ? 0 : 0.2 }}
-                    className="shrink-0 text-primary"
-                  >
-                    <CaretDown size={18} weight="bold" />
-                  </motion.span>
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={reduceMotion ? false : { height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={
-                        reduceMotion ? undefined : { height: 0, opacity: 0 }
-                      }
-                      className="overflow-hidden"
-                    >
-                      <p className="max-w-2xl pb-6 text-sm leading-6 text-[#37333d]/65 sm:text-base sm:leading-7">
-                        {item.answer}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FinalCta() {
-  return (
-    <section className="bg-[#fbfaf7] py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[28px] bg-primary px-6 py-12 text-center sm:px-12 sm:py-16">
-          <h2
-            className="mx-auto max-w-3xl text-3xl font-extrabold tracking-[-0.035em] text-white sm:text-4xl lg:text-5xl"
-            style={{ fontFamily: "var(--font-nunito-family)" }}
-          >
-            Dạy và học ngay tại BeeWise LMS
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-white/72">
-            Đăng nhập để xem lịch học, tài liệu và tiến độ lớp của bạn trên
-            BeeWise LMS.
-          </p>
-          <Link
-            href="/login"
-            className="mt-8 inline-flex h-12 items-center justify-center whitespace-nowrap rounded-xl bg-[#ffc500] px-7 text-sm font-extrabold text-[#201a00] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
-          >
-            Đăng nhập LMS
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="border-t border-primary/8 bg-[#fbfaf7] py-8">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6 lg:px-8">
-        <div className="flex items-center gap-3">
-          <span className="relative size-8 overflow-hidden rounded-lg bg-primary/8">
-            <Image
-              src="https://res.cloudinary.com/dqevxj2k6/image/upload/v1783561272/beewise/beewise-logo-nobackground.png"
-              alt=""
-              fill
-              sizes="32px"
-              className="object-contain p-1"
-            />
-          </span>
-          <p className="text-xs text-[#37333d]/50">
-            © {new Date().getFullYear()} BeeWise Education
-          </p>
-        </div>
-        <div className="flex gap-5 text-xs font-semibold text-[#37333d]/55">
-          <a href="#" className="hover:text-primary">
-            Điều khoản
-          </a>
-          <a href="#" className="hover:text-primary">
-            Bảo mật
-          </a>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 export function FaqAndCtaSection() {
   return (
     <>
-      <FaqSection />
-      <FinalCta />
-      <Footer />
+      <section id="faq" className="scroll-mt-32 bg-background py-16 sm:py-24">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+          <PortalReveal>
+            <PortalTitle primary="Bạn còn " accent="thắc mắc?" className="text-[clamp(2rem,3vw,2.7rem)]" />
+          </PortalReveal>
+          <PortalReveal>
+            <Accordion type="single" collapsible defaultValue="faq-0" className="space-y-3">
+              {FAQ_ITEMS.map((item, index) => (
+                <AccordionItem key={item.question} value={`faq-${index}`} className="rounded-2xl border border-border bg-background px-5 last:border-b sm:px-6">
+                  <AccordionTrigger className="py-5 font-sans text-base font-semibold">{item.question}</AccordionTrigger>
+                  <AccordionContent className="pb-5 text-sm leading-7 text-muted-foreground">{item.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </PortalReveal>
+        </div>
+      </section>
+      <section className="bg-background px-5 pb-16 sm:px-8 sm:pb-20">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-3xl border border-primary/15 bg-muted px-6 py-12 sm:px-12 sm:py-16">
+          <div className="pointer-events-none absolute -right-16 -top-28 size-96 rounded-full border-[48px] border-primary/5" aria-hidden="true" />
+          <div className="relative max-w-3xl">
+            <SplitText text="Vào lớp học " accentText="của bạn." className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.22] tracking-[-0.035em] text-primary" />
+            <p className="mt-5 text-base leading-7 text-muted-foreground">Đăng nhập bằng tài khoản đã được BeeWise kích hoạt LMS.</p>
+            <Button asChild className="mt-7 h-12 rounded-xl px-6 transition-all hover:-translate-y-0.5 active:scale-[0.98] motion-reduce:transform-none"><Link href="/login">Đăng nhập</Link></Button>
+          </div>
+        </div>
+      </section>
+      <footer className="border-t border-border bg-background py-7">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <p>© {new Date().getFullYear()} BeeWise Education</p>
+          <div className="flex gap-5">
+            <a href="https://beewise.vn/terms" className="rounded-md py-2 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Điều khoản</a>
+            <a href="https://beewise.vn/privacy" className="rounded-md py-2 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Bảo mật</a>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
