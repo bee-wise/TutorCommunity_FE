@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import {
@@ -19,9 +19,11 @@ export function useConsultantWidgetTools(
   roomId: string,
   teachingOfferings: ChatTeachingOffering[],
   onSent: () => void,
+  initialTab: WidgetTab = "trial",
+  initialConfirmationId?: string,
 ) {
   const queryClient = useQueryClient();
-  const [tab, setTab] = useState<WidgetTab>("trial");
+  const [tab, setTab] = useState<WidgetTab>(initialTab);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -46,8 +48,7 @@ export function useConsultantWidgetTools(
     }
   }
 
-  const [confirmationId, setConfirmationId] = useState("");
-  const [subjectId, setSubjectId] = useState("");
+  const [confirmationId, setConfirmationId] = useState(initialConfirmationId ?? "");
   const [offeringId, setOfferingId] = useState("");
   const [classMode, setClassMode] = useState<TeachingMode>("ONLINE");
   const [duration, setDuration] = useState("60");
@@ -70,6 +71,37 @@ export function useConsultantWidgetTools(
     (item) => item.id === confirmationId,
   );
 
+  const lastPopulatedIdRef = useRef<string>("");
+
+  useEffect(() => {
+    if (initialTab) {
+      setTab(initialTab);
+    }
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (initialConfirmationId !== undefined) {
+      setConfirmationId(initialConfirmationId);
+    }
+  }, [initialConfirmationId]);
+
+  useEffect(() => {
+    if (!confirmationId) {
+      lastPopulatedIdRef.current = "";
+      return;
+    }
+    if (!confirmations.data) return;
+    if (lastPopulatedIdRef.current === confirmationId) return;
+    const item = confirmations.data.find((candidate) => candidate.id === confirmationId);
+    if (!item) return;
+    setOfferingId(item.tutorOfferingId ?? "");
+    setClassMode(item.teachingMode === "OFFLINE" ? "OFFLINE" : "ONLINE");
+    setDuration(String(item.sessionDurationMinutes ?? 60));
+    setSessions(String(item.numberOfSessions ?? 1));
+    setSchedule(item.proposedSchedule ?? "");
+    lastPopulatedIdRef.current = confirmationId;
+  }, [confirmationId, confirmations.data]);
+
   const createTrialMutation = useMutation({
     mutationFn: (input: CreateTrialSession) =>
       connectionWidgetsService.createTrial(roomId, input),
@@ -81,7 +113,6 @@ export function useConsultantWidgetTools(
   const updateConfirmationMutation = useMutation({
     mutationFn: (input: {
       id: string;
-      subjectId: string;
       tutorOfferingId: string;
       teachingMode: TeachingMode;
       sessionDurationMinutes: number;
@@ -108,12 +139,12 @@ export function useConsultantWidgetTools(
     setConfirmationId(id);
     const item = confirmations.data?.find((candidate) => candidate.id === id);
     if (!item) return;
-    setSubjectId(item.subjectId ?? "");
     setOfferingId(item.tutorOfferingId ?? "");
     setClassMode(item.teachingMode === "OFFLINE" ? "OFFLINE" : "ONLINE");
     setDuration(String(item.sessionDurationMinutes ?? 60));
     setSessions(String(item.numberOfSessions ?? 1));
     setSchedule(item.proposedSchedule ?? "");
+    lastPopulatedIdRef.current = id;
   }
 
   async function createTrial(event: FormEvent<HTMLFormElement>) {
@@ -196,14 +227,13 @@ export function useConsultantWidgetTools(
     const minutes = Number(duration);
     const count = Number(sessions);
     if (
-      !z.guid().safeParse(subjectId.trim()).success ||
       !z.guid().safeParse(offeringId.trim()).success ||
       !Number.isInteger(minutes) ||
       minutes <= 0 ||
       !Number.isInteger(count) ||
       count <= 0
     ) {
-      setError("Hãy nhập mã GUID hợp lệ của môn học và gói giảng dạy, cùng thời lượng và số buổi học.");
+      setError("Hãy nhập mã GUID hợp lệ của gói giảng dạy, cùng thời lượng và số buổi học.");
       return;
     }
     setError("");
@@ -211,7 +241,6 @@ export function useConsultantWidgetTools(
     try {
       await updateConfirmationMutation.mutateAsync({
         id: selected.id,
-        subjectId: subjectId.trim(),
         tutorOfferingId: offeringId.trim(),
         teachingMode: classMode,
         sessionDurationMinutes: minutes,
@@ -243,7 +272,7 @@ export function useConsultantWidgetTools(
     },
     confirmation: {
       trials, confirmations, selected, confirmationId, chooseConfirmation,
-      subjectId, setSubjectId, offeringId, setOfferingId, classMode, setClassMode,
+      offeringId, setOfferingId, classMode, setClassMode,
       duration, setDuration, sessions, setSessions, schedule, setSchedule,
       completeTrial, updateConfirmation,
     },

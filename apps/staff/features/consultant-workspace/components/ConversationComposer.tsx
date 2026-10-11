@@ -5,7 +5,7 @@ import {
   ChevronDownIcon as CaretDown,
   PencilSquareIcon as NotePencil,
   PaperAirplaneIcon as PaperPlaneRight,
-  SparklesIcon as Sparkle,
+  RectangleStackIcon as WidgetIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
 import { messageTemplates } from "../data/workspace-options";
@@ -145,7 +145,7 @@ export function ConversationComposer({
                 aria-label="Mở widget"
                 className="h-10 rounded-xl px-2.5 text-xs font-bold text-foreground transition-all hover:bg-muted hover:text-primary active:scale-[0.98]"
               >
-                <Sparkle className="size-4" aria-hidden="true" />
+                <WidgetIcon className="size-4" aria-hidden="true" />
                 <span>Widget</span>
               </Button>
             </div>

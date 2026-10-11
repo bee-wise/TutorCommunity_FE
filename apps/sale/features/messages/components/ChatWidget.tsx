@@ -13,6 +13,7 @@ import {
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
+import { formatTeachingOfferingName } from "@workspace/core/services/chat-business-message";
 import type {
   ChatWidget as ChatWidgetType,
   ChatParticipantRole,
@@ -183,57 +184,83 @@ function TrialSessionWidget({
     CANCELLED: "Đã hủy",
     COMPLETED: "Đã hoàn thành",
   };
+  const isEnded =
+    data.status !== "CANCELLED" &&
+    Boolean(data.endAt) &&
+    !Number.isNaN(new Date(data.endAt).getTime()) &&
+    new Date(data.endAt).getTime() < Date.now();
   const needsAction =
+    !isEnded &&
     data.status === "PROPOSED" &&
     ((currentRole === "LEARNER" && !data.confirmedByLearnerAt) ||
       (currentRole === "TUTOR" && !data.confirmedByTutorAt));
 
   return (
-    <WidgetFrame
-      icon={CalendarCheckIcon}
-      title="Lịch học thử"
-      reference={`Mã đề xuất ${data.id}`}
-      status={statusLabels[data.status]}
-      tone={
-        data.status === "COMPLETED" || data.status === "CONFIRMED"
-          ? "success"
-          : "warning"
-      }
-      footer={needsAction ? <MockAction label="Xác nhận lịch" /> : undefined}
-    >
-      <div className="rounded-xl bg-muted px-3.5 py-3">
-        <p className="font-nunito text-base font-extrabold text-primary">
-          {dateTime(data.startAt)}
-        </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Kết thúc {time(data.endAt)} ·{" "}
-          {data.teachingMode === "ONLINE" ? "Học trực tuyến" : "Học trực tiếp"}
-        </p>
-      </div>
-      {(data.location || data.meetingInfo) && (
-        <p className="flex items-start gap-2 text-xs leading-5 text-foreground">
-          {data.teachingMode === "ONLINE" ? (
-            <MonitorIcon width={16} height={16}
-              className="mt-0.5 shrink-0 text-primary"
+    <div className="w-full">
+      <WidgetFrame
+        icon={CalendarCheckIcon}
+        title="Lịch học thử"
+        reference={`Mã đề xuất ${data.id}`}
+        status={statusLabels[data.status]}
+        tone={
+          data.status === "COMPLETED" || data.status === "CONFIRMED"
+            ? "success"
+            : "warning"
+        }
+        footer={needsAction ? <MockAction label="Xác nhận lịch" /> : undefined}
+      >
+        <div className="rounded-xl bg-muted px-3.5 py-3">
+          <p className="font-nunito text-base font-extrabold text-primary">
+            {dateTime(data.startAt)}
+          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Kết thúc {time(data.endAt)} ·{" "}
+            {data.teachingMode === "ONLINE" ? "Học trực tuyến" : "Học trực tiếp"}
+          </p>
+        </div>
+        {(data.location || data.meetingInfo) && (
+          <p className="flex items-start gap-2 text-xs leading-5 text-foreground">
+            {data.teachingMode === "ONLINE" ? (
+              <MonitorIcon width={16} height={16}
+                className="mt-0.5 shrink-0 text-primary"
+                aria-hidden="true"
+              />
+            ) : (
+              <MapPinIcon width={16} height={16}
+                className="mt-0.5 shrink-0 text-primary"
+                aria-hidden="true"
+              />
+            )}
+            {data.location || data.meetingInfo}
+          </p>
+        )}
+        <div className="flex flex-wrap gap-2">
+          <Confirmation label="Gia sư" confirmed={!!data.confirmedByTutorAt} />
+          <Confirmation
+            label="Học viên"
+            confirmed={!!data.confirmedByLearnerAt}
+          />
+        </div>
+      </WidgetFrame>
+
+      {isEnded && (
+        <div className="my-3 flex items-center gap-2 w-full select-none" role="status">
+          <div className="h-px flex-1 bg-border/80" />
+          <div className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-amber-500/35 bg-card px-3 py-1 text-center text-[11px] font-bold text-amber-900 dark:text-amber-200 shadow-2xs backdrop-blur-xs">
+            <ClockIcon
+              width={14}
+              height={14}
+              className="shrink-0 text-amber-600 dark:text-amber-400"
               aria-hidden="true"
             />
-          ) : (
-            <MapPinIcon width={16} height={16}
-              className="mt-0.5 shrink-0 text-primary"
-              aria-hidden="true"
-            />
-          )}
-          {data.location || data.meetingInfo}
-        </p>
+            <span className="leading-tight">
+              Buổi học thử đã kết thúc, vui lòng đợi tư vấn viên gửi xác nhận buổi học.
+            </span>
+          </div>
+          <div className="h-px flex-1 bg-border/80" />
+        </div>
       )}
-      <div className="flex flex-wrap gap-2">
-        <Confirmation label="Gia sư" confirmed={!!data.confirmedByTutorAt} />
-        <Confirmation
-          label="Học viên"
-          confirmed={!!data.confirmedByLearnerAt}
-        />
-      </div>
-    </WidgetFrame>
+    </div>
   );
 }
 
@@ -267,7 +294,7 @@ function ClassConfirmationWidget({
         needsAction ? <MockAction label="Xác nhận điều kiện" /> : undefined
       }
     >
-      <Detail label="Môn học" value={data.subject} />
+      <Detail label="Môn học" value={formatTeachingOfferingName(data)} />
       <Detail
         label="Hình thức"
         value={data.teachingMode === "ONLINE" ? "Trực tuyến" : "Trực tiếp"}
@@ -358,7 +385,7 @@ function PaymentRequestWidget({
       }
     >
       <Detail label="Gia sư" value={data.tutorName} />
-      <Detail label="Môn học" value={data.subject} />
+      <Detail label="Môn học" value={formatTeachingOfferingName(data)} />
       <Detail label="Số buổi" value={`${data.numberOfSessions} buổi`} />
       <div className="rounded-xl bg-muted px-3.5 py-3">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">

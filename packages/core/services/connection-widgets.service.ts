@@ -53,6 +53,8 @@ export const classConfirmationSchema = z
     tutorProfileId: nullableString,
     subjectId: nullableString,
     subjectName: nullableString,
+    contextName: nullableString,
+    teachingItemName: nullableString,
     tutorOfferingId: nullableString,
     teachingMode: nullableString,
     pricePerHour: z.number().nullish(),
@@ -84,6 +86,10 @@ export const paymentRequestSchema = z
     status: nullableString,
     expiredAt: nullableString,
     paidAt: nullableString,
+    contextName: nullableString,
+    teachingItemName: nullableString,
+    subjectName: nullableString,
+    subject: nullableString,
   })
   .passthrough();
 
@@ -99,6 +105,7 @@ export const classSessionSchema = z
     locationOrMeetingInfo: nullableString,
     status: nullableString,
     replacesSessionId: nullableString,
+    durationMinutes: z.number().nullish(),
   })
   .passthrough();
 
@@ -107,7 +114,10 @@ export const classScheduleSchema = z
     classId: nullableString,
     tutorId: nullableString,
     learnerId: nullableString,
+    tutorOfferingId: nullableString,
     subjectName: nullableString,
+    contextName: nullableString,
+    teachingItemName: nullableString,
     teachingMode: nullableString,
     status: nullableString,
     numberOfSessions: z.number().nullish(),
@@ -136,7 +146,7 @@ export type ClassSessionSlot = {
   locationOrMeetingInfo?: string;
 };
 export type UpdateClassConfirmation = {
-  subjectId: string;
+  subjectId?: string;
   teachingMode: "ONLINE" | "OFFLINE";
   sessionDurationMinutes: number;
   numberOfSessions: number;
@@ -201,6 +211,13 @@ export const connectionWidgetsService = {
     const response: unknown = await apiClient.post(
       `/trial-sessions/${idPath(id)}/confirm`,
       { expectedVersion },
+    );
+    return dataOf(trialSessionSchema, response);
+  },
+  async cancelTrial(id: string, expectedVersion: number, reason: string) {
+    const response: unknown = await apiClient.post(
+      `/trial-sessions/${idPath(id)}/cancel`,
+      { expectedVersion, reason: reason.trim() },
     );
     return dataOf(trialSessionSchema, response);
   },

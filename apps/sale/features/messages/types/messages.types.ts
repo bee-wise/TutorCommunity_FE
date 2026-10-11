@@ -4,7 +4,12 @@ import type { ChatBusinessMessage } from "@workspace/core/services/chat-business
 // DOMAIN TYPES: Connection & Chat Room
 // ============================================================
 
-export type ConnectionStatus = "ACTIVE" | "CLOSED" | "CANCELLED" | "TIMEOUT" | "CONVERTED_TO_CLASS";
+export type ConnectionStatus =
+  | "ACTIVE"
+  | "CLOSED"
+  | "CANCELLED"
+  | "TIMEOUT"
+  | "CONVERTED_TO_CLASS";
 export type ConnectionStage =
   | "WAITING_FOR_TUTOR"
   | "DISCUSSING"
@@ -65,6 +70,7 @@ export interface ChatMessage {
   business?: ChatBusinessMessage | null;
   createdAt: string; // ISO string
   isRead: boolean;
+  isDraft?: boolean;
 }
 
 // ============================================================
@@ -85,6 +91,8 @@ export interface TrialSession {
   proposedBy: string;
   confirmedByTutorAt?: string | null;
   confirmedByLearnerAt?: string | null;
+  contextName?: string | null;
+  teachingItemName?: string | null;
 }
 
 export interface ClassConfirmation {
@@ -93,7 +101,9 @@ export interface ClassConfirmation {
   tutorId: string;
   learnerId: string;
   tutorOfferingId: string;
-  subject: string;
+  subject?: string;
+  contextName?: string | null;
+  teachingItemName?: string | null;
   teachingMode: "ONLINE" | "OFFLINE";
   pricePerSession: number;
   sessionDurationMinutes: number;
@@ -123,7 +133,9 @@ export interface PaymentRequest {
   providerTransactionId?: string | null;
   createdAt: string;
   tutorName: string;
-  subject: string;
+  subject?: string;
+  contextName?: string | null;
+  teachingItemName?: string | null;
   numberOfSessions: number;
 }
 

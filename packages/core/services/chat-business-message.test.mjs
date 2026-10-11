@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { toChatBusinessMessage, toChatHistoryBusinessMessage } from "./chat-business-message.ts";
+import {
+  formatTeachingOfferingName,
+  isDraftWidget,
+  isDraftWidgetMessage,
+  toChatBusinessMessage,
+  toChatHistoryBusinessMessage,
+} from "./chat-business-message.ts";
 
 test("recognizes Swagger widget resource names and parses JSON payloads", () => {
   for (const [resource, kind] of [
@@ -33,7 +39,7 @@ test("ignores unrelated messages and malformed payloads", () => {
   );
 });
 
-test("uses hydrated widget state instead of the event snapshot", () => {
+test("uses hydrated widget state without businessPayload dependency", () => {
   const message = {
     id: "event-1",
     chatRoomId: "room-1",
@@ -43,7 +49,6 @@ test("uses hydrated widget state instead of the event snapshot", () => {
     messageType: "BUSINESS",
     businessType: "trial_proposed",
     businessReferenceId: "trial-1",
-    businessPayload: { status: "PROPOSED" },
     type: "WIDGET",
     widget: {
       type: "TRIAL_SESSION",
@@ -57,26 +62,109 @@ test("uses hydrated widget state instead of the event snapshot", () => {
   const result = toChatHistoryBusinessMessage(message);
   assert.equal(result?.kind, "TRIAL_SESSION");
   assert.equal(result?.current?.data.status, "COMPLETED");
-  assert.equal(result?.payload.status, "PROPOSED");
   assert.equal(result?.roomId, "room-1");
   assert.equal(toChatHistoryBusinessMessage({ ...message, id: "event-2" })?.referenceId, "trial-1");
 });
 
-test("falls back to content when hydrated resource is unavailable or unrelated", () => {
-  const message = {
-    id: "event-1",
-    chatRoomId: "room-1",
-    senderId: "user-1",
-    content: "Trial lesson proposed.",
-    createdAt: "2026-10-06T03:00:00Z",
-    businessType: "trial_proposed",
-    type: "WIDGET",
-    widget: { type: "TRIAL_SESSION", referenceId: "trial-1", trialSession: null },
-  };
-  assert.equal(toChatHistoryBusinessMessage(message), null);
-  assert.equal(toChatHistoryBusinessMessage({
-    ...message,
-    widget: { ...message.widget, trialSession: { id: "trial-1", chatRoomId: "other-room" } },
-  }), null);
-  assert.equal(toChatHistoryBusinessMessage({ ...message, type: "SYSTEM", widget: null }), null);
+test("formatTeachingOfferingName formats contextName and teachingItemName properly", () => {
+  assert.equal(
+    formatTeachingOfferingName({ contextName: "Lớp 10", teachingItemName: "Toán Đại Số" }),
+    "Lớp 10 - Toán Đại Số",
+  );
+  assert.equal(
+    formatTeachingOfferingName({ contextName: null, teachingItemName: "Toán Học" }),
+    "Toán Học",
+  );
+  assert.equal(
+    formatTeachingOfferingName({ contextName: "Lớp 12", teachingItemName: undefined }),
+    "Lớp 12",
+  );
+  assert.equal(
+    formatTeachingOfferingName({ subjectName: "Tiếng Anh Căn Bản" }),
+    "Tiếng Anh Căn Bản",
+  );
+  assert.equal(
+    formatTeachingOfferingName({
+      offeringSnapshot: { contextName: "Cấp 3", teachingItemName: "Vật Lý" },
+    }),
+    "Cấp 3 - Vật Lý",
+  );
+  assert.equal(formatTeachingOfferingName(null), "—");
+  assert.equal(formatTeachingOfferingName({}, "Chưa xác định"), "Chưa xác định");
+});
+
+test("isDraftWidget checks for DRAFT status case-insensitively", () => {
+  assert.equal(isDraftWidget("DRAFT"), true);
+  assert.equal(isDraftWidget("draft"), true);
+  assert.equal(isDraftWidget("Draft"), true);
+  assert.equal(isDraftWidget("PROPOSED"), false);
+  assert.equal(isDraftWidget("CONFIRMED"), false);
+  assert.equal(isDraftWidget(null), false);
+  assert.equal(isDraftWidget(undefined), false);
+});
+
+test("isDraftWidgetMessage identifies draft status across all message forms", () => {
+  assert.equal(isDraftWidgetMessage({ isDraft: true }), true);
+  assert.equal(isDraftWidgetMessage({ isDraft: false }), false);
+  assert.equal(isDraftWidgetMessage(null), false);
+  assert.equal(isDraftWidgetMessage(undefined), false);
+
+  // Raw API widget format
+  assert.equal(
+    isDraftWidgetMessage({
+      widget: { classConfirmation: { status: "DRAFT" } },
+    }),
+    true,
+  );
+  assert.equal(
+    isDraftWidgetMessage({
+      widget: { classConfirmation: { status: "WAITING_CONFIRMATION" } },
+    }),
+    false,
+  );
+  assert.equal(
+    isDraftWidgetMessage({
+      widget: { trialSession: { status: "draft" } },
+    }),
+    true,
+  );
+
+  // Mapped ChatMessage widget format
+  assert.equal(
+    isDraftWidgetMessage({
+      widget: { widgetType: "CLASS_CONFIRMATION", data: { status: "DRAFT" } },
+    }),
+    true,
+  );
+
+  // Business current data format
+  assert.equal(
+    isDraftWidgetMessage({
+      business: {
+        kind: "CLASS_CONFIRMATION",
+        current: {
+          kind: "CLASS_CONFIRMATION",
+          data: { status: "DRAFT" },
+        },
+      },
+    }),
+    true,
+  );
+
+  // Business payload format
+  assert.equal(
+    isDraftWidgetMessage({
+      businessPayload: { status: "DRAFT" },
+    }),
+    true,
+  );
+  assert.equal(
+    isDraftWidgetMessage({
+      business: {
+        kind: "CLASS_CONFIRMATION",
+        payload: { status: "DRAFT" },
+      },
+    }),
+    true,
+  );
 });

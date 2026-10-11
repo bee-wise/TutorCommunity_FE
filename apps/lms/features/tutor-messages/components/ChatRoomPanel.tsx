@@ -149,7 +149,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         )}
 
         {/* Messages area */}
-        <div className="min-h-0 flex-1 overflow-y-auto bg-muted px-3 py-5 sm:px-6">
+        <div className="min-h-0 flex-1 overflow-y-auto [scroll-behavior:auto] bg-muted px-3 py-5 sm:px-6">
           <div className="mx-auto max-w-4xl space-y-1">
             {hasOlderMessages && (
               <button type="button" disabled={loadingOlderMessages} onClick={() => void loadOlderMessages()} className="mx-auto mb-3 block rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-primary disabled:opacity-50">

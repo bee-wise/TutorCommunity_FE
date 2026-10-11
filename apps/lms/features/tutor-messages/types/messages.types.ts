@@ -65,6 +65,7 @@ export interface ChatMessage {
   business?: ChatBusinessMessage | null;
   createdAt: string; // ISO string
   isRead: boolean;
+  isDraft?: boolean;
 }
 
 // ============================================================
@@ -85,6 +86,8 @@ export interface TrialSession {
   proposedBy: string;
   confirmedByTutorAt?: string | null;
   confirmedByLearnerAt?: string | null;
+  contextName?: string | null;
+  teachingItemName?: string | null;
 }
 
 export interface ClassConfirmation {
@@ -93,7 +96,9 @@ export interface ClassConfirmation {
   tutorId: string;
   learnerId: string;
   tutorOfferingId: string;
-  subject: string;
+  subject?: string;
+  contextName?: string | null;
+  teachingItemName?: string | null;
   teachingMode: "ONLINE" | "OFFLINE";
   pricePerSession: number;
   sessionDurationMinutes: number;
@@ -123,7 +128,9 @@ export interface PaymentRequest {
   providerTransactionId?: string | null;
   createdAt: string;
   tutorName: string;
-  subject: string;
+  subject?: string;
+  contextName?: string | null;
+  teachingItemName?: string | null;
   numberOfSessions: number;
 }
 
