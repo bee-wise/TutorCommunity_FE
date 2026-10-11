@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   UserGroupIcon as UsersThree,
 } from "@heroicons/react/24/outline";
@@ -32,17 +32,40 @@ export function ConversationTimeline({
   onLoadOlder: () => void;
   onRetry: () => void;
 }) {
+  const initialScrollDoneRef = useRef<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const visibleMessages = selectTrialWidgetTimelineMessages(
     messages,
     (message) => message.senderId === consultantId,
   );
+  const latestId = visibleMessages.at(-1)?.id;
+
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    const el = messagesEndRef.current;
+    if (!el) return;
+    const container = el.closest(".overflow-y-auto") as HTMLElement | null;
+    if (container && behavior === "auto") {
+      container.scrollTop = container.scrollHeight;
+    }
+    el.scrollIntoView({ behavior });
+  }, []);
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length, room.id]);
+    if (!latestId) return;
+    const isInitialForRoom = initialScrollDoneRef.current !== room.id;
+    if (isInitialForRoom) {
+      initialScrollDoneRef.current = room.id;
+      scrollToBottom("auto");
+      requestAnimationFrame(() => {
+        scrollToBottom("auto");
+      });
+    } else {
+      scrollToBottom("smooth");
+    }
+  }, [latestId, room.id, scrollToBottom]);
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto bg-muted/30 px-3 py-4 sm:px-6">
+    <div className="min-h-0 flex-1 overflow-y-auto [scroll-behavior:auto] bg-muted/30 px-3 py-4 sm:px-6">
       <div className="mx-auto max-w-4xl space-y-1">
         {hasOlder && (
           <div className="flex justify-center pb-2">

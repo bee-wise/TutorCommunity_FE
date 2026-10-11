@@ -42,11 +42,11 @@ export function Input({ hasError, className, ...props }: InputProps) {
     <input
       className={`w-full h-11 px-4 rounded-xl border text-sm bg-[#f8f9fc] text-[#0c0c0b] placeholder:text-[#0c0c0b]/40
         transition-all duration-200 outline-none
-        focus:bg-white focus:border-[#280f91] focus:ring-4 focus:ring-[#280f91]/10
+        focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10
         ${
           hasError
             ? "border-red-400 focus:border-red-500 focus:ring-red-400/20 bg-red-50/50"
-            : "border-[#0c0c0b]/10 hover:border-[#280f91]/40"
+            : "border-[#0c0c0b]/10 hover:border-primary/40"
         }
         ${className ?? ""}
       `}

@@ -75,7 +75,7 @@ export function PostCreateModal({ open, onOpenChange }: PostCreateModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-xl text-[#280f91]">
+          <DialogTitle className="text-xl text-primary">
             Tạo bài đăng tìm gia sư
           </DialogTitle>
         </DialogHeader>

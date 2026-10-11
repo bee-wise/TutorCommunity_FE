@@ -56,7 +56,7 @@ function TutorAvatar({ tutor }: { tutor: ApiTutorProfile }) {
       !tutor.avatarUrl ||
       tutor.avatarUrl.includes("demo.invalid") ? (
         <div
-          className="flex h-full w-full items-center justify-center text-2xl font-extrabold text-[#280f91]"
+          className="flex h-full w-full items-center justify-center text-2xl font-extrabold text-primary"
           aria-label={`Ảnh dự phòng của ${name}`}
         >
           {name
@@ -147,7 +147,10 @@ export function TutorCard({
   const ModeIcon = modeInfo.icon;
 
   const offeringTags = (tutor.teachingOfferings || [])
-    .map((o) => o.teachingItemName || o.proposal?.teachingItemName || o.programName)
+    .map(
+      (o) =>
+        o.teachingItemName || o.proposal?.teachingItemName || o.programName,
+    )
     .filter(Boolean) as string[];
 
   const tags = Array.from(new Set(offeringTags));
@@ -186,7 +189,7 @@ export function TutorCard({
   return (
     <>
       <article
-        className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border border-[#dce3f0] bg-white shadow-[0_4px_16px_rgba(16,24,40,0.04)] transition duration-300 hover:-translate-y-1 hover:border-[#280f91]/25 hover:shadow-[0_18px_38px_rgba(40,15,145,0.10)]"
+        className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border border-[#dce3f0] bg-white shadow-[0_4px_16px_rgba(16,24,40,0.04)] transition duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-[0_18px_38px_rgba(40,15,145,0.10)]"
         aria-label={`Gia sư ${name}`}
       >
         {isBestMatch && (
@@ -216,7 +219,7 @@ export function TutorCard({
           <button
             type="button"
             onClick={handleSave}
-            className={`absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border transition sm:right-5 sm:top-5 ${isSaved ? "border-[#f1b8c0] bg-[#fff1f3] text-[#c52f47]" : "border-[#dce3f0] bg-white text-[#667085] hover:border-[#280f91]/30 hover:bg-[#f7f5ff] hover:text-[#280f91]"}`}
+            className={`absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border transition sm:right-5 sm:top-5 ${isSaved ? "border-[#f1b8c0] bg-[#fff1f3] text-[#c52f47]" : "border-[#dce3f0] bg-white text-[#667085] hover:border-primary/30 hover:bg-[#f7f5ff] hover:text-primary"}`}
             aria-label={`${isSaved ? "Bỏ lưu" : "Lưu"} gia sư ${name}`}
           >
             <HeartIcon
@@ -238,7 +241,7 @@ export function TutorCard({
               <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-[#475467]">
                 <UserIcon
                   size={14}
-                  className="shrink-0 text-[#280f91]"
+                  className="shrink-0 text-primary"
                   aria-hidden="true"
                 />
                 <span className="line-clamp-1">
@@ -275,7 +278,7 @@ export function TutorCard({
               {visibleTags.map((tag, index) => (
                 <span
                   key={`${tag}-${index}`}
-                  className={`rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-[#280f91]" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
+                  className={`rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-primary" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
                 >
                   {tag}
                 </span>
@@ -315,7 +318,7 @@ export function TutorCard({
             <button
               type="button"
               onClick={() => setShowReason(true)}
-              className="mt-3 flex w-full items-center justify-between gap-3 rounded-xl bg-[#f5f2ff] px-3.5 py-2.5 text-left text-xs font-bold text-[#280f91] transition hover:bg-[#eeeaff]"
+              className="mt-3 flex w-full items-center justify-between gap-3 rounded-xl bg-[#f5f2ff] px-3.5 py-2.5 text-left text-xs font-bold text-primary transition hover:bg-[#eeeaff]"
             >
               <span className="flex items-center gap-2">
                 <InfoIcon size={16} weight="fill" aria-hidden="true" />
@@ -363,7 +366,7 @@ export function TutorCard({
               <Link
                 href={tutorProfileHref}
                 id={`${isLoggedIn ? "tutor-card-cta" : "tutor-card-view"}-${tutor.profileId}`}
-                className="inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/40"
+                className="inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-white shadow-[0_6px_16px_rgba(40,15,145,0.16)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
                 Xem hồ sơ
                 <ArrowRightIcon size={14} weight="bold" aria-hidden="true" />
@@ -401,7 +404,7 @@ export function TutorCard({
                 >
                   <div className="flex items-start justify-between gap-5 border-b border-[#e7eaf2] bg-[#faf9ff] px-5 py-5 sm:px-7 sm:py-6">
                     <div className="flex min-w-0 items-start gap-3.5">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#280f91] text-white shadow-[0_8px_20px_rgba(40,15,145,0.2)]">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-[0_8px_20px_rgba(40,15,145,0.2)]">
                         <SparkleIcon
                           size={21}
                           weight="fill"
@@ -409,7 +412,7 @@ export function TutorCard({
                         />
                       </div>
                       <div className="min-w-0">
-                        <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-[#280f91]/65">
+                        <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-primary/65">
                           BeeWise AI phân tích
                         </p>
                         <h3
@@ -424,7 +427,7 @@ export function TutorCard({
                     <button
                       type="button"
                       onClick={() => setShowReason(false)}
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#dce3f0] bg-white text-[#667085] shadow-sm transition hover:border-[#280f91]/25 hover:bg-[#f5f2ff] hover:text-[#280f91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/30"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#dce3f0] bg-white text-[#667085] shadow-sm transition hover:border-primary/25 hover:bg-[#f5f2ff] hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                       aria-label="Đóng cửa sổ lý do phù hợp"
                     >
                       <XIcon size={19} weight="bold" aria-hidden="true" />
@@ -456,7 +459,7 @@ export function TutorCard({
                             key={index}
                             className="flex gap-3 rounded-xl border border-[#e7eaf2] p-4"
                           >
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#280f91]/8 text-xs font-extrabold text-[#280f91]">
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/8 text-xs font-extrabold text-primary">
                               {index + 1}
                             </span>
                             <p className="pt-0.5 text-sm leading-6 text-[#344054]">
@@ -471,13 +474,13 @@ export function TutorCard({
                     <button
                       type="button"
                       onClick={() => setShowReason(false)}
-                      className="inline-flex h-11 items-center justify-center rounded-xl border border-[#dce3f0] px-5 text-sm font-bold text-[#475467] transition hover:bg-[#f8fafc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/25"
+                      className="inline-flex h-11 items-center justify-center rounded-xl border border-[#dce3f0] px-5 text-sm font-bold text-[#475467] transition hover:bg-[#f8fafc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
                     >
                       Đóng
                     </button>
                     <Link
                       href={tutorProfileHref}
-                      className="inline-flex h-11 items-center justify-center rounded-xl bg-[#280f91] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(40,15,145,0.18)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]/35 focus-visible:ring-offset-2"
+                      className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(40,15,145,0.18)] transition hover:bg-[#1f0b70] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2"
                     >
                       Xem hồ sơ {name}
                     </Link>

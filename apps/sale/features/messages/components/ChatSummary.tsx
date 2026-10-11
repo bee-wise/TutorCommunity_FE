@@ -7,9 +7,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { useMessages } from "../hooks/useMessages";
 import type { ChatRoom } from "../types/messages.types";
-import { STAGE_LABELS, STAGE_COLORS, formatRelativeTime } from "../constants/messages.utils";
+import {
+  STAGE_LABELS,
+  STAGE_COLORS,
+  formatRelativeTime,
+} from "../constants/messages.utils";
 
-const card = "rounded-2xl border border-[#e5eaf5] bg-white p-5 sm:p-6 shadow-sm";
+const card =
+  "rounded-2xl border border-[#e5eaf5] bg-white p-5 sm:p-6 shadow-sm";
 
 function StageBadge({ stage }: { stage: string }) {
   return (
@@ -27,9 +32,9 @@ export function ChatRow({ room }: { room: ChatRoom }) {
   return (
     <Link
       href={`/tutor/messages/${room.id}`}
-      className="flex flex-col gap-2 rounded-xl border border-[#e5eaf5] p-4 transition hover:border-[#280f91]/30 hover:bg-[#faf9ff] sm:flex-row sm:items-center"
+      className="flex flex-col gap-2 rounded-xl border border-[#e5eaf5] p-4 transition hover:border-primary/30 hover:bg-[#faf9ff] sm:flex-row sm:items-center"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#cfe1fa] text-sm font-black text-[#280f91]">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#cfe1fa] text-sm font-black text-primary">
         {room.learner.initials}
       </div>
       <div className="min-w-0 flex-1">
@@ -38,21 +43,25 @@ export function ChatRow({ room }: { room: ChatRoom }) {
           {room.unreadCount > 0 && (
             <span
               aria-label={`${room.unreadCount} tin nhắn chưa đọc`}
-              className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ffc500] px-1 text-[9px] font-black text-[#280f91]"
+              className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ffc500] px-1 text-[9px] font-black text-primary"
             >
               {room.unreadCount}
             </span>
           )}
         </div>
         <p className="text-xs text-[#716c83]">
-          {room.hasConnectionDetails ? `${room.subject} ${room.gradeLevel}` : "Cuộc trò chuyện kết nối"}
+          {room.hasConnectionDetails
+            ? `${room.subject} ${room.gradeLevel}`
+            : "Cuộc trò chuyện kết nối"}
         </p>
         <p className="mt-1 truncate text-sm text-[#0c0c0b]">
           {room.lastMessage ?? "Mở cuộc trò chuyện"}
         </p>
-        {room.hasConnectionDetails && <div className="mt-1.5">
-          <StageBadge stage={room.connectionStage} />
-        </div>}
+        {room.hasConnectionDetails && (
+          <div className="mt-1.5">
+            <StageBadge stage={room.connectionStage} />
+          </div>
+        )}
       </div>
       <div className="flex items-center gap-1.5 text-xs text-[#716c83]">
         {room.lastMessageAt ? formatRelativeTime(room.lastMessageAt) : ""}
@@ -69,8 +78,13 @@ export function ChatSummary() {
   return (
     <section className={card}>
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-extrabold text-[#280f91]">Tin nhắn và kết nối gần đây</h2>
-        <Link className="text-sm font-bold text-[#280f91] hover:underline" href="/tutor/messages">
+        <h2 className="text-lg font-extrabold text-primary">
+          Tin nhắn và kết nối gần đây
+        </h2>
+        <Link
+          className="text-sm font-bold text-primary hover:underline"
+          href="/tutor/messages"
+        >
           Xem tất cả
         </Link>
       </div>
@@ -83,19 +97,35 @@ export function ChatSummary() {
           ] as const
         ).map(([label, value]) => (
           <div key={label} className="rounded-xl bg-[#f4f1ff] p-3">
-            <strong className="block text-xl text-[#280f91]">{value}</strong>
+            <strong className="block text-xl text-primary">{value}</strong>
             <span className="text-xs text-[#66617c]">{label}</span>
           </div>
         ))}
       </div>
-      {loading ? <p className="py-6 text-center text-sm text-muted-foreground">Đang tải cuộc trò chuyện...</p> : error ? <div className="py-6 text-center text-sm text-muted-foreground">Không tải được cuộc trò chuyện. <button type="button" onClick={() => void refetch()} className="font-semibold text-primary underline">Thử lại</button></div> : rooms.length === 0 ? (
+      {loading ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          Đang tải cuộc trò chuyện...
+        </p>
+      ) : error ? (
+        <div className="py-6 text-center text-sm text-muted-foreground">
+          Không tải được cuộc trò chuyện.{" "}
+          <button
+            type="button"
+            onClick={() => void refetch()}
+            className="font-semibold text-primary underline"
+          >
+            Thử lại
+          </button>
+        </div>
+      ) : rooms.length === 0 ? (
         <div className="flex flex-col items-center rounded-xl border border-dashed border-[#cbd6ea] p-8 text-center">
-          <span className="mb-3 text-[#280f91]">
+          <span className="mb-3 text-primary">
             <MessageCircle />
           </span>
           <strong>Chưa có cuộc trò chuyện mới</strong>
           <p className="mt-1 max-w-md text-sm text-[#716c83]">
-            Khi Learner kết nối với hồ sơ của bạn, phòng chat sẽ xuất hiện tại đây.
+            Khi Learner kết nối với hồ sơ của bạn, phòng chat sẽ xuất hiện tại
+            đây.
           </p>
         </div>
       ) : (

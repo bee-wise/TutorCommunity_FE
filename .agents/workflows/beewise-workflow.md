@@ -515,13 +515,13 @@ Every agent executing a task must follow these steps:
 
 # 16. Terminal Requirement
 
-> **Required Terminal:** Git Bash
+> **Required Terminal:** PowerShell
 
-All project commands and scripts must be compatible with **Git Bash (Bash shell)**.
+All project commands and scripts must be compatible with **PowerShell**.
 
-- Always run commands with standard Bash syntax (`mkdir -p`, `rm -rf`, `cp -r`, `mv`).
-- Do **not** use PowerShell cmdlets (`New-Item`, `Remove-Item`, `Copy-Item`).
-- If running commands in VS Code, ensure the terminal profile is set to **Git Bash**.
+- Run commands with PowerShell syntax and cmdlets (`New-Item`, `Remove-Item`, `Copy-Item`, `Move-Item`).
+- Do **not** use Git Bash or Bash-specific syntax (`mkdir -p`, `rm -rf`, `cp -r`).
+- If running commands in VS Code, ensure the terminal profile is set to **PowerShell**.
 
 ---
 

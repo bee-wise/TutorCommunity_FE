@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from '@workspace/core/helpers/utils';
+import { cn } from "@workspace/core/helpers/utils";
 import type { Session } from "../types/schedule.types";
 import { getSessionsForDate } from "../hooks/useScheduleFilters";
 import { SessionBadge } from "./SessionBadge";
@@ -14,9 +14,18 @@ interface CalendarViewProps {
 
 const DAY_NAMES = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 const MONTH_NAMES = [
-  "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4",
-  "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8",
-  "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12",
+  "Tháng 1",
+  "Tháng 2",
+  "Tháng 3",
+  "Tháng 4",
+  "Tháng 5",
+  "Tháng 6",
+  "Tháng 7",
+  "Tháng 8",
+  "Tháng 9",
+  "Tháng 10",
+  "Tháng 11",
+  "Tháng 12",
 ];
 
 // Reference today
@@ -126,7 +135,9 @@ export function CalendarView({ sessions, onSessionClick }: CalendarViewProps) {
             : null;
           const isToday = dateStr === TODAY_STR;
           const isWeekend = i % 7 >= 5;
-          const daySessions = dateStr ? getSessionsForDate(sessions, dateStr) : [];
+          const daySessions = dateStr
+            ? getSessionsForDate(sessions, dateStr)
+            : [];
           const isLastRow = i >= totalCells - 7;
 
           return (
@@ -148,7 +159,7 @@ export function CalendarView({ sessions, onSessionClick }: CalendarViewProps) {
                       className={cn(
                         "flex items-center justify-center size-6 rounded-full text-xs font-semibold leading-none",
                         isToday
-                          ? "bg-[#280f91] text-white"
+                          ? "bg-primary text-white"
                           : isWeekend
                             ? "text-muted-foreground/60"
                             : "text-foreground",

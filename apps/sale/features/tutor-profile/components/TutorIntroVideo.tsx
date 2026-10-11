@@ -45,7 +45,7 @@ export function TutorIntroVideo({ videoUrl }: TutorIntroVideoProps) {
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  className="group flex h-16 w-16 items-center justify-center rounded-full bg-[#280f91] text-white shadow-2xl shadow-[#280f91]/50 transition duration-300 hover:scale-110 hover:bg-[#3815c4] active:scale-95"
+                  className="group flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-2xl shadow-primary/50 transition duration-300 hover:scale-110 hover:bg-[#3815c4] active:scale-95"
                   aria-label="Phát video giới thiệu"
                 >
                   <Play
@@ -81,4 +81,3 @@ export function TutorIntroVideo({ videoUrl }: TutorIntroVideoProps) {
     </SectionShell>
   );
 }
-

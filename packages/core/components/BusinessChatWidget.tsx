@@ -22,6 +22,8 @@ import {
   ArrowRightIcon as ArrowRight,
   DocumentTextIcon as FileText,
   ReceiptPercentIcon as Receipt,
+  XCircleIcon as XCircle,
+  PencilSquareIcon as PencilSquare,
 } from "@heroicons/react/24/outline";
 import { getApiErrorMessage } from "../sys-libs/error-handler";
 import {
@@ -29,11 +31,21 @@ import {
   type ClassSessionSlot,
 } from "../services/connection-widgets.service";
 import {
+  formatTeachingOfferingName,
+  isDraftWidget,
   payloadString,
   type ChatBusinessMessage,
 } from "../services/chat-business-message";
 import { DateTimePicker } from "@workspace/ui/components/ui/date-time-picker";
 import { Button } from "@workspace/ui/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@workspace/ui/components/ui/dialog";
 import { queryKeys } from "../sys-libs/queryKeys";
 import { TrialJoinButton } from "./TrialJoinButton";
 
@@ -159,11 +171,13 @@ function Frame({
   icon: Icon,
   title,
   status,
+  statusAction,
   children,
 }: {
   icon: typeof Sparkle;
   title: string;
   status?: string | null;
+  statusAction?: ReactNode;
   children: ReactNode;
 }) {
   const currentStatus = status ? statusConfig[status] : undefined;
@@ -179,16 +193,19 @@ function Frame({
             {title}
           </h3>
         </div>
-        {status && (
-          <span
-            className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[11px] font-bold tracking-tight ${
-              currentStatus?.className ??
-              "bg-card text-primary border-primary/25"
-            }`}
-          >
-            {currentStatus?.label ?? status}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {status && (
+            <span
+              className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[11px] font-bold tracking-tight ${
+                currentStatus?.className ??
+                "bg-card text-primary border-primary/25"
+              }`}
+            >
+              {currentStatus?.label ?? status}
+            </span>
+          )}
+          {statusAction}
+        </div>
       </header>
       <div className="space-y-3 p-4 text-xs">{children}</div>
     </section>
@@ -296,6 +313,11 @@ function TrialWidget({ business, currentRole }: Props) {
       : query.data;
   const payload = business.payload;
   const status = data?.status;
+
+  if (currentRole !== "CONSULTANT" && isDraftWidget(status)) {
+    return null;
+  }
+
   const joinUrl =
     meetingUrl(data?.zoomUrl) ?? meetingUrl(data?.locationOrMeetingInfo);
   const meetingInfo =
@@ -308,21 +330,50 @@ function TrialWidget({ business, currentRole }: Props) {
   const confirmed =
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
 
-  const subjectDisplay = (() => {
-    const context = data?.contextName || payloadString(payload, "contextName");
-    const item =
-      data?.teachingItemName || payloadString(payload, "teachingItemName");
-    if (context && item) {
-      return `${context} - ${item}`;
+  const subjectDisplay = formatTeachingOfferingName(data);
+
+  const scheduledEndAtValue =
+    data?.scheduledEndAt ??
+    (business.current ? undefined : payloadString(payload, "scheduledEndAt"));
+  const scheduledEndTime = scheduledEndAtValue
+    ? new Date(scheduledEndAtValue).getTime()
+    : NaN;
+  const isEnded =
+    status !== "CANCELLED" &&
+    !Number.isNaN(scheduledEndTime) &&
+    scheduledEndTime < Date.now();
+
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelError, setCancelError] = useState("");
+  const [cancelBusy, setCancelBusy] = useState(false);
+
+  async function cancelTrial() {
+    if (!id || data?.version === undefined || data?.version === null) return;
+    if (!cancelReason.trim()) {
+      setCancelError("Vui lòng nhập lý do hủy buổi học thử.");
+      return;
     }
-    if (item) return item;
-    if (context) return context;
-    return (
-      data?.subject ??
-      (business.current ? undefined : payloadString(payload, "subject")) ??
-      "—"
-    );
-  })();
+    setCancelBusy(true);
+    setCancelError("");
+    try {
+      await connectionWidgetsService.cancelTrial(
+        id,
+        data.version,
+        cancelReason.trim(),
+      );
+      await queryClient.invalidateQueries({
+        queryKey: ["connection-widget", "trial", id],
+      });
+      await refreshChatHistory(queryClient, business.roomId);
+      setShowCancelModal(false);
+      setCancelReason("");
+    } catch (caught) {
+      setCancelError(getApiErrorMessage(caught));
+    } finally {
+      setCancelBusy(false);
+    }
+  }
 
   async function confirm() {
     if (!id || data?.version === undefined || data?.version === null) return;
@@ -342,101 +393,260 @@ function TrialWidget({ business, currentRole }: Props) {
   }
 
   return (
-    <Frame icon={GraduationCap} title="Đề xuất lịch học thử" status={status}>
-      <div className="space-y-2 border-b border-border/60 pb-3">
-        <Row label="Môn học" value={subjectDisplay} />
-        <Row
-          label="Bắt đầu"
-          value={dateTime(
-            data?.scheduledStartAt ??
-              (business.current
-                ? undefined
-                : payloadString(payload, "scheduledStartAt")),
-          )}
-        />
-        <Row
-          label="Kết thúc"
-          value={dateTime(
-            data?.scheduledEndAt ??
-              (business.current
-                ? undefined
-                : payloadString(payload, "scheduledEndAt")),
-          )}
-        />
-        <Row
-          label="Hình thức"
-          value={
-            data?.teachingMode === "ONLINE" ? (
-              <span className="inline-flex items-center gap-1 text-primary">
-                <VideoCamera width={13} height={13} /> Trực tuyến
-              </span>
-            ) : data?.teachingMode === "OFFLINE" ? (
-              <span className="inline-flex items-center gap-1">
-                <MapPin width={13} height={13} /> Trực tiếp
-              </span>
-            ) : (
-              "—"
-            )
-          }
-        />
-        {meetingInfo && !isOnlineRoom && (
-          <Row label="Địa điểm" value={meetingInfo} />
-        )}
-      </div>
-
-      {data && meetingInfo && isOnlineRoom && (
-        <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5">
-          <div className="flex items-center gap-1.5 font-semibold text-primary">
-            <VideoCamera width={14} height={14} aria-hidden="true" />
-            <span>Phòng học trực tuyến</span>
-          </div>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="min-w-0 basis-40 flex-1 break-all font-medium leading-5 text-foreground/80 select-text">
-              {meetingInfo}
-            </span>
-            {joinUrl && <TrialJoinButton trial={data} href={joinUrl} />}
-          </div>
-        </div>
-      )}
-
-      {data?.note && (
-        <div className="rounded-xl border border-border/80 bg-background p-2.5 text-muted-foreground text-[11px] leading-relaxed">
-          <span className="font-semibold text-foreground">Ghi chú: </span>
-          {data.note}
-        </div>
-      )}
-
-      <ConfirmationStatusGroup
-        tutorConfirmedAt={data?.tutorConfirmedAt}
-        learnerConfirmedAt={data?.learnerConfirmedAt}
-      />
-
-      {status === "PROPOSED" &&
-        (currentRole === "TUTOR" || currentRole === "LEARNER") &&
-        !confirmed && (
-          <Button
-            type="button"
-            onClick={() => void confirm()}
-            disabled={busy || !data}
-            className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
-          >
-            {busy ? (
-              <>
-                <CircleNotch width={14} height={14} className="animate-spin" />
-                <span>Đang xác nhận...</span>
-              </>
-            ) : (
-              <>
-                <Check width={14} height={14} />
-                <span>Xác nhận lịch học thử</span>
-              </>
+    <div className="w-full max-w-[440px]">
+      <Frame icon={GraduationCap} title="Đề xuất lịch học thử" status={status}>
+        <div className="space-y-2 border-b border-border/60 pb-3">
+          <Row label="Môn học" value={subjectDisplay} />
+          <Row
+            label="Bắt đầu"
+            value={dateTime(
+              data?.scheduledStartAt ??
+                (business.current
+                  ? undefined
+                  : payloadString(payload, "scheduledStartAt")),
             )}
-          </Button>
+          />
+          <Row
+            label="Kết thúc"
+            value={dateTime(
+              data?.scheduledEndAt ??
+                (business.current
+                  ? undefined
+                  : payloadString(payload, "scheduledEndAt")),
+            )}
+          />
+          <Row
+            label="Hình thức"
+            value={
+              data?.teachingMode === "ONLINE" ? (
+                <span className="inline-flex items-center gap-1 text-primary">
+                  <VideoCamera width={13} height={13} /> Trực tuyến
+                </span>
+              ) : data?.teachingMode === "OFFLINE" ? (
+                <span className="inline-flex items-center gap-1">
+                  <MapPin width={13} height={13} /> Trực tiếp
+                </span>
+              ) : (
+                "—"
+              )
+            }
+          />
+          {meetingInfo && !isOnlineRoom && (
+            <Row label="Địa điểm" value={meetingInfo} />
+          )}
+        </div>
+
+        {data && meetingInfo && isOnlineRoom && (
+          <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5">
+            <div className="flex items-center gap-1.5 font-semibold text-primary">
+              <VideoCamera width={14} height={14} aria-hidden="true" />
+              <span>Phòng học trực tuyến</span>
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="min-w-0 basis-40 flex-1 break-all font-medium leading-5 text-foreground/80 select-text">
+                {meetingInfo}
+              </span>
+              {joinUrl && <TrialJoinButton trial={data} href={joinUrl} />}
+            </div>
+          </div>
         )}
 
-      {query.error && <ErrorBanner message={getApiErrorMessage(query.error)} />}
-      {error && <ErrorBanner message={error} />}
-    </Frame>
+        {data?.note && (
+          <div className="rounded-xl border border-border/80 bg-background p-2.5 text-muted-foreground text-[11px] leading-relaxed">
+            <span className="font-semibold text-foreground">Ghi chú: </span>
+            {data.note}
+          </div>
+        )}
+
+        <ConfirmationStatusGroup
+          tutorConfirmedAt={data?.tutorConfirmedAt}
+          learnerConfirmedAt={data?.learnerConfirmedAt}
+        />
+
+        {status === "CANCELLED" &&
+          (data?.cancellationReason || data?.completionNote) && (
+            <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-2.5 text-destructive text-[11px] leading-relaxed">
+              <span className="font-semibold text-destructive">
+                Lý do hủy:{" "}
+              </span>
+              {data.cancellationReason || data.completionNote}
+            </div>
+          )}
+
+        {status === "PROPOSED" &&
+          (currentRole === "TUTOR" || currentRole === "LEARNER") &&
+          !confirmed &&
+          !isEnded && (
+            <Button
+              type="button"
+              onClick={() => void confirm()}
+              disabled={busy || !data}
+              className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
+            >
+              {busy ? (
+                <>
+                  <CircleNotch
+                    width={14}
+                    height={14}
+                    className="animate-spin"
+                  />
+                  <span>Đang xác nhận...</span>
+                </>
+              ) : (
+                <>
+                  <Check width={14} height={14} />
+                  <span>Xác nhận lịch học thử</span>
+                </>
+              )}
+            </Button>
+          )}
+
+        {currentRole === "CONSULTANT" &&
+          status !== "COMPLETED" &&
+          status !== "CANCELLED" &&
+          data && (
+            <div className="pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setCancelReason("");
+                  setCancelError("");
+                  setShowCancelModal(true);
+                }}
+                disabled={busy || cancelBusy}
+                className="h-10 w-full rounded-xl border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/40 font-nunito text-xs font-bold transition-all active:scale-[0.98]"
+              >
+                <XCircle width={15} height={15} className="shrink-0" />
+                <span>Hủy buổi học thử</span>
+              </Button>
+            </div>
+          )}
+
+        {query.error && (
+          <ErrorBanner message={getApiErrorMessage(query.error)} />
+        )}
+        {error && <ErrorBanner message={error} />}
+
+        {currentRole === "CONSULTANT" && (
+          <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
+            <DialogContent className="max-w-md rounded-2xl p-5">
+              <DialogHeader className="space-y-1.5 text-left">
+                <div className="flex items-center gap-2 text-destructive">
+                  <XCircle width={20} height={20} className="shrink-0" />
+                  <DialogTitle className="font-nunito text-base font-extrabold text-foreground">
+                    Hủy buổi học thử
+                  </DialogTitle>
+                </div>
+                <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
+                  Buổi học thử sẽ được chuyển sang trạng thái{" "}
+                  <strong>Đã hủy</strong>. Thao tác này dành riêng cho Tư vấn
+                  viên và không thể hoàn tác.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-2 py-2">
+                <label
+                  htmlFor="cancel-trial-reason"
+                  className="block text-xs font-bold text-foreground"
+                >
+                  Lý do hủy buổi học thử{" "}
+                  <span className="text-destructive">*</span>
+                </label>
+                <textarea
+                  id="cancel-trial-reason"
+                  rows={3}
+                  value={cancelReason}
+                  onChange={(e) => {
+                    setCancelReason(e.target.value);
+                    if (cancelError) setCancelError("");
+                  }}
+                  placeholder="Nhập lý do hủy (ví dụ: Học viên bận đột xuất, Gia sư xin dời lịch mới...)"
+                  className="w-full resize-none rounded-xl border border-input bg-background p-2.5 text-xs text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 transition-all"
+                  disabled={cancelBusy}
+                />
+                {cancelError && <ErrorBanner message={cancelError} />}
+              </div>
+
+              <DialogFooter className="flex flex-row justify-end gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowCancelModal(false)}
+                  disabled={cancelBusy}
+                  className="h-9 rounded-xl px-4 text-xs font-semibold"
+                >
+                  Quay lại
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => void cancelTrial()}
+                  disabled={cancelBusy || !cancelReason.trim()}
+                  className="h-9 rounded-xl px-4 text-xs font-bold shadow-xs transition-all active:scale-95"
+                >
+                  {cancelBusy ? (
+                    <>
+                      <CircleNotch
+                        width={14}
+                        height={14}
+                        className="animate-spin"
+                      />
+                      <span>Đang hủy...</span>
+                    </>
+                  ) : (
+                    <span>Xác nhận hủy</span>
+                  )}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+      </Frame>
+
+      {isEnded && (
+        <div className="my-3 flex items-center gap-2 w-full select-none" role="status">
+          <div className="h-px flex-1 bg-border/80" />
+          <div
+            className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border border-amber-500/35 bg-card px-3 py-1 text-center text-[11px] font-bold text-amber-900 dark:text-amber-200 shadow-2xs backdrop-blur-xs transition-all ${
+              currentRole === "CONSULTANT"
+                ? "cursor-pointer hover:bg-muted active:scale-95"
+                : ""
+            }`}
+            title={
+              currentRole === "CONSULTANT"
+                ? "Nhấn để mở công cụ xác nhận lớp học"
+                : undefined
+            }
+            onClick={
+              currentRole === "CONSULTANT"
+                ? () => {
+                    window.dispatchEvent(
+                      new CustomEvent("beewise:open-consultant-widget", {
+                        detail: {
+                          tab: "confirmation",
+                          roomId: business.roomId,
+                        },
+                      }),
+                    );
+                  }
+                : undefined
+            }
+          >
+            <Clock
+              width={14}
+              height={14}
+              className="shrink-0 text-amber-600 dark:text-amber-400"
+              aria-hidden="true"
+            />
+            <span className="leading-tight">
+              Buổi học thử đã kết thúc, vui lòng đợi tư vấn viên gửi xác nhận buổi học.
+            </span>
+          </div>
+          <div className="h-px flex-1 bg-border/80" />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -457,6 +667,11 @@ function ConfirmationWidget({ business, currentRole }: Props) {
       ? business.current.data
       : query.data;
   const status = data?.status;
+
+  if (currentRole !== "CONSULTANT" && isDraftWidget(status)) {
+    return null;
+  }
+
   const confirmed =
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
 
@@ -477,19 +692,42 @@ function ConfirmationWidget({ business, currentRole }: Props) {
     }
   }
 
+  function handleOpenEdit() {
+    const confirmationId = data?.id ?? id;
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("beewise:open-consultant-widget", {
+          detail: {
+            tab: "confirmation",
+            confirmationId,
+            roomId: business.roomId,
+          },
+        }),
+      );
+    }
+  }
+
   return (
-    <Frame icon={FileText} title="Xác nhận lớp học" status={status}>
+    <Frame
+      icon={FileText}
+      title="Xác nhận lớp học"
+      status={status}
+      statusAction={
+        isDraftWidget(status) && currentRole === "CONSULTANT" ? (
+          <button
+            type="button"
+            onClick={handleOpenEdit}
+            className="inline-flex size-6 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground transition-all active:scale-95 shadow-2xs"
+            title="Chỉnh sửa điều khoản lớp học"
+            aria-label="Chỉnh sửa điều khoản lớp học"
+          >
+            <PencilSquare width={13} height={13} aria-hidden="true" />
+          </button>
+        ) : undefined
+      }
+    >
       <div className="space-y-2 border-b border-border/60 pb-3">
-        <Row
-          label="Môn học"
-          value={
-            data?.subjectName ??
-            (business.current
-              ? undefined
-              : payloadString(business.payload, "subjectName")) ??
-            "—"
-          }
-        />
+        <Row label="Môn học" value={formatTeachingOfferingName(data)} />
         <Row
           label="Hình thức"
           value={
@@ -502,7 +740,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
                 <MapPin width={13} height={13} /> Trực tiếp
               </span>
             ) : (
-              "—"
+              "Đang thảo luận"
             )
           }
         />
@@ -511,12 +749,16 @@ function ConfirmationWidget({ business, currentRole }: Props) {
           value={
             data?.sessionDurationMinutes
               ? `${data.sessionDurationMinutes} phút / buổi`
-              : "—"
+              : "Đang thảo luận"
           }
         />
         <Row
           label="Số buổi"
-          value={data?.numberOfSessions ? `${data.numberOfSessions} buổi` : "—"}
+          value={
+            data?.numberOfSessions
+              ? `${data.numberOfSessions} buổi`
+              : "Đang thảo luận"
+          }
         />
         <Row label="Học phí mỗi giờ" value={money(data?.pricePerHour)} />
         <Row label="Tổng học phí" value={money(data?.totalAmount)} highlight />
@@ -695,6 +937,11 @@ function SessionsWidget({ business, currentRole }: Props) {
     business.current?.kind === "CLASS_SCHEDULE"
       ? business.current.data
       : undefined;
+
+  if (currentRole !== "CONSULTANT" && isDraftWidget(schedule?.status)) {
+    return null;
+  }
+
   const sessions = schedule?.sessions ?? query.data;
 
   async function submit(event: FormEvent) {
@@ -762,7 +1009,7 @@ function SessionsWidget({ business, currentRole }: Props) {
       <Row label="Mã lớp học" value={classId ?? "—"} />
       {schedule && (
         <div className="space-y-1 rounded-xl border border-border/80 bg-background p-3">
-          <Row label="Môn học" value={schedule.subjectName ?? "—"} />
+          <Row label="Môn học" value={formatTeachingOfferingName(schedule)} />
           <Row label="Trạng thái lớp" value={schedule.status ?? "—"} />
           <Row
             label="Số buổi dự kiến"
@@ -913,6 +1160,13 @@ function SessionsWidget({ business, currentRole }: Props) {
 }
 
 export function BusinessChatWidget(props: Props) {
+  if (
+    props.currentRole !== "CONSULTANT" &&
+    isDraftWidget(props.business.current?.data?.status)
+  ) {
+    return null;
+  }
+
   switch (props.business.kind) {
     case "TRIAL_SESSION":
       return <TrialWidget {...props} />;

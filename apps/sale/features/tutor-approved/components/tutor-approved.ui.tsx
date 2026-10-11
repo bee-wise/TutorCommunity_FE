@@ -61,9 +61,7 @@ export function TutorApprovedShell({
   if (isChat) {
     return (
       <div className="flex h-[100dvh] flex-col overflow-hidden bg-[#f7f9fd] text-[#17142f]">
-        <main className="flex-1 overflow-hidden">
-          {children}
-        </main>
+        <main className="flex-1 overflow-hidden">{children}</main>
       </div>
     );
   }
@@ -114,7 +112,7 @@ function SectionTitle({
 }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
-      <h2 className="text-lg font-extrabold text-[#280f91]">{title}</h2>
+      <h2 className="text-lg font-extrabold text-primary">{title}</h2>
       {action}
     </div>
   );
@@ -160,14 +158,16 @@ function WelcomeBanner() {
       : "Hồ sơ của bạn đã được xác thực và đang hiển thị trên BeeWise. Bạn có thể trao đổi với học viên, cập nhật lịch rảnh và quản lý lớp học trong Tutor LMS.";
   return (
     <section
-      className={`overflow-hidden rounded-3xl p-6 text-white shadow-xl md:p-8 ${expired ? "bg-[#905b0f]" : expiring ? "bg-[#5b3d00]" : "bg-[#280f91]"}`}
+      className={`overflow-hidden rounded-3xl p-6 text-white shadow-xl md:p-8 ${expired ? "bg-[#905b0f]" : expiring ? "bg-[#5b3d00]" : "bg-primary"}`}
     >
       <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
         <div>
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#ffc510]">
             Tutor Home
           </p>
-          <h1 className="font-nunito text-2xl font-black md:text-4xl">{title}</h1>
+          <h1 className="font-nunito text-2xl font-black md:text-4xl">
+            {title}
+          </h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-white/80 md:text-base">
             {description}
           </p>
@@ -179,7 +179,7 @@ function WelcomeBanner() {
               {expired ? "Hồ sơ đang tạm ẩn" : "Hồ sơ đang hiển thị"}
             </span>
             {!expired && (
-              <span className={`${badge} bg-[#ffc510] text-[#280f91]`}>
+              <span className={`${badge} bg-[#ffc510] text-primary`}>
                 Sẵn sàng nhận lớp
               </span>
             )}
@@ -189,14 +189,14 @@ function WelcomeBanner() {
           {expired || expiring ? (
             <Button
               onClick={() => dispatch({ type: "open-renewal" })}
-              className="rounded-full bg-[#ffc510] text-[#280f91] hover:bg-[#ffd54f]"
+              className="rounded-full bg-[#ffc510] text-primary hover:bg-[#ffd54f]"
             >
               {expired ? "Gia hạn gói" : "Gia hạn ngay"}
             </Button>
           ) : (
             <Button
               asChild
-              className="rounded-full bg-[#ffc510] text-[#280f91] hover:bg-[#ffd54f]"
+              className="rounded-full bg-[#ffc510] text-primary hover:bg-[#ffd54f]"
             >
               <Link href="/tutor/profile/public">Xem hồ sơ công khai</Link>
             </Button>
@@ -218,8 +218,6 @@ function WelcomeBanner() {
   );
 }
 
-
-
 function PublicProfileCard() {
   const { state } = useTutorApproved();
   const p = state.profile;
@@ -234,12 +232,12 @@ function PublicProfileCard() {
         }
       />
       <div className="flex flex-col gap-5 sm:flex-row">
-        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-[#cfe1fa] text-2xl font-black text-[#280f91]">
+        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-[#cfe1fa] text-2xl font-black text-primary">
           MA
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="text-xl font-black">{p.fullName}</h3>
-          <p className="font-bold text-[#280f91]">{p.title}</p>
+          <p className="font-bold text-primary">{p.title}</p>
           <p className="mt-2 text-sm leading-6 text-[#66617c]">
             {p.introduction}
           </p>
@@ -333,7 +331,7 @@ function ListingCard() {
             : "Đã hết hạn"}
         </span>
       </div>
-      <p className="mt-2 text-2xl font-black text-[#280f91]">50.000 VNĐ</p>
+      <p className="mt-2 text-2xl font-black text-primary">50.000 VNĐ</p>
       <dl className="mt-4 space-y-2 text-sm">
         <div className="flex justify-between">
           <dt>Bắt đầu</dt>
@@ -372,7 +370,7 @@ function AvailabilitySummary() {
         action={
           <Link
             href="/tutor/availability"
-            className="text-xs font-bold text-[#280f91]"
+            className="text-xs font-bold text-primary"
           >
             Cập nhật
           </Link>
@@ -382,7 +380,7 @@ function AvailabilitySummary() {
         <div className="space-y-3">
           {state.availability.slice(0, 3).map((slot) => (
             <div key={slot.id} className="flex items-center gap-3 text-sm">
-              <CalendarDays className="text-[#280f91]" size={18} />
+              <CalendarDays className="text-primary" size={18} />
               <div>
                 <strong>{slot.day}</strong>
                 <p className="text-xs text-[#716c83]">
@@ -412,7 +410,7 @@ function NotificationSummary() {
         action={
           <span
             aria-label={`${unread.length} thông báo chưa đọc`}
-            className={`${badge} bg-[#ffc510] text-[#280f91]`}
+            className={`${badge} bg-[#ffc510] text-primary`}
           >
             {unread.length}
           </span>
@@ -422,7 +420,7 @@ function NotificationSummary() {
         <div className="space-y-3">
           {unread.slice(0, 3).map((n) => (
             <div key={n.id} className="flex gap-3 text-sm">
-              <Bell size={17} className="mt-0.5 shrink-0 text-[#280f91]" />
+              <Bell size={17} className="mt-0.5 shrink-0 text-primary" />
               <div>
                 <strong>{n.title}</strong>
                 <p className="text-xs text-[#716c83]">{n.description}</p>
@@ -431,7 +429,7 @@ function NotificationSummary() {
           ))}
           <Link
             href="/tutor/notifications"
-            className="block text-sm font-bold text-[#280f91]"
+            className="block text-sm font-bold text-primary"
           >
             Xem tất cả thông báo
           </Link>
@@ -445,7 +443,7 @@ function NotificationSummary() {
 
 function LmsCard() {
   return (
-    <section className="rounded-2xl bg-[#280f91] p-5 text-white">
+    <section className="rounded-2xl bg-primary p-5 text-white">
       <GraduationCap className="text-[#ffc510]" />
       <h2 className="mt-3 text-lg font-black">Quản lý lớp học của bạn</h2>
       <p className="mt-2 text-sm leading-6 text-white/75">
@@ -454,7 +452,7 @@ function LmsCard() {
       </p>
       <Button
         asChild
-        className="mt-4 w-full bg-[#ffc510] text-[#280f91] hover:bg-[#ffd54f]"
+        className="mt-4 w-full bg-[#ffc510] text-primary hover:bg-[#ffd54f]"
       >
         <a href={TUTOR_LMS_URL}>Vào LMS</a>
       </Button>
@@ -475,7 +473,7 @@ function RecentActivity() {
       <div className="space-y-4">
         {activities.map((item, i) => (
           <div key={item} className="flex gap-3">
-            <Sparkles size={18} className="mt-0.5 shrink-0 text-[#280f91]" />
+            <Sparkles size={18} className="mt-0.5 shrink-0 text-primary" />
             <div>
               <p className="text-sm">{item}</p>
               <time className="text-xs text-[#716c83]">{i + 1} ngày trước</time>
@@ -512,7 +510,7 @@ function NotificationsScreen() {
             onClick={() => dispatch({ type: "mark-read", id: n.id })}
             className={`flex w-full gap-4 border-b border-[#edf0f7] p-4 text-left last:border-0 ${n.read ? "opacity-65" : "bg-[#faf9ff]"}`}
           >
-            <span className="mt-1 rounded-full bg-[#f4f1ff] p-2 text-[#280f91]">
+            <span className="mt-1 rounded-full bg-[#f4f1ff] p-2 text-primary">
               <Bell size={18} />
             </span>
             <span className="flex-1">
@@ -520,7 +518,7 @@ function NotificationsScreen() {
                 {n.title}
                 {!n.read && (
                   <span
-                    className="h-2 w-2 rounded-full bg-[#280f91]"
+                    className="h-2 w-2 rounded-full bg-primary"
                     aria-label="Chưa đọc"
                   />
                 )}
@@ -533,7 +531,7 @@ function NotificationsScreen() {
               </span>
             </span>
             {n.actionLabel && (
-              <span className="text-xs font-bold text-[#280f91]">
+              <span className="text-xs font-bold text-primary">
                 {n.actionLabel}
               </span>
             )}
@@ -691,9 +689,7 @@ function SubscriptionScreen() {
               Preview · Không phải giao dịch thật
             </span>
             <h2 className="mt-3 text-2xl font-black">Gói hiển thị 6 tháng</h2>
-            <p className="mt-2 text-3xl font-black text-[#280f91]">
-              50.000 VNĐ
-            </p>
+            <p className="mt-2 text-3xl font-black text-primary">50.000 VNĐ</p>
             <ul className="mt-5 space-y-3 text-sm">
               {[
                 "Tiếp tục hiển thị hồ sơ",
@@ -793,7 +789,7 @@ function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center rounded-xl border border-dashed border-[#cbd6ea] p-8 text-center">
-      {icon && <span className="mb-3 text-[#280f91]">{icon}</span>}
+      {icon && <span className="mb-3 text-primary">{icon}</span>}
       <strong>{title}</strong>
       <p className="mt-1 max-w-md text-sm text-[#716c83]">{description}</p>
     </div>
@@ -817,4 +813,3 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
     </label>
   );
 }
-

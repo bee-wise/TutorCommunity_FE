@@ -37,7 +37,7 @@ export function OtpInput({
     input?.select();
   };
 
-  const commit = (next: string[]) => onChange(next.join("").trimEnd());
+  const commit = (next: string[]) => onChange(next.map((digit) => digit || " ").join("").trimEnd());
 
   const insertDigit = (index: number, digit: string) => {
     const next = [...digits];

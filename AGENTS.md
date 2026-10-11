@@ -1,3 +1,14 @@
+<!-- BEGIN:user-request-scope -->
+
+# PHẠM VI CÔNG VIỆC THEO YÊU CẦU NGƯỜI DÙNG
+
+- Chỉ thực hiện đúng yêu cầu cụ thể của người dùng. Chỉ sửa các file và phần code cần thiết trực tiếp để hoàn thành yêu cầu đó; không tự mở rộng phạm vi, chỉnh sửa, tái cấu trúc hoặc "dọn dẹp" phần khác.
+- Nếu phát hiện lỗi hoặc vấn đề ngoài phạm vi yêu cầu, chỉ báo cho người dùng biết vị trí và tác động; không tự sửa khi chưa có yêu cầu riêng từ người dùng.
+- Không sửa file theo dõi công việc, tài liệu, cấu hình, định dạng hay các thay đổi có sẵn của người khác nếu yêu cầu hiện tại không liên quan trực tiếp. Các bước kiểm tra chỉ được đọc và báo cáo lỗi ngoài phạm vi.
+- Nếu một thay đổi ngoài phạm vi thực sự cần thiết để hoàn thành yêu cầu, giải thích sự phụ thuộc và hỏi người dùng trước khi sửa.
+
+<!-- END:user-request-scope -->
+
 <!-- BEGIN:beewise-core-rules -->
 
 # MANDATORY BEEWISE DEVELOPMENT STANDARDS & AGENT WORKFLOW
@@ -20,7 +31,8 @@ Tất cả các AI Agent khi làm việc trong repository này **BẮT BUỘC** 
    - **API Client**: Bắt buộc gọi qua `apiClient` từ `@workspace/core/apiClient` với `withCredentials: true`. Cấm gọi trực tiếp `axios` trong components.
 
 4. **TERMINAL REQUIREMENT**:
-   - Bắt buộc sử dụng cú pháp **Git Bash (Bash)** cho mọi câu lệnh (`mkdir -p`, `rm -rf`, `cp -r`). Tuyệt đối không sinh lệnh PowerShell.
+   - Bắt buộc dùng **PowerShell** khi chạy lệnh trong project.
+   - Dùng cú pháp và cmdlet PowerShell (`New-Item`, `Remove-Item`, `Copy-Item`); không dùng Git Bash hoặc cú pháp Bash.
 
 <!-- END:beewise-core-rules -->
 
@@ -57,6 +69,6 @@ Khi phát triển hoặc sửa đổi BẤT KỲ giao diện người dùng, but
      - **Interactive Text Links**: Dùng `transition-colors hover:text-primary/80` (KHÔNG dùng `hover:underline` trừ nội dung chính sách pháp lý).
 4. **MANDATORY MICRO-INTERACTIONS**: Mọi nút tương tác phải có `active:scale-[0.98]` hoặc `active:scale-95`, `transition-all`, và hiệu ứng bo góc mượt mà theo đúng triết lý Edutech Soft-Modern của BeeWise.
 5. **FORBIDDEN REDUNDANT SUBTITLE PARAGRAPHS**: CẤM HOÀN TOÀN việc tự động sinh các đoạn paragraph mô tả sáo rỗng, lặp lại ý tiêu đề (`<p className="text-sm text-muted-foreground">...</p>`) dưới các thẻ `h1`, `h2`, page headers. Mặc định chỉ giữ tiêu đề sạch sẽ, gọn gàng; CHỈ THÊM đoạn mô tả khi mang lại thông tin chỉ dẫn thao tác nghiệp vụ thiết yếu hoặc cảnh báo thực sự hữu ích.
-
+6. **FORBIDDEN NATIVE TRIANGLE DISCLOSURE (<details><summary> / ▶)**: CẤM TUYỆT ĐỐI dùng thẻ `<details><summary>` mặc định của trình duyệt để lộ glyph hình tam giác đen thô sơ (`▶`). Mọi tính năng mở rộng/thu gọn nội dung bắt buộc dùng component `DisclosureCard`, `Collapsible` từ `@workspace/ui/components/ui/collapsible` hoặc `Accordion` từ `@workspace/ui/components/ui/accordion`.
 
 <!-- END:beewise-ui-standards -->

@@ -5,7 +5,10 @@ import Image from "next/image";
 import { useFormContext } from "react-hook-form";
 import type { TutorProfileEditorValues } from "../../schemas/profile-editor.schema";
 import { TEACHING_MODE_OPTIONS } from "../../constants/profile-editor.options";
-import { isLocalPreviewUrl, validatePreviewFile } from "../../utils/file-preview";
+import {
+  isLocalPreviewUrl,
+  validatePreviewFile,
+} from "../../utils/file-preview";
 import { AvailabilityListField } from "../AvailabilityListField";
 import { ProfileBlockDialog } from "../ProfileBlockDialog";
 import { ProfileField } from "../ProfileField";
@@ -46,7 +49,10 @@ function BasicInfoFields({
           />
         </div>
         <div>
-          <label htmlFor="avatar-file" className="text-sm font-bold text-[#17142f]">
+          <label
+            htmlFor="avatar-file"
+            className="text-sm font-bold text-[#17142f]"
+          >
             Ảnh đại diện
           </label>
           <p className="mt-1 text-xs leading-5 text-[#56516a]">
@@ -57,22 +63,60 @@ function BasicInfoFields({
             type="file"
             accept="image/jpeg,image/png,image/webp"
             onChange={(event) => onFileChange(event.target.files?.[0])}
-            className="mt-3 block w-full text-xs text-[#56516a] file:mr-3 file:rounded-full file:border-0 file:bg-[#280f91] file:px-4 file:py-2 file:font-bold file:text-white hover:file:bg-[#200c76]"
+            className="mt-3 block w-full text-xs text-[#56516a] file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:font-bold file:text-white hover:file:bg-[#200c76]"
           />
-          {fileError ? <p role="alert" className="mt-2 text-xs font-semibold text-[#9f2017]">{fileError}</p> : null}
+          {fileError ? (
+            <p
+              role="alert"
+              className="mt-2 text-xs font-semibold text-[#9f2017]"
+            >
+              {fileError}
+            </p>
+          ) : null}
         </div>
       </div>
 
       <div className="rounded-xl border border-[#cfe1fa] bg-[#f7f9fd] p-4">
         <p className="text-xs font-bold text-[#56516a]">Tên hiển thị</p>
-        <p className="mt-1 text-sm font-extrabold text-[#17142f]">{profile.displayName}</p>
-        <p className="mt-1 text-xs leading-5 text-[#716c83]">Thông tin tài khoản được đồng bộ từ hệ thống và không chỉnh sửa tại đây.</p>
+        <p className="mt-1 text-sm font-extrabold text-[#17142f]">
+          {profile.displayName}
+        </p>
+        <p className="mt-1 text-xs leading-5 text-[#716c83]">
+          Thông tin tài khoản được đồng bộ từ hệ thống và không chỉnh sửa tại
+          đây.
+        </p>
       </div>
 
-      <ProfileField id="headline" label="Tiêu đề hồ sơ" reviewRequired error={errors.headline} registration={register("headline")} />
-      <ProfileField id="shortIntro" label="Giới thiệu ngắn" reviewRequired error={errors.shortIntro} registration={register("shortIntro")} multiline rows={3} />
-      <SimpleListField name="subjects" label="Môn giảng dạy" itemLabel="Môn học" addLabel="Thêm môn" reviewRequired />
-      <SimpleListField name="specializations" label="Chuyên môn nổi bật" itemLabel="Chuyên môn" addLabel="Thêm chuyên môn" reviewRequired />
+      <ProfileField
+        id="headline"
+        label="Tiêu đề hồ sơ"
+        reviewRequired
+        error={errors.headline}
+        registration={register("headline")}
+      />
+      <ProfileField
+        id="shortIntro"
+        label="Giới thiệu ngắn"
+        reviewRequired
+        error={errors.shortIntro}
+        registration={register("shortIntro")}
+        multiline
+        rows={3}
+      />
+      <SimpleListField
+        name="subjects"
+        label="Môn giảng dạy"
+        itemLabel="Môn học"
+        addLabel="Thêm môn"
+        reviewRequired
+      />
+      <SimpleListField
+        name="specializations"
+        label="Chuyên môn nổi bật"
+        itemLabel="Chuyên môn"
+        addLabel="Thêm chuyên môn"
+        reviewRequired
+      />
       <ProfileField
         id="teaching-mode"
         label="Hình thức dạy"
@@ -81,8 +125,19 @@ function BasicInfoFields({
         options={TEACHING_MODE_OPTIONS}
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        <ProfileField id="area" label="Khu vực dạy" error={errors.area} registration={register("area")} />
-        <ProfileField id="hourlyRate" label="Học phí" reviewRequired error={errors.hourlyRate} registration={register("hourlyRate")} />
+        <ProfileField
+          id="area"
+          label="Khu vực dạy"
+          error={errors.area}
+          registration={register("area")}
+        />
+        <ProfileField
+          id="hourlyRate"
+          label="Học phí"
+          reviewRequired
+          error={errors.hourlyRate}
+          registration={register("hourlyRate")}
+        />
       </div>
       <AvailabilityListField />
     </>
@@ -103,9 +158,13 @@ export function BasicInfoEditDialog({
   const generatedUrl = useRef<string | null>(null);
   const committed = useRef(false);
 
-  useEffect(() => () => {
-    if (!committed.current && generatedUrl.current) URL.revokeObjectURL(generatedUrl.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (!committed.current && generatedUrl.current)
+        URL.revokeObjectURL(generatedUrl.current);
+    },
+    [],
+  );
 
   const handleFileChange = (file?: File) => {
     if (!file) return;
@@ -129,7 +188,12 @@ export function BasicInfoEditDialog({
         onSave({ ...values, avatarUrl });
       }}
     >
-      <BasicInfoFields profile={profile} avatarUrl={avatarUrl} fileError={fileError} onFileChange={handleFileChange} />
+      <BasicInfoFields
+        profile={profile}
+        avatarUrl={avatarUrl}
+        fileError={fileError}
+        onFileChange={handleFileChange}
+      />
     </ProfileBlockDialog>
   );
 }

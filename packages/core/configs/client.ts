@@ -16,6 +16,7 @@ const AUTH_ENDPOINTS_WITHOUT_REFRESH = [
   "/auth/refresh",
   "/auth/forgot-password",
   "/auth/reset-password",
+  "/auth/google",
 ];
 
 export function shouldAttemptRefresh(url?: string): boolean {

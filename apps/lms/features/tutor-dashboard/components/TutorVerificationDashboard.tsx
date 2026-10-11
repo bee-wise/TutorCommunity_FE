@@ -120,7 +120,7 @@ export function TutorVerificationDashboard() {
                   <div
                     className={`w-10 h-10 flex items-center justify-center rounded-full border-2 bg-background
                       ${isDone ? "border-[#447353] text-[#447353]" : ""}
-                      ${isCurrent ? "border-[#280f91] text-[#280f91] shadow-sm shadow-[#280f91]/20" : ""}
+                      ${isCurrent ? "border-primary text-primary shadow-sm shadow-primary/20" : ""}
                       ${isPending ? "border-border text-muted-foreground/40" : ""}
                     `}
                   >
@@ -138,7 +138,7 @@ export function TutorVerificationDashboard() {
                 <div className="flex flex-col gap-1 mt-0.5 md:mt-2 md:text-center pb-2 md:pb-0">
                   <span
                     className={`text-[10px] font-bold uppercase tracking-wider
-                      ${isDone ? "text-[#447353]" : isCurrent ? "text-[#280f91]" : "text-muted-foreground/50"}
+                      ${isDone ? "text-[#447353]" : isCurrent ? "text-primary" : "text-muted-foreground/50"}
                     `}
                     style={{ fontFamily: "var(--font-nunito-family)" }}
                   >
@@ -164,9 +164,9 @@ export function TutorVerificationDashboard() {
                     <div className="mt-3 md:flex md:justify-center">
                       <Link
                         href={step.ctaHref}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#280f91]
-                          text-[#280f91] text-xs font-bold bg-[#280f91]/5
-                          hover:bg-[#280f91]/10 active:scale-[0.98] transition-all"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-primary
+                          text-primary text-xs font-bold bg-primary/5
+                          hover:bg-primary/10 active:scale-[0.98] transition-all"
                         style={{ fontFamily: "var(--font-nunito-family)" }}
                       >
                         {step.ctaLabel}

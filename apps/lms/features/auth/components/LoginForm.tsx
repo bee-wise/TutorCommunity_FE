@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -10,11 +10,7 @@ import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
 import { useLmsAccessActivation } from "./AuthLayout";
 import { useLogin } from "@workspace/core/hooks/useLogin";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@workspace/ui/components/ui/tooltip";
+import { GoogleAuthEntry } from "./GoogleAuthEntry";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,10 +24,16 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
+
+  useEffect(() => {
+    const email = new URLSearchParams(window.location.search).get("email");
+    if (email) setValue("email", email);
+  }, [setValue]);
 
   const onSubmit = async (data: LoginFormValues) => {
     login(data);
@@ -61,11 +63,11 @@ export function LoginForm() {
             className="text-2xl tracking-tight text-[#0c0c0b] mb-1"
             style={{ fontFamily: "var(--font-google-sans)", fontWeight: 800 }}
           >
-            Đăng nhập vào Beewise LMS
+            Đăng nhập vào BeeWise LMS
           </h1>
           <p className="text-xs text-[#0c0c0b]/60 leading-relaxed max-w-[280px] mx-auto">
             Vui lòng đăng nhập bằng Email bạn đã đăng ký tại Cộng Đồng Gia Sư
-            Beewise
+            BeeWise
           </p>
         </div>
 
@@ -106,7 +108,7 @@ export function LoginForm() {
         <div className="flex justify-end">
           <Link
             href="/forgot-password"
-            className="text-xs text-[#280f91] hover:text-[#280f91]/80 font-semibold transition-colors"
+            className="text-xs text-primary hover:text-primary/80 font-semibold transition-colors"
           >
             Quên mật khẩu?
           </Link>
@@ -117,10 +119,10 @@ export function LoginForm() {
           id="login-submit"
           type="submit"
           disabled={isPending}
-          className="relative w-full h-12 mt-2 rounded-xl bg-[#280f91] text-white font-bold text-sm
+          className="relative mx-auto w-full max-w-[400px] h-10 mt-2 rounded-xl bg-primary text-white font-bold text-sm
             flex items-center justify-center gap-2
-            hover:bg-[#1f0c73] active:scale-[0.98] transition-all duration-200
-            disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-[#280f91]/30"
+            hover:bg-primary/90 active:scale-[0.98] transition-all duration-200
+            disabled:opacity-60 disabled:cursor-not-allowed"
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
           {isPending ? (
@@ -139,26 +141,7 @@ export function LoginForm() {
           <div className="flex-grow border-t border-[#0c0c0b]/10"></div>
         </div>
 
-        {/* Social Login */}
-
-        <Tooltip>
-          <TooltipTrigger asChild className="w-full">
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-2 h-11 rounded-xl border border-[#0c0c0b]/10 bg-white text-[#0c0c0b] font-semibold text-sm hover:bg-[#f8f9fc] transition-colors"
-            >
-              <Image
-                src="/images/Logos/google.png"
-                alt="Google"
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-              Google
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>Tính năng đang được phát triển</TooltipContent>
-        </Tooltip>
+        <GoogleAuthEntry onLmsAccessNotActivated={openAccessActivationDialog} />
       </form>
     </div>
   );

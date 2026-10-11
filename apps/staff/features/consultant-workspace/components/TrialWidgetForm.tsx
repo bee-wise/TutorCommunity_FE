@@ -1,4 +1,4 @@
-import { AcademicCapIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
+import { AcademicCapIcon, CalendarDaysIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
 import { DateTimePicker } from "@workspace/ui/components/ui/date-time-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/ui/select";
@@ -23,16 +23,13 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
       className="rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-5"
     >
       <div className="mb-4 flex items-center gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <AcademicCapIcon className="size-5" aria-hidden="true" />
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
+          <AcademicCapIcon className="size-4.5" aria-hidden="true" />
         </span>
         <div className="min-w-0">
           <h3 className="font-nunito text-base font-extrabold leading-tight text-foreground">
             Đề xuất buổi học thử
           </h3>
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            Hoàn tất thông tin để gửi lịch học vào phòng chat.
-          </p>
         </div>
       </div>
 
@@ -57,9 +54,9 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
             </SelectContent>
           </Select>
           {model.teachingOfferings.length === 0 && (
-            <p className="text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/10 p-2 text-xs font-medium text-amber-800 dark:text-amber-300">
               Gia sư chưa có tổ hợp giảng dạy trong phòng chat này.
-            </p>
+            </div>
           )}
         </WidgetField>
 
@@ -69,7 +66,7 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
           onChange={model.setTeachingMode}
         />
 
-        <fieldset className="min-w-0 rounded-2xl border border-primary/10 bg-primary/[0.035] p-3 sm:col-span-2 sm:p-3.5">
+        <fieldset className="min-w-0 rounded-2xl border border-primary/15 bg-primary/[0.035] p-3 sm:col-span-2 sm:p-3.5">
           <legend className="px-1 font-nunito text-xs font-extrabold text-primary">Thời gian học</legend>
           <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
             <WidgetField id="trial-start" label="Bắt đầu" required>
@@ -128,16 +125,17 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
       </div>
 
       <div className="mt-4 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="flex items-center gap-2 text-xs text-muted-foreground">
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <CalendarDaysIcon className="size-4 shrink-0 text-primary" aria-hidden="true" />
           Lịch học sẽ xuất hiện trong phòng chat.
         </p>
         <Button
           type="submit"
           disabled={busy || model.teachingOfferings.length === 0}
-          className="h-10 w-full rounded-xl px-5 font-nunito text-xs font-extrabold transition-all active:scale-[0.98] sm:w-auto"
+          className="h-10 w-full rounded-xl px-5 font-nunito text-xs font-extrabold shadow-xs transition-all active:scale-[0.98] sm:w-auto"
         >
-          {busy ? "Đang gửi đề xuất..." : "Gửi đề xuất học thử"}
+          <PaperAirplaneIcon className="size-4" aria-hidden="true" />
+          <span>{busy ? "Đang gửi đề xuất..." : "Gửi đề xuất học thử"}</span>
         </Button>
       </div>
     </form>

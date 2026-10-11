@@ -1,109 +1,151 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { List, X } from "@phosphor-icons/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { Button } from "@workspace/ui/components/ui/button";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 
 const NAV_LINKS = [
-  { label: "Dành cho học viên", href: "#learner" },
-  { label: "Dành cho gia sư", href: "#tutor" },
-  { label: "Cách hoạt động", href: "#how-it-works" },
-  { label: "Câu hỏi thường gặp", href: "#faq" },
+  { label: "Học Viên", href: "#learner" },
+  { label: "Gia Sư", href: "#tutor" },
+  { label: "Cách Hoạt Động", href: "#how-it-works" },
+  { label: "Câu Hỏi Thường Gặp", href: "#faq" },
 ] as const;
+
+gsap.registerPlugin(useGSAP);
 
 export function LmsHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const headerRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const reducedMotion = usePrefersReducedMotion();
+
+  useGSAP(
+    () => {
+      if (menuOpen && !reducedMotion) {
+        gsap.fromTo(
+          menuRef.current,
+          { opacity: 0, y: -12 },
+          { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" },
+        );
+      }
+    },
+    {
+      scope: headerRef,
+      dependencies: [menuOpen, reducedMotion],
+      revertOnUpdate: true,
+    },
+  );
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    const onPointer = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !headerRef.current?.contains(event.target)
+      )
+        setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [menuOpen]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#280f91]/8 bg-[#fbfaf7]/92 backdrop-blur-xl">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="flex shrink-0 items-center gap-1.5"
-          aria-label="BeeWise LMS, trang chủ"
-        >
-          <div className="relative h-8 w-[108px] sm:h-9 sm:w-[120px]">
+    <header
+      ref={headerRef}
+      className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4"
+    >
+      <div className="mx-auto max-w-7xl rounded-2xl border border-border bg-background/95 shadow-[0_8px_32px_-18px_color-mix(in_srgb,var(--primary)_30%,transparent)] backdrop-blur-md">
+        <div className="flex h-16 items-center justify-between gap-2 px-3 sm:h-[72px] sm:px-5">
+          <Link
+            href="/"
+            className="relative h-16 w-[108px] shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-[160px]"
+            aria-label="BeeWise LMS, trang chủ"
+          >
             <Image
-              src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1791535277/BeeWiseLMS-Logo-500x150.svg"
               alt="BeeWise LMS"
               fill
-              priority
-              sizes="(max-width: 640px) 108px, 120px"
+              preload
+              sizes="(max-width: 680px) 108px, 160px"
               className="object-contain object-left"
             />
-          </div>
-          <span className="rounded-full bg-accent/40 px-1.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-primary">
-            LMS
-          </span>
-        </Link>
-
-        <nav
-          className="hidden items-center gap-7 lg:flex"
-          aria-label="Điều hướng chính"
-        >
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm uppercase font-black text-primary transition-colors hover:text-accent"
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <Link
-            href="/login"
-            className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-xl bg-[#ffc500] px-4 text-sm font-extrabold text-[#201a00] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91] focus-visible:ring-offset-2 sm:px-5"
-          >
-            Đăng nhập
           </Link>
-          <button
-            type="button"
-            onClick={() => setMenuOpen((value) => !value)}
-            className="grid size-10 place-items-center rounded-xl text-[#280f91] transition-colors hover:bg-[#280f91]/7 lg:hidden"
-            aria-expanded={menuOpen}
-            aria-controls="mobile-navigation"
-            aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
+          <nav
+            className="hidden items-center gap-1 lg:flex"
+            aria-label="Điều hướng chính"
           >
-            {menuOpen ? (
-              <X size={22} weight="bold" />
-            ) : (
-              <List size={22} weight="bold" />
-            )}
-          </button>
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="rounded-xl px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+          <div className="flex items-center gap-1.5">
+            <Button
+              asChild
+              className="h-10 rounded-xl px-3 text-sm transition-all active:scale-[0.98] sm:px-5"
+            >
+              <Link href="/login">Đăng nhập</Link>
+            </Button>
+            <Button
+              ref={triggerRef}
+              variant="outline"
+              size="icon"
+              onClick={() => setMenuOpen((value) => !value)}
+              className="size-11 rounded-xl transition-all active:scale-[0.98] lg:hidden"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation"
+              aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
+            >
+              {menuOpen ? (
+                <XMarkIcon className="size-5" />
+              ) : (
+                <Bars3Icon className="size-5" />
+              )}
+            </Button>
+          </div>
         </div>
+        <nav
+          ref={menuRef}
+          hidden={!menuOpen}
+          id="mobile-navigation"
+          className="border-t border-border p-3 lg:hidden"
+          aria-label="Điều hướng trên di động"
+        >
+          <div className="flex flex-col gap-1">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </nav>
       </div>
-
-      <AnimatePresence initial={false}>
-        {menuOpen && (
-          <motion.nav
-            id="mobile-navigation"
-            initial={reduceMotion ? false : { height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-[#280f91]/8 bg-[#fbfaf7] lg:hidden"
-            aria-label="Điều hướng trên di động"
-          >
-            <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-3 text-sm font-semibold text-[#29272f]/75 hover:bg-[#280f91]/6 hover:text-[#280f91]"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
     </header>
   );
 }

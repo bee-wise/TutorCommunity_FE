@@ -64,7 +64,7 @@ export function GuestFavoriteModal() {
           <Link
             href={loginHref}
             onClick={closeModal}
-            className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-[#280f91] px-5 py-3.5 text-sm font-extrabold text-white shadow-md shadow-[#280f91]/20 transition-all hover:bg-[#1f0b70] hover:shadow-lg hover:shadow-[#280f91]/30 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#280f91]"
+            className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-primary px-5 py-3.5 text-sm font-extrabold text-white shadow-md shadow-primary/20 transition-all hover:bg-[#1f0b70] hover:shadow-lg hover:shadow-primary/30 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             <span>Đăng nhập</span>
@@ -84,7 +84,7 @@ export function GuestFavoriteModal() {
           <button
             type="button"
             onClick={closeModal}
-            className="w-full pt-1 text-center text-xs font-semibold text-[#667085] hover:text-[#280f91] transition-colors"
+            className="w-full pt-1 text-center text-xs font-semibold text-[#667085] hover:text-primary transition-colors"
           >
             Để sau
           </button>

@@ -8,7 +8,7 @@ import {
   getApiErrorMessage,
   handleApiError,
 } from "@workspace/core/sys-libs/error-handler";
-import { useCooldown } from "../hooks/useCooldown";
+import { useCooldown } from "@workspace/core/hooks/useCooldown";
 import {
   useForgotPassword,
   useResetPassword,
@@ -16,9 +16,9 @@ import {
 import {
   resetPasswordSchema,
   type ResetPasswordValues,
-} from "../schemas/password.schema";
+} from "@workspace/core/schemas/password.schema";
 import { FormField } from "./FormField";
-import { OtpInput } from "./OtpInput";
+import { OtpInput } from "@workspace/ui/components/auth/RecoveryOtpInput";
 import { PasswordInput } from "./PasswordInput";
 
 interface ResetPasswordFormProps {

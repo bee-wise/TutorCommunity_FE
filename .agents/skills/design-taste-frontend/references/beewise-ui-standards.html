@@ -102,6 +102,8 @@
         <a href="#buttons" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Buttons</a>
         <a href="#chips" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Action Chips</a>
         <a href="#forms" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Forms & OTP</a>
+        <a href="#checkboxes" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Checkboxes</a>
+        <a href="#collapsible" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Collapsible & Accordion</a>
         <a href="#cards" class="text-xs font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:inline-block px-2 py-1">Cards</a>
         
         <button onclick="toggleDarkMode()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border border-border bg-background hover:bg-muted text-foreground transition-all cursor-pointer">
@@ -581,6 +583,485 @@
       </div>
     </section>
 
+    <!-- 4.B CUSTOM CHECKBOX & INTERACTIVE SELECTABLE SPEC -->
+    <section id="checkboxes" class="rounded-3xl border border-border bg-white p-6 shadow-soft space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-2.5 py-1 rounded-lg">Interactive UI</span>
+            <span class="text-[11px] font-bold text-secondary bg-secondary/15 px-2 py-0.5 rounded-md">Anti-Default Standard</span>
+          </div>
+          <h2 class="font-nunito text-2xl font-black text-foreground mt-2">Bộ Component Checkbox Custom</h2>
+          <p class="text-xs text-muted-foreground mt-1">Chuẩn hóa Checkbox tùy biến (thay thế checkbox mặc định thô của trình duyệt) với đầy đủ trạng thái & biến thể</p>
+        </div>
+        <div class="text-xs font-bold text-primary font-mono bg-muted/50 px-3 py-1.5 rounded-xl border border-border w-fit">
+          &lt;Checkbox /&gt; Spec
+        </div>
+      </div>
+
+      <!-- 1. Checkbox States Grid -->
+      <div>
+        <h3 class="font-nunito font-bold text-sm text-foreground mb-3 flex items-center gap-2">
+          <i class="ph-bold ph-check-square text-primary text-base"></i>
+          <span>1. Các trạng thái Checkbox cơ bản (Click để test tương tác trực tiếp)</span>
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          <!-- State 1: Default Unchecked -->
+          <div class="flex items-start gap-3 p-3.5 rounded-2xl border border-border bg-background hover:border-primary/40 transition-all cursor-pointer group select-none" onclick="toggleCheckbox(this.querySelector('.custom-checkbox'))">
+            <div class="custom-checkbox w-5 h-5 rounded-md border-2 border-border bg-white flex items-center justify-center transition-all duration-150 group-hover:border-primary/60 shrink-0 mt-0.5">
+              <i class="ph-bold ph-check text-white text-xs opacity-0 transition-opacity"></i>
+            </div>
+            <div>
+              <div class="font-nunito text-xs font-bold text-foreground">Chưa chọn (Unchecked)</div>
+              <p class="text-[11px] text-muted-foreground">Hover để xem viền sáng mượt mà</p>
+            </div>
+          </div>
+
+          <!-- State 2: Checked (Primary) -->
+          <div class="flex items-start gap-3 p-3.5 rounded-2xl border border-primary/30 bg-primary/5 hover:border-primary transition-all cursor-pointer group select-none" onclick="toggleCheckbox(this.querySelector('.custom-checkbox'))">
+            <div class="custom-checkbox is-checked w-5 h-5 rounded-md border-2 border-primary bg-primary text-white flex items-center justify-center transition-all duration-150 shrink-0 mt-0.5 shadow-xs">
+              <i class="ph-bold ph-check text-white text-xs opacity-100 transition-opacity"></i>
+            </div>
+            <div>
+              <div class="font-nunito text-xs font-bold text-primary">Đã chọn (Checked - Primary)</div>
+              <p class="text-[11px] text-muted-foreground">Màu xanh Royal Blue #0C1EAA chuẩn BeeWise</p>
+            </div>
+          </div>
+
+          <!-- State 3: Indeterminate (Bán phần) -->
+          <div class="flex items-start gap-3 p-3.5 rounded-2xl border border-primary/30 bg-primary/5 hover:border-primary transition-all cursor-pointer group select-none">
+            <div class="custom-checkbox is-indeterminate w-5 h-5 rounded-md border-2 border-primary bg-primary text-white flex items-center justify-center transition-all duration-150 shrink-0 mt-0.5 shadow-xs">
+              <i class="ph-bold ph-minus text-white text-xs opacity-100"></i>
+            </div>
+            <div>
+              <div class="font-nunito text-xs font-bold text-primary">Bán phần (Indeterminate)</div>
+              <p class="text-[11px] text-muted-foreground">Dùng cho Select All khi chọn 1 phần</p>
+            </div>
+          </div>
+
+          <!-- State 4: Accent Amber Checked -->
+          <div class="flex items-start gap-3 p-3.5 rounded-2xl border border-accent/40 bg-accent/10 hover:border-accent transition-all cursor-pointer group select-none" onclick="toggleAccentCheckbox(this.querySelector('.custom-checkbox'))">
+            <div class="custom-checkbox is-checked w-5 h-5 rounded-md border-2 border-accent bg-accent text-accent-foreground flex items-center justify-center transition-all duration-150 shrink-0 mt-0.5 shadow-xs">
+              <i class="ph-bold ph-check text-accent-foreground text-xs opacity-100"></i>
+            </div>
+            <div>
+              <div class="font-nunito text-xs font-bold text-amber-900">Brand Accent (Vàng Hổ Phách)</div>
+              <p class="text-[11px] text-muted-foreground">Dành cho tùy chọn Promo / VIP / Đề xuất</p>
+            </div>
+          </div>
+
+          <!-- State 5: Disabled State -->
+          <div class="flex items-start gap-3 p-3.5 rounded-2xl border border-border bg-muted/40 opacity-60 cursor-not-allowed select-none">
+            <div class="w-5 h-5 rounded-md border-2 border-border bg-muted flex items-center justify-center shrink-0 mt-0.5">
+              <i class="ph-bold ph-lock text-muted-foreground text-[10px]"></i>
+            </div>
+            <div>
+              <div class="font-nunito text-xs font-bold text-muted-foreground">Vô hiệu hóa (Disabled)</div>
+              <p class="text-[11px] text-muted-foreground">Không thể bấm hoặc thao tác</p>
+            </div>
+          </div>
+
+          <!-- State 6: Error / Validation State -->
+          <div class="flex items-start gap-3 p-3.5 rounded-2xl border border-destructive/40 bg-destructive/5 hover:border-destructive transition-all cursor-pointer group select-none" onclick="toggleCheckbox(this.querySelector('.custom-checkbox'))">
+            <div class="custom-checkbox w-5 h-5 rounded-md border-2 border-destructive bg-white flex items-center justify-center transition-all duration-150 shrink-0 mt-0.5 group-hover:bg-destructive/10">
+              <i class="ph-bold ph-check text-destructive text-xs opacity-0 transition-opacity"></i>
+            </div>
+            <div>
+              <div class="font-nunito text-xs font-bold text-destructive">Lỗi xác thực (Validation Error)</div>
+              <p class="text-[11px] text-destructive/80">Bắt buộc phải tích chọn mục này</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2. Real-world Checkbox Patterns -->
+      <div class="border-t border-border pt-6 space-y-4">
+        <h3 class="font-nunito font-bold text-sm text-foreground flex items-center gap-2">
+          <i class="ph-bold ph-cards text-primary text-base"></i>
+          <span>2. Các biến thể ứng dụng thực tế trong hệ thống BeeWise</span>
+        </h3>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Pattern A: Terms & Conditions Inline Checkbox -->
+          <div class="rounded-2xl border border-border bg-white p-4 space-y-3">
+            <div class="text-xs font-bold text-muted-foreground font-mono uppercase">Pattern A: Điều khoản & Xác nhận Form</div>
+            
+            <label class="flex items-start gap-3 cursor-pointer group select-none" onclick="toggleCheckbox(this.querySelector('.custom-checkbox'))">
+              <div class="custom-checkbox is-checked w-5 h-5 rounded-md border-2 border-primary bg-primary text-white flex items-center justify-center transition-all duration-150 shrink-0 mt-0.5 active:scale-95 shadow-xs">
+                <i class="ph-bold ph-check text-white text-xs opacity-100"></i>
+              </div>
+              <span class="text-xs text-foreground/80 leading-relaxed font-sans">
+                Tôi đồng ý với <a href="javascript:void(0)" class="text-primary font-bold transition-colors hover:text-primary/80">Điều khoản sử dụng</a> và <a href="javascript:void(0)" class="text-primary font-bold transition-colors hover:text-primary/80">Chính sách bảo mật</a> của BeeWise.
+              </span>
+            </label>
+
+            <label class="flex items-start gap-3 cursor-pointer group select-none" onclick="toggleCheckbox(this.querySelector('.custom-checkbox'))">
+              <div class="custom-checkbox w-5 h-5 rounded-md border-2 border-border bg-white flex items-center justify-center transition-all duration-150 group-hover:border-primary/60 shrink-0 mt-0.5 active:scale-95">
+                <i class="ph-bold ph-check text-white text-xs opacity-0"></i>
+              </div>
+              <span class="text-xs text-foreground/80 leading-relaxed font-sans">
+                Nhận thông báo cập nhật gia sư mới và ưu đãi học tập qua Email.
+              </span>
+            </label>
+          </div>
+
+          <!-- Pattern B: Selectable Filter List Items -->
+          <div class="rounded-2xl border border-border bg-white p-4 space-y-3">
+            <div class="flex items-center justify-between text-xs font-bold text-muted-foreground font-mono uppercase">
+              <span>Pattern B: Bộ lọc môn học (Filter List)</span>
+              <span class="text-primary cursor-pointer hover:underline" onclick="resetFilterCheckboxes()">Đặt lại</span>
+            </div>
+
+            <div class="space-y-1.5">
+              <!-- Filter Item 1 -->
+              <div class="flex items-center justify-between p-2.5 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer group select-none" onclick="toggleCheckbox(this.querySelector('.filter-chk'))">
+                <div class="flex items-center gap-3">
+                  <div class="filter-chk is-checked w-4.5 h-4.5 rounded-md border-2 border-primary bg-primary text-white flex items-center justify-center transition-all shrink-0 active:scale-95">
+                    <i class="ph-bold ph-check text-white text-[11px] opacity-100"></i>
+                  </div>
+                  <span class="text-xs font-bold text-foreground font-nunito">Toán học (Lớp 10 - 12)</span>
+                </div>
+                <span class="text-[11px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">48 gia sư</span>
+              </div>
+
+              <!-- Filter Item 2 -->
+              <div class="flex items-center justify-between p-2.5 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer group select-none" onclick="toggleCheckbox(this.querySelector('.filter-chk'))">
+                <div class="flex items-center gap-3">
+                  <div class="filter-chk is-checked w-4.5 h-4.5 rounded-md border-2 border-primary bg-primary text-white flex items-center justify-center transition-all shrink-0 active:scale-95">
+                    <i class="ph-bold ph-check text-white text-[11px] opacity-100"></i>
+                  </div>
+                  <span class="text-xs font-bold text-foreground font-nunito">Tiếng Anh Giao Tiếp & IELTS</span>
+                </div>
+                <span class="text-[11px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">64 gia sư</span>
+              </div>
+
+              <!-- Filter Item 3 -->
+              <div class="flex items-center justify-between p-2.5 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer group select-none" onclick="toggleCheckbox(this.querySelector('.filter-chk'))">
+                <div class="flex items-center gap-3">
+                  <div class="filter-chk w-4.5 h-4.5 rounded-md border-2 border-border bg-white flex items-center justify-center transition-all group-hover:border-primary/60 shrink-0 active:scale-95">
+                    <i class="ph-bold ph-check text-white text-[11px] opacity-0"></i>
+                  </div>
+                  <span class="text-xs font-bold text-foreground font-nunito">Vật lý (Luyện thi Đại học)</span>
+                </div>
+                <span class="text-[11px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">22 gia sư</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pattern C: Selectable Option Cards (Rich Checkbox Cards) -->
+          <div class="rounded-2xl border border-border bg-white p-4 space-y-3 lg:col-span-2">
+            <div class="text-xs font-bold text-muted-foreground font-mono uppercase">Pattern C: Thẻ lựa chọn đa năng (Checkbox Selectable Cards)</div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              
+              <!-- Card 1: Online -->
+              <div class="selectable-card is-selected p-4 rounded-2xl border-2 border-primary bg-primary/5 cursor-pointer transition-all duration-200 flex flex-col justify-between space-y-3 active:scale-[0.99]" onclick="toggleSelectableCard(this)">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center text-lg shadow-xs">
+                    <i class="ph-bold ph-video-camera"></i>
+                  </div>
+                  <div class="card-chk w-5 h-5 rounded-md border-2 border-primary bg-primary text-white flex items-center justify-center transition-all">
+                    <i class="ph-bold ph-check text-xs"></i>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-nunito font-extrabold text-sm text-primary">Học Trực Tuyến (Online)</h4>
+                  <p class="text-xs text-muted-foreground mt-0.5">Qua Zoom / Google Meet, linh hoạt địa điểm</p>
+                </div>
+                <span class="w-fit text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">Phổ biến nhất</span>
+              </div>
+
+              <!-- Card 2: Offline -->
+              <div class="selectable-card p-4 rounded-2xl border-2 border-border bg-white hover:border-primary/40 cursor-pointer transition-all duration-200 flex flex-col justify-between space-y-3 active:scale-[0.99]" onclick="toggleSelectableCard(this)">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-muted text-muted-foreground flex items-center justify-center text-lg">
+                    <i class="ph-bold ph-map-pin"></i>
+                  </div>
+                  <div class="card-chk w-5 h-5 rounded-md border-2 border-border bg-white flex items-center justify-center transition-all">
+                    <i class="ph-bold ph-check text-xs opacity-0"></i>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-nunito font-extrabold text-sm text-foreground">Học Trực Tiếp (Tại nhà)</h4>
+                  <p class="text-xs text-muted-foreground mt-0.5">Gia sư đến tận nhà kèm cặp 1-kèm-1</p>
+                </div>
+                <span class="w-fit text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">Kèm chuyên sâu</span>
+              </div>
+
+              <!-- Card 3: Hybrid AI Assistant -->
+              <div class="selectable-card is-selected p-4 rounded-2xl border-2 border-accent bg-accent/10 cursor-pointer transition-all duration-200 flex flex-col justify-between space-y-3 active:scale-[0.99]" onclick="toggleSelectableCard(this, true)">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-accent text-accent-foreground flex items-center justify-center text-lg shadow-xs">
+                    <i class="ph-bold ph-sparkle"></i>
+                  </div>
+                  <div class="card-chk w-5 h-5 rounded-md border-2 border-accent bg-accent text-accent-foreground flex items-center justify-center transition-all">
+                    <i class="ph-bold ph-check text-xs"></i>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-nunito font-extrabold text-sm text-amber-900">Kèm Trợ Lý BeeWise AI</h4>
+                  <p class="text-xs text-muted-foreground mt-0.5">Phân tích bài tập & gợi ý lộ trình tự động 24/7</p>
+                </div>
+                <span class="w-fit text-[10px] font-bold text-accent-foreground bg-accent px-2 py-0.5 rounded-md">Tính năng cao cấp</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 3. Implementation Spec for AI Agent -->
+      <div class="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-xs space-y-2">
+        <div class="flex items-center gap-2 font-nunito font-extrabold text-sm text-primary">
+          <i class="ph-bold ph-code text-base"></i>
+          <span>Tiêu Chuẩn Code Checkbox Cho AI Agent (Zero-Native-Default)</span>
+        </div>
+        <p class="text-muted-foreground leading-relaxed">
+          <strong>Quy tắc bắt buộc:</strong> CẤM sử dụng thẻ <code class="bg-white px-1.5 py-0.5 rounded border border-border text-primary font-mono">&lt;input type="checkbox"&gt;</code> mặc định đơn độc. Mọi checkbox phải được bọc trong container styled với:
+        </p>
+        <div class="font-mono text-[11px] bg-white p-3 rounded-xl border border-border text-foreground space-y-1">
+          <div><span class="text-primary font-bold">Base container:</span> <code class="text-muted-foreground">w-5 h-5 rounded-md border-2 border-border bg-white transition-all duration-150 flex items-center justify-center active:scale-95</code></div>
+          <div><span class="text-primary font-bold">Checked state:</span> <code class="text-muted-foreground">bg-primary border-primary text-primary-foreground shadow-xs</code></div>
+          <div><span class="text-primary font-bold">Hidden input:</span> <code class="text-muted-foreground">&lt;input type="checkbox" className="sr-only" {...register("fieldName")} /&gt;</code></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4.C COLLAPSIBLE, DISCLOSURE & ACCORDION (ZERO-TRIANGLE SPEC) -->
+    <section id="collapsible" class="rounded-3xl border border-border bg-white p-6 shadow-soft space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-2.5 py-1 rounded-lg">Interactive UI</span>
+            <span class="text-[11px] font-bold text-destructive bg-destructive/15 px-2 py-0.5 rounded-md">Anti-Triangle Slop</span>
+          </div>
+          <h2 class="font-nunito text-2xl font-black text-foreground mt-2">Bộ Component Collapsible, Disclosure & Accordion Tùy Biến</h2>
+          <p class="text-xs text-muted-foreground mt-1">Cấm hoàn toàn toggle bằng hình tam giác đen mặc định trình duyệt (&lt;details&gt;&lt;summary&gt;). Sử dụng component chuẩn Edutech Soft-Modern với icon xoay mượt mà</p>
+        </div>
+        <div class="text-xs font-bold text-primary font-mono bg-muted/50 px-3 py-1.5 rounded-xl border border-border w-fit">
+          &lt;DisclosureCard /&gt; &amp; &lt;Accordion /&gt;
+        </div>
+      </div>
+
+      <!-- 1. Anti-Slop Comparison (Hình tam giác thô VS Component Chuẩn) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- WRONG EXAMPLE: Raw <details><summary> with black triangle -->
+        <div class="rounded-2xl border border-red-200 bg-red-50/50 p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-100 text-red-700 text-xs font-bold">
+              <i class="ph-bold ph-x-circle text-base"></i> CẤM TUYỆT ĐỐI (Slop tam giác mặc định)
+            </span>
+            <span class="text-[11px] text-red-500 font-mono">&lt;details&gt;&lt;summary&gt;</span>
+          </div>
+
+          <div class="bg-white rounded-xl border border-red-200 p-4 space-y-2 font-sans">
+            <details class="cursor-pointer font-sans text-xs">
+              <summary class="font-semibold text-foreground select-none">Chi tiết bổ sung</summary>
+              <div class="mt-2 text-muted-foreground text-xs p-2.5 bg-slate-50 rounded border border-dashed border-slate-200">
+                Nội dung bị mở ra thô sơ, icon tam giác đen mặc định không ăn khớp với ngôn ngữ thiết kế BeeWise.
+              </div>
+            </details>
+          </div>
+          <p class="text-[11px] text-red-600 leading-relaxed font-sans">
+            ⚠️ Thẻ <code class="font-mono bg-red-100 px-1 rounded">&lt;details&gt;</code> mặc định tạo ra glyph hình tam giác đen (▶) lệch lạc, không có micro-interactions, không có card hierarchy và phá vỡ thẩm mỹ Soft-Modern.
+          </p>
+        </div>
+
+        <!-- RIGHT EXAMPLE: BeeWise DisclosureCard -->
+        <div class="rounded-2xl border border-secondary/30 bg-secondary/5 p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary/15 text-secondary text-xs font-bold">
+              <i class="ph-bold ph-check-circle text-base"></i> CHUẨN BEEWISE (Anti-Slop Component)
+            </span>
+            <span class="text-[11px] text-secondary font-mono">&lt;DisclosureCard variant="subtle" /&gt;</span>
+          </div>
+
+          <div class="bg-white rounded-xl border border-border p-3">
+            <div class="demo-disclosure is-open rounded-xl border border-primary/40 bg-muted/60 p-3.5 transition-all">
+              <button type="button" onclick="toggleDemoDisclosure(this.closest('.demo-disclosure'))" class="w-full flex items-center justify-between gap-3 text-left cursor-pointer group active:scale-[0.99] select-none">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center text-xs font-bold shrink-0">
+                    <i class="ph-bold ph-brackets-curly"></i>
+                  </div>
+                  <div>
+                    <span class="font-nunito text-xs font-bold text-primary group-hover:text-primary transition-colors">Chi tiết bổ sung</span>
+                    <span class="ml-2 px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary">JSON Schema</span>
+                  </div>
+                </div>
+                <div class="disclosure-chevron w-7 h-7 rounded-lg border border-primary/30 bg-primary/10 flex items-center justify-center text-primary transition-all duration-200 rotate-180">
+                  <i class="ph-bold ph-caret-down text-xs transition-transform duration-200"></i>
+                </div>
+              </button>
+              <div class="disclosure-body pt-3 mt-2 border-t border-border/60 text-xs text-muted-foreground space-y-2">
+                <p>Nội dung bổ sung hiển thị mượt mà trong container bo góc, có hierarchy rõ ràng và icon xoay 180° tự nhiên.</p>
+                <div class="p-2.5 rounded-lg bg-white border border-border font-mono text-[11px] text-foreground">
+                  {"items": ["Minh chứng chứng chỉ tiếng Anh"]}
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="text-[11px] text-secondary/90 leading-relaxed font-sans">
+            ✅ Container bo cong `rounded-xl`, nút bấm có hiệu ứng hover/active scale, icon caret xoay mượt mà, phân tầng màu sắc chuẩn xác.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- 2. Interactive Variations Showcase -->
+      <div class="space-y-4 pt-2">
+        <h3 class="font-nunito font-bold text-sm text-foreground flex items-center gap-2">
+          <i class="ph-bold ph-stack text-primary text-base"></i>
+          <span>2. Các biến thể Disclosure & Accordion thực tế (Click để trải nghiệm)</span>
+        </h3>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Variant A: Rich Disclosure Card -->
+          <div class="space-y-3">
+            <div class="text-xs font-bold text-muted-foreground font-mono uppercase">Biến thể A: Disclosure Card (Dành cho Setting & Review)</div>
+            
+            <div class="demo-disclosure rounded-2xl border border-border bg-white p-4 shadow-2xs hover:border-primary/40 transition-all">
+              <button type="button" onclick="toggleDemoDisclosure(this.closest('.demo-disclosure'))" class="w-full flex items-center justify-between gap-3 text-left cursor-pointer group select-none active:scale-[0.99]">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg shrink-0">
+                    <i class="ph-bold ph-chart-bar"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-nunito text-sm font-extrabold text-foreground group-hover:text-primary transition-colors">Barem và điểm Consultant</span>
+                      <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-secondary/15 text-secondary border border-secondary/20">Chấm lại</span>
+                    </div>
+                    <p class="text-xs text-muted-foreground truncate">Xem tiêu chí đánh giá và bảng thang điểm chuẩn</p>
+                  </div>
+                </div>
+                <span class="disclosure-chevron w-8 h-8 rounded-lg border border-border bg-background flex items-center justify-center text-muted-foreground transition-all duration-200 group-hover:border-primary/40 group-hover:text-primary shrink-0">
+                  <i class="ph-bold ph-caret-down text-sm transition-transform duration-200"></i>
+                </span>
+              </button>
+              <div class="disclosure-body hidden pt-4 mt-3 border-t border-border space-y-3 text-xs">
+                <div class="grid gap-2">
+                  <div class="p-2.5 rounded-xl bg-muted/40 border border-border/60 flex items-center justify-between">
+                    <span class="font-semibold text-foreground">Mức 4: Năng lực chuyên môn xuất sắc & phát âm chuẩn</span>
+                    <span class="font-bold text-primary font-mono">4/4 Điểm</span>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-muted/20 border border-border/40 flex items-center justify-between text-muted-foreground">
+                    <span>Mức 3: Đạt chuẩn phương pháp sư phạm cần thiết</span>
+                    <span class="font-mono">3/4 Điểm</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Variant A2: Policy with Status -->
+            <div class="demo-disclosure rounded-2xl border border-border bg-white p-4 shadow-2xs hover:border-primary/40 transition-all">
+              <button type="button" onclick="toggleDemoDisclosure(this.closest('.demo-disclosure'))" class="w-full flex items-center justify-between gap-3 text-left cursor-pointer group select-none active:scale-[0.99]">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-9 h-9 rounded-xl bg-accent/20 text-amber-900 flex items-center justify-center text-lg shrink-0">
+                    <i class="ph-bold ph-shield-check"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-nunito text-sm font-extrabold text-foreground group-hover:text-primary transition-colors">Quy định phỏng vấn v2.1</span>
+                      <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary text-white">Đang áp dụng</span>
+                    </div>
+                    <p class="text-xs text-muted-foreground truncate">Cập nhật lúc: 10/10/2026 bởi Hệ thống</p>
+                  </div>
+                </div>
+                <span class="disclosure-chevron w-8 h-8 rounded-lg border border-border bg-background flex items-center justify-center text-muted-foreground transition-all duration-200 group-hover:border-primary/40 group-hover:text-primary shrink-0">
+                  <i class="ph-bold ph-caret-down text-sm transition-transform duration-200"></i>
+                </span>
+              </button>
+              <div class="disclosure-body hidden pt-4 mt-3 border-t border-border space-y-3 text-xs">
+                <p class="leading-relaxed text-foreground/80">
+                  Gia sư cần hoàn thành tối thiểu 4 câu hỏi video và cam kết tuân thủ quy tắc ứng xử trước khi nhận lớp chính thức.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Variant B: Accordion Multi-Item Group (FAQ / Syllabus) -->
+          <div class="space-y-3">
+            <div class="text-xs font-bold text-muted-foreground font-mono uppercase">Biến thể B: Accordion Nhóm (FAQ / Giáo trình môn học)</div>
+            
+            <div class="rounded-2xl border border-border bg-white p-4 space-y-1 shadow-2xs">
+              
+              <!-- Accordion Item 1 -->
+              <div class="demo-accordion-item border-b border-border/80 last:border-b-0 pb-3">
+                <button type="button" onclick="toggleDemoAccordion(this.closest('.demo-accordion-item'))" class="w-full flex items-center justify-between py-2 text-left cursor-pointer group select-none active:scale-[0.99]">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black font-nunito text-xs">1</span>
+                    <span class="font-nunito text-xs font-extrabold text-foreground group-hover:text-primary transition-colors">Quy trình phỏng vấn AI diễn ra như thế nào?</span>
+                  </div>
+                  <span class="accordion-chevron w-6 h-6 rounded-md border border-border bg-background flex items-center justify-center text-muted-foreground transition-all duration-200 group-hover:text-primary shrink-0">
+                    <i class="ph-bold ph-caret-down text-xs transition-transform duration-200"></i>
+                  </span>
+                </button>
+                <div class="accordion-body hidden pt-2 text-xs text-muted-foreground leading-relaxed pl-8">
+                  Ứng viên thực hiện kiểm tra micro/camera, trả lời 4 câu hỏi chuyên môn qua video trong 15 phút. Hệ thống AI tự động chấm sơ bộ và gửi kết quả cho Consultant thẩm định.
+                </div>
+              </div>
+
+              <!-- Accordion Item 2 -->
+              <div class="demo-accordion-item border-b border-border/80 last:border-b-0 py-3">
+                <button type="button" onclick="toggleDemoAccordion(this.closest('.demo-accordion-item'))" class="w-full flex items-center justify-between py-2 text-left cursor-pointer group select-none active:scale-[0.99]">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black font-nunito text-xs">2</span>
+                    <span class="font-nunito text-xs font-extrabold text-foreground group-hover:text-primary transition-colors">Làm sao để cấp lại lượt phỏng vấn khi gặp sự cố mạng?</span>
+                  </div>
+                  <span class="accordion-chevron w-6 h-6 rounded-md border border-border bg-background flex items-center justify-center text-muted-foreground transition-all duration-200 group-hover:text-primary shrink-0">
+                    <i class="ph-bold ph-caret-down text-xs transition-transform duration-200"></i>
+                  </span>
+                </button>
+                <div class="accordion-body hidden pt-2 text-xs text-muted-foreground leading-relaxed pl-8">
+                  Consultant có quyền bấm nút "Cấp lại lượt phỏng vấn" trong màn hình quản trị sau khi kiểm tra biên bản lỗi kỹ thuật.
+                </div>
+              </div>
+
+              <!-- Accordion Item 3 -->
+              <div class="demo-accordion-item last:border-b-0 pt-3">
+                <button type="button" onclick="toggleDemoAccordion(this.closest('.demo-accordion-item'))" class="w-full flex items-center justify-between py-2 text-left cursor-pointer group select-none active:scale-[0.99]">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black font-nunito text-xs">3</span>
+                    <span class="font-nunito text-xs font-extrabold text-foreground group-hover:text-primary transition-colors">Thời gian duyệt hồ sơ gia sư là bao lâu?</span>
+                  </div>
+                  <span class="accordion-chevron w-6 h-6 rounded-md border border-border bg-background flex items-center justify-center text-muted-foreground transition-all duration-200 group-hover:text-primary shrink-0">
+                    <i class="ph-bold ph-caret-down text-xs transition-transform duration-200"></i>
+                  </span>
+                </button>
+                <div class="accordion-body hidden pt-2 text-xs text-muted-foreground leading-relaxed pl-8">
+                  Hồ sơ được thẩm định tự động kết hợp xét duyệt thủ công trong vòng 24 - 48 giờ làm việc.
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 3. Implementation Spec for AI Agent -->
+      <div class="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-xs space-y-2">
+        <div class="flex items-center gap-2 font-nunito font-extrabold text-sm text-primary">
+          <i class="ph-bold ph-code text-base"></i>
+          <span>Tiêu Chuẩn Code Collapsible & Accordion Cho AI Agent</span>
+        </div>
+        <p class="text-muted-foreground leading-relaxed">
+          <strong>Quy tắc bắt buộc:</strong> TUYỆT ĐỐI CẤM sử dụng thẻ <code class="bg-white px-1.5 py-0.5 rounded border border-border text-destructive font-mono">&lt;details&gt;&lt;summary&gt;</code> mặc định thô sơ. Luôn import và sử dụng bộ component chuẩn từ <code class="bg-white px-1.5 py-0.5 rounded border border-border text-primary font-mono">@workspace/ui</code>:
+        </p>
+        <div class="font-mono text-[11px] bg-white p-3 rounded-xl border border-border text-foreground space-y-1.5">
+          <div><span class="text-primary font-bold">1. Thẻ mở rộng đơn lẻ (DisclosureCard):</span> <code class="text-muted-foreground">&lt;DisclosureCard title="Tiêu đề" variant="subtle"&gt;...&lt;/DisclosureCard&gt;</code></div>
+          <div><span class="text-primary font-bold">2. Nhóm Accordion đa mục:</span> <code class="text-muted-foreground">&lt;Accordion type="single" collapsible&gt;&lt;AccordionItem value="1"&gt;&lt;AccordionTrigger&gt;...&lt;/AccordionTrigger&gt;&lt;AccordionContent&gt;...&lt;/AccordionContent&gt;&lt;/AccordionItem&gt;&lt;/Accordion&gt;</code></div>
+          <div><span class="text-primary font-bold">3. Radix Primitive chuẩn:</span> <code class="text-muted-foreground">import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@workspace/ui/components/ui/collapsible";</code></div>
+        </div>
+      </div>
+    </section>
+
     <!-- 5. REALISTIC COMPONENT CARDS -->
     <section id="cards" class="rounded-3xl border border-border bg-white p-6 shadow-soft space-y-6">
       <div>
@@ -737,6 +1218,153 @@
         document.getElementById(`otp-${i}`).value = '';
       }
       document.getElementById('otp-1').focus();
+    }
+
+    function toggleCheckbox(chkEl) {
+      if (!chkEl) return;
+      const isChecked = chkEl.classList.contains('is-checked');
+      const icon = chkEl.querySelector('i');
+      if (isChecked) {
+        chkEl.classList.remove('is-checked', 'bg-primary', 'border-primary', 'text-white', 'shadow-xs');
+        chkEl.classList.add('bg-white', 'border-border');
+        if (icon) {
+          icon.classList.remove('opacity-100');
+          icon.classList.add('opacity-0');
+        }
+      } else {
+        chkEl.classList.add('is-checked', 'bg-primary', 'border-primary', 'text-white', 'shadow-xs');
+        chkEl.classList.remove('bg-white', 'border-border', 'border-destructive');
+        if (icon) {
+          icon.classList.remove('opacity-0', 'text-destructive');
+          icon.classList.add('opacity-100', 'text-white');
+        }
+      }
+    }
+
+    function toggleAccentCheckbox(chkEl) {
+      if (!chkEl) return;
+      const isChecked = chkEl.classList.contains('is-checked');
+      const icon = chkEl.querySelector('i');
+      if (isChecked) {
+        chkEl.classList.remove('is-checked', 'bg-accent', 'border-accent', 'text-accent-foreground', 'shadow-xs');
+        chkEl.classList.add('bg-white', 'border-border');
+        if (icon) {
+          icon.classList.remove('opacity-100');
+          icon.classList.add('opacity-0');
+        }
+      } else {
+        chkEl.classList.add('is-checked', 'bg-accent', 'border-accent', 'text-accent-foreground', 'shadow-xs');
+        chkEl.classList.remove('bg-white', 'border-border');
+        if (icon) {
+          icon.classList.remove('opacity-0');
+          icon.classList.add('opacity-100');
+        }
+      }
+    }
+
+    function toggleSelectableCard(cardEl, isAccent = false) {
+      if (!cardEl) return;
+      const isSelected = cardEl.classList.contains('is-selected');
+      const chk = cardEl.querySelector('.card-chk');
+      const icon = chk ? chk.querySelector('i') : null;
+      const title = cardEl.querySelector('h4');
+
+      if (isSelected) {
+        cardEl.classList.remove('is-selected', 'border-primary', 'bg-primary/5', 'border-accent', 'bg-accent/10');
+        cardEl.classList.add('border-border', 'bg-white');
+        if (title) {
+          title.className = 'font-nunito font-extrabold text-sm text-foreground';
+        }
+        if (chk) {
+          chk.className = 'card-chk w-5 h-5 rounded-md border-2 border-border bg-white flex items-center justify-center transition-all';
+        }
+        if (icon) {
+          icon.classList.remove('opacity-100');
+          icon.classList.add('opacity-0');
+        }
+      } else {
+        cardEl.classList.add('is-selected');
+        cardEl.classList.remove('border-border', 'bg-white');
+        if (isAccent) {
+          cardEl.classList.add('border-accent', 'bg-accent/10');
+          if (title) title.className = 'font-nunito font-extrabold text-sm text-amber-900';
+          if (chk) chk.className = 'card-chk w-5 h-5 rounded-md border-2 border-accent bg-accent text-accent-foreground flex items-center justify-center transition-all shadow-xs';
+        } else {
+          cardEl.classList.add('border-primary', 'bg-primary/5');
+          if (title) title.className = 'font-nunito font-extrabold text-sm text-primary';
+          if (chk) chk.className = 'card-chk w-5 h-5 rounded-md border-2 border-primary bg-primary text-white flex items-center justify-center transition-all shadow-xs';
+        }
+        if (icon) {
+          icon.classList.remove('opacity-0');
+          icon.classList.add('opacity-100');
+        }
+      }
+    }
+
+    function resetFilterCheckboxes() {
+      const filters = document.querySelectorAll('.filter-chk');
+      filters.forEach((chk, idx) => {
+        const icon = chk.querySelector('i');
+        if (idx < 2) {
+          chk.classList.add('is-checked', 'bg-primary', 'border-primary', 'text-white');
+          chk.classList.remove('bg-white', 'border-border');
+          if (icon) {
+            icon.classList.remove('opacity-0');
+            icon.classList.add('opacity-100');
+          }
+        } else {
+          chk.classList.remove('is-checked', 'bg-primary', 'border-primary', 'text-white');
+          chk.classList.add('bg-white', 'border-border');
+          if (icon) {
+            icon.classList.remove('opacity-100');
+            icon.classList.add('opacity-0');
+          }
+        }
+      });
+    }
+
+    function toggleDemoDisclosure(cardEl) {
+      if (!cardEl) return;
+      const isOpen = cardEl.classList.contains('is-open');
+      const body = cardEl.querySelector('.disclosure-body');
+      const chevron = cardEl.querySelector('.disclosure-chevron');
+      if (isOpen) {
+        cardEl.classList.remove('is-open');
+        if (body) body.classList.add('hidden');
+        if (chevron) {
+          chevron.classList.remove('rotate-180', 'border-primary/30', 'bg-primary/10', 'text-primary');
+          chevron.classList.add('text-muted-foreground', 'border-border', 'bg-background');
+        }
+      } else {
+        cardEl.classList.add('is-open');
+        if (body) body.classList.remove('hidden');
+        if (chevron) {
+          chevron.classList.add('rotate-180', 'border-primary/30', 'bg-primary/10', 'text-primary');
+          chevron.classList.remove('text-muted-foreground', 'border-border', 'bg-background');
+        }
+      }
+    }
+
+    function toggleDemoAccordion(itemEl) {
+      if (!itemEl) return;
+      const isOpen = itemEl.classList.contains('is-open');
+      const body = itemEl.querySelector('.accordion-body');
+      const chevron = itemEl.querySelector('.accordion-chevron');
+      if (isOpen) {
+        itemEl.classList.remove('is-open');
+        if (body) body.classList.add('hidden');
+        if (chevron) {
+          chevron.classList.remove('rotate-180', 'border-primary/30', 'bg-primary/10', 'text-primary');
+          chevron.classList.add('text-muted-foreground', 'border-border', 'bg-background');
+        }
+      } else {
+        itemEl.classList.add('is-open');
+        if (body) body.classList.remove('hidden');
+        if (chevron) {
+          chevron.classList.add('rotate-180', 'border-primary/30', 'bg-primary/10', 'text-primary');
+          chevron.classList.remove('text-muted-foreground', 'border-border', 'bg-background');
+        }
+      }
     }
   </script>
 </body>

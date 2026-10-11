@@ -3,7 +3,7 @@ import type {
   ChatRoomRecord,
   ConnectRequest,
 } from "./chat-rooms.service";
-import { toChatHistoryBusinessMessage } from "./chat-business-message";
+import { isDraftWidget, isDraftWidgetMessage, toChatHistoryBusinessMessage } from "./chat-business-message";
 
 export type ParticipantRole = "LEARNER" | "TUTOR" | "CONSULTANT";
 type Participant = {
@@ -200,6 +200,7 @@ export function toChatRoom(
 export function toChatMessage(
   message: ChatMessageRecord,
   room: ReturnType<typeof toChatRoom>,
+  viewerRole?: ParticipantRole,
 ) {
   const sender = [room.learner, room.tutor, room.consultant].find(
     (item) => item.id === message.senderId,
@@ -207,25 +208,34 @@ export function toChatMessage(
   const isSystem = message.type === "SYSTEM" ||
     (!message.type && message.messageType?.toUpperCase() === "SYSTEM");
   const business = toChatHistoryBusinessMessage(message);
+
+  // Widgets with status DRAFT must not appear in SALE and LMS chatrooms
+  const isDraft = isDraftWidgetMessage({ ...message, business });
+  const shouldHideWidget = isDraft && viewerRole !== "CONSULTANT";
+  const effectiveBusiness = shouldHideWidget ? null : business;
+
   return {
     id: message.id,
     chatRoomId: message.chatRoomId,
     senderId: message.senderId,
     senderRole: sender?.role ?? ("CONSULTANT" as const),
     senderName: sender?.name ?? "Người tham gia",
-    type: business
+    type: effectiveBusiness
       ? ("WIDGET" as const)
       : isSystem
         ? ("SYSTEM" as const)
         : ("TEXT" as const),
-    business,
+    business: effectiveBusiness,
+    isDraft,
     text:
       message.content ??
-      (business
+      (effectiveBusiness
         ? ""
-        : message.businessType
-          ? "Thông tin kết nối đã được cập nhật."
-          : ""),
+        : isDraft
+          ? ""
+          : message.businessType
+            ? "Thông tin kết nối đã được cập nhật."
+            : ""),
     createdAt: message.createdAt,
     isRead: true,
   };

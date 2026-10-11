@@ -75,7 +75,7 @@ export default function ApplicationsPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#280f91] flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
           {isLearner ? (
             <>
               <Inbox className="w-6 h-6 text-accent" />

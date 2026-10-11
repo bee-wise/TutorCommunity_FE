@@ -228,7 +228,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         )}
 
         {/* Messages area */}
-        <div className="min-h-0 flex-1 overflow-y-auto bg-muted px-3 py-5 sm:px-6">
+        <div className="min-h-0 flex-1 overflow-y-auto [scroll-behavior:auto] bg-muted px-3 py-5 sm:px-6">
           <div className="mx-auto max-w-4xl space-y-1">
             {hasOlder && (
               <div className="flex justify-center pb-3">

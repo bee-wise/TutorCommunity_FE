@@ -19,8 +19,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from '@workspace/ui/components/ui/sheet';
-import { cn } from '@workspace/core/helpers/utils';
+} from "@workspace/ui/components/ui/sheet";
+import { cn } from "@workspace/core/helpers/utils";
 import type { Session } from "../types/schedule.types";
 import { STATUS_COLORS, STATUS_LABELS } from "../types/schedule.types";
 
@@ -99,7 +99,8 @@ export function SessionDetailSheet({
           <div
             className={cn(
               "px-6 pt-5 pb-4 border-b border-border/40",
-              session.status === "UPCOMING" && "bg-[#fff3cb]/30 backdrop-blur-sm",
+              session.status === "UPCOMING" &&
+                "bg-[#fff3cb]/30 backdrop-blur-sm",
               session.status === "COMPLETED" && "bg-emerald-50/40",
               session.status === "CANCELED" && "bg-red-50/30",
             )}
@@ -171,7 +172,7 @@ export function SessionDetailSheet({
 
             {/* Fee */}
             <InfoRow icon={Banknote} label="Học phí / buổi">
-              <span className="text-base font-extrabold font-nunito text-[#280f91]">
+              <span className="text-base font-extrabold font-nunito text-primary">
                 {formatFee(session.feeVnd)}
               </span>
             </InfoRow>
@@ -181,7 +182,10 @@ export function SessionDetailSheet({
             {/* Classroom Link CTA */}
             <div className="rounded-xl border border-border/50 bg-muted/20 p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Video className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                <Video
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                />
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Phòng học trực tuyến
                 </p>
@@ -238,7 +242,7 @@ export function SessionDetailSheet({
             <button
               type="button"
               onClick={() => setConfirmed(true)}
-              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#280f91] text-white font-semibold text-sm hover:bg-[#1e0b72] active:scale-[0.98] transition-all duration-150 shadow-sm shadow-[#280f91]/20"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-[#1e0b72] active:scale-[0.98] transition-all duration-150 shadow-sm shadow-primary/20"
             >
               <CheckCircle2 className="size-4" strokeWidth={2} />
               Xác nhận thay đổi lịch
@@ -260,7 +264,7 @@ export function SessionDetailSheet({
               onMouseLeave={() => setShowTooltip(false)}
               onFocus={() => setShowTooltip(true)}
               onBlur={() => setShowTooltip(false)}
-              className="flex items-center justify-center gap-1.5 w-full py-2 text-sm text-muted-foreground hover:text-[#280f91] transition-colors font-medium"
+              className="flex items-center justify-center gap-1.5 w-full py-2 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
             >
               <MessageCircle className="size-4" strokeWidth={1.75} />
               Yêu cầu đổi lịch / Liên hệ tư vấn viên

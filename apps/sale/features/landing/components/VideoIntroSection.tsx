@@ -51,7 +51,7 @@ export function VideoIntroSection() {
                 {
                   icon: Handshake,
                   title: "Kết nối nhanh chóng",
-                  desc: "Beewise AI",
+                  desc: "BeeWise AI",
                 },
                 {
                   icon: CheckCircle,

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useTutorOnboardingViewModel } from "../TutorOnboardingProvider";
 import { OnboardingVideoGuide } from "../OnboardingVideoGuide";
 import { Button } from "@workspace/ui/components/ui/button";
+import { TutorInterviewScreen } from "@/features/ai-interviews/components/TutorInterviewScreen";
 
 const prepChecklist = [
   "Chọn không gian yên tĩnh, đủ ánh sáng và kết nối Internet ổn định",
@@ -30,6 +31,8 @@ const benefits = [
 
 export function InterviewScreen() {
   const { dispatchAction, isPreview } = useTutorOnboardingViewModel();
+
+  if (!isPreview) return <TutorInterviewScreen />;
 
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">

@@ -15,6 +15,7 @@ import type { ChatMessage, ChatParticipantRole } from "../types/messages.types";
 import { formatMessageTime, formatSessionTime, formatFileSize } from "../constants/messages.utils";
 import { ChatWidget } from "./ChatWidget";
 import { BusinessChatWidget } from "@workspace/core/components/BusinessChatWidget";
+import { isDraftWidget, isDraftWidgetMessage } from "@workspace/core/services/chat-business-message";
 
 export function SessionTimeDivider({ timestamp }: { timestamp: string }) {
   return (
@@ -183,6 +184,18 @@ export function MessageBubble({
   showTime = true,
   onContextMenu,
 }: MessageBubbleProps) {
+  const widgetStatus =
+    message.business?.current?.data?.status ??
+    (message.widget?.widgetType === "CLASS_CONFIRMATION" ? message.widget.data.status : undefined);
+  const isDraft =
+    message.isDraft ||
+    (typeof widgetStatus === "string" && isDraftWidget(widgetStatus)) ||
+    isDraftWidgetMessage(message);
+
+  if (isDraft && currentRole !== "CONSULTANT") {
+    return null;
+  }
+
   if (message.type === "SYSTEM") {
     return <SystemMessagePill text={message.text ?? ""} />;
   }
@@ -265,7 +278,7 @@ export function MessageBubble({
             onContextMenu={handleContextMenu}
           />
         )}
-        {message.type === "WIDGET" && (message.widget || message.business) && (
+        {message.type === "WIDGET" && !isDraft && (message.widget || message.business) && (
           <div
             className="mt-1 w-full max-w-[440px]"
             title="Nhấn chuột phải để xem tùy chọn"

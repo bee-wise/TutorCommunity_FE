@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
+    "dev:https": "next dev --experimental-https --port 3000",
+    "dev:https": "next dev --experimental-https --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

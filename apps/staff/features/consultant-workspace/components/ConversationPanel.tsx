@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
+import type { WidgetTab } from "../hooks/useConsultantWidgetTools";
 import { RectangleStackIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import {
   InformationCircleIcon as Info,
@@ -64,6 +65,8 @@ export function ConversationPanel({
 }: ConversationPanelProps) {
   const [draft, setDraft] = useState("");
   const [showWidgets, setShowWidgets] = useState(false);
+  const [widgetTab, setWidgetTab] = useState<WidgetTab>("trial");
+  const [widgetConfirmationId, setWidgetConfirmationId] = useState<string | undefined>();
   const [widgetDialogElement, setWidgetDialogElement] =
     useState<HTMLDivElement | null>(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -72,6 +75,29 @@ export function ConversationPanel({
   const [note, setNote] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
   const readOnly = room.status !== "ACTIVE";
+
+  useEffect(() => {
+    function handleOpenWidget(event: Event) {
+      const customEvent = event as CustomEvent<{
+        tab?: WidgetTab;
+        confirmationId?: string;
+        roomId?: string;
+      }>;
+      if (customEvent.detail?.roomId && customEvent.detail.roomId !== room.id) {
+        return;
+      }
+      if (customEvent.detail?.tab) {
+        setWidgetTab(customEvent.detail.tab);
+      }
+      setWidgetConfirmationId(customEvent.detail?.confirmationId);
+      setShowWidgets(true);
+    }
+
+    window.addEventListener("beewise:open-consultant-widget", handleOpenWidget);
+    return () => {
+      window.removeEventListener("beewise:open-consultant-widget", handleOpenWidget);
+    };
+  }, [room.id]);
 
   const learner = participantName(room, "LEARNER");
   const tutor = participantName(room, "TUTOR");
@@ -167,7 +193,11 @@ export function ConversationPanel({
           draft={draft}
           onDraftChange={setDraft}
           onSend={() => void submitMessage()}
-          onOpenWidgets={() => setShowWidgets(true)}
+          onOpenWidgets={() => {
+            setWidgetTab("trial");
+            setWidgetConfirmationId(undefined);
+            setShowWidgets(true);
+          }}
           sending={sending}
           isMock={room.isMock}
           error={actionError}
@@ -177,31 +207,42 @@ export function ConversationPanel({
       <Dialog open={showWidgets} onOpenChange={setShowWidgets}>
         <DialogContent
           ref={setWidgetDialogElement}
-          className="flex max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-[900px] flex-col gap-0 overflow-visible rounded-3xl border-border bg-background p-0 shadow-soft [&>button]:right-4 [&>button]:top-4 [&>button]:rounded-xl [&>button]:border [&>button]:border-border [&>button]:bg-background [&>button]:p-2 [&>button]:transition-all [&>button]:active:scale-[0.98]"
+          className="flex max-h-[calc(100dvh-1.5rem)] w-[calc(100vw-1.5rem)] max-w-[1120px] xl:max-w-[1180px] flex-col gap-0 overflow-visible rounded-3xl border-border bg-background p-0 shadow-soft [&>button]:right-4 [&>button]:top-4 [&>button]:rounded-xl [&>button]:border [&>button]:border-border [&>button]:bg-background [&>button]:p-2 [&>button]:transition-all [&>button]:active:scale-[0.98]"
         >
           <DialogHeader className="shrink-0 rounded-t-3xl border-b border-border bg-card px-4 py-3 pr-16 text-left sm:px-6 sm:py-4 sm:pr-16">
             <div className="flex items-start gap-3">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <RectangleStackIcon className="size-5" aria-hidden="true" />
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
+                <RectangleStackIcon className="size-4.5" aria-hidden="true" />
               </span>
               <div>
-                <DialogTitle className="font-nunito text-base font-extrabold leading-[1.2] text-foreground">
+                <DialogTitle className="font-nunito text-base font-black tracking-tight text-foreground sm:text-lg">
                   Widget cho phòng chat
                 </DialogTitle>
-                <DialogDescription className="text-xs leading-relaxed">
-                  Chọn nội dung cần gửi vào cuộc trò chuyện này.
+                <DialogDescription className="text-xs text-muted-foreground">
+                  Đề xuất buổi học thử và cập nhật bản điều khoản lớp học.
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
           <div className="min-h-0 overflow-y-auto rounded-b-3xl p-3 sm:p-5">
             {room.isMock || room.kind !== "group" ? (
-              <p className="rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground shadow-soft">
-                Widget chỉ dùng trong phòng chat kết nối ba bên.
-              </p>
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/30 p-8 text-center">
+                <span className="flex size-10 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground shadow-2xs">
+                  <RectangleStackIcon className="size-5" aria-hidden="true" />
+                </span>
+                <h4 className="mt-3 font-nunito text-sm font-extrabold text-foreground">
+                  Chỉ áp dụng cho phòng chat ba bên
+                </h4>
+                <p className="mt-1 max-w-xs text-xs text-muted-foreground">
+                  Widget nghiệp vụ học thử và điều khoản chỉ dùng trong phòng kết nối giữa Tư vấn viên, Gia sư và Học viên.
+                </p>
+              </div>
             ) : (
               <ConsultantWidgetTools
+                key={widgetConfirmationId ? `edit-${widgetConfirmationId}` : `tab-${widgetTab}`}
                 roomId={room.id}
+                initialTab={widgetTab}
+                initialConfirmationId={widgetConfirmationId}
                 teachingOfferings={
                   room.participants.find((person) => person.role === "TUTOR")
                     ?.teachingOfferings ?? []

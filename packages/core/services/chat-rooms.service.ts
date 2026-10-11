@@ -79,7 +79,6 @@ export const messageSchema = z.object({
   messageType: z.string().nullable().optional(),
   businessType: z.string().nullable().optional(),
   businessReferenceId: z.string().nullable().optional(),
-  businessPayload: z.unknown().optional(),
   type: z.string().nullable().optional(),
   widget: chatHistoryWidgetSchema.nullish(),
 }).passthrough();

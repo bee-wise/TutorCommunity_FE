@@ -100,7 +100,7 @@ export function TutorGuideSteps() {
                       />
                     </div>
                     <p className="font-nunito mt-3 text-base font-extrabold sm:mt-5 sm:text-2xl">
-                      Xem hướng dẫn trở thành gia sư Beewise
+                      Xem hướng dẫn trở thành gia sư BeeWise
                     </p>
                   </div>
 
