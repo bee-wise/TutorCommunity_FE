@@ -86,6 +86,27 @@ test("profile status is not overridden by a stale draft status", () => {
   );
 });
 
+test("resubmitted profile stays pending when onboarding rejection is stale", () => {
+  assert.equal(
+    resolveLiveTutorOnboardingScenario({
+      tutorProfileStatus: "PENDING_REVIEW",
+      tutorOnboardingStatus: "REJECTED",
+    }),
+    "pending-review",
+  );
+});
+
+test("approved profile leaves rejection screen when onboarding status is stale", () => {
+  assert.equal(
+    resolveLiveTutorOnboardingScenario({
+      tutorProfileStatus: "APPROVED",
+      tutorOnboardingStatus: "REJECTED",
+      isInterviewed: false,
+    }),
+    "interview",
+  );
+});
+
 test("preview sends profile to review before allowing interview", () => {
   const submitted = applyTutorOnboardingAction(
     { scenario: "profile-draft", selectedStepId: "profile" },
@@ -121,6 +142,31 @@ test("LMS access is controlled by BE permission", () => {
       canAccessTutorLms: true,
     }),
     "completed",
+  );
+});
+
+test("fresh readiness completes additional information without granting LMS access", () => {
+  const user = {
+    tutorProfileStatus: "APPROVED",
+    tutorOnboardingStatus: "POST_APPROVAL_INFO_REQUIRED",
+    canAccessTutorLms: false,
+    isInterviewed: true,
+  };
+  assert.equal(resolveLiveTutorOnboardingScenario(user), "post-approval");
+  assert.equal(
+    resolveLiveTutorOnboardingScenario(user, { isReady: false }),
+    "post-approval",
+  );
+  assert.equal(
+    resolveLiveTutorOnboardingScenario(user, { isReady: true }),
+    "completed",
+  );
+  assert.equal(
+    resolveLiveTutorOnboardingScenario(
+      { tutorProfileStatus: "PENDING_REVIEW", isInterviewed: true },
+      { isReady: true },
+    ),
+    "pending-review",
   );
 });
 

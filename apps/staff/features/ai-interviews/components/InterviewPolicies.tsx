@@ -1,192 +1,166 @@
 "use client";
 
 import { useState } from "react";
+import { PlusIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { useInterviewPoliciesQuery } from "@workspace/core/ai-interviews/hooks/useInterviewQueries";
 import { interviewApi } from "@workspace/core/ai-interviews/services/interview.api";
 import { Button } from "@workspace/ui/components/ui/button";
-import { DisclosureCard } from "@workspace/ui/components/ui/collapsible";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@workspace/ui/components/ui/dialog";
+import { InterviewActivationDialog } from "./InterviewActivationDialog";
 import {
   useInterviewPolicyForm,
   useStaffInterviewMutation,
 } from "../hooks/useInterviewActions";
-import {
-  actionClass,
-  fieldClass,
-  FieldError,
-  InterviewQueryState,
-  panelClass,
-} from "./InterviewUi";
+import { actionClass, InterviewQueryState, panelClass } from "./InterviewUi";
 import { InterviewAudit } from "./InterviewAudit";
+import { InterviewPolicyEditor } from "./InterviewPolicyEditor";
+import { InterviewVersions, InterviewVersionStatus } from "./InterviewVersions";
 
 export function InterviewPolicies() {
   const query = useInterviewPoliciesQuery();
-  const { form, mutation, save } = useInterviewPolicyForm(query.data?.map((item) => item.version));
+  const [version, setVersion] = useState("");
   const [activation, setActivation] = useState("");
-  const [audit, setAudit] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [audit, setAudit] = useState(false);
+  const model = useInterviewPolicyForm(
+    query.data?.map((item) => item.version),
+    (created) => {
+      setVersion(created);
+      setEditing(false);
+    },
+  );
+  const selected =
+    query.data?.find((item) => item.version === version) ??
+    query.data?.find((item) => item.is_active) ??
+    query.data?.[0];
   const activate = useStaffInterviewMutation(
     interviewApi.activatePolicy,
     "Đã áp dụng quy định mới.",
   );
   return (
-    <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(300px,420px)]">
-      <div className="space-y-5">
-        <InterviewQueryState
-          pending={query.isPending}
-          error={query.error}
-          retry={() => void query.refetch()}
-        />
-        {query.data?.length === 0 && (
-          <p className={panelClass}>
-            Chưa có quy định. Tạo phiên bản đầu tiên để gia sư có thể xác nhận.
-          </p>
-        )}
-        {query.data?.map((item) => (
-          <article key={item.version} className={panelClass}>
-            <div className="flex flex-wrap justify-between gap-3">
-              <h2 className="font-bold">Quy định {item.version}</h2>
-              <span
-                className={`rounded-full border border-border px-3 py-1 text-xs font-bold ${item.is_active ? "bg-primary text-primary-foreground" : "bg-muted"}`}
-              >
-                {item.is_active ? "Đang áp dụng" : "Chưa áp dụng"}
-              </span>
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {new Date(item.created_at).toLocaleString("vi-VN")}
-            </p>
-            <DisclosureCard
-              variant="subtle"
-              size="sm"
-              title="Nội dung và câu xác nhận"
-              className="mt-4"
-            >
-              <p className="max-h-96 overflow-y-auto whitespace-pre-wrap text-sm leading-7">
-                {item.content}
-              </p>
-              <p className="mt-4 rounded-2xl bg-background p-4 text-sm border border-border">
-                {item.confirmation_text}
-              </p>
-            </DisclosureCard>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className={actionClass}
-                disabled={item.is_active || activate.isPending}
-                onClick={() => setActivation(item.version)}
-              >
-                Áp dụng
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className={actionClass}
-                disabled={mutation.isPending}
-                onClick={() => {
-                  form.reset({ version: "", content: item.content, confirmation_text: item.confirmation_text });
-                  form.setFocus("version");
-                }}
-              >
-                Sao chép để sửa
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className={actionClass}
-                onClick={() => setAudit(item.version)}
-              >
-                Lịch sử
-              </Button>
-            </div>
-          </article>
-        ))}
-        {audit && <InterviewAudit key={audit} entity="policy" id={audit} />}
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-nunito text-xl font-extrabold">
+          Quy định nền tảng
+        </h2>
+        <Button
+          className={actionClass}
+          disabled={editing || model.mutation.isPending}
+          onClick={() => {
+            model.form.reset({
+              version: "",
+              content: "",
+              confirmation_text: "",
+            });
+            setEditing(true);
+          }}
+        >
+          <PlusIcon className="size-4" />
+          Tạo quy định mới
+        </Button>
       </div>
-      <section className={panelClass}>
-        <h2 className="text-lg font-bold">Tạo phiên bản quy định</h2>
-
-        <form onSubmit={save} className="mt-5">
-          <fieldset disabled={mutation.isPending} className="space-y-4">
-            <label className="block text-sm font-medium">
-              Phiên bản
-              <input
-                {...form.register("version")}
-                maxLength={50}
-                className={`mt-2 ${fieldClass}`}
+      <InterviewQueryState
+        pending={query.isPending}
+        error={query.error}
+        retry={() => void query.refetch()}
+      />
+      {query.data && (
+        <div className="grid items-start gap-5 lg:grid-cols-[250px_minmax(0,1fr)]">
+          <InterviewVersions
+            items={query.data}
+            selected={selected?.version ?? ""}
+            disabled={editing}
+            onSelect={(value) => {
+              setVersion(value);
+              setAudit(false);
+            }}
+          />
+          <div className="min-w-0 space-y-5">
+            <div hidden={!editing}>
+              <InterviewPolicyEditor
+                model={model}
+                onCancel={() => setEditing(false)}
               />
-            </label>
-            <FieldError message={form.formState.errors.version?.message} />
-            <label className="block text-sm font-medium">
-              Nội dung quy định
-              <textarea
-                {...form.register("content")}
-                maxLength={100000}
-                rows={9}
-                className={`mt-2 ${fieldClass}`}
+            </div>
+            {!editing &&
+              (selected ? (
+                <section className={panelClass}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="font-nunito text-xl font-extrabold">
+                      Quy định {selected.version}
+                    </h3>
+                    <InterviewVersionStatus active={selected.is_active} />
+                  </div>
+                  <div className="mt-5 flex flex-wrap gap-2 border-b border-border pb-5">
+                    <Button
+                      className={actionClass}
+                      disabled={selected.is_active || activate.isPending}
+                      onClick={() => setActivation(selected.version)}
+                    >
+                      Áp dụng
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={actionClass}
+                      onClick={() => {
+                        model.form.reset({
+                          version: "",
+                          content: selected.content,
+                          confirmation_text: selected.confirmation_text,
+                        });
+                        setEditing(true);
+                      }}
+                    >
+                      <DocumentDuplicateIcon className="size-4" />
+                      Sao chép để sửa
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={actionClass}
+                      aria-pressed={audit}
+                      onClick={() => setAudit(!audit)}
+                    >
+                      Lịch sử
+                    </Button>
+                  </div>
+                  <h4 className="mt-5 text-sm font-bold">Nội dung quy định</h4>
+                  <p className="mt-3 max-h-[480px] overflow-y-auto whitespace-pre-wrap text-sm leading-7">
+                    {selected.content}
+                  </p>
+                  <div className="mt-6 rounded-2xl border border-primary/15 bg-primary/5 p-4">
+                    <h4 className="text-xs font-bold text-primary">
+                      Câu xác nhận của gia sư
+                    </h4>
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-6">
+                      {selected.confirmation_text}
+                    </p>
+                  </div>
+                </section>
+              ) : (
+                <p className={panelClass}>
+                  Chưa có quy định. Tạo phiên bản đầu tiên để gia sư có thể xác
+                  nhận.
+                </p>
+              ))}
+            {!editing && audit && selected && (
+              <InterviewAudit
+                key={selected.version}
+                entity="policy"
+                id={selected.version}
+                defaultOpen
               />
-            </label>
-            <FieldError message={form.formState.errors.content?.message} />
-            <label className="block text-sm font-medium">
-              Câu xác nhận của gia sư
-              <textarea
-                {...form.register("confirmation_text")}
-                maxLength={4000}
-                rows={3}
-                className={`mt-2 ${fieldClass}`}
-              />
-            </label>
-            <FieldError
-              message={form.formState.errors.confirmation_text?.message}
-            />
-            <Button type="submit" className={actionClass}>
-              {mutation.isPending ? "Đang tạo…" : "Tạo quy định"}
-            </Button>
-          </fieldset>
-        </form>
-      </section>
-      <Dialog
-        open={Boolean(activation)}
-        onOpenChange={(open) => {
-          if (!open && !activate.isPending) setActivation("");
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Áp dụng quy định {activation}?</DialogTitle>
-            <DialogDescription>
-              Gia sư cần đọc và xác nhận bản mới trước lượt phỏng vấn tiếp theo.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              className={actionClass}
-              disabled={activate.isPending}
-              onClick={() => setActivation("")}
-            >
-              Hủy
-            </Button>
-            <Button
-              className={actionClass}
-              disabled={activate.isPending}
-              onClick={() =>
-                activate.mutate(activation, {
-                  onSuccess: () => setActivation(""),
-                })
-              }
-            >
-              Xác nhận áp dụng
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            )}
+          </div>
+        </div>
+      )}
+      <InterviewActivationDialog
+        kind="policy"
+        version={activation}
+        pending={activate.isPending}
+        onClose={() => setActivation("")}
+        onConfirm={() =>
+          activate.mutate(activation, { onSuccess: () => setActivation("") })
+        }
+      />
     </div>
   );
 }

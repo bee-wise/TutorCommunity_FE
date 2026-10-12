@@ -7,10 +7,8 @@ import {
   Bank,
   CaretDown,
   Check,
-  CheckCircle,
   MagnifyingGlass,
   Plus,
-  Spinner,
   Trash,
   Warning,
 } from "@phosphor-icons/react/dist/ssr";
@@ -30,7 +28,6 @@ import type {
 } from "../../api/tutor-readiness.api";
 import {
   getVietQRBanks,
-  lookupVietQRAccount,
   type VietQRBank,
 } from "../../api/vietqr.api";
 
@@ -58,11 +55,6 @@ export function PostApprovalScreen() {
     isPreview ? state.bankInfo.accountHolder : "",
   );
 
-  const [isLookingUp, setIsLookingUp] = useState(false);
-  const [lookupStatus, setLookupStatus] = useState<
-    "idle" | "success" | "error" | "key_missing"
-  >("idle");
-  const [lookupMessage, setLookupMessage] = useState("");
   // Availability state
   const [availability, setAvailability] = useState<AvailabilityRow[]>([
     { id: "initial", day: "", from: "", to: "" },
@@ -117,61 +109,6 @@ export function PostApprovalScreen() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // Debounced auto-lookup account name
-  useEffect(() => {
-    const cleanNum = accountNumber.trim();
-    if (!selectedBank || cleanNum.length < 6) return;
-
-    const timer = setTimeout(async () => {
-      setIsLookingUp(true);
-      setLookupStatus("idle");
-      setLookupMessage("");
-
-      const result = await lookupVietQRAccount(selectedBank.bin, cleanNum);
-      setIsLookingUp(false);
-
-      if (result.success && result.accountName) {
-        setAccountHolder(result.accountName);
-        setLookupStatus("success");
-        setLookupMessage(result.accountName);
-      } else if (result.isKeyMissing) {
-        setLookupStatus("key_missing");
-        setLookupMessage(
-          "Chưa thể xác thực tự động qua VietQR. Vui lòng tự nhập và kiểm tra kỹ tên chủ tài khoản.",
-        );
-      } else {
-        setLookupStatus("error");
-        setLookupMessage(result.error || "Số tài khoản không hợp lệ");
-      }
-    }, 600);
-
-    return () => clearTimeout(timer);
-  }, [accountNumber, selectedBank]);
-
-  const handleManualLookup = async () => {
-    if (!selectedBank || accountNumber.trim().length < 6) return;
-    setIsLookingUp(true);
-    const result = await lookupVietQRAccount(
-      selectedBank.bin,
-      accountNumber.trim(),
-    );
-    setIsLookingUp(false);
-
-    if (result.success && result.accountName) {
-      setAccountHolder(result.accountName);
-      setLookupStatus("success");
-      setLookupMessage(result.accountName);
-    } else if (result.isKeyMissing) {
-      setLookupStatus("key_missing");
-      setLookupMessage(
-        "Chưa thể xác thực tự động qua VietQR. Vui lòng tự nhập và kiểm tra kỹ tên chủ tài khoản.",
-      );
-    } else {
-      setLookupStatus("error");
-      setLookupMessage(result.error || "Số tài khoản không hợp lệ");
-    }
-  };
 
   const bankDetails = (): ReadinessBank | null => {
     if (
@@ -333,9 +270,9 @@ export function PostApprovalScreen() {
             <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-amber-400/40 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
               <Warning className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>
-                Vui lòng kiểm tra và nhập chính xác thông tin tài khoản ngân
-                hàng thụ hưởng. Nếu thông tin không chính xác, quá trình thanh
-                toán sẽ bị chậm trễ hoặc có thể không thực hiện được.
+                Thông tin tài khoản không được xác thực tự động. Vui lòng kiểm
+                tra kỹ ngân hàng, số tài khoản và tên chủ tài khoản trước khi
+                lưu để tránh chậm trễ thanh toán.
               </span>
             </div>
 
@@ -417,7 +354,6 @@ export function PostApprovalScreen() {
                             onClick={() => {
                               setSelectedBank(b);
                               setAccountHolder("");
-                              setLookupStatus("idle");
                               setIsDropdownOpen(false);
                               setBankSearch("");
                             }}
@@ -465,114 +401,32 @@ export function PostApprovalScreen() {
                 <label className="mb-1.5 block text-xs font-bold text-foreground">
                   Số tài khoản <span className="text-destructive">*</span>
                 </label>
-                <div className="relative">
-                  <Input
-                    value={accountNumber}
-                    onChange={(e) => {
-                      setAccountNumber(e.target.value.replace(/\D/g, ""));
-                      setAccountHolder("");
-                      setLookupStatus("idle");
-                    }}
-                    placeholder="Nhập số tài khoản"
-                    autoComplete="off"
-                    inputMode="numeric"
-                    className="h-10 rounded-xl border-input pr-9 font-google-sans text-sm focus:border-primary"
-                  />
-                  <div className="absolute right-2.5 top-2.5">
-                    {isLookingUp ? (
-                      <Spinner className="h-5 w-5 animate-spin text-primary" />
-                    ) : lookupStatus === "success" ? (
-                      <CheckCircle
-                        className="h-5 w-5 text-secondary"
-                        weight="fill"
-                      />
-                    ) : null}
-                  </div>
-                </div>
+                <Input
+                  value={accountNumber}
+                  onChange={(e) => {
+                    setAccountNumber(e.target.value.replace(/\D/g, ""));
+                    setAccountHolder("");
+                  }}
+                  placeholder="Nhập số tài khoản"
+                  autoComplete="off"
+                  inputMode="numeric"
+                  className="h-10 rounded-xl border-input font-google-sans text-sm focus:border-primary"
+                />
               </div>
 
               {/* Account Holder Name */}
               <div>
-                <div className="mb-1.5 flex items-center justify-between">
-                  <label className="block text-xs font-bold text-foreground">
-                    Tên chủ tài khoản{" "}
-                    <span className="text-destructive">*</span>
-                  </label>
-                  {lookupStatus === "success" && (
-                    <span className="flex items-center gap-1 text-[10px] font-bold text-secondary">
-                      <CheckCircle className="h-3 w-3" weight="fill" />
-                      Đã xác thực
-                    </span>
-                  )}
-                </div>
+                <label className="mb-1.5 block text-xs font-bold text-foreground">
+                  Tên chủ tài khoản <span className="text-destructive">*</span>
+                </label>
                 <Input
                   value={accountHolder}
-                  onChange={(e) => {
-                    setAccountHolder(e.target.value.toUpperCase());
-                    setLookupStatus("idle");
-                  }}
+                  onChange={(e) => setAccountHolder(e.target.value.toUpperCase())}
                   placeholder="NGUYEN VAN A"
                   autoComplete="name"
-                  className={`h-10 rounded-xl border-input font-semibold uppercase tracking-wide focus:border-primary ${
-                    lookupStatus === "success" ? "bg-secondary/10" : ""
-                  }`}
+                  className="h-10 rounded-xl border-input font-semibold uppercase tracking-wide focus:border-primary"
                 />
               </div>
-            </div>
-
-            {/* Lookup feedback message / validation status */}
-            <div className="mt-3">
-              {isLookingUp && (
-                <p className="flex items-center gap-1.5 text-xs text-primary">
-                  <Spinner className="h-3.5 w-3.5 animate-spin" />
-                  Đang tra cứu tên chủ tài khoản từ ngân hàng...
-                </p>
-              )}
-
-              {lookupStatus === "success" && (
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-secondary">
-                  <CheckCircle className="h-4 w-4" weight="fill" />
-                  Tài khoản hợp lệ: {lookupMessage}
-                </p>
-              )}
-
-              {lookupStatus === "key_missing" && (
-                <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-accent/20 p-2.5 text-xs text-amber-800 ring-1 ring-accent/40">
-                  <span className="flex items-center gap-1.5">
-                    <Warning className="h-4 w-4 shrink-0" />
-                    {lookupMessage}
-                  </span>
-                  {isPreview && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setAccountHolder("NGUYỄN VĂN AN");
-                        setLookupStatus("success");
-                        setLookupMessage("NGUYỄN VĂN AN (Mẫu)");
-                      }}
-                      className="rounded bg-card px-2 py-0.5 text-[11px] font-bold text-primary shadow-sm hover:bg-primary/10"
-                    >
-                      Điền mẫu (Preview)
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {lookupStatus === "error" && (
-                <div className="flex items-center justify-between gap-2 text-xs text-destructive">
-                  <span className="flex items-center gap-1.5">
-                    <Warning className="h-4 w-4 shrink-0" />
-                    {lookupMessage}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleManualLookup}
-                    className="font-semibold text-primary underline"
-                  >
-                    Thử lại
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* Save button */}

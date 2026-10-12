@@ -14,9 +14,11 @@ import {
   tutorProfileFormSchema,
   type TutorProfileFormValues,
 } from "../schemas/profile-registration.schema";
-import { tutorProfileRegistrationService } from "../services/profile-registration.service";
+import { tutorProfileRegistrationService, tutorProfileReviewQueryKey } from "../services/profile-registration.service";
 import type { PendingNavigation } from "../types/profile-registration.types";
 import { buildTutorProfileDraftPayload } from "../utils/build-draft-payload";
+import { buildTutorProfileReviewPatch } from "../utils/build-review-patch";
+import { resolveLiveTutorOnboardingScenario } from "../../tutor-onboarding/schemas/live-tutor-onboarding";
 
 const DRAFT_GUARD_STATE_KEY = "__tutorProfileDraftGuard";
 const PROFILE_QUERY_KEY = ["tutor-profile", "registration"] as const;
@@ -25,7 +27,10 @@ export function useTutorProfileRegistration() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const login = useAuthStore((state) => state.login);
+  const user = useAuthStore((state) => state.user);
+  const isReviewCorrection = user ? resolveLiveTutorOnboardingScenario(user) === "rejected" : false;
   const profileExistsRef = useRef(false);
+  const initialValuesRef = useRef<TutorProfileFormValues | null>(null);
   const [pendingNavigation, setPendingNavigation] = useState<PendingNavigation | null>(null);
   const [isLeaving, setIsLeaving] = useState(false);
   const allowNavigationRef = useRef(false);
@@ -35,22 +40,40 @@ export function useTutorProfileRegistration() {
     mode: "onBlur",
   });
 
+  const reviewQuery = useQuery({
+    queryKey: tutorProfileReviewQueryKey,
+    queryFn: tutorProfileRegistrationService.getReview,
+    enabled: isReviewCorrection,
+    retry: false,
+  });
   const profileQuery = useQuery({
-    queryKey: PROFILE_QUERY_KEY,
-    queryFn: tutorProfileRegistrationService.getProfile,
+    queryKey: isReviewCorrection ? [...PROFILE_QUERY_KEY, "rejected"] : PROFILE_QUERY_KEY,
+    queryFn: async () => isReviewCorrection
+      ? tutorProfileRegistrationService.getRejectedProfile(
+          await queryClient.fetchQuery({
+            queryKey: tutorProfileReviewQueryKey,
+            queryFn: tutorProfileRegistrationService.getReview,
+            staleTime: 30_000,
+          }),
+        )
+      : tutorProfileRegistrationService.getProfile(),
     retry: false,
   });
 
   useEffect(() => {
     if (profileQuery.data) {
       profileExistsRef.current = true;
-      if (!form.formState.isDirty) form.reset(profileQuery.data);
+      if (!form.formState.isDirty) {
+        initialValuesRef.current = profileQuery.data;
+        form.reset(profileQuery.data);
+      }
     }
-  }, [form, form.formState.isDirty, profileQuery.data]);
+  }, [form, form.formState.isDirty, isReviewCorrection, profileQuery.data]);
 
   const persistDraft = useCallback(async (values: TutorProfileFormValues) => {
     const result = await tutorProfileRegistrationService.saveDraft(values, profileExistsRef.current);
     profileExistsRef.current = true;
+    initialValuesRef.current = values;
     queryClient.setQueryData(PROFILE_QUERY_KEY, values);
     void queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY, refetchType: "none" });
     return result;
@@ -70,11 +93,35 @@ export function useTutorProfileRegistration() {
   });
 
   const submitMutation = useMutation({
-    mutationFn: (values: TutorProfileFormValues) => tutorProfileRegistrationService.submit(values),
-    onSuccess: async () => {
+    mutationFn: (values: TutorProfileFormValues) => {
+      if (isReviewCorrection) {
+        const initialValues = initialValuesRef.current;
+        if (!initialValues) throw new Error("Chưa tải xong hồ sơ cần chỉnh sửa.");
+        return tutorProfileRegistrationService.submitReviewPatch(
+          buildTutorProfileReviewPatch(values, initialValues),
+        );
+      }
+      return tutorProfileRegistrationService.submit(values);
+    },
+    onSuccess: async (result) => {
       allowNavigationRef.current = true;
-      const meResponse = await authService.getMe();
-      if (meResponse.success && meResponse.data) login(meResponse.data);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY, refetchType: "none" }),
+        queryClient.invalidateQueries({ queryKey: tutorProfileReviewQueryKey, refetchType: "none" }),
+      ]);
+      try {
+        const meResponse = await authService.getMe();
+        if (meResponse.success && meResponse.data) {
+          const refreshedUser = meResponse.data;
+          login(refreshedUser.tutorProfileStatus?.trim().toUpperCase() === "REJECTED"
+            ? { ...refreshedUser, tutorProfileStatus: result.tutorProfileStatus ?? "PENDING_REVIEW" }
+            : refreshedUser);
+        } else if (user) {
+          login({ ...user, tutorProfileStatus: result.tutorProfileStatus ?? "PENDING_REVIEW" });
+        }
+      } catch {
+        if (user) login({ ...user, tutorProfileStatus: result.tutorProfileStatus ?? "PENDING_REVIEW" });
+      }
       toast.success("Đã gửi hồ sơ", { description: "BeeWise sẽ xét duyệt hồ sơ trước khi mở Phỏng vấn AI.", position: "top-right" });
       router.replace("/tutor/onboarding");
     },
@@ -85,7 +132,7 @@ export function useTutorProfileRegistration() {
     if (!pendingNavigation || isLeaving) return;
     setIsLeaving(true);
     try {
-      await persistDraft(form.getValues());
+      if (!isReviewCorrection) await persistDraft(form.getValues());
       allowNavigationRef.current = true;
       if (pendingNavigation.kind === "history") {
         window.history.go(-2);
@@ -94,9 +141,9 @@ export function useTutorProfileRegistration() {
       }
     } catch (error) {
       setIsLeaving(false);
-      toast.error("Chưa thể lưu bản nháp", { description: getApiErrorMessage(error), position: "top-right" });
+      toast.error(isReviewCorrection ? "Chưa thể rời trang" : "Chưa thể lưu bản nháp", { description: getApiErrorMessage(error), position: "top-right" });
     }
-  }, [form, isLeaving, pendingNavigation, persistDraft]);
+  }, [form, isLeaving, isReviewCorrection, pendingNavigation, persistDraft]);
 
   useEffect(() => {
     const guardedUrl = window.location.href;
@@ -113,6 +160,10 @@ export function useTutorProfileRegistration() {
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (!form.formState.isDirty || allowNavigationRef.current) return;
+      if (isReviewCorrection) {
+        event.preventDefault();
+        return;
+      }
       void fetch("/api/tutors/profile", {
         method: profileExistsRef.current ? "PUT" : "POST",
         credentials: "include",
@@ -179,11 +230,13 @@ export function useTutorProfileRegistration() {
         window.history.replaceState(nextState, "", window.location.href);
       }
     };
-  }, [form, form.formState.isDirty, queryClient]);
+  }, [form, form.formState.isDirty, isReviewCorrection, queryClient]);
 
   return {
     form,
     profileQuery,
+    reviewQuery,
+    isReviewCorrection,
     pendingNavigation,
     isSaving: saveMutation.isPending || isLeaving,
     isSubmitting: submitMutation.isPending,

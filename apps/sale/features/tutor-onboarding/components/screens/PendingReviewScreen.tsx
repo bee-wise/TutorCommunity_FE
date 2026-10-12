@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@workspace/ui/components/ui/button";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useRefreshTutorProfileStatus } from "../../hooks/useRefreshTutorProfileStatus";
 import { useTutorOnboardingViewModel } from "../TutorOnboardingProvider";
 
 const reviewSteps = [
@@ -16,6 +18,7 @@ const reviewSteps = [
 
 export function PendingReviewScreen() {
   const { dispatchAction, isPreview } = useTutorOnboardingViewModel();
+  const refreshStatus = useRefreshTutorProfileStatus();
 
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_320px]">
@@ -35,6 +38,18 @@ export function PendingReviewScreen() {
             hồ sơ được phê duyệt. Dự kiến có kết quả trong{" "}
             <strong className="text-primary">1–3 ngày làm việc</strong>.
           </p>
+          {!isPreview && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={refreshStatus.isPending}
+              onClick={() => refreshStatus.mutate()}
+              className="mt-5 gap-2 rounded-xl border-primary/25 text-primary transition-all hover:bg-primary/5 active:scale-[0.98]"
+            >
+              <ArrowPathIcon className={`size-4 ${refreshStatus.isPending ? "animate-spin" : ""}`} aria-hidden="true" />
+              {refreshStatus.isPending ? "Đang cập nhật..." : "Tải lại trạng thái"}
+            </Button>
+          )}
         </div>
 
         {/* Review timeline */}

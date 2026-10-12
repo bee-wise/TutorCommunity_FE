@@ -3,6 +3,7 @@ import {
   LockKey as LockKeyhole,
   ShieldCheck,
   Books,
+  GearSix,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
@@ -15,6 +16,14 @@ const settingsFeatures = [
     icon: ShieldCheck,
     category: "Truy cập & bảo mật",
     details: ["Vai trò", "Định nghĩa quyền", "Ma trận phân quyền"],
+  },
+  {
+    title: "Cấu hình phỏng vấn AI",
+    description: "Quản lý quy định nền tảng, bộ câu hỏi và barem chấm điểm phỏng vấn.",
+    href: "/admin/ai-interviews/settings",
+    icon: GearSix,
+    category: "Đánh giá gia sư",
+    details: ["Quy định", "Câu hỏi", "Barem chấm điểm"],
   },
   {
     title: "Chương trình & tổ hợp dạy",
@@ -65,7 +74,7 @@ export function SettingsOverview() {
                 <Link
                   key={href}
                   href={href}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span
                     aria-hidden="true"

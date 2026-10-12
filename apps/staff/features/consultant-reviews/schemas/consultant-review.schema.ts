@@ -13,6 +13,12 @@ export const pendingProfileFieldSchema = z.object({
   requestedAt: z.string(),
 });
 
+const previouslyApprovedFieldSchema = z.object({
+  fieldName: z.string(),
+  approvedValue: z.string(),
+  reviewedAt: z.string(),
+});
+
 export const pendingProfileSchema = z.object({
   profileId: z.uuid(),
   tutorUserId: z.uuid(),
@@ -30,6 +36,8 @@ export const pendingProfileSchema = z.object({
   submittedAt: z.string(),
   updatedAt: z.string(),
   fields: z.array(pendingProfileFieldSchema).nullish(),
+  reviewCount: z.number().int().nonnegative(),
+  previouslyApprovedFields: z.array(previouslyApprovedFieldSchema).nullish(),
 });
 
 export const pendingFieldChangeSchema = z.object({
@@ -145,6 +153,8 @@ export const profileReviewSchema = z.object({
   reviewedAt: nullableText,
   profile: tutorProfileSubmissionSchema,
   rejectedFields: z.array(rejectedFieldResponseSchema).nullish(),
+  reviewCount: z.number().int().nonnegative(),
+  previouslyApprovedFields: z.array(previouslyApprovedFieldSchema),
 });
 
 export type ReviewList = z.infer<typeof reviewListSchema>;

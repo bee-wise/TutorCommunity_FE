@@ -16,17 +16,17 @@ export const profileSections: { title: string; description: string; fields: Prof
   {
     title: "Nội dung và học phí",
     description: "Tổ hợp giảng dạy, môn học và mức phí đề xuất",
-    fields: ["teachingOfferings", "subjectIds", "gradeLevelIds", "specializationIds", "hourlyRate"],
+    fields: ["teachingOfferings", "specializationIds"],
   },
   {
-    title: "Phương pháp và lịch dạy",
-    description: "Cách dạy, kinh nghiệm và thời gian có thể nhận lớp",
-    fields: ["teachingModes", "teachingMethods", "availability", "experienceYears"],
+    title: "Phương pháp và kinh nghiệm",
+    description: "Hình thức, phương pháp và kinh nghiệm giảng dạy",
+    fields: ["teachingModes", "teachingMethods", "experienceYears"],
   },
   {
-    title: "Khu vực và thanh toán",
-    description: "Phạm vi dạy trực tiếp và thông tin liên quan",
-    fields: ["area", "offlineCity", "offlineDistrict", "offlineWard", "offlineAddressDetail", "travelRadiusKm", "bankInformation"],
+    title: "Khu vực giảng dạy",
+    description: "Địa điểm và phạm vi dạy trực tiếp",
+    fields: ["area", "offlineCity", "offlineDistrict", "offlineWard", "offlineAddressDetail", "travelRadiusKm"],
   },
 ];
 
@@ -37,9 +37,9 @@ export const profileFieldLabels: Record<ProfileFieldName, string> = {
   gender: "Giới tính",
   avatarUrl: "Ảnh đại diện",
   headline: "Tiêu đề hồ sơ",
-  universityId: "Mã trường đại học",
-  majorId: "Mã chuyên ngành",
-  studentYear: "Năm học",
+  universityId: "Trường đại học",
+  majorId: "Chuyên ngành",
+  studentYear: "Năm học / tình trạng học tập",
   studentCardUrl: "Thẻ sinh viên",
   hourlyRate: "Học phí theo môn",
   introduction: "Giới thiệu chi tiết",
@@ -60,7 +60,7 @@ export const profileFieldLabels: Record<ProfileFieldName, string> = {
   teachingHistory: "Kinh nghiệm giảng dạy",
   subjectIds: "Mã môn học",
   gradeLevelIds: "Mã khối lớp",
-  specializationIds: "Mã chuyên môn",
+  specializationIds: "Chuyên môn nổi bật",
   teachingModes: "Hình thức dạy",
 };
 
@@ -98,7 +98,17 @@ export function formatReviewDate(value?: string | null): string {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? value
-    : new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" }).format(date);
+    : new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Ho_Chi_Minh" }).format(date);
+}
+
+export function formatProfileReviewStatus(value?: string | null): string {
+  const labels: Record<string, string> = {
+    PENDING_REVIEW: "Đang chờ duyệt",
+    APPROVED: "Đã phê duyệt",
+    REJECTED: "Cần chỉnh sửa",
+    DRAFT: "Bản nháp",
+  };
+  return value ? labels[value.trim().toUpperCase()] ?? value : "Chưa rõ trạng thái";
 }
 
 export function readableFieldName(value?: string | null): string {

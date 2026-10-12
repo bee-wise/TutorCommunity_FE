@@ -12,7 +12,7 @@ import {
 } from "../schemas/profile-registration.schema";
 import { useLearningProgramOptions } from "../hooks/useLearningProgramOptions";
 import type { LearningCatalogItem } from "../services/learning-programs.service";
-import { ProfileField, profileInputClass } from "./ProfileField";
+import { ProfileField, profileInputClass, useProfileReviewRejection } from "./ProfileField";
 import { ProfileSelect } from "./ProfileSelect";
 
 function optionName(item: LearningCatalogItem): string {
@@ -22,10 +22,12 @@ function optionName(item: LearningCatalogItem): string {
 function TeachingOfferingCard({
   index,
   count,
+  originalOfferingId,
   onRemove,
 }: {
   index: number;
   count: number;
+  originalOfferingId: string | null;
   onRemove: () => void;
 }) {
   const {
@@ -37,6 +39,7 @@ function TeachingOfferingCard({
   const offering =
     useWatch({ control, name: `teachingOfferings.${index}` }) ??
     emptyTeachingOffering;
+  const rejection = useProfileReviewRejection("teachingOfferings", originalOfferingId ?? offering.id ?? undefined);
   const { programs, contexts, teachingItems } = useLearningProgramOptions(
     offering.programId,
     offering.programVersionId,
@@ -115,13 +118,22 @@ function TeachingOfferingCard({
     [404, 409].includes(teachingItems.error.statusCode);
 
   return (
-    <div className="min-w-0 space-y-4 rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
+    <div
+      data-review-offering-id={originalOfferingId ?? offering.id ?? undefined}
+      tabIndex={-1}
+      className={`min-w-0 space-y-4 rounded-2xl border p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-destructive/70 focus:ring-offset-2 sm:p-5 ${rejection ? "border-destructive/50 bg-destructive/5" : "border-border bg-card"}`}
+    >
       <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
         <div>
           <p className="text-sm font-bold text-primary">Môn dạy {index + 1}</p>
           <p className="text-xs text-muted-foreground">
             Chọn chương trình, cấp học, môn dạy và học phí riêng.
           </p>
+          {rejection ? (
+            <p className="mt-1 text-xs font-semibold leading-5 text-destructive">
+              Cần chỉnh sửa theo phản hồi: {rejection.rejectionReason}
+            </p>
+          ) : null}
         </div>
         {count > 1 ? (
           <Button
@@ -163,7 +175,9 @@ function TeachingOfferingCard({
             disabled={programs.isPending || programs.isError}
             placeholder={programs.isPending
                 ? "Đang tải chương trình..."
-                : "Chọn chương trình"}
+                : offering.id && offering.programVersionId && !offering.programId
+                  ? "Chương trình hiện tại · chọn để chỉnh sửa"
+                  : "Chọn chương trình"}
             options={(programs.data ?? []).map((item) => ({ value: item.id, label: optionName(item) }))}
           />
           {programs.isError ? (
@@ -426,12 +440,13 @@ export function TeachingOfferingsFields() {
   }, [getValues, offerings, setValue]);
 
   return (
-    <div className="space-y-4">
+    <div id="profile-review-field-teachingOfferings" tabIndex={-1} className="space-y-4 scroll-mt-28 focus:outline-none focus:ring-2 focus:ring-destructive/70 focus:ring-offset-2">
       {fields.map((field, index) => (
         <TeachingOfferingCard
           key={field.fieldKey}
           index={index}
           count={fields.length}
+          originalOfferingId={field.id}
           onRemove={() => remove(index)}
         />
       ))}

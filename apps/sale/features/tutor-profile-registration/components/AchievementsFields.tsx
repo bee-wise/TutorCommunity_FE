@@ -10,6 +10,7 @@ import {
   ProfileField,
   profileInputClass,
   profileTextareaClass,
+  useProfileReviewRejection,
 } from "./ProfileField";
 
 export function AchievementsFields() {
@@ -23,9 +24,10 @@ export function AchievementsFields() {
     name: "achievements",
     keyName: "fieldKey",
   });
+  const rejection = useProfileReviewRejection("achievements");
 
   return (
-    <section className="space-y-4 border-t border-border pt-6" aria-labelledby="achievements-heading">
+    <section id="profile-review-field-achievements" tabIndex={-1} className={`space-y-4 scroll-mt-28 border-t pt-6 focus:outline-none focus:ring-2 focus:ring-destructive/70 focus:ring-offset-2 ${rejection ? "rounded-xl border border-destructive/40 bg-destructive/5 p-4" : "border-border"}`} aria-labelledby="achievements-heading">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 id="achievements-heading" className="text-lg font-bold text-foreground">
@@ -56,6 +58,12 @@ export function AchievementsFields() {
           <Plus aria-hidden="true" /> Thêm thành tích
         </Button>
       </div>
+
+      {rejection ? (
+        <p className="text-xs font-semibold leading-5 text-destructive">
+          Cần chỉnh sửa theo phản hồi: {rejection.rejectionReason}
+        </p>
+      ) : null}
 
       {achievements.fields.length === 0 ? (
         <div className="flex items-start gap-3 rounded-xl border border-dashed border-border bg-muted/30 p-4">

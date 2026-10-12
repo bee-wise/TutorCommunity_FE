@@ -1,18 +1,18 @@
 import { z } from "zod";
 
 export const learningCatalogItemSchema = z.object({
-  id: z.string().uuid(),
+  id: z.guid(),
   code: z.string().nullish(),
   name: z.string().nullish(),
   type: z.string().nullish(),
   status: z.string().nullish(),
-  programId: z.string().uuid().nullish(),
-  programVersionId: z.string().uuid().nullish(),
-  teachingItemId: z.string().uuid().nullish(),
-  contextId: z.string().uuid().nullish(),
+  programId: z.guid().nullish(),
+  programVersionId: z.guid().nullish(),
+  teachingItemId: z.guid().nullish(),
+  contextId: z.guid().nullish(),
   effectiveFrom: z.string().nullish(),
   publishedAt: z.string().nullish(),
-  publishedBy: z.string().uuid().nullish(),
+  publishedBy: z.guid().nullish(),
 });
 
 export type LearningCatalogItem = z.infer<typeof learningCatalogItemSchema>;
@@ -76,8 +76,8 @@ export const contextFormSchema = z.object({
 export type ContextFormValues = z.infer<typeof contextFormSchema>;
 
 export const mappingFormSchema = z.object({
-  teachingItemId: z.string().uuid("Chọn môn / nội dung dạy."),
-  contextId: z.union([z.string().uuid(), z.literal("__none__")]),
+  teachingItemId: z.guid("Chọn môn / nội dung dạy."),
+  contextId: z.union([z.guid(), z.literal("__none__")]),
 });
 export type MappingFormValues = z.infer<typeof mappingFormSchema>;
 

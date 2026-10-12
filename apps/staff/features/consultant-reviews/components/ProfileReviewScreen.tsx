@@ -1,38 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  CheckCircle,
-  Copy,
-  Info,
-  WarningCircle,
-} from "@phosphor-icons/react";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
+import { Button } from "@workspace/ui/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/ui/dialog";
-import {
-  formatReviewDate,
   profileSections,
   type ProfileFieldName,
 } from "../data/profile-fields";
+import { compareProfileReview } from "../data/review-comparison";
+import { canRejectSubmittedField, canSubmitProfileReview } from "../data/review-eligibility";
 import {
   useProfileReview,
+  useReviewList,
   useSubmitProfileReview,
 } from "../hooks/useConsultantReviews";
 import { ProfileReviewField } from "./ProfileReviewField";
+import { ProfileReviewHeader } from "./ProfileReviewHeader";
 import { ReviewDecisionSummary } from "./ReviewDecisionSummary";
+import { ReviewStepActions } from "./ReviewStepActions";
 import { ReviewStepper } from "./ReviewStepper";
+import { ReviewSubmitDialog } from "./ReviewSubmitDialog";
 
 const LIST_HREF = "/consultant/tutors";
 const LAST_STEP = profileSections.length;
@@ -43,32 +32,69 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
   const mutation = useSubmitProfileReview(profileId);
   const [activeStep, setActiveStep] = useState(0);
   const [furthestStep, setFurthestStep] = useState(0);
-  const [rejections, setRejections] = useState<
-    Partial<Record<ProfileFieldName, string>>
-  >({});
-  const [offeringRejections, setOfferingRejections] = useState<
-    Record<string, string>
-  >({});
+  const [rejections, setRejections] = useState<Partial<Record<ProfileFieldName, string>>>({});
+  const [offeringRejections, setOfferingRejections] = useState<Record<string, string>>({});
   const [note, setNote] = useState("");
   const [showValidation, setShowValidation] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [infoModalOpen, setInfoModalOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [locateRequest, setLocateRequest] = useState<{ field: ProfileFieldName; sequence: number } | null>(null);
 
   const offerings = profileQuery.data?.profile.teachingOfferings ?? [];
-  const reviewable =
-    profileQuery.data?.status?.toUpperCase() === "PENDING_REVIEW";
-  const selectedFields = Object.entries(rejections) as [
-    ProfileFieldName,
-    string,
-  ][];
-  const selectedOfferings = Object.entries(offeringRejections);
+  const reviewable = profileQuery.data?.status?.toUpperCase() === "PENDING_REVIEW";
+  const reviewCount = profileQuery.data?.reviewCount ?? 0;
+  const isResubmission = reviewCount > 0;
+  const queueQuery = useReviewList({ queue: "profiles", search: "" }, reviewable && isResubmission, 0);
+  const pendingProfile = queueQuery.data?.profiles?.find((profile) => profile.profileId === profileId);
+  const submittedFields = new Set(
+    (pendingProfile?.fields ?? [])
+      .map((field) => field.fieldName)
+      .filter((field): field is string => Boolean(field)),
+  );
+  const canSubmitReview = canSubmitProfileReview(
+    reviewable,
+    reviewCount,
+    queueQuery.isSuccess && !queueQuery.isFetching && Boolean(pendingProfile),
+  );
+  const comparisons = useMemo(
+    () => profileQuery.data ? compareProfileReview(profileQuery.data) : null,
+    [profileQuery.data],
+  );
+  const resubmittedFields = useMemo(() => {
+    if (!comparisons) return undefined;
+    const rejectedFields = profileQuery.data?.rejectedFields;
+    const rejectedNames = new Set(
+      (rejectedFields ?? [])
+        .map((field) => field.fieldName?.split(/[.[\]]+/).find(Boolean))
+        .filter((field): field is string => Boolean(field)),
+    );
+    return profileSections.flatMap((section) => section.fields).filter((field) => {
+      const status = comparisons[field]?.status;
+      return (status === "changed" || status === "new") &&
+        (!rejectedFields?.length || rejectedNames.has(field));
+    });
+  }, [comparisons, profileQuery.data?.rejectedFields]);
+  const reviewableFields = new Set<ProfileFieldName>(
+    profileSections.flatMap((section) => section.fields).filter((field) =>
+      canRejectSubmittedField({
+        submitted: submittedFields.has(field),
+        reviewCount,
+      }),
+    ),
+  );
+  const activeRejections = Object.fromEntries(
+    Object.entries(rejections).filter(([field]) => reviewableFields.has(field as ProfileFieldName)),
+  ) as Partial<Record<ProfileFieldName, string>>;
+  const activeOfferingRejections = reviewableFields.has("teachingOfferings")
+    ? offeringRejections
+    : {};
+  const selectedFields = Object.entries(activeRejections) as [ProfileFieldName, string][];
+  const selectedOfferings = Object.entries(activeOfferingRejections);
   const selectedCount = selectedFields.length + selectedOfferings.length;
   const currentSection = profileSections[activeStep];
   const rejectionCounts = [
     ...profileSections.map(
       (section) =>
-        section.fields.filter((field) => field in rejections).length +
+        section.fields.filter((field) => field in activeRejections).length +
         (section.fields.includes("teachingOfferings")
           ? selectedOfferings.length
           : 0),
@@ -93,7 +119,23 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
     false,
   ];
 
+  useEffect(() => {
+    if (!locateRequest) return;
+    const target = document.getElementById(`profile-review-field-${locateRequest.field}`);
+    target?.scrollIntoView({ behavior: "smooth", block: "center" });
+    target?.focus({ preventScroll: true });
+  }, [activeStep, locateRequest]);
+
+  function locateField(field: ProfileFieldName) {
+    const step = profileSections.findIndex((section) => section.fields.includes(field));
+    if (step < 0) return;
+    setActiveStep(step);
+    setFurthestStep((current) => Math.max(current, step));
+    setLocateRequest((current) => ({ field, sequence: (current?.sequence ?? 0) + 1 }));
+  }
+
   function toggleField(field: ProfileFieldName) {
+    if (!reviewableFields.has(field)) return;
     if (field === "teachingOfferings") setOfferingRejections({});
     setRejections((current) => {
       const next = { ...current };
@@ -104,6 +146,7 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
   }
 
   function toggleOffering(id: string) {
+    if (!reviewableFields.has("teachingOfferings")) return;
     setRejections((current) => {
       const next = { ...current };
       delete next.teachingOfferings;
@@ -124,6 +167,7 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
     }
     const next = Math.min(activeStep + 1, LAST_STEP);
     setActiveStep(next);
+    setLocateRequest(null);
     setFurthestStep((current) => Math.max(current, next));
     setShowValidation(false);
   }
@@ -135,10 +179,12 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
       return;
     }
     setActiveStep(index);
+    setLocateRequest(null);
     setShowValidation(false);
   }
 
   function openConfirmation() {
+    if (!canSubmitReview) return;
     const firstInvalid = profileSections.findIndex((_, index) =>
       invalidStep(index),
     );
@@ -151,7 +197,10 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
   }
 
   async function submit() {
-    if (!reviewable || profileSections.some((_, index) => invalidStep(index)))
+    if (!canSubmitReview ||
+      selectedFields.some(([field]) => !reviewableFields.has(field)) ||
+      (selectedOfferings.length > 0 && !reviewableFields.has("teachingOfferings")) ||
+      profileSections.some((_, index) => invalidStep(index)))
       return;
     try {
       await mutation.mutateAsync({
@@ -176,57 +225,23 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
   }
 
   return (
-    <main className="min-w-0 bg-muted px-4 py-6 sm:px-6 lg:px-8">
+    <main className="min-w-0 bg-background px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
       <div className="mx-auto max-w-6xl space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link
-            href={LIST_HREF}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <ArrowLeft size={17} aria-hidden="true" /> Về hàng chờ
-          </Link>
-
-          {profileQuery.data ? (
-            <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3 py-1.5 shadow-sm">
-              <div className="min-w-0 text-right">
-                <span className="block truncate font-nunito text-sm font-bold text-foreground">
-                  {profileQuery.data.profile.displayName || "Gia sư chưa đặt tên"}
-                </span>
-                <span className="block font-mono text-[11px] text-muted-foreground">
-                  Mã: {profileId.length > 18 ? `${profileId.slice(0, 15)}...` : profileId}
-                </span>
-              </div>
-              <span
-                className={`shrink-0 rounded-md border px-2 py-0.5 text-xs font-bold ${
-                  reviewable
-                    ? "border-amber-500/30 bg-amber-500/10 text-amber-700"
-                    : "border-border text-muted-foreground"
-                }`}
-              >
-                {reviewable
-                  ? "Đang chờ duyệt"
-                  : profileQuery.data.status || "Chưa rõ trạng thái"}
-              </span>
-              <button
-                type="button"
-                onClick={() => setInfoModalOpen(true)}
-                className="flex size-7 items-center justify-center rounded-md border border-border bg-muted/50 text-muted-foreground transition-colors hover:border-primary hover:bg-primary/10 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label="Xem thông tin chi tiết hồ sơ"
-                title="Thông tin chi tiết hồ sơ"
-              >
-                <Info size={16} weight="bold" aria-hidden="true" />
-              </button>
-            </div>
-          ) : null}
-        </div>
+        <ProfileReviewHeader
+          profileId={profileId}
+          review={profileQuery.data}
+          reviewable={reviewable}
+          resubmittedFields={reviewable && isResubmission ? resubmittedFields : undefined}
+          onLocateField={locateField}
+        />
 
         {profileQuery.isPending ? (
           <div className="space-y-4" role="status" aria-label="Đang tải hồ sơ">
-            <div className="h-72 animate-pulse rounded-xl bg-card" />
+            <div className="h-72 animate-pulse rounded-3xl border border-border bg-card" />
           </div>
         ) : profileQuery.isError ? (
           <div
-            className="rounded-xl border border-error bg-card p-6"
+            className="rounded-2xl border border-destructive bg-card p-6"
             role="alert"
           >
             <p className="font-semibold text-destructive">
@@ -235,26 +250,44 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
             <p className="mt-1 text-sm text-muted-foreground">
               {getApiErrorMessage(profileQuery.error)}
             </p>
-            <button
-              type="button"
+            <Button
               onClick={() => void profileQuery.refetch()}
-              className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+              className="mt-4 rounded-xl transition-all active:scale-[0.98]"
             >
               Thử lại
-            </button>
+            </Button>
           </div>
         ) : profileQuery.data ? (
           <>
-
             {!reviewable && (
-              <div className="flex items-start gap-2 rounded-lg border border-warning bg-card p-4 text-sm text-foreground">
-                <WarningCircle
-                  size={20}
-                  className="shrink-0 text-warning"
+              <div className="flex items-start gap-3 rounded-2xl border border-warning bg-card p-4 text-sm text-foreground">
+                <ExclamationTriangleIcon
+                  className="size-5 shrink-0 text-warning"
                   aria-hidden="true"
                 />
                 Hồ sơ không ở trạng thái chờ duyệt. Bạn có thể xem lại nội dung
                 nhưng không thể gửi quyết định mới.
+              </div>
+            )}
+            {reviewable && isResubmission && queueQuery.isFetching && (
+              <div className="rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground" role="status">
+                Đang xác minh các trường thuộc lượt xét duyệt hiện tại...
+              </div>
+            )}
+            {reviewable && isResubmission && queueQuery.isError && (
+              <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-destructive bg-card p-4 text-sm text-destructive" role="alert">
+                <span>Chưa tải được các trường được gửi trong lượt xét duyệt này.</span>
+                <Button type="button" variant="outline" size="sm" onClick={() => void queueQuery.refetch()} className="rounded-xl transition-all active:scale-[0.98]">Thử lại</Button>
+              </div>
+            )}
+            {reviewable && isResubmission && queueQuery.isSuccess && !pendingProfile && (
+              <div className="rounded-2xl border border-destructive bg-card p-4 text-sm text-destructive" role="alert">
+                Không tìm thấy hồ sơ trong hàng chờ hiện tại. Vui lòng tải lại trang trước khi xét duyệt.
+              </div>
+            )}
+            {reviewable && canSubmitReview && reviewableFields.size === 0 && (
+              <div className="rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground">
+                Chưa có trường nào có giá trị chờ duyệt để từ chối. Bạn có thể duyệt hồ sơ hoặc kiểm tra lại dữ liệu đã gửi.
               </div>
             )}
 
@@ -267,16 +300,24 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
                   invalidSteps={invalidSteps}
                   onSelect={selectStep}
                 />
+                <ReviewStepActions
+                  activeStep={activeStep}
+                  lastStep={LAST_STEP}
+                  reviewable={canSubmitReview}
+                  onPrevious={() => selectStep(activeStep - 1)}
+                  onNext={advance}
+                  onSubmit={openConfirmation}
+                />
               </div>
 
               <div className="min-w-0 space-y-4">
                 {currentSection ? (
-                  <section className="overflow-hidden rounded-xl border border-border bg-card">
-                    <div className="border-b border-border px-5 py-5 sm:px-7">
-                      <p className="text-xs font-bold text-primary">
+                  <section className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
+                    <div className="border-b border-border px-5 py-5 sm:px-7 sm:py-6">
+                      <p className="text-xs font-extrabold uppercase tracking-wider text-primary">
                         Bước {activeStep + 1} / {LAST_STEP + 1}
                       </p>
-                      <h2 className="mt-1 font-nunito text-2xl font-extrabold">
+                      <h2 className="mt-2 font-nunito text-2xl font-extrabold text-foreground">
                         {currentSection.title}
                       </h2>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -289,9 +330,13 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
                           key={field}
                           field={field}
                           value={profileQuery.data.profile[field]}
-                          rejected={field in rejections}
-                          reason={rejections[field] ?? ""}
-                          reviewable={reviewable}
+                          comparison={comparisons?.[field]}
+                          highlighted={locateRequest?.field === field}
+                          rejected={field in activeRejections}
+                          reason={activeRejections[field] ?? ""}
+                          reviewable={canSubmitReview}
+                          submittedInCurrentReview={!isResubmission || submittedFields.has(field)}
+                          rejectableInCurrentReview={reviewableFields.has(field)}
                           showValidation={showValidation}
                           onToggle={() => toggleField(field)}
                           onReasonChange={(value) =>
@@ -301,7 +346,7 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
                             }))
                           }
                           offerings={offerings}
-                          offeringRejections={offeringRejections}
+                          offeringRejections={activeOfferingRejections}
                           onToggleOffering={toggleOffering}
                           onOfferingReasonChange={(id, value) =>
                             setOfferingRejections((current) => ({
@@ -315,207 +360,32 @@ export function ProfileReviewScreen({ profileId }: { profileId: string }) {
                   </section>
                 ) : (
                   <ReviewDecisionSummary
-                    rejections={rejections}
-                    offeringRejections={offeringRejections}
+                    rejections={activeRejections}
+                    offeringRejections={activeOfferingRejections}
                     offeringIds={offerings.map((item) => item.id)}
                     note={note}
                     onNoteChange={setNote}
                     reviewable={reviewable}
+                    isResubmission={isResubmission}
                     status={profileQuery.data.status}
                     previousRejections={profileQuery.data.rejectedFields ?? []}
                   />
                 )}
 
-                <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-3 sm:p-4">
-                  <div>
-                    <p className="text-xs font-bold text-primary">
-                      Bước {activeStep + 1} / {LAST_STEP + 1}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {selectedCount
-                        ? `${selectedCount} mục đã đánh dấu cần sửa`
-                        : "Chưa có mục cần sửa"}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {activeStep > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => selectStep(activeStep - 1)}
-                        className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-bold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        <ArrowLeft size={16} aria-hidden="true" /> Bước trước
-                      </button>
-                    )}
-                    {activeStep < LAST_STEP ? (
-                      <button
-                        type="button"
-                        onClick={advance}
-                        className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        Tiếp tục <ArrowRight size={16} aria-hidden="true" />
-                      </button>
-                    ) : reviewable ? (
-                      <button
-                        type="button"
-                        onClick={openConfirmation}
-                        className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        <CheckCircle size={17} aria-hidden="true" /> Gửi kết quả
-                      </button>
-                    ) : null}
-                  </div>
-                </div>
               </div>
             </div>
           </>
         ) : null}
       </div>
 
-      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {selectedCount
-                ? "Gửi yêu cầu chỉnh sửa hồ sơ?"
-                : "Duyệt toàn bộ hồ sơ?"}
-            </DialogTitle>
-            <DialogDescription>
-              {selectedCount
-                ? `${selectedCount} mục sẽ bị từ chối, các mục còn lại được duyệt. Gia sư sẽ nhận lý do để cập nhật.`
-                : "Hồ sơ sẽ được phê duyệt trong một lần xử lý."}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <button
-              type="button"
-              onClick={() => setConfirmOpen(false)}
-              disabled={mutation.isPending}
-              className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground"
-            >
-              Quay lại rà soát
-            </button>
-            <button
-              type="button"
-              onClick={() => void submit()}
-              disabled={mutation.isPending}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
-            >
-              {mutation.isPending ? "Đang gửi..." : "Xác nhận gửi"}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={infoModalOpen} onOpenChange={setInfoModalOpen}>
-        <DialogContent className="max-w-md rounded-2xl border-border sm:max-w-lg">
-          <DialogHeader className="text-left">
-            <div className="mb-2 flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Info size={22} weight="fill" aria-hidden="true" />
-            </div>
-            <DialogTitle className="font-nunito text-xl font-extrabold text-foreground">
-              Thông tin chi tiết hồ sơ
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              Thông tin định danh và trạng thái xét duyệt của gia sư.
-            </DialogDescription>
-          </DialogHeader>
-
-          {profileQuery.data ? (
-            <div className="space-y-4 py-2 text-sm">
-              <div className="grid gap-3 rounded-xl border border-border bg-muted/40 p-3.5">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Tên hiển thị
-                  </span>
-                  <span className="font-semibold text-foreground">
-                    {profileQuery.data.profile.displayName || "Chưa đặt tên"}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between gap-2 border-t border-border/60 pt-2.5">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Trạng thái xét duyệt
-                  </span>
-                  <span
-                    className={`rounded-md border px-2 py-0.5 text-xs font-bold ${
-                      reviewable
-                        ? "border-amber-500/30 bg-amber-500/10 text-amber-700"
-                        : "border-border text-muted-foreground"
-                    }`}
-                  >
-                    {reviewable
-                      ? "Đang chờ duyệt"
-                      : profileQuery.data.status || "Chưa rõ trạng thái"}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between gap-2 border-t border-border/60 pt-2.5">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Mã hồ sơ (UUID)
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-xs text-foreground">
-                      {profileId}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        void navigator.clipboard.writeText(profileId);
-                        setCopied(true);
-                        setTimeout(() => setCopied(false), 2000);
-                      }}
-                      className="inline-flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-                      title="Sao chép mã hồ sơ"
-                    >
-                      {copied ? (
-                        <Check size={14} className="text-green-600" />
-                      ) : (
-                        <Copy size={14} />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {profileQuery.data.reviewedAt ? (
-                  <div className="flex items-center justify-between gap-2 border-t border-border/60 pt-2.5">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Thời gian xử lý gần nhất
-                    </span>
-                    <span className="text-xs font-medium text-foreground">
-                      {formatReviewDate(profileQuery.data.reviewedAt)}
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="rounded-xl border border-border bg-card p-3.5 text-xs leading-5 text-muted-foreground">
-                <p className="mb-1 font-semibold text-foreground">
-                  Quy trình xét duyệt:
-                </p>
-                <p>
-                  1. Đi qua từng bước kiểm tra thông tin cá nhân, môn dạy, giới thiệu và địa chỉ.
-                </p>
-                <p>
-                  2. Đánh dấu từ chối và nhập lý do rõ ràng nếu mục nào chưa đạt chuẩn.
-                </p>
-                <p>
-                  3. Xem lại tổng kết quyết định ở bước cuối trước khi gửi kết quả.
-                </p>
-              </div>
-            </div>
-          ) : null}
-
-          <DialogFooter>
-            <button
-              type="button"
-              onClick={() => setInfoModalOpen(false)}
-              className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 sm:w-auto"
-            >
-              Đóng
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ReviewSubmitDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        selectedCount={selectedCount}
+        isResubmission={isResubmission}
+        pending={mutation.isPending}
+        onSubmit={() => void submit()}
+      />
     </main>
   );
 }
