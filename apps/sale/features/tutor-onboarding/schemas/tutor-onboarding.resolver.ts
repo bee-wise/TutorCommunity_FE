@@ -68,7 +68,7 @@ const descriptionMap: Record<TutorOnboardingScreen, string> = {
   POST_APPROVAL:
     "Bổ sung tài khoản ngân hàng nhận thanh toán và lịch rảnh để bắt đầu nhận lớp.",
   COMPLETED:
-    "Hồ sơ đã được duyệt, thông tin bổ sung đã hoàn tất và Tutor LMS đã được mở.",
+    "Hồ sơ đã được duyệt và thông tin bổ sung đã hoàn tất.",
   UNKNOWN: "Fallback an toàn. LMS không được mở cho kịch bản chưa hợp lệ.",
 };
 

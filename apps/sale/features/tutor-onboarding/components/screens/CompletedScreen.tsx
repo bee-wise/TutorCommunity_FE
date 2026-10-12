@@ -23,6 +23,7 @@ const SLOT_LABELS: Record<string, string> = {
 export function CompletedScreen() {
   const { session, state, isPreview } = useTutorOnboardingViewModel();
   const { profile, bankInfo, weeklyAvailability } = state;
+  const canAccessTutorLms = isPreview || session.canAccessTutorLms;
 
   const availabilitySummary = Object.entries(weeklyAvailability)
     .filter(([, slots]) => slots && slots.length > 0)
@@ -50,7 +51,7 @@ export function CompletedScreen() {
             Chúc mừng, {session.user.firstName}!
           </h2>
           <p className="mt-2 text-base text-white/80">
-            Bạn đã hoàn tất toàn bộ quá trình onboarding và chính thức trở thành gia sư BeeWise.
+            Bạn đã hoàn tất thông tin bổ sung và sẵn sàng đồng hành cùng học viên BeeWise.
           </p>
         </div>
       </div>
@@ -113,7 +114,9 @@ export function CompletedScreen() {
             </p>
             <ul className="mt-3 grid gap-2">
               {[
-                "Tutor LMS đã được mở",
+                canAccessTutorLms
+                  ? "Tutor LMS đã được mở"
+                  : "Quyền truy cập Tutor LMS đang được cập nhật",
                 "Hồ sơ công khai đã kích hoạt",
                 "Lịch rảnh đang chờ đặt lịch",
                 "Thông báo nhận lớp qua email & app",
@@ -130,13 +133,15 @@ export function CompletedScreen() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <Button
-              type="button"
-              onClick={() => window.location.assign(TUTOR_LMS_URL)}
-              className="w-full rounded-full bg-primary py-3 text-primary-foreground hover:bg-primary/90"
-            >
-              Vào Tutor LMS
-            </Button>
+            {canAccessTutorLms && (
+              <Button
+                type="button"
+                onClick={() => window.location.assign(TUTOR_LMS_URL)}
+                className="w-full rounded-full bg-primary py-3 text-primary-foreground hover:bg-primary/90"
+              >
+                Vào Tutor LMS
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"

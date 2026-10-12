@@ -44,6 +44,7 @@ export function resolveLiveTutorOnboardingScenario(
     | "canAccessTutorLms"
     | "isInterviewed"
   >,
+  readiness?: { isReady: boolean } | null,
 ): TutorOnboardingScenario | "unknown" {
   if (user.canAccessTutorLms === true) return "completed";
 
@@ -62,10 +63,25 @@ export function resolveLiveTutorOnboardingScenario(
     detailedStatuses.find(isKnownStatus);
 
   if (status) {
+    // A fresh profile status takes precedence over a stale onboarding rejection.
+    if (profileStatus === "REJECTED") return "rejected";
+    if (["PROFILE_SUBMITTED", "INTERVIEW_PENDING", "PENDING_REVIEW", "PENDING_VERIFICATION"].includes(profileStatus)) {
+      return "pending-review";
+    }
+
+    if (
+      readiness?.isReady === true &&
+      (status === "POST_APPROVAL_INFO_REQUIRED" ||
+        status === "COMPLETED" ||
+        (profileStatus === "APPROVED" && user.isInterviewed === true))
+    ) {
+      return "completed";
+    }
+
     // A stale COMPLETED status must not unlock the LMS while BE denies access.
     if (status === "COMPLETED") return "post-approval";
 
-    if (profileStatus === "REJECTED" || status === "REJECTED") {
+    if (status === "REJECTED" && profileStatus !== "APPROVED") {
       return "rejected";
     }
 

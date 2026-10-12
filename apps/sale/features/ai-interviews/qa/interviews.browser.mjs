@@ -10,6 +10,10 @@ const requireRuntime = createRequire(packageDirectory ? path.join(packageDirecto
 const { chromium } = requireRuntime("playwright");
 const saleUrl = process.env.BEEWISE_SALE_QA_URL ?? "http://localhost:3100";
 const staffUrl = process.env.BEEWISE_STAFF_QA_URL ?? "http://localhost:3102";
+const tutorOnly = process.env.BEEWISE_QA_TUTOR_ONLY === "1";
+const staffOnly = process.env.BEEWISE_QA_STAFF_ONLY === "1";
+const tutorMobile = process.env.BEEWISE_QA_TUTOR_MOBILE === "1";
+const visualQA = process.env.BEEWISE_QA_VISUAL === "1";
 const outputDirectory = path.resolve(process.env.BEEWISE_QA_OUTPUT ?? ".tmp/ai-interviews-qa");
 await mkdir(outputDirectory, { recursive: true });
 const id = "12345678-1234-4234-9234-123456789abc";
@@ -39,16 +43,19 @@ async function createSession(role, mobile = false) {
   const rubricContent = { version: "v1", language: "vi", questions: Array.from({ length: 6 }, (_, index) => ({ q_code: `Q${index + 1}`, text: "Nêu kinh nghiệm giảng dạy", prep_seconds: 30, answer_seconds: 90, weight: 1 / 6, criteria: [{ criterion_code: `Q${index + 1}.C1`, description: "Có ví dụ cụ thể", levels: ["Chưa thể hiện", "Ít", "Cơ bản", "Tốt", "Rất tốt"] }] })), thresholds: { pass: 70 }, extra_setting: { enabled: true } };
   const prompt = {
     q_code: "Q1", kind: "main", title: "Kinh nghiệm giảng dạy", group: "Giới thiệu", question_number: 1, total_questions: 1,
-    text: "Chia sẻ kinh nghiệm giảng dạy của bạn.\nNêu một ví dụ cụ thể.", prep_seconds: 1, answer_seconds: 2,
+    text: "Chia sẻ kinh nghiệm giảng dạy của bạn.\nNêu một ví dụ cụ thể.", prep_seconds: visualQA ? 30 : 1, answer_seconds: visualQA ? 30 : 2,
     video_upload: { url: "https://qa-r2.invalid/video", method: "PUT", content_type: "video/webm", key: "qa-video" },
   };
   const state = () => ({ interview_id: id, status: session.submitted ? "COMPLETED" : "IN_PROGRESS", intro: "Xin chào, hãy chia sẻ kinh nghiệm của bạn.", prompt: session.answerCount && !session.processing ? null : prompt, all_answered: session.answerCount > 0 && !session.processing, outro: "Cảm ơn bạn đã hoàn thành." });
   const summary = { overall_score: 75, score_complete: true, assessment_level: "Meets Expectations", requires_human_review: true, human_review_reasons: ["DATA_CONFLICT"], questions: [{ q_code: "Q1", title: "Giới thiệu", points: 15, max_points: 20 }] };
   const packageData = () => ({
-    interview: { interview_id: id, tutor_id: tutorId, status: session.decision ? "APPROVED" : "PENDING_REVIEW", rubric_version: "v1", language: "vi", overall_score: 75, manual_review_required: true, started_at: now, submitted_at: now },
-    summary,
+    interview: { interview_id: id, tutor_id: tutorId, status: session.packageStatus ?? (session.decision ? "APPROVED" : "PENDING_REVIEW"), rubric_version: "v1", language: "vi", overall_score: 75, manual_review_required: true, started_at: now, submitted_at: now },
+    summary: session.incomplete ? { ...summary, overall_score: null, score_complete: false } : summary,
     report: { data_conflicts: [{ q_code: "Q1", criterion_codes: ["Q1.C1"], interview_quote: "Tôi đã dạy 5 năm.", profile: { fact_id: "experience", label: "Kinh nghiệm", text: "2 năm" }, note: "Cần xác minh số năm", status: "OPEN" }], strengths: ["Giải thích rõ"], improvements: ["Thêm ví dụ"], verification_required: [], items_to_check: [] },
-    questions: [{ q_code: "Q1", title: "Giới thiệu", objective: "Kinh nghiệm và cách dạy", max_points: 20, points: 15, turn: null, criteria: [{ criterion_code: "Q1.C1", description: "Kinh nghiệm", weight: 1, levels: ["Chưa thể hiện", "Ít", "Cơ bản", "Tốt", "Rất tốt"], score_status: "SCORED", score: 3, effective_score: 3, evidence: [{ q_code: "Q1", quote: "Tôi chuẩn bị bài theo mục tiêu.", type: "DIRECT" }] }] }],
+    questions: [{ q_code: "Q1", title: "Kinh nghiệm giảng dạy", objective: "Đối chiếu kinh nghiệm và cách chuẩn bị bài học", max_points: 20, points: 15,
+      turn: { question: "Chia sẻ kinh nghiệm giảng dạy và một ví dụ cụ thể.", transcript: "Tôi đã dạy 5 năm. Tôi chuẩn bị bài theo mục tiêu của học viên và điều chỉnh phương pháp khi học viên chưa hiểu bài.", clarity_p: 0.9, followup: null, followup_transcript: null, video_url: "https://qa-r2.invalid/review-video", audio_url: null, followup_video_url: null, followup_audio_url: null, needs_review: true, review_reasons: ["DATA_CONFLICT"] },
+      criteria: [{ criterion_code: "Q1.C1", description: "Kinh nghiệm", weight: 1, levels: ["Chưa thể hiện", "Ít", "Cơ bản", "Tốt", "Rất tốt"], score_status: "SCORED", score: 3, effective_score: session.overridden ? 4 : 3, override_level: session.overridden ? 4 : null, override_reason: session.overridden ? "Bằng chứng đầy đủ trong bản chép lời." : null, evidence: [{ q_code: "Q1", quote: "Tôi chuẩn bị bài theo mục tiêu.", type: "DIRECT" }] }] },
+      { q_code: "Q2", title: "Xử lý tình huống", objective: "Kiểm tra cách giải thích và hỗ trợ học viên", max_points: 80, points: 60, turn: null, criteria: [] }],
     decisions: session.decision ? [{ id: 1, decision: "APPROVED", reason: null, feedback: "Đạt yêu cầu", details: null, consultant_id: id, created_at: now, synced_at: null }] : [], tutor: { fullName: "Gia sư kiểm thử", experience: "2 năm" }, tutor_error: null,
   });
   await context.route("**/*", async (route) => {
@@ -92,11 +99,12 @@ async function createSession(role, mobile = false) {
     if (endpoint === `/interviews/${id}/package`) return respond(packageData());
     if (endpoint === "/interviews") return respond([{ interview_id: id, tutor_id: tutorId, status: "PENDING_REVIEW", overall_score: 75, manual_review_required: true, started_at: now, submitted_at: now, last_activity_at: now }]);
     if (endpoint === "/audit-logs") return respond([]);
-    if (endpoint === `/interviews/${id}/override`) return respond({ criterion_code: "Q1.C1", override_level: 4, overall_score: 80, summary });
+    if (endpoint === `/interviews/${id}/override`) { session.overridden = true; return respond({ criterion_code: "Q1.C1", override_level: 4, overall_score: 80, summary }); }
+    if (endpoint === `/interviews/${id}/rescore`) { session.rescored = true; return respond({ interview_id: id, status: "AI_PROCESSING" }); }
     if (endpoint === `/interviews/${id}/decision`) { session.decision = true; return respond({ decision_id: 1, status: "APPROVED" }); }
     if (endpoint === `/tutors/${tutorId}/attempt-grants`) { session.grant = true; return respond({ grant_id: 1, attempts_allowed: 2 }, 201); }
     if (endpoint === "/policies" && request.method() === "POST") { session.policyCreated = true; return respond({ version: "v2", is_active: false }, 201); }
-    if (endpoint === "/policies") return respond([{ version: "v1", content: "Nội dung quy định", confirmation_text: "Tôi đồng ý", is_active: true, created_by: id, created_at: now }, ...(session.policyCreated ? [{ version: "v2", content: "Quy định mới", confirmation_text: "Tôi đã đọc", is_active: session.activated, created_by: id, created_at: now }] : [])]);
+    if (endpoint === "/policies") return respond([{ version: "v1", content: "Nội dung quy định", confirmation_text: "Tôi đồng ý", is_active: !session.activated, created_by: id, created_at: now }, ...(session.policyCreated ? [{ version: "v2", content: "Quy định mới", confirmation_text: "Tôi đã đọc", is_active: session.activated, created_by: id, created_at: now }] : [])]);
     if (endpoint === "/policies/v2/activate") { session.activated = true; return route.fulfill({ status: 204 }); }
     if (endpoint === "/rubrics" && request.method() === "POST") {
       session.rubricUploadCount = (session.rubricUploadCount ?? 0) + 1;
@@ -132,60 +140,172 @@ async function createSession(role, mobile = false) {
   session.page.on("pageerror", (error) => session.errors.push(error.message));
   return session;
 }
-async function screenshot(session, name) { await session.page.screenshot({ path: path.join(outputDirectory, `${name}.png`), fullPage: true }); }
+async function screenshot(session, name) {
+  await session.page.evaluate(() => window.scrollTo(0, 0));
+  await session.page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await session.page.screenshot({ path: path.join(outputDirectory, `${name}.png`), fullPage: true, animations: "disabled", caret: "hide" });
+}
 
 try {
-  if (process.env.BEEWISE_QA_AUTO_START === "1") await Promise.all([startLocalServer("sale", saleUrl), startLocalServer("staff", staffUrl)]);
-  const tutor = await createSession("tutor"); const page = tutor.page;
+  if (process.env.BEEWISE_QA_AUTO_START === "1") await Promise.all([...(!staffOnly ? [startLocalServer("sale", saleUrl)] : []), ...(!tutorOnly ? [startLocalServer("staff", staffUrl)] : [])]);
+  if (!staffOnly) {
+  const tutor = await createSession("tutor", tutorMobile); const page = tutor.page;
+  const tutorViewport = tutorMobile ? "mobile" : "desktop";
   tutor.testProcessing = true; tutor.failVideoOnce = true;
   await page.goto(`${saleUrl}/tutor/onboarding`);
   await page.getByRole("heading", { name: "Quy định nền tảng", exact: true }).waitFor();
+  if (visualQA) await page.getByRole("navigation", { name: "Tiến trình onboarding gia sư", exact: true }).waitFor({ state: "visible" });
+  if (visualQA && tutorMobile) await page.waitForFunction(() => {
+    const current = document.querySelector('[aria-label="Tiến trình onboarding gia sư"] [aria-current="step"]')?.getBoundingClientRect();
+    return current && current.left >= 0 && current.right <= window.innerWidth;
+  });
   assert.equal(await page.getByRole("heading", { name: "Quy định nền tảng", exact: true }).count(), 1, "The recorder UI must mount only once across breakpoints");
-  await screenshot(tutor, "tutor-policy-desktop");
-  await page.getByRole("checkbox", { name: "Tôi đã đọc và hiểu quy định kiểm thử." }).check();
+  await screenshot(tutor, `tutor-policy-${tutorViewport}`);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
+  if (visualQA) {
+    await page.evaluate(() => document.documentElement.classList.add("dark"));
+    await screenshot(tutor, `tutor-policy-${tutorViewport}-dark`);
+    await page.evaluate(() => document.documentElement.classList.remove("dark"));
+  }
+  const policyCheck = page.getByRole("checkbox", { name: "Tôi đã đọc và hiểu quy định kiểm thử." });
+  await page.getByText("Tôi đã đọc và hiểu quy định kiểm thử.", { exact: true }).click();
+  assert.equal(await policyCheck.isChecked(), true);
+  await policyCheck.focus(); await page.keyboard.press("Space");
+  assert.equal(await policyCheck.isChecked(), false);
+  await page.keyboard.press("Space");
   await page.getByRole("button", { name: "Tiếp tục kiểm tra thiết bị" }).click();
+  if (visualQA) await screenshot(tutor, `tutor-devices-empty-${tutorViewport}`);
   await page.getByRole("button", { name: "Kết nối camera và micro" }).click();
   await page.getByRole("button", { name: "Ghi thử micro", exact: true }).click();
   await page.getByText("Micro đã đạt kiểm tra", { exact: true }).first().waitFor({ timeout: 15000 });
+  if (visualQA) await screenshot(tutor, `tutor-devices-connected-${tutorViewport}`);
   assert.equal(tutor.calls.filter((call) => call.path.endsWith("/interviews") && call.method === "POST").length, 0);
-  await page.getByRole("checkbox", { name: "Tôi đã dành đủ thời gian" }).check();
+  await page.getByText("Tôi đã dành đủ thời gian để hoàn thành buổi phỏng vấn.", { exact: true }).click();
   await page.getByRole("button", { name: "Xác nhận kiểm tra", exact: true }).click();
   await page.getByRole("button", { name: "Có, bắt đầu phỏng vấn" }).waitFor();
+  if (visualQA) await screenshot(tutor, `tutor-ready-${tutorViewport}`);
   assert.equal(tutor.calls.filter((call) => call.path.endsWith("/interviews") && call.method === "POST").length, 0);
   await page.getByRole("button", { name: "Có, bắt đầu phỏng vấn" }).click();
+  if (visualQA) { await page.getByRole("button", { name: "Xem câu hỏi đầu tiên" }).waitFor(); await screenshot(tutor, `tutor-intro-${tutorViewport}`); }
   await page.getByRole("button", { name: "Xem câu hỏi đầu tiên" }).click();
+  if (visualQA) {
+    await page.getByRole("button", { name: "Trả lời ngay", exact: true }).waitFor();
+    await screenshot(tutor, `tutor-preparing-${tutorViewport}`);
+    await page.getByRole("button", { name: "Trả lời ngay", exact: true }).click();
+    await page.getByRole("button", { name: "Kết thúc và gửi câu trả lời", exact: true }).waitFor();
+    await screenshot(tutor, `tutor-recording-${tutorViewport}`);
+    await page.waitForFunction(() => Number(document.querySelector('[role="timer"]')?.getAttribute("aria-label")?.match(/\d+/)?.[0]) <= 28);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
+    await page.getByRole("button", { name: "Kết thúc và gửi câu trả lời", exact: true }).click();
+  }
   await page.getByRole("button", { name: "Nộp bài phỏng vấn", exact: true }).waitFor({ timeout: 15000 });
   assert.equal(tutor.answerCount, 1); assert.ok(tutor.videoCount >= 1);
   assert.equal(await page.getByRole("button", { name: "Nộp bài phỏng vấn", exact: true }).isDisabled(), true);
   await page.getByRole("button", { name: "Thử tải lại 1 video", exact: true }).click();
-  await screenshot(tutor, "tutor-complete-desktop");
+  await screenshot(tutor, `tutor-complete-${tutorViewport}`);
   await page.getByRole("button", { name: "Nộp bài phỏng vấn", exact: true }).click();
   await page.getByRole("heading", { name: "Đã nộp, chờ chấm" }).waitFor(); assert.equal(tutor.submitted, true);
+  if (visualQA) await screenshot(tutor, `tutor-submitted-${tutorViewport}`);
   assert.deepEqual(tutor.errors, []); results.push("Tutor: policy → real MediaRecorder pre-check → explicit start → timed audio/video → processing recovery without duplicate answers → failed video retry → submit; single mounted instance"); await tutor.context.close();
+  }
 
+  if (!tutorOnly) {
   const consultant = await createSession("consultant");
   await consultant.page.goto(`${staffUrl}/consultant/ai-interviews`);
+  await consultant.page.getByRole("link", { name: "Xem hồ sơ", exact: true }).waitFor();
+  await screenshot(consultant, "consultant-queue-desktop");
   await consultant.page.getByRole("link", { name: "Xem hồ sơ", exact: true }).click();
-  await consultant.page.getByRole("heading", { name: "Mâu thuẫn cần xác minh" }).waitFor(); await screenshot(consultant, "consultant-review-desktop");
+  await consultant.page.getByRole("heading", { name: /Mâu thuẫn cần xác minh/ }).waitFor(); await screenshot(consultant, "consultant-review-desktop");
+  assert.equal(await consultant.page.getByRole("button", { name: "Barem và điểm Consultant", exact: true }).count(), 0, "Scoring must not clutter the overview");
+  await consultant.page.getByRole("button", { name: "Câu trả lời & điểm", exact: true }).click();
+  assert.equal(await consultant.page.getByRole("heading", { name: "Kinh nghiệm giảng dạy", exact: true }).count(), 1);
+  assert.equal(await consultant.page.locator("video").count(), 1);
+  await screenshot(consultant, "consultant-answer-desktop");
+  await consultant.page.getByRole("button", { name: /Q2.*60\/80/ }).click();
+  assert.equal(await consultant.page.locator("video").count(), 0, "Changing questions must remove the previous recording");
+  await consultant.page.getByRole("heading", { name: "Xử lý tình huống", exact: true }).waitFor();
+  await consultant.page.getByRole("button", { name: /Q1.*15\/20/ }).click();
+  await consultant.page.getByRole("button", { name: /Tiêu chí & chấm điểm/ }).click();
+  await consultant.page.getByRole("button", { name: /Kinh nghiệm/ }).click();
   await consultant.page.getByText("Barem và điểm Consultant", { exact: true }).click();
-  await consultant.page.getByRole("radio", { name: "4", exact: true }).check();
+  await consultant.page.getByRole("radio", { name: "4", exact: true }).focus();
+  await consultant.page.keyboard.press("Space");
+  assert.equal(await consultant.page.getByRole("radio", { name: "4", exact: true }).isChecked(), true);
   await consultant.page.getByLabel("Lý do chấm lại").fill("Bằng chứng đầy đủ trong bản chép lời.");
+  const overrideResponse = consultant.page.waitForResponse((response) => response.url().endsWith("/override"));
   await consultant.page.getByRole("button", { name: "Lưu điểm Consultant", exact: true }).click();
+  assert.equal((await overrideResponse).status(), 200);
+  const overrideCall = consultant.calls.find((call) => call.path.endsWith("/override"));
+  assert.equal(JSON.parse(overrideCall.body).new_level, 4);
+  await screenshot(consultant, "consultant-scoring-desktop");
   await consultant.page.getByLabel("Phản hồi gửi gia sư").fill("Đạt yêu cầu");
   await consultant.page.getByRole("button", { name: "Lưu quyết định", exact: true }).click();
+  await consultant.page.getByRole("button", { name: "Lịch sử", exact: true }).click();
   await consultant.page.getByText("Đang chờ đồng bộ BeeWise Core").waitFor(); assert.equal(consultant.decision, true);
+  await screenshot(consultant, "consultant-history-desktop");
+  assert.equal(await consultant.page.getByRole("button", { name: "Lưu quyết định", exact: true }).count(), 0, "An approved interview cannot be decided again");
+  consultant.packageStatus = "NEEDS_REVISION";
+  await consultant.page.reload();
+  await consultant.page.getByRole("button", { name: "Câu trả lời & điểm", exact: true }).click();
+  await consultant.page.getByRole("button", { name: /Tiêu chí & chấm điểm/ }).click();
+  await consultant.page.getByRole("button", { name: /Kinh nghiệm/ }).click();
+  await consultant.page.getByRole("button", { name: "Barem và điểm Consultant", exact: true }).click();
+  assert.equal(await consultant.page.getByRole("button", { name: "Lưu điểm Consultant", exact: true }).count(), 1);
+  assert.equal(await consultant.page.getByRole("button", { name: "Lưu quyết định", exact: true }).count(), 0);
+  consultant.packageStatus = "PENDING_REVIEW"; consultant.decision = false;
+  await consultant.page.setViewportSize({ width: 390, height: 844 });
+  await consultant.page.reload();
+  await consultant.page.getByRole("heading", { name: "Quyết định xét duyệt", exact: true }).waitFor();
+  assert.equal(await consultant.page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
+  await screenshot(consultant, "consultant-review-mobile");
+  await consultant.page.getByRole("link", { name: "Xét duyệt", exact: true }).click();
+  await consultant.page.waitForFunction(() => {
+    const target = document.getElementById("interview-actions")?.getBoundingClientRect();
+    return target && target.y >= 0 && target.y < window.innerHeight;
+  });
+  const decisionBounds = await consultant.page.getByRole("heading", { name: "Quyết định xét duyệt", exact: true }).boundingBox();
+  assert.ok(decisionBounds.y >= 0 && decisionBounds.y < 844, "Mobile shortcut must bring the decision into view");
+  consultant.incomplete = true;
+  await consultant.page.reload();
+  await consultant.page.getByRole("alert").filter({ hasText: "Điểm chưa đầy đủ" }).waitFor();
+  assert.equal(await consultant.page.getByText("75", { exact: true }).count(), 0, "An incomplete summary must not fall back to an old interview score");
   assert.deepEqual(consultant.errors, []); results.push("Consultant: queue → package/conflicts → criterion override → decision → Core sync state"); await consultant.context.close();
 
   const admin = await createSession("admin", true);
   await admin.page.goto(`${staffUrl}/admin/ai-interviews`);
   await admin.page.getByRole("link", { name: "Xem hồ sơ", exact: true }).click();
-  await admin.page.getByRole("heading", { name: "Thao tác Admin", exact: true }).waitFor();
+  await admin.page.getByRole("button", { name: "Thao tác Admin", exact: true }).waitFor();
+  await screenshot(admin, "admin-review-mobile");
   assert.equal(await admin.page.getByRole("button", { name: "Lưu quyết định", exact: true }).count(), 0);
+  await admin.page.getByRole("button", { name: "Thao tác Admin", exact: true }).click();
   await admin.page.getByRole("button", { name: "Xóa dữ liệu phỏng vấn", exact: true }).click();
   assert.equal(await admin.page.getByRole("button", { name: "Xác nhận", exact: true }).isDisabled(), true);
+  await admin.page.getByRole("dialog").getByRole("textbox").fill("wrong-id");
+  assert.equal(await admin.page.getByRole("button", { name: "Xác nhận", exact: true }).isDisabled(), true);
+  await admin.page.getByRole("dialog").getByRole("textbox").fill(tutorId);
+  assert.equal(await admin.page.getByRole("button", { name: "Xác nhận", exact: true }).isEnabled(), true);
   await admin.page.getByRole("button", { name: "Hủy", exact: true }).click();
-  await screenshot(admin, "admin-review-mobile");
+  assert.equal(admin.calls.some((call) => call.method === "DELETE"), false);
+  await admin.page.getByRole("button", { name: "Chấm lại bằng AI", exact: true }).click();
+  await admin.page.getByRole("button", { name: "Xác nhận", exact: true }).click();
+  await admin.page.getByText("Đã yêu cầu AI chấm lại.", { exact: true }).waitFor();
+  assert.equal(admin.rescored, true);
+  await admin.page.getByRole("button", { name: "Cấp lại lượt phỏng vấn", exact: true }).click();
+  await admin.page.getByLabel("Lý do cấp lượt", { exact: true }).fill("Cho phép gia sư bổ sung nội dung phỏng vấn.");
+  await admin.page.getByRole("button", { name: "Cấp thêm một lượt", exact: true }).click();
+  await admin.page.getByText("Đã cấp thêm lượt phỏng vấn.", { exact: true }).waitFor();
+  assert.equal(admin.grant, true);
+  assert.equal(await admin.page.getByLabel("Lý do cấp lượt", { exact: true }).inputValue(), "");
+  await screenshot(admin, "admin-review-actions-mobile");
+  admin.packageStatus = "IN_PROGRESS";
+  await admin.page.reload();
+  await admin.page.getByRole("button", { name: "Thao tác Admin", exact: true }).click();
+  assert.equal(await admin.page.getByRole("button", { name: "Chấm lại bằng AI", exact: true }).isDisabled(), true);
+  await admin.page.getByRole("button", { name: "Cấp lại lượt phỏng vấn", exact: true }).click();
+  assert.equal(await admin.page.getByRole("button", { name: "Cấp thêm một lượt", exact: true }).isDisabled(), true);
   await admin.page.goto(`${staffUrl}/admin/ai-interviews/settings`);
+  await admin.page.getByRole("button", { name: "Sao chép để sửa", exact: true }).waitFor();
+  await screenshot(admin, "admin-policy-mobile");
   await admin.page.getByRole("button", { name: "Sao chép để sửa", exact: true }).click();
   assert.equal(await admin.page.getByLabel("Nội dung quy định", { exact: true }).inputValue(), "Nội dung quy định");
   assert.equal(await admin.page.getByLabel("Câu xác nhận của gia sư", { exact: true }).inputValue(), "Tôi đồng ý");
@@ -200,11 +320,12 @@ try {
   await admin.page.getByText("Đã áp dụng quy định mới.", { exact: true }).waitFor();
   assert.equal(admin.activated, true);
   await admin.page.getByRole("button", { name: "Bộ câu hỏi và barem", exact: true }).click();
+  await admin.page.getByRole("button", { name: "Tải bộ câu hỏi mới", exact: true }).click();
   await admin.page.getByLabel("File TOML", { exact: true }).setInputFiles({ name: "sample.toml", mimeType: "application/toml", buffer: Buffer.from('version = "v2"') });
   await admin.page.getByText("sample.toml · 0.0 KB", { exact: true }).waitFor();
   await admin.page.getByRole("button", { name: "Bỏ file TOML", exact: true }).click();
   await admin.page.getByText("Chưa chọn file", { exact: true }).waitFor();
-  await admin.page.getByRole("button", { name: "Xem cấu hình và lịch sử", exact: true }).click();
+  await admin.page.getByRole("button", { name: "Đóng trình tải lên", exact: true }).click();
   await admin.page.getByRole("heading", { name: "Cấu hình v1", exact: true }).waitFor(); await screenshot(admin, "admin-rubric-mobile");
   const exported = admin.page.waitForEvent("download");
   await admin.page.getByRole("button", { name: "Xuất TOML", exact: true }).click();
@@ -223,18 +344,35 @@ try {
   await admin.page.getByRole("button", { name: "Tạo phiên bản rubric", exact: true }).click();
   await admin.page.getByRole("heading", { name: "Cấu hình v2", exact: true }).waitFor();
   assert.equal(admin.rubricActivated, undefined, "Creating a version must not activate it");
-  await admin.page.getByRole("heading", { name: "Rubric v2", exact: true }).locator("..").locator("..").getByRole("button", { name: "Áp dụng", exact: true }).click();
+  await admin.page.getByRole("button", { name: "Áp dụng", exact: true }).click();
   await admin.page.getByRole("button", { name: "Xác nhận áp dụng", exact: true }).click();
   await admin.page.getByText("Đã áp dụng bộ câu hỏi mới.", { exact: true }).waitFor();
   assert.equal(admin.rubricActivated, true);
   assert.equal(await admin.page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
+  await admin.page.setViewportSize({ width: 1440, height: 1000 });
+  await screenshot(admin, "admin-rubric-desktop");
+  admin.packageStatus = "PENDING_REVIEW";
+  await admin.page.goto(`${staffUrl}/admin/ai-interviews/${id}`);
+  await admin.page.getByRole("button", { name: "Thao tác Admin", exact: true }).waitFor();
+  await screenshot(admin, "admin-review-desktop");
   assert.deepEqual(admin.errors, []); results.push("Admin: mobile package → delete guard → copy/create/activate policy → export TOML → edit rubric/retain draft on validation error → create separate version → activate; no page overflow"); await admin.context.close();
+  }
   process.stdout.write(JSON.stringify({ passed: results, screenshots: outputDirectory }, null, 2) + "\n");
+} catch (error) {
+  for (const [index, context] of browser.contexts().entries()) {
+    for (const page of context.pages()) {
+      await page.screenshot({ path: path.join(outputDirectory, `failure-${index}.png`), fullPage: true });
+      process.stderr.write((await page.locator("body").innerText()) + "\n");
+    }
+  }
+  throw error;
 } finally {
   await browser.close();
   for (const child of localServers) {
-    if (!child.pid || child.exitCode !== null) continue;
-    if (process.platform === "win32") spawnSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"]);
-    else child.kill("SIGTERM");
+    if (child.pid && child.exitCode === null) {
+      if (process.platform === "win32") spawnSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"]);
+      else child.kill("SIGTERM");
+    }
+    child.stdout?.destroy(); child.stderr?.destroy(); child.unref();
   }
 }

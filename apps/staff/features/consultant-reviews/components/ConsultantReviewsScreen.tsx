@@ -1,115 +1,33 @@
 "use client";
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import Link from "next/link";
 import {
-  ArrowClockwise,
-  ArrowLeft,
-  ArrowRight,
-  CircleNotch,
-  MagnifyingGlass,
-  NotePencil,
-  UserCircle,
-  WarningCircle,
-  X,
-} from "@phosphor-icons/react";
+  ArrowPathIcon,
+  MagnifyingGlassIcon,
+  UserCircleIcon,
+  ExclamationCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/ui/select";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
-import type { ReviewQueue } from "../api/consultant-reviews.api";
-import { formatReviewDate, readableFieldName } from "../data/profile-fields";
 import { sortBySubmittedAt, type ReviewSort } from "../data/review-sort";
-import { useReviewList } from "../hooks/useConsultantReviews";
-import type {
-  PendingFieldChange,
-  PendingProfile,
-} from "../schemas/consultant-review.schema";
+import { useReviewQueues } from "../hooks/useConsultantReviews";
+import type { PendingFieldChange } from "../schemas/consultant-review.schema";
 import { FieldChangeDialog } from "./FieldChangeDialog";
+import { FieldChangeItem, ReviewQueueItem } from "./ReviewQueueItems";
+import { ReviewQueueTabs, type ReviewTab } from "./ReviewQueueTabs";
 
 const PAGE_SIZE = 20;
 
-function ReviewQueueItem({ profile }: { profile: PendingProfile }) {
-  return (
-    <article className="grid min-w-0 gap-4 border-b border-border px-4 py-4 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-6">
-      <div className="flex min-w-0 gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-primary">
-          <UserCircle size={22} aria-hidden="true" />
-        </span>
-        <div className="min-w-0">
-          <h3 className="truncate font-nunito text-base font-extrabold text-foreground">
-            {profile.displayName ||
-              profile.tutorFullName ||
-              "Gia sư chưa đặt tên"}
-          </h3>
-          <p className="truncate text-xs text-muted-foreground">
-            {profile.tutorEmail || profile.profileId}
-          </p>
-          <p className="mt-1 line-clamp-2 text-sm text-foreground">
-            {profile.profileHeadline ||
-              [profile.universityName, profile.major]
-                .filter(Boolean)
-                .join(" · ") ||
-              "Chưa có giới thiệu"}
-          </p>
-          <p className="mt-1.5 text-xs text-muted-foreground">
-            Nộp lúc {formatReviewDate(profile.submittedAt)}
-          </p>
-        </div>
-      </div>
-      <Link
-        href={`/consultant/tutors/${encodeURIComponent(profile.profileId)}`}
-        className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-card px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        Bắt đầu xét duyệt <ArrowRight size={16} aria-hidden="true" />
-      </Link>
-    </article>
-  );
-}
-
-function FieldChangeItem({
-  request,
-  onReview,
-}: {
-  request: PendingFieldChange;
-  onReview: () => void;
-}) {
-  return (
-    <article className="grid min-w-0 gap-4 border-b border-border px-4 py-4 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-6">
-      <div className="flex min-w-0 gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-secondary">
-          <NotePencil size={21} aria-hidden="true" />
-        </span>
-        <div className="min-w-0">
-          <h3 className="font-nunito text-base font-extrabold text-foreground">
-            {readableFieldName(request.fieldName)}
-          </h3>
-          <p className="truncate text-xs text-muted-foreground">
-            {request.requestedByFullName ||
-              request.requestedByEmail ||
-              "Gia sư"}
-            {request.requestedByFullName && request.requestedByEmail
-              ? ` · ${request.requestedByEmail}`
-              : ""}
-          </p>
-          <p className="mt-1 line-clamp-2 break-words text-sm text-foreground">
-            {request.newValue || "Giá trị trống"}
-          </p>
-          <p className="mt-1.5 text-xs text-muted-foreground">
-            Yêu cầu lúc {formatReviewDate(request.requestedAt)}
-          </p>
-        </div>
-      </div>
-      <button
-        type="button"
-        onClick={onReview}
-        className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-card px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        Xem thay đổi <ArrowRight size={16} aria-hidden="true" />
-      </button>
-    </article>
-  );
-}
-
 export function ConsultantReviewsScreen() {
-  const [queue, setQueue] = useState<ReviewQueue>("profiles");
+  const [activeTab, setActiveTab] = useState<ReviewTab>("newProfiles");
   const [page, setPage] = useState(1);
   const [searchDraft, setSearchDraft] = useState("");
   const [search, setSearch] = useState("");
@@ -126,26 +44,32 @@ export function ConsultantReviewsScreen() {
     return () => clearTimeout(timer);
   }, [searchDraft]);
 
-  const reviews = useReviewList({ queue, search });
+  const { profileReviews, fieldReviews, tabCounts, refreshQueues } = useReviewQueues(search);
+  const reviews = activeTab === "fieldChanges" ? fieldReviews : profileReviews;
 
   const sortedProfiles = useMemo(
-    () => sortBySubmittedAt(reviews.data?.profiles ?? [], sort),
-    [reviews.data?.profiles, sort],
+    () => sortBySubmittedAt(
+      (profileReviews.data?.profiles ?? []).filter((profile) =>
+        activeTab === "newProfiles" ? profile.reviewCount === 0 : profile.reviewCount > 0,
+      ),
+      sort,
+    ),
+    [profileReviews.data?.profiles, activeTab, sort],
   );
   const sortedChanges = useMemo(
-    () => sortBySubmittedAt(reviews.data?.fieldChanges ?? [], sort),
-    [reviews.data?.fieldChanges, sort],
+    () => sortBySubmittedAt(fieldReviews.data?.fieldChanges ?? [], sort),
+    [fieldReviews.data?.fieldChanges, sort],
   );
   const totalCount =
-    queue === "profiles" ? sortedProfiles.length : sortedChanges.length;
+    activeTab === "fieldChanges" ? sortedChanges.length : sortedProfiles.length;
   const pageCount = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const currentPage = Math.min(page, pageCount);
   const start = (currentPage - 1) * PAGE_SIZE;
   const profiles = sortedProfiles.slice(start, start + PAGE_SIZE);
   const fieldChanges = sortedChanges.slice(start, start + PAGE_SIZE);
 
-  function switchQueue(next: ReviewQueue) {
-    setQueue(next);
+  function switchTab(next: ReviewTab) {
+    setActiveTab(next);
     setPage(1);
   }
 
@@ -156,59 +80,34 @@ export function ConsultantReviewsScreen() {
   }
 
   return (
-    <main className="min-w-0 bg-muted/40 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="min-w-0 bg-background px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
       <div className="mx-auto max-w-6xl space-y-5">
-        <header className="flex flex-wrap items-end justify-between gap-4">
+        <header className="flex flex-wrap items-center justify-between gap-5 rounded-3xl bg-primary px-5 py-6 text-primary-foreground shadow-[var(--shadow-soft)] sm:px-7">
           <div>
-            <p className="text-xs font-bold text-primary">Khu vực xét duyệt</p>
-            <h1 className="mt-1 font-nunito text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            <p className="text-xs font-bold text-primary-foreground/80">Khu vực xét duyệt</p>
+            <h1 className="mt-1 font-nunito text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
               Hồ sơ gia sư
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Xử lý hồ sơ mới và các yêu cầu chỉnh sửa đã gửi lên.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => void reviews.refetch()}
-            disabled={reviews.isFetching}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
-          >
-            <ArrowClockwise size={17} aria-hidden="true" /> Làm mới
-          </button>
-        </header>
-
-        <section className="overflow-hidden rounded-xl border border-border bg-card">
-          <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-4 sm:px-6">
-            <div
-              className="flex rounded-lg bg-muted p-1"
-              role="tablist"
-              aria-label="Loại yêu cầu xét duyệt"
-            >
-              <button
-                role="tab"
-                aria-selected={queue === "profiles"}
-                type="button"
-                onClick={() => switchQueue("profiles")}
-                className={`rounded-md px-3 py-2 text-sm font-semibold transition-colors ${queue === "profiles" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                Hồ sơ mới
-              </button>
-              <button
-                role="tab"
-                aria-selected={queue === "fieldChanges"}
-                type="button"
-                onClick={() => switchQueue("fieldChanges")}
-                className={`rounded-md px-3 py-2 text-sm font-semibold transition-colors ${queue === "fieldChanges" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                Thay đổi thông tin
-              </button>
-            </div>
             {!reviews.isPending && !reviews.isError && (
-              <span className="rounded-md border border-border px-2.5 py-1 text-xs font-bold text-red-600">
-                {totalCount} chờ xử lý
+              <span className="mt-3 inline-flex rounded-full bg-accent px-3 py-1 text-xs font-extrabold text-accent-foreground">
+                {totalCount} yêu cầu chờ xử lý
               </span>
             )}
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={refreshQueues}
+            disabled={profileReviews.isFetching || fieldReviews.isFetching}
+            className="h-10 rounded-xl border-primary-foreground/40 bg-card px-4 font-bold text-primary transition-all hover:bg-card/90 active:scale-[0.98]"
+          >
+            <ArrowPathIcon className={`size-4 ${profileReviews.isFetching || fieldReviews.isFetching ? "animate-spin" : ""}`} aria-hidden="true" /> Làm mới
+          </Button>
+        </header>
+
+        <section className="overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)]">
+          <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-4 sm:px-6">
+            <ReviewQueueTabs value={activeTab} counts={tabCounts} onChange={switchTab} />
           </div>
 
           <div className="flex flex-col gap-3 border-b border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
@@ -217,9 +116,8 @@ export function ConsultantReviewsScreen() {
                 Tìm gia sư
               </label>
               <div className="relative min-w-0 max-w-md flex-1">
-                <MagnifyingGlass
-                  size={17}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                <MagnifyingGlassIcon
+                  className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                   aria-hidden="true"
                 />
                 <input
@@ -227,12 +125,11 @@ export function ConsultantReviewsScreen() {
                   value={searchDraft}
                   onChange={(event) => setSearchDraft(event.target.value)}
                   placeholder="Tên hoặc email gia sư"
-                  className="w-full rounded-lg border border-input bg-background py-2.5 pl-9 pr-9 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  className="min-h-10 w-full rounded-xl border border-input bg-background py-2.5 pl-9 pr-10 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/30"
                 />
                 {reviews.isFetching && searchDraft.trim() ? (
-                  <CircleNotch
-                    size={16}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-muted-foreground"
+                  <ArrowPathIcon
+                    className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground"
                     aria-hidden="true"
                   />
                 ) : searchDraft ? (
@@ -243,35 +140,36 @@ export function ConsultantReviewsScreen() {
                       setSearch("");
                       setPage(1);
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                    className="absolute right-2 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-muted/40 hover:text-foreground active:scale-95"
                     aria-label="Xóa từ khóa tìm kiếm"
                   >
-                    <X size={16} aria-hidden="true" />
+                    <XMarkIcon className="size-4" aria-hidden="true" />
                   </button>
                 ) : null}
               </div>
             </form>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:shrink-0">
               <label
                 htmlFor="review-sort"
                 className="text-sm font-medium text-muted-foreground"
               >
                 Sắp xếp
               </label>
-              <select
-                id="review-sort"
+              <Select
                 value={sort}
-                onChange={(event) => {
-                  setSort(
-                    event.target.value === "oldest" ? "oldest" : "newest",
-                  );
+                onValueChange={(value) => {
+                  setSort(value === "oldest" ? "oldest" : "newest");
                   setPage(1);
                 }}
-                className="min-h-10 rounded-lg border border-input bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none focus:ring-2 focus:ring-ring"
               >
-                <option value="newest">Mới nhất trước</option>
-                <option value="oldest">Cũ nhất trước</option>
-              </select>
+                <SelectTrigger id="review-sort" className="min-w-44 font-semibold">
+                  <SelectValue placeholder="Chọn thứ tự" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Mới nhất trước</SelectItem>
+                  <SelectItem value="oldest">Cũ nhất trước</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -284,33 +182,31 @@ export function ConsultantReviewsScreen() {
               {Array.from({ length: 4 }, (_, index) => (
                 <div
                   key={index}
-                  className="h-20 animate-pulse rounded-lg bg-muted"
+                  className="h-20 animate-pulse rounded-xl bg-muted"
                 />
               ))}
             </div>
           ) : reviews.isError ? (
             <div className="p-6" role="alert">
               <p className="flex items-center gap-2 font-semibold text-destructive">
-                <WarningCircle size={20} /> Không tải được hàng chờ
+                <ExclamationCircleIcon className="size-5" aria-hidden="true" /> Không tải được hàng chờ
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {getApiErrorMessage(reviews.error)}
               </p>
-              <button
+              <Button
                 type="button"
                 onClick={() => void reviews.refetch()}
-                className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+                className="mt-4 rounded-xl font-bold active:scale-[0.98]"
               >
                 Thử lại
-              </button>
+              </Button>
             </div>
           ) : totalCount === 0 ? (
             <div className="px-6 py-14 text-center">
-              <UserCircle
-                size={32}
-                className="mx-auto text-secondary"
-                aria-hidden="true"
-              />
+              <span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+                <UserCircleIcon className="size-6" aria-hidden="true" />
+              </span>
               <h2 className="mt-3 font-nunito text-lg font-bold">
                 {search
                   ? "Không tìm thấy yêu cầu phù hợp"
@@ -319,13 +215,15 @@ export function ConsultantReviewsScreen() {
               <p className="mt-1 text-sm text-muted-foreground">
                 {search
                   ? "Thử từ khóa khác để tìm gia sư."
-                  : queue === "profiles"
+                  : activeTab === "newProfiles"
                     ? "Chưa có hồ sơ mới cần xét duyệt."
-                    : "Chưa có thay đổi thông tin cần xét duyệt."}
+                    : activeTab === "resubmittedProfiles"
+                      ? "Chưa có hồ sơ gửi lại cần xét duyệt."
+                      : "Chưa có thay đổi thông tin cần xét duyệt."}
               </p>
             </div>
-          ) : queue === "profiles" ? (
-            <div role="tabpanel" aria-label="Hồ sơ mới">
+          ) : activeTab !== "fieldChanges" ? (
+            <div role="tabpanel" aria-label={activeTab === "newProfiles" ? "Hồ sơ mới" : "Duyệt lại hồ sơ"}>
               {profiles.map((profile) => (
                 <ReviewQueueItem key={profile.profileId} profile={profile} />
               ))}
@@ -351,22 +249,24 @@ export function ConsultantReviewsScreen() {
                 Trang {currentPage}/{pageCount}
               </span>
               <div className="flex gap-2">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   disabled={currentPage === 1}
                   onClick={() => setPage(currentPage - 1)}
-                  className="rounded-lg border border-border bg-card px-3 py-2 font-semibold text-foreground hover:border-primary hover:text-primary disabled:opacity-40"
+                  className="rounded-xl border-border bg-card font-bold text-foreground transition-all hover:border-primary hover:bg-card hover:text-primary active:scale-[0.98] disabled:opacity-40"
                 >
                   Trước
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="outline"
                   disabled={currentPage === pageCount}
                   onClick={() => setPage(currentPage + 1)}
-                  className="rounded-lg border border-border bg-card px-3 py-2 font-semibold text-foreground hover:border-primary hover:text-primary disabled:opacity-40"
+                  className="rounded-xl border-border bg-card font-bold text-foreground transition-all hover:border-primary hover:bg-card hover:text-primary active:scale-[0.98] disabled:opacity-40"
                 >
                   Tiếp
-                </button>
+                </Button>
               </div>
             </nav>
           )}

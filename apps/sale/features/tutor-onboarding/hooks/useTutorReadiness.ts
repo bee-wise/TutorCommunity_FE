@@ -40,7 +40,18 @@ export function useTutorReadiness(enabled: boolean) {
       }
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey });
+      try {
+        await queryClient.fetchQuery({
+          queryKey,
+          queryFn: tutorReadinessApi.get,
+          staleTime: 0,
+        });
+      } catch {
+        toast.error("Đã lưu, nhưng chưa cập nhật được trạng thái. Vui lòng thử tải lại.", {
+          position: "top-right",
+        });
+        return;
+      }
       try {
         const me = await authService.getMe();
         if (me.success && me.data) login(me.data);

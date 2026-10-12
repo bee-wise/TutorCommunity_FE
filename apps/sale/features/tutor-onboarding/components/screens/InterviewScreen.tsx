@@ -29,13 +29,51 @@ const benefits = [
   "Dữ liệu phỏng vấn được bảo mật tuyệt đối",
 ];
 
+function InterviewBanner() {
+  return (
+    <section
+      aria-label="Giới thiệu phỏng vấn AI"
+      className="overflow-hidden rounded-2xl border border-primary/15 bg-[#edf0ff] shadow-sm"
+    >
+      <div className="grid items-center sm:grid-cols-[minmax(0,1fr)_minmax(220px,42%)]">
+        <div className="px-6 pt-7 sm:px-8 sm:py-8">
+          <h2 className="mt-4 font-nunito text-2xl font-extrabold leading-tight text-primary sm:text-3xl">
+            Phỏng vấn cùng trợ lý BeeWise AI
+          </h2>
+          <p className="mt-2 max-w-md text-sm leading-6 text-foreground/75">
+            Chia sẻ kinh nghiệm và cách bạn đồng hành cùng học viên.
+          </p>
+        </div>
+        <div className="relative h-32 sm:h-40">
+          <Image
+            src="/icons/BeeWiseAI-icon.svg"
+            alt=""
+            fill
+            sizes="(max-width: 640px) 100vw, 42vw"
+            className="object-contain object-center"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function InterviewScreen() {
   const { dispatchAction, isPreview } = useTutorOnboardingViewModel();
 
-  if (!isPreview) return <TutorInterviewScreen />;
+  if (!isPreview)
+    return (
+      <div className="space-y-5">
+        <InterviewBanner />
+        <TutorInterviewScreen />
+      </div>
+    );
 
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
+      <div className="lg:col-span-2">
+        <InterviewBanner />
+      </div>
       {/* ── Main panel ── */}
       <div className="flex flex-col gap-5">
         {/* AI Interview Hero Card */}

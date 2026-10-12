@@ -1,8 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { Warning } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@workspace/ui/components/ui/button";
+import { ProfileReviewFeedback } from "../../tutor-profile-registration/components/ProfileReviewFeedback";
+import { tutorProfileRegistrationService, tutorProfileReviewQueryKey } from "../../tutor-profile-registration/services/profile-registration.service";
 import { onboardingSteps } from "../constants/tutor-onboarding.fixtures";
 import { useTutorOnboardingViewModel } from "./TutorOnboardingProvider";
 import {
@@ -91,6 +95,12 @@ function OverviewScreen() {
 function RejectedScreen() {
   const router = useRouter();
   const { dispatchAction, isPreview } = useTutorOnboardingViewModel();
+  const review = useQuery({
+    queryKey: tutorProfileReviewQueryKey,
+    queryFn: tutorProfileRegistrationService.getReview,
+    enabled: !isPreview,
+    retry: false,
+  });
 
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -114,11 +124,23 @@ function RejectedScreen() {
               </li>
             ))}
           </ul>
-        </div> : (
-          <p className="mt-4 text-sm text-muted-foreground">
-            Vui lòng xem phản hồi BeeWise đã gửi cho bạn trước khi cập nhật hồ sơ.
-          </p>
-        )}
+        </div> : review.data ? (
+          <div className="mt-4">
+            <ProfileReviewFeedback
+              review={review.data}
+              onLocateField={(fieldName, offeringId) => {
+                const params = new URLSearchParams({ field: fieldName });
+                if (offeringId) params.set("offeringId", offeringId);
+                router.push(`/tutor/onboarding/profile-register?${params.toString()}`);
+              }}
+            />
+          </div>
+        ) : review.isError ? (
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
+            <span className="text-destructive">Chưa tải được phản hồi xét duyệt.</span>
+            <Button type="button" variant="outline" size="sm" onClick={() => void review.refetch()} className="rounded-lg transition-all active:scale-[0.98]">Thử lại</Button>
+          </div>
+        ) : <p className="mt-4 text-sm text-muted-foreground">Đang tải phản hồi xét duyệt...</p>}
       </StatusCard>
       <StatusCard title="Gửi lại hồ sơ">
         <p>Sau khi chỉnh sửa, gửi lại hồ sơ để BeeWise xét duyệt lần tiếp theo.</p>
@@ -129,9 +151,9 @@ function RejectedScreen() {
                 ? dispatchAction("edit-rejected-profile")
                 : router.push("/tutor/onboarding/profile-register")
             }
-            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            className="gap-2 rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
           >
-            Chỉnh sửa hồ sơ
+            Chỉnh sửa hồ sơ <ArrowRightIcon className="size-4" aria-hidden="true" />
           </Button>
           {isPreview ? <Button
             variant="outline"

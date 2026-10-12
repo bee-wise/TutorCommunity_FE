@@ -1,37 +1,193 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDownTrayIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import { useInterviewRubricQuery, useInterviewRubricsQuery } from "@workspace/core/ai-interviews/hooks/useInterviewQueries";
+import {
+  ArrowDownTrayIcon,
+  DocumentPlusIcon,
+  PencilSquareIcon,
+} from "@heroicons/react/24/outline";
+import {
+  useInterviewRubricQuery,
+  useInterviewRubricsQuery,
+} from "@workspace/core/ai-interviews/hooks/useInterviewQueries";
 import { interviewApi } from "@workspace/core/ai-interviews/services/interview.api";
 import { Button } from "@workspace/ui/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@workspace/ui/components/ui/dialog";
-import { useInterviewRubricUpload, useStaffInterviewMutation } from "../hooks/useInterviewActions";
+import { InterviewActivationDialog } from "./InterviewActivationDialog";
+import {
+  useInterviewRubricUpload,
+  useStaffInterviewMutation,
+} from "../hooks/useInterviewActions";
 import { useInterviewRubricExport } from "../hooks/useInterviewRubricEditor";
-import { actionClass, fieldClass, FieldError, InterviewQueryState, panelClass } from "./InterviewUi";
+import { actionClass, InterviewQueryState, panelClass } from "./InterviewUi";
 import { InterviewAudit } from "./InterviewAudit";
 import { InterviewRubricEditor } from "./InterviewRubricEditor";
-import { InterviewRubricFileInput } from "./InterviewRubricFileInput";
+import { InterviewRubricPreview } from "./InterviewRubricPreview";
+import { InterviewRubricUpload } from "./InterviewRubricUpload";
+import { InterviewVersions, InterviewVersionStatus } from "./InterviewVersions";
 
 export function InterviewRubrics() {
   const query = useInterviewRubricsQuery();
   const [version, setVersion] = useState("");
   const [activation, setActivation] = useState("");
-  const [editing, setEditing] = useState(false);
-  const detail = useInterviewRubricQuery(version);
-  const exportToml = useInterviewRubricExport(detail.data?.content, version);
-  const { form, file, mutation, save } = useInterviewRubricUpload();
-  const activate = useStaffInterviewMutation(interviewApi.activateRubric, "Đã áp dụng bộ câu hỏi mới.");
-  return <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(300px,420px)]">
-    <div className="space-y-5"><InterviewQueryState pending={query.isPending} error={query.error} retry={() => void query.refetch()} />
-      {query.data?.length === 0 && <p className={panelClass}>Chưa có bộ câu hỏi. Tải lên file TOML để tạo phiên bản đầu tiên.</p>}
-      {query.data?.map((item) => <article key={item.version} className={panelClass}><div className="flex flex-wrap justify-between gap-3"><h2 className="font-bold">Rubric {item.version}</h2><span className={`rounded-full border border-border px-3 py-1 text-xs font-bold ${item.is_active ? "bg-primary text-primary-foreground" : "bg-muted"}`}>{item.is_active ? "Đang áp dụng" : item.is_default ? "Bản dự phòng" : "Chưa áp dụng"}</span></div><p className="mt-3 whitespace-pre-wrap text-sm">{item.note}</p><p className="mt-2 text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString("vi-VN")}</p><div className="mt-4 flex flex-wrap gap-2"><Button variant="outline" size="sm" className={actionClass} onClick={() => { setVersion(item.version); setEditing(false); }}>Xem cấu hình và lịch sử</Button><Button variant="outline" size="sm" className={actionClass} disabled={item.is_active || activate.isPending} onClick={() => setActivation(item.version)}>Áp dụng</Button></div></article>)}
-      {version && <><section className={panelClass}><h2 className="font-bold">Cấu hình {version}</h2><div className="mt-4"><InterviewQueryState pending={detail.isPending} error={detail.error} retry={() => void detail.refetch()} />{detail.data && <><div className="mb-4 flex flex-wrap gap-2"><Button variant="outline" className={actionClass} onClick={() => setEditing(true)} disabled={editing}><PencilSquareIcon className="size-4" />Chỉnh thành bản mới</Button><Button variant="outline" className={actionClass} onClick={exportToml}><ArrowDownTrayIcon className="size-4" />Xuất TOML</Button></div><pre className="max-h-[600px] overflow-auto whitespace-pre-wrap break-all rounded-2xl bg-muted p-4 text-xs leading-6">{JSON.stringify(detail.data.content, null, 2)}</pre></>}</div></section>{editing && detail.data && <InterviewRubricEditor key={version} content={detail.data.content} version={version} existingVersions={query.data?.map((item) => item.version) ?? []} onCancel={() => setEditing(false)} onCreated={(createdVersion) => { setEditing(false); setVersion(createdVersion); }} />}<InterviewAudit key={version} entity="rubric" id={version} /></>}
+  const [mode, setMode] = useState<"view" | "edit" | "upload">("view");
+  const [audit, setAudit] = useState(false);
+  const selected =
+    query.data?.find((item) => item.version === version) ??
+    query.data?.find((item) => item.is_active) ??
+    query.data?.[0];
+  const selectedVersion = selected?.version ?? "";
+  const detail = useInterviewRubricQuery(selectedVersion);
+  const exportToml = useInterviewRubricExport(
+    detail.data?.content,
+    selectedVersion,
+  );
+  function onCreated(createdVersion: string) {
+    setMode("view");
+    setVersion(createdVersion);
+    setAudit(false);
+  }
+  const upload = useInterviewRubricUpload(onCreated);
+  const activate = useStaffInterviewMutation(
+    interviewApi.activateRubric,
+    "Đã áp dụng bộ câu hỏi mới.",
+  );
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-nunito text-xl font-extrabold">
+          Bộ câu hỏi và barem
+        </h2>
+        <Button
+          className={actionClass}
+          disabled={mode === "edit"}
+          onClick={() => setMode("upload")}
+        >
+          <DocumentPlusIcon className="size-4" />
+          Tải bộ câu hỏi mới
+        </Button>
+      </div>
+      <InterviewQueryState
+        pending={query.isPending}
+        error={query.error}
+        retry={() => void query.refetch()}
+      />
+      {query.data && (
+        <div className="grid items-start gap-5 lg:grid-cols-[250px_minmax(0,1fr)]">
+          <InterviewVersions
+            items={query.data}
+            selected={selectedVersion}
+            disabled={mode !== "view"}
+            onSelect={(value) => {
+              setVersion(value);
+              setAudit(false);
+            }}
+          />
+          <div className="min-w-0 space-y-5">
+            <div hidden={mode !== "upload"}>
+              <InterviewRubricUpload
+                model={upload}
+                onCancel={() => setMode("view")}
+              />
+            </div>
+            {mode === "edit" && detail.data && (
+              <InterviewRubricEditor
+                key={selectedVersion}
+                content={detail.data.content}
+                version={selectedVersion}
+                existingVersions={query.data.map((item) => item.version)}
+                onCancel={() => setMode("view")}
+                onCreated={onCreated}
+              />
+            )}
+            {mode === "view" &&
+              (selected ? (
+                <section className={panelClass}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="font-nunito text-xl font-extrabold">
+                      Cấu hình {selectedVersion}
+                    </h3>
+                    <InterviewVersionStatus
+                      active={selected.is_active}
+                      fallback={selected.is_default}
+                    />
+                  </div>
+                  {selected.note && (
+                    <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">
+                      {selected.note}
+                    </p>
+                  )}
+                  <div className="mt-5 flex flex-wrap gap-2 border-b border-border pb-5">
+                    <Button
+                      className={actionClass}
+                      disabled={selected.is_active || activate.isPending}
+                      onClick={() => setActivation(selectedVersion)}
+                    >
+                      Áp dụng
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={actionClass}
+                      disabled={!detail.data}
+                      onClick={() => setMode("edit")}
+                    >
+                      <PencilSquareIcon className="size-4" />
+                      Chỉnh thành bản mới
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={actionClass}
+                      disabled={!detail.data}
+                      onClick={exportToml}
+                    >
+                      <ArrowDownTrayIcon className="size-4" />
+                      Xuất TOML
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={actionClass}
+                      aria-pressed={audit}
+                      onClick={() => setAudit(!audit)}
+                    >
+                      Lịch sử
+                    </Button>
+                  </div>
+                  <div className="mt-5">
+                    <InterviewQueryState
+                      pending={detail.isPending}
+                      error={detail.error}
+                      retry={() => void detail.refetch()}
+                    />
+                    {detail.data && (
+                      <InterviewRubricPreview content={detail.data.content} />
+                    )}
+                  </div>
+                </section>
+              ) : (
+                <p className={panelClass}>
+                  Chưa có bộ câu hỏi. Tải lên file TOML để tạo phiên bản đầu
+                  tiên.
+                </p>
+              ))}
+            {mode === "view" && audit && selected && (
+              <InterviewAudit
+                key={selectedVersion}
+                entity="rubric"
+                id={selectedVersion}
+                defaultOpen
+              />
+            )}
+          </div>
+        </div>
+      )}
+      <InterviewActivationDialog
+        kind="rubric"
+        version={activation}
+        pending={activate.isPending}
+        onClose={() => setActivation("")}
+        onConfirm={() =>
+          activate.mutate(activation, { onSuccess: () => setActivation("") })
+        }
+      />
     </div>
-    <section className={panelClass}><h2 className="text-lg font-bold">Tải bộ câu hỏi mới</h2><p className="mt-3 text-sm text-muted-foreground">File TOML tối đa 1 MB. Phiên bản nằm trong file; bản mới chưa áp dụng cho đến khi bạn xác nhận.</p><form onSubmit={save} className="mt-5"><fieldset disabled={mutation.isPending} className="space-y-4">
-      <InterviewRubricFileInput file={file} onChange={(selected) => { if (selected) form.setValue("file", selected, { shouldValidate: true }); else form.resetField("file"); }} /><FieldError message={form.formState.errors.file?.message} />
-      <label className="block text-sm font-medium">Ghi chú thay đổi<textarea {...form.register("note")} rows={4} maxLength={2000} className={`mt-2 ${fieldClass}`} /></label><FieldError message={form.formState.errors.note?.message} /><Button type="submit" className={actionClass}>{mutation.isPending ? "Đang tải lên…" : "Tải rubric lên"}</Button>
-    </fieldset></form></section>
-    <Dialog open={Boolean(activation)} onOpenChange={(open) => { if (!open && !activate.isPending) setActivation(""); }}><DialogContent><DialogHeader><DialogTitle>Áp dụng rubric {activation}?</DialogTitle><DialogDescription>Chỉ các buổi phỏng vấn mới dùng bộ câu hỏi này. Buổi đang làm hoặc đã chấm giữ nguyên phiên bản cũ.</DialogDescription></DialogHeader><DialogFooter><Button variant="outline" className={actionClass} disabled={activate.isPending} onClick={() => setActivation("")}>Hủy</Button><Button className={actionClass} disabled={activate.isPending} onClick={() => activate.mutate(activation, { onSuccess: () => setActivation("") })}>Xác nhận áp dụng</Button></DialogFooter></DialogContent></Dialog>
-  </div>;
+  );
 }
