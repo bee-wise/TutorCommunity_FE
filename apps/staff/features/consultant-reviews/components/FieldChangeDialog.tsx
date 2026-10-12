@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -61,10 +62,10 @@ export function FieldChangeDialog({
 
   return (
     <Dialog open={Boolean(request)} onOpenChange={(open) => { if (!open) close(); }}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto rounded-3xl border-border sm:max-w-2xl">
         <DialogHeader>
-          <p className="text-xs font-bold text-primary">Bước {step + 1} / 2</p>
-          <DialogTitle>{step === 0 ? "Đối chiếu thay đổi" : "Chọn quyết định"}</DialogTitle>
+          <p className="text-xs font-extrabold uppercase tracking-wider text-primary">Bước {step + 1} / 2</p>
+          <DialogTitle className="font-nunito text-xl font-extrabold">{step === 0 ? "Đối chiếu thay đổi" : "Chọn quyết định"}</DialogTitle>
           <DialogDescription>
             {readableFieldName(request?.fieldName)} · {request?.requestedByFullName || request?.requestedByEmail || "Gia sư"} · {formatReviewDate(request?.requestedAt)}
           </DialogDescription>
@@ -74,17 +75,17 @@ export function FieldChangeDialog({
           <div className="space-y-4 py-2">
             <p className="text-sm leading-6 text-muted-foreground">Kiểm tra giá trị đã công khai và giá trị gia sư muốn cập nhật trước khi đưa ra quyết định.</p>
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-              <div className="min-w-0 rounded-lg border border-border bg-muted p-4">
+              <div className="min-w-0 rounded-2xl border border-border bg-background p-4">
                 <p className="mb-2 text-xs font-bold text-muted-foreground">Giá trị hiện tại</p>
-                <div className="break-words text-sm"><ReviewValue value={parseValue(request.oldValue)} /></div>
+                <div className="break-words text-sm"><ReviewValue value={parseValue(request.oldValue)} fieldName={request.fieldName} /></div>
               </div>
-              <div className="min-w-0 rounded-lg border border-primary bg-card p-4">
+              <div className="min-w-0 rounded-2xl border border-primary bg-card p-4">
                 <p className="mb-2 text-xs font-bold text-primary">Giá trị đề xuất</p>
-                <div className="break-words text-sm"><ReviewValue value={parseValue(request.newValue)} /></div>
+                <div className="break-words text-sm"><ReviewValue value={parseValue(request.newValue)} fieldName={request.fieldName} /></div>
               </div>
             </div>
             {(request.fieldName?.toLowerCase() === "teachingofferings" || request.targetTable?.toLowerCase().includes("teaching_offering")) && (
-              <p className="rounded-lg border border-border bg-muted p-3 text-xs text-muted-foreground">Thay đổi tổ hợp giảng dạy được xử lý như một lượt duyệt thay thế.</p>
+              <p className="rounded-xl border border-border bg-background p-3 text-xs text-muted-foreground">Thay đổi tổ hợp giảng dạy được xử lý như một lượt duyệt thay thế.</p>
             )}
           </div>
         )}
@@ -97,7 +98,7 @@ export function FieldChangeDialog({
                 type="button"
                 onClick={() => setDecision("approve")}
                 aria-pressed={decision === "approve"}
-                className={`rounded-lg border p-4 text-left text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${decision === "approve" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary"}`}
+                className={`rounded-2xl border p-4 text-left text-sm font-bold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${decision === "approve" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary"}`}
               >
                 Phê duyệt
                 <span className={`mt-1 block text-xs font-normal ${decision === "approve" ? "text-primary-foreground" : "text-muted-foreground"}`}>Áp dụng giá trị mới</span>
@@ -106,7 +107,7 @@ export function FieldChangeDialog({
                 type="button"
                 onClick={() => setDecision("reject")}
                 aria-pressed={decision === "reject"}
-                className={`rounded-lg border p-4 text-left text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${decision === "reject" ? "border-destructive bg-destructive text-destructive-foreground" : "border-border bg-card text-foreground hover:border-destructive"}`}
+                className={`rounded-2xl border p-4 text-left text-sm font-bold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${decision === "reject" ? "border-destructive bg-destructive text-destructive-foreground" : "border-border bg-card text-foreground hover:border-destructive"}`}
               >
                 Từ chối
                 <span className={`mt-1 block text-xs font-normal ${decision === "reject" ? "text-destructive-foreground" : "text-muted-foreground"}`}>Giữ nguyên giá trị hiện tại</span>
@@ -125,7 +126,7 @@ export function FieldChangeDialog({
                   rows={3}
                   aria-invalid={triedSubmit && !reason.trim()}
                   placeholder="Nêu điều gia sư cần sửa"
-                  className="w-full resize-y rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring aria-invalid:border-destructive"
+                  className="w-full resize-y rounded-xl border border-input bg-background px-3.5 py-3 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/30 aria-invalid:border-destructive"
                 />
                 {triedSubmit && !reason.trim() && <p className="mt-1 text-xs font-semibold text-destructive">Vui lòng nhập lý do từ chối.</p>}
               </div>
@@ -133,7 +134,7 @@ export function FieldChangeDialog({
             {decision === "approve" && (
               <div>
                 <label htmlFor="field-approval-note" className="mb-1.5 block text-sm font-bold">Ghi chú (không bắt buộc)</label>
-                <textarea id="field-approval-note" value={note} onChange={(event) => setNote(event.target.value)} maxLength={1000} rows={2} className="w-full resize-y rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                <textarea id="field-approval-note" value={note} onChange={(event) => setNote(event.target.value)} maxLength={1000} rows={2} className="w-full resize-y rounded-xl border border-input bg-background px-3.5 py-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-ring/30" />
               </div>
             )}
           </div>
@@ -142,13 +143,13 @@ export function FieldChangeDialog({
         <DialogFooter className="gap-2">
           {step === 0 ? (
             <>
-              <button type="button" onClick={close} className="min-h-10 rounded-lg border border-border px-4 py-2 text-sm font-bold text-foreground hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Đóng</button>
-              <button type="button" onClick={() => setStep(1)} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Tiếp tục <ArrowRight size={16} aria-hidden="true" /></button>
+              <Button type="button" variant="outline" onClick={close} className="min-h-10 rounded-xl font-bold transition-all active:scale-[0.98]">Đóng</Button>
+              <Button type="button" onClick={() => setStep(1)} className="min-h-10 gap-2 rounded-xl font-bold transition-all active:scale-[0.98]">Tiếp tục <ArrowRightIcon className="size-4" aria-hidden="true" /></Button>
             </>
           ) : (
             <>
-              <button type="button" onClick={() => setStep(0)} disabled={action.isPending} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-bold text-foreground hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"><ArrowLeft size={16} aria-hidden="true" /> Bước trước</button>
-              <button type="button" onClick={() => void submit()} disabled={action.isPending} className={`min-h-10 rounded-lg px-4 py-2 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${decision === "reject" ? "bg-destructive text-destructive-foreground" : "bg-primary text-primary-foreground"}`}>{action.isPending ? "Đang gửi..." : "Xác nhận quyết định"}</button>
+              <Button type="button" variant="outline" onClick={() => setStep(0)} disabled={action.isPending} className="min-h-10 gap-2 rounded-xl font-bold transition-all active:scale-[0.98]"><ArrowLeftIcon className="size-4" aria-hidden="true" /> Bước trước</Button>
+              <Button type="button" variant={decision === "reject" ? "destructive" : "default"} onClick={() => void submit()} disabled={action.isPending} className="min-h-10 rounded-xl font-bold transition-all active:scale-[0.98]">{action.isPending ? "Đang gửi..." : "Xác nhận quyết định"}</Button>
             </>
           )}
         </DialogFooter>

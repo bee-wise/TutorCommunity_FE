@@ -13,7 +13,7 @@ import type {
   VietnamProvince,
   VietnamWard,
 } from "../services/vietnam-administrative.service";
-import { ProfileField, profileInputClass } from "./ProfileField";
+import { ProfileField, profileInputClass, useProfileReviewRejection } from "./ProfileField";
 import { ProfileSelect } from "./ProfileSelect";
 
 const LEGACY_VALUE = "__legacy_location__";
@@ -62,6 +62,9 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
   const city = useWatch({ control, name: "offlineCity" });
   const ward = useWatch({ control, name: "offlineWard" });
   const area = useWatch({ control, name: "area" });
+  const areaFieldRejection = useProfileReviewRejection("area");
+  const districtRejection = useProfileReviewRejection("offlineDistrict");
+  const areaRejection = areaFieldRejection ?? districtRejection;
 
   const provincesQuery = useVietnamProvinces();
   const provinces = provincesQuery.data ?? [];
@@ -98,13 +101,18 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
   };
 
   return (
-    <div className="space-y-3 rounded-2xl border border-border bg-muted/40 p-4">
+    <div id="profile-review-field-area" tabIndex={-1} className={`space-y-3 scroll-mt-28 rounded-2xl border p-4 focus:outline-none focus:ring-2 focus:ring-destructive/70 focus:ring-offset-2 ${areaRejection ? "border-destructive/50 bg-destructive/5" : "border-border bg-muted/40"}`}>
       <div className="flex items-start gap-3">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <MapPin className="size-5" weight="fill" aria-hidden="true" />
         </span>
         <div>
           <h3 className="font-bold text-foreground">Khu vực giảng dạy</h3>
+          {areaRejection ? (
+            <p className="mt-1 text-xs font-semibold leading-5 text-destructive">
+              Cần chỉnh sửa theo phản hồi: {areaRejection.rejectionReason}
+            </p>
+          ) : null}
           <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
             Dữ liệu hành chính hai cấp sau tháng 07/2025. Có thể chọn toàn tỉnh
             hoặc thu hẹp đến phường, xã.
@@ -115,6 +123,7 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
       <div className="grid items-start gap-4 sm:grid-cols-2">
         <ProfileField
           label="Tỉnh / thành phố"
+          reviewField="offlineCity"
           required={required}
           error={errors.offlineCity?.message}
           interactive
@@ -143,7 +152,7 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
           />
         </ProfileField>
 
-        <ProfileField label="Phường / xã / đặc khu" interactive>
+        <ProfileField label="Phường / xã / đặc khu" reviewField="offlineWard" interactive>
           <ProfileSelect
             value={
               selectedWard ? String(selectedWard.code) : ward ? LEGACY_VALUE : ""
@@ -166,7 +175,7 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
           />
         </ProfileField>
 
-        <ProfileField label="Địa chỉ chi tiết">
+        <ProfileField label="Địa chỉ chi tiết" reviewField="offlineAddressDetail">
           <input
             {...register("offlineAddressDetail")}
             className={profileInputClass}
@@ -174,7 +183,7 @@ export function TeachingAreaFields({ required }: { required: boolean }) {
           />
         </ProfileField>
 
-        <ProfileField label="Bán kính di chuyển (km)">
+        <ProfileField label="Bán kính di chuyển (km)" reviewField="travelRadiusKm">
           <input
             {...register("travelRadiusKm", { valueAsNumber: true })}
             type="number"

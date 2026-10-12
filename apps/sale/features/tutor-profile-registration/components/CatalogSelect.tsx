@@ -54,6 +54,9 @@ export function CatalogSelect({
   const items = catalogQuery.data ?? [];
   const selectedItem =
     items.find((item) => item.id === selectedId) ?? selectedItemQuery.data;
+  const selectedName = selectedItem?.name && selectedItem.name !== selectedId
+    ? selectedItem.name
+    : undefined;
   const hasExactMatch = items.some(
     (item) =>
       item.name.toLocaleLowerCase("vi") ===
@@ -63,6 +66,7 @@ export function CatalogSelect({
     mutationFn: (name: string) =>
       tutorProfileRegistrationService.proposeCatalog(resource, name),
     onSuccess: (item, name) => {
+      queryClient.setQueryData(["catalog", resource, "item", item.id], item);
       queryClient.setQueryData(
         ["catalog", resource, name],
         (current: typeof items | undefined) => [...(current ?? []), item],
@@ -91,7 +95,7 @@ export function CatalogSelect({
     ? selected.length
       ? `Đã chọn ${selected.length} chuyên môn`
       : placeholder
-    : (selectedItem?.name ??
+    : (selectedName ??
       (selectedId
         ? selectedItemQuery.isPending
           ? "Đang tải lựa chọn..."

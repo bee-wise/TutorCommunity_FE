@@ -4,4 +4,5 @@ export const consultantReviewKeys = {
   all: ["consultant-reviews"] as const,
   list: (params: ReviewListParams) => [...consultantReviewKeys.all, "list", params] as const,
   profile: (id: string) => [...consultantReviewKeys.all, "profile", id] as const,
+  catalogName: (resource: string, id: string) => [...consultantReviewKeys.all, "catalog", resource, id] as const,
 };

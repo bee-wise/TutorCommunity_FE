@@ -37,6 +37,31 @@ const FIELD_STEPS: Record<string, ProfileStepIndex> = {
   teachingHistory: 3,
 };
 
+const REVIEW_FIELD_STEPS: Record<string, ProfileStepIndex> = {
+  ...FIELD_STEPS,
+  subjectIds: 1,
+  gradeLevelIds: 1,
+  hourlyRate: 1,
+  basePrice: 1,
+  teachingMode: 1,
+};
+
+export function getRejectedProfileSteps(
+  rejectedFields: readonly { fieldName: string }[],
+): Set<ProfileStepIndex> {
+  const steps = new Set<ProfileStepIndex>();
+  for (const { fieldName } of rejectedFields) {
+    const step = getRejectedProfileStep(fieldName);
+    if (step !== undefined) steps.add(step);
+  }
+  return steps;
+}
+
+export function getRejectedProfileStep(fieldName: string): ProfileStepIndex | undefined {
+  const rootField = fieldName.split(/[.[\]]+/).find(Boolean);
+  return rootField ? REVIEW_FIELD_STEPS[rootField] : undefined;
+}
+
 const FIELD_LABELS: Record<string, string> = {
   displayName: "Tên hiển thị",
   dateOfBirth: "Ngày sinh",

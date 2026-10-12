@@ -18,6 +18,7 @@ import { FileUploadField } from "./FileUploadField";
 import { ProfileSelect } from "./ProfileSelect";
 import {
   ProfileField,
+  ProfileReviewHighlight,
   profileInputClass,
   profileTextareaClass,
 } from "./ProfileField";
@@ -52,6 +53,7 @@ export function BasicInformationSection() {
       <div className="grid items-start gap-4 sm:grid-cols-2">
         <ProfileField
           label="Tên hiển thị"
+          reviewField="displayName"
           required
           error={errors.displayName?.message}
         >
@@ -61,7 +63,7 @@ export function BasicInformationSection() {
             placeholder="Nguyễn Minh Anh"
           />
         </ProfileField>
-        <div className="grid gap-1.5 text-sm font-semibold text-foreground">
+        <ProfileReviewHighlight fieldName="dateOfBirth" className="grid gap-1.5 text-sm font-semibold text-foreground">
           <label htmlFor="tutor-date-of-birth">
             Ngày sinh <span className="text-destructive">*</span>
           </label>
@@ -84,8 +86,8 @@ export function BasicInformationSection() {
               {errors.dateOfBirth.message}
             </span>
           ) : null}
-        </div>
-        <ProfileField label="Giới tính" required error={errors.gender?.message} interactive>
+        </ProfileReviewHighlight>
+        <ProfileField label="Giới tính" reviewField="gender" required error={errors.gender?.message} interactive>
           <Controller control={control} name="gender" render={({ field }) => (
             <ProfileSelect
               label="Giới tính"
@@ -104,6 +106,7 @@ export function BasicInformationSection() {
         </ProfileField>
         <ProfileField
           label="Năm học / tình trạng học tập"
+          reviewField="studentYear"
           required
           error={errors.studentYear?.message}
           interactive
@@ -123,6 +126,7 @@ export function BasicInformationSection() {
       </div>
       <ProfileField
         label="Giấy tờ tùy thân"
+        reviewField="identityDocumentsUrl"
         required
         interactive
         error={errors.identityDocumentsUrl?.message}
@@ -142,6 +146,7 @@ export function BasicInformationSection() {
       </ProfileField>
       <ProfileField
         label="Ảnh đại diện"
+        reviewField="avatarUrl"
         required
         interactive
         error={errors.avatarUrl?.message}
@@ -162,6 +167,7 @@ export function BasicInformationSection() {
       <div className="grid items-start gap-4 lg:grid-cols-2">
         <ProfileField
           label="Trường đại học"
+          reviewField="universityId"
           required
           error={errors.universityId?.message}
           interactive
@@ -181,6 +187,7 @@ export function BasicInformationSection() {
         </ProfileField>
         <ProfileField
           label="Chuyên ngành"
+          reviewField="majorId"
           required
           error={errors.majorId?.message}
           interactive
@@ -201,6 +208,7 @@ export function BasicInformationSection() {
       </div>
       <ProfileField
         label="Thẻ sinh viên / bằng tốt nghiệp"
+        reviewField="studentCardUrl"
         required
         interactive
         error={errors.studentCardUrl?.message}
@@ -245,6 +253,7 @@ export function TeachingInformationSection() {
             </span>
           </span>
         }
+        reviewField="specializationIds"
         interactive
       >
         <Controller
@@ -263,6 +272,7 @@ export function TeachingInformationSection() {
       </ProfileField>
       <ProfileField
         label="Số năm kinh nghiệm"
+        reviewField="experienceYears"
         required
         error={errors.experienceYears?.message}
       >
@@ -297,6 +307,7 @@ export function IntroductionSection() {
       />
       <ProfileField
         label="Tiêu đề hồ sơ"
+        reviewField="headline"
         required
         error={errors.headline?.message}
       >
@@ -308,6 +319,7 @@ export function IntroductionSection() {
       </ProfileField>
       <ProfileField
         label="Giới thiệu ngắn"
+        reviewField="shortIntro"
         required
         error={errors.shortIntro?.message}
       >
@@ -319,6 +331,7 @@ export function IntroductionSection() {
       </ProfileField>
       <ProfileField
         label="Giới thiệu chi tiết"
+        reviewField="introduction"
         required
         error={errors.introduction?.message}
       >
@@ -328,7 +341,7 @@ export function IntroductionSection() {
           placeholder="Chia sẻ kinh nghiệm, cách bạn xây dựng lộ trình và kết quả từng đạt được..."
         />
       </ProfileField>
-      <div className="space-y-3">
+      <ProfileReviewHighlight fieldName="teachingMethods" className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-foreground">Phương pháp giảng dạy</h3>
@@ -396,9 +409,10 @@ export function IntroductionSection() {
             {errors.teachingMethods.message}
           </p>
         ) : null}
-      </div>
+      </ProfileReviewHighlight>
       <ProfileField
         label="Video giới thiệu"
+        reviewField="videoUrl"
         hint="MP4, WebM hoặc MOV, tối đa 100 MB."
       >
         <Controller
@@ -438,7 +452,7 @@ export function TeachingAreaAndVerificationSection() {
         description="Thông tin xác minh được bảo mật và chỉ dùng để xét duyệt hồ sơ."
       />
       <TeachingAreaFields required={requiresTeachingArea} />
-      <div className="space-y-3">
+      <ProfileReviewHighlight fieldName="teachingHistory" className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-foreground">Kinh nghiệm giảng dạy</h3>
@@ -523,7 +537,7 @@ export function TeachingAreaAndVerificationSection() {
             </div>
           </div>
         ))}
-      </div>
+      </ProfileReviewHighlight>
     </div>
   );
 }

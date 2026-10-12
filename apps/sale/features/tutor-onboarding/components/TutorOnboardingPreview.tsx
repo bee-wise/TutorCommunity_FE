@@ -2,7 +2,12 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import {
+  getTutorReadiness,
+  tutorReadinessQueryKey,
+} from "@workspace/core/services/tutor-readiness.service";
 
 import { TutorOnboardingProvider } from "./TutorOnboardingProvider";
 import { parseTutorOnboardingScenario } from "../schemas/tutor-onboarding.resolver";
@@ -43,6 +48,16 @@ export function TutorOnboardingExperience({
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+  const authScenario = user ? resolveLiveTutorOnboardingScenario(user) : "unknown";
+  const readiness = useQuery({
+    queryKey: tutorReadinessQueryKey(user?.id),
+    queryFn: getTutorReadiness,
+    enabled:
+      Boolean(user?.id) &&
+      (authScenario === "post-approval" ||
+        (requestedScenario === "post-approval" && authScenario === "approved")),
+    retry: false,
+  });
 
   useEffect(() => {
     if (isAuthLoading) return;
@@ -67,7 +82,7 @@ export function TutorOnboardingExperience({
     return null;
   }
 
-  const resolvedScenario = resolveLiveTutorOnboardingScenario(user);
+  const resolvedScenario = resolveLiveTutorOnboardingScenario(user, readiness.data);
   const scenario =
     requestedScenario === "post-approval" &&
     (resolvedScenario === "approved" || resolvedScenario === "post-approval")

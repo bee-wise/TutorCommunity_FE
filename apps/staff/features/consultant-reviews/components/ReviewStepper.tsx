@@ -1,4 +1,4 @@
-import { Check, WarningCircle } from "@phosphor-icons/react";
+import { CheckIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { profileSections } from "../data/profile-fields";
 
 const titles = [...profileSections.map((section) => section.title), "Rà soát và gửi"];
@@ -28,15 +28,15 @@ export function ReviewStepper({
             onClick={() => onSelect(index)}
             disabled={!visited}
             aria-current={active ? "step" : undefined}
-            className={`flex min-w-44 shrink-0 items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed lg:w-full lg:min-w-0 ${active ? "border-primary bg-card text-primary shadow-sm" : "border-transparent bg-transparent text-foreground hover:border-border hover:bg-card disabled:text-muted-foreground"}`}
+            className={`flex min-w-44 shrink-0 items-center gap-3 rounded-2xl border px-3.5 py-3.5 text-left transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:active:scale-100 lg:w-full lg:min-w-0 ${active ? "border-primary bg-primary text-primary-foreground shadow-sm" : "border-border bg-card text-foreground hover:border-primary disabled:text-muted-foreground"}`}
           >
-            <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg text-xs font-extrabold ${active ? "bg-primary text-primary-foreground" : invalidSteps[index] ? "bg-destructive text-destructive-foreground" : index < furthestStep ? "bg-secondary text-secondary-foreground" : "border border-border bg-card text-muted-foreground"}`}>
-              {invalidSteps[index] ? <WarningCircle size={16} aria-hidden="true" /> : index < furthestStep ? <Check size={16} aria-hidden="true" /> : index + 1}
+            <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg text-xs font-extrabold ${active ? "bg-primary-foreground text-primary" : invalidSteps[index] ? "bg-destructive text-destructive-foreground" : index < furthestStep ? "bg-accent text-accent-foreground" : "border border-border bg-background text-muted-foreground"}`}>
+              {invalidSteps[index] ? <ExclamationCircleIcon className="size-4" aria-hidden="true" /> : index < furthestStep ? <CheckIcon className="size-4" aria-hidden="true" /> : index + 1}
             </span>
             <span className="min-w-0">
               <span className="block text-xs font-semibold">Bước {index + 1}</span>
               <span className="block truncate text-sm font-bold">{title}</span>
-              {invalidSteps[index] ? <span className="block text-xs text-destructive">Thiếu lý do</span> : rejectionCounts[index] > 0 && <span className="block text-xs text-destructive">{rejectionCounts[index]} mục cần sửa</span>}
+              {invalidSteps[index] ? <span className={`block text-xs ${active ? "text-primary-foreground" : "text-destructive"}`}>Thiếu lý do</span> : rejectionCounts[index] > 0 && <span className={`block text-xs ${active ? "text-primary-foreground" : "text-destructive"}`}>{rejectionCounts[index]} mục cần sửa</span>}
             </span>
           </button>
         );

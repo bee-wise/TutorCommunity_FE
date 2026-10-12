@@ -20,6 +20,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { Header } from "@workspace/ui/components/layout/Header";
 import { Button } from "@workspace/ui/components/ui/button";
+import { InterviewOnboardingSteps } from "@/features/ai-interviews/components/InterviewOnboardingSteps";
 import { onboardingSteps } from "../constants/tutor-onboarding.fixtures";
 import { useTutorOnboardingViewModel } from "./TutorOnboardingProvider";
 import { OnboardingVideoGuide } from "./OnboardingVideoGuide";
@@ -115,6 +116,7 @@ export function TutorOnboardingShell({
       )}
       {!capture && toolbar}
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-12 pt-24 sm:px-6 lg:px-8">
+        {!liveInterview && <>
         {/* Banner */}
         <section>
           <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
@@ -157,11 +159,10 @@ export function TutorOnboardingShell({
             </div>
           </div>
         </section>
+        </>}
 
         {/* Desktop stepper (hidden on mobile) */}
-        <div className="hidden md:block">
-          <OnboardingStepper />
-        </div>
+        {liveInterview ? <InterviewOnboardingSteps step={view.activeStep}><OnboardingStepper compact /></InterviewOnboardingSteps> : <div className="hidden md:block"><OnboardingStepper /></div>}
 
         {liveInterview ? <div>{children}</div> : <>
         {/* Mobile: 2-column layout (left: vertical step rail, right: step content) */}

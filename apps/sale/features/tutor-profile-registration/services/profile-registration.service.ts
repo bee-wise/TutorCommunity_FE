@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiClient } from "@workspace/core/configs/client";
+import { apiClient } from "@workspace/core/apiClient";
 import { ApiError } from "@workspace/core/sys-libs/error-handler";
 import type { ApiResponse } from "@workspace/core/types/api-response.type";
 import {
@@ -7,6 +7,7 @@ import {
   tutorProfileDraftResponseSchema,
   type TutorProfileFormValues,
 } from "../schemas/profile-registration.schema";
+import { tutorProfileReviewSchema, type TutorProfileReview } from "../schemas/profile-review.schema";
 import type {
   CatalogItem,
   CatalogResource,
@@ -14,6 +15,10 @@ import type {
   TutorProfileMutationResult,
 } from "../types/profile-registration.types";
 import { buildTutorProfileDraftPayload } from "../utils/build-draft-payload";
+import type { TutorProfileReviewPatch } from "../utils/build-review-patch";
+import { learningProgramsService } from "./learning-programs.service";
+
+export const tutorProfileReviewQueryKey = ["tutor-profile", "review"] as const;
 
 const catalogItemSchema = z.object({
   id: z.union([z.string(), z.number()]).transform(String),
@@ -79,6 +84,53 @@ function normalizeUploadResponse(response: unknown): FileUploadResult {
 }
 
 export const tutorProfileRegistrationService = {
+  async getReview(): Promise<TutorProfileReview> {
+    const response = await apiClient.get<never, ApiResponse<unknown>>(
+      "/tutors/profile/review",
+    );
+    return tutorProfileReviewSchema.parse(response.data);
+  },
+
+  async getRejectedProfile(review: TutorProfileReview): Promise<TutorProfileFormValues> {
+    const values = mapDraftResponseToFormValues(review.profile);
+    if (values.teachingOfferings.every((item) => item.programId)) return values;
+
+    // The review response supplies programVersionId but not programId, which the form needs.
+    const existing = await tutorProfileRegistrationService.getProfile().catch(() => null);
+    for (const offering of values.teachingOfferings) {
+      if (offering.programId) continue;
+      const matching = existing?.teachingOfferings.find((item) =>
+        (item.id && item.id === offering.id) ||
+        (item.programVersionId === offering.programVersionId &&
+          item.teachingItemId === offering.teachingItemId &&
+          item.contextSelection === offering.contextSelection),
+      );
+      if (matching?.programId) offering.programId = matching.programId;
+    }
+    if (values.teachingOfferings.every((item) => item.programId)) return values;
+
+    const programs = await learningProgramsService.listPrograms().catch(() => []);
+    for (const offering of values.teachingOfferings) {
+      if (offering.programId) continue;
+      offering.programId = programs.find((program) =>
+        program.programVersionId === offering.programVersionId,
+      )?.id ?? "";
+    }
+    if (values.teachingOfferings.every((item) => item.programId)) return values;
+
+    const contexts = await Promise.all(programs.map(async (program) => ({
+      programId: program.id,
+      data: await learningProgramsService.listContexts(program.id).catch(() => null),
+    })));
+    for (const offering of values.teachingOfferings) {
+      if (offering.programId) continue;
+      offering.programId = contexts.find((item) =>
+        item.data?.programVersionId === offering.programVersionId,
+      )?.programId ?? "";
+    }
+    return values;
+  },
+
   async getProfile(): Promise<TutorProfileFormValues | null> {
     try {
       const response = await apiClient.get<never, ApiResponse<unknown>>(
@@ -115,12 +167,20 @@ export const tutorProfileRegistrationService = {
   },
 
   async submit(
-    profile: TutorProfileFormValues,
+    profile?: TutorProfileFormValues,
   ): Promise<TutorProfileMutationResult> {
     const response = await apiClient.post<
       never,
       ApiResponse<TutorProfileMutationResult>
-    >("/tutors/profile/submit", buildTutorProfileDraftPayload(profile));
+    >("/tutors/profile/submit", profile ? buildTutorProfileDraftPayload(profile) : undefined);
+    return response.data ?? {};
+  },
+
+  async submitReviewPatch(patch: TutorProfileReviewPatch): Promise<TutorProfileMutationResult> {
+    const response = await apiClient.post<never, ApiResponse<TutorProfileMutationResult>>(
+      "/tutors/profile/submit",
+      Object.keys(patch).length ? patch : undefined,
+    );
     return response.data ?? {};
   },
 

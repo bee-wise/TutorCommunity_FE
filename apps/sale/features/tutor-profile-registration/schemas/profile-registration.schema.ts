@@ -38,7 +38,7 @@ const dateOfBirthSchema = z.string().superRefine((value, context) => {
 const teachingOfferingSchema = z
   .object({
     id: z.string().uuid().nullable(),
-    programId: z.string().uuid("Vui lòng chọn chương trình."),
+    programId: z.string(),
     programVersionId: z
       .string()
       .uuid("Chương trình chưa có phiên bản được xuất bản."),
@@ -60,6 +60,14 @@ const teachingOfferingSchema = z
       .positive("Học phí phải lớn hơn 0."),
   })
   .superRefine((offering, context) => {
+    // Review responses omit programId. An existing offering can be retained by id.
+    if (!z.uuid().safeParse(offering.programId).success && !(offering.programId === "" && offering.id)) {
+      context.addIssue({
+        code: "custom",
+        path: ["programId"],
+        message: "Vui lòng chọn chương trình.",
+      });
+    }
     if (offering.teachingItemId === "__proposal__") {
       if (offering.proposedTeachingItemName.length < 2) {
         context.addIssue({

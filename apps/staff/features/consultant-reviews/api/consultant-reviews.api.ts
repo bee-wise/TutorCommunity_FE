@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiClient } from "@workspace/core/configs/client";
+import { apiClient } from "@workspace/core/apiClient";
 import {
   profileReviewSchema,
   reviewListSchema,
@@ -39,8 +39,17 @@ const fieldActionSchema = z.object({
 });
 
 const pathId = (id: string) => encodeURIComponent(id);
+export type ReviewCatalogResource = "universities" | "majors" | "specializations";
+const catalogItemSchema = z.object({ name: z.string().trim().min(1) });
 
 export const consultantReviewsApi = {
+  async catalogName(resource: ReviewCatalogResource, id: string): Promise<string> {
+    const response: unknown = await apiClient.get(`/${resource}/${pathId(id)}`);
+    const data = response && typeof response === "object" && "data" in response
+      ? response.data
+      : response;
+    return catalogItemSchema.parse(data).name;
+  },
   async list(params: ReviewListParams, page: number, signal?: AbortSignal): Promise<ReviewList> {
     const response: unknown = await apiClient.get("/consultant/reviews", {
       signal,
