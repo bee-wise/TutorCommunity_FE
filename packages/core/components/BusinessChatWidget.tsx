@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   useQuery,
   useQueryClient,
@@ -828,10 +828,32 @@ function PaymentWidget({ business, currentRole, roomClosed }: Props) {
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const data =
+  const storedData =
     business.current?.kind === "PAYMENT_REQUEST"
       ? business.current.data
       : (createdQuery.data ?? query.data);
+  // GET only reads DB; while PENDING the learner polls refresh so PayOS is checked even without a webhook.
+  const verify = useQuery({
+    queryKey: ["connection-widget", "payment-refresh", storedData?.id],
+    queryFn: () => connectionWidgetsService.refreshPayment(storedData!.id),
+    enabled:
+      currentRole === "LEARNER" &&
+      !roomClosed &&
+      storedData?.status === "PENDING" &&
+      !!storedData.id,
+    refetchInterval: 10_000,
+    refetchOnWindowFocus: true,
+    retry: false,
+  });
+  const data = verify.data ?? storedData;
+  const verifiedStatus = verify.data?.status;
+  useEffect(() => {
+    if (!verifiedStatus || verifiedStatus === "PENDING") return;
+    void queryClient.invalidateQueries({
+      queryKey: ["connection-widget", "payment"],
+    });
+    void refreshChatHistory(queryClient, business.roomId);
+  }, [verifiedStatus, queryClient, business.roomId]);
   const classId =
     data?.classId ?? (business.current ? undefined : classIdFromPayload);
   const checkout = safeCheckout(data?.checkoutUrl);

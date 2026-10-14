@@ -260,6 +260,13 @@ export const connectionWidgetsService = {
     );
     return dataOf(paymentRequestSchema, response);
   },
+  // Asks BE to verify with PayOS; the only client path that can settle a payment when no webhook arrives.
+  async refreshPayment(id: string) {
+    const response: unknown = await apiClient.post(
+      `/payment-requests/${idPath(id)}/refresh`,
+    );
+    return dataOf(paymentRequestSchema, response);
+  },
   async createPayment(classId: string) {
     const response: unknown = await apiClient.post(
       `/classes/${idPath(classId)}/payment-requests`,

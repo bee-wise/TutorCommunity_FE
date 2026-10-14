@@ -18,6 +18,11 @@ import { chatRoomsService } from "../services/chat-rooms.service";
 import { chatRoomKeys } from "./useMessages";
 import type { ChatParticipantRole } from "../types/messages.types";
 
+type RoomPublication = {
+  type?: string;
+  payload?: { paymentRequestId?: string; status?: string };
+};
+
 export function useChatRoom(roomId: string) {
   const user = useAuthStore((state) => state.user);
   const authenticated = useAuthStore((state) => state.isAuthenticated);
@@ -31,10 +36,21 @@ export function useChatRoom(roomId: string) {
     queryFn: () => chatRoomsService.get(roomId),
     enabled: authenticated && !!user && !!roomId,
   });
-  const realtime = useCentrifugoSubscription(`chat:room:${roomId}`, {
+  // Outbox delivery is at-least-once; toast each paid request only once.
+  const paidToasts = useRef(new Set<string>());
+  const realtime = useCentrifugoSubscription<RoomPublication>(`chat:room:${roomId}`, {
     enabled: authenticated && !!roomQuery.data,
     chatRoomId: roomId,
-    onPublication: () => {
+    onPublication: (data) => {
+      const payment = data?.type === "payment.updated" ? data.payload : undefined;
+      if (payment?.status === "PAID" && payment.paymentRequestId
+        && !paidToasts.current.has(payment.paymentRequestId)) {
+        paidToasts.current.add(payment.paymentRequestId);
+        toast.success(
+          currentUserRole === "LEARNER" ? "Thanh toán học phí thành công" : "Học viên đã thanh toán học phí",
+          { description: "Lớp học đã được kích hoạt, bước tiếp theo là xếp lịch học." },
+        );
+      }
       void queryClient.invalidateQueries({
         queryKey: chatRoomKeys.messages(roomId),
       });
