@@ -22,6 +22,10 @@ Module._load = function (name, parent, isMain) {
   if (name === "@phosphor-icons/react") return { UserPlusIcon: () => null };
   if (name === "next/link") return { __esModule: true, default: ({ children, ...props }) => React.createElement("a", props, children) };
   if (name === "next/image") return { __esModule: true, default: ({ src, alt }) => React.createElement("img", { src, alt }) };
+  if (name.endsWith("/useTutorClassDetail")) return { useTutorClassDetail: mockDetail };
+  if (name === "./GroupClassManagement") return { GroupClassManagement: () => React.createElement("section", null, "Vận hành lớp nhóm") };
+  if (name === "./MemberChangesPanel") return { MemberChangesPanel: () => React.createElement("section", null, "Yêu cầu thay đổi thành viên") };
+  if (name === "../hooks/useClassMembers") return { useClassMembers: (classId) => {const detail=mockDetail(classId);return {...detail,mode:"current",setMode(){},search:"",updateSearch(){},members:detail.learners.map(l=>({...l,enrollmentId:l.id,joinedAt:detail.classInfo.createdAt,leftAt:null})),total:detail.learners.length,page:0,pageCount:1,setPage(){}};} };
   if (name === "@workspace/ui/components/ui/sidebar") return {
     Sidebar: box, SidebarContent: box, SidebarFooter: box, SidebarGroup: box, SidebarGroupContent: box,
     SidebarGroupLabel: box, SidebarHeader: box, SidebarMenu: box, SidebarMenuItem: box, SidebarRail: () => null,
@@ -33,7 +37,20 @@ Module._load = function (name, parent, isMain) {
   return originalLoad.call(this, name, parent, isMain);
 };
 const { getClassWorkspaceRoute, getClassWorkspaceLinks } = require("../utils/class-workspace.utils.ts");
-const { TUTOR_CLASSES } = require("../data/classes.mock.ts");
+const { TUTOR_CLASSES, CLASS_ROSTER, TUTOR_CLASS_SESSIONS } = require("../data/classes.mock.ts");
+// Isolate layout regression fixtures from the real API hook. API/auth/cache are
+// exercised separately in class-api.test.cjs; these are not backend E2E tests.
+function mockDetail(classId) {
+  const classInfo = TUTOR_CLASSES.find((item) => item.id === classId);
+  if (!classInfo) return { classInfo: undefined, learners: [], loading: false, error: null, retry() {} };
+  const learners = CLASS_ROSTER.filter((learner) => classInfo.learnerIds.includes(learner.id));
+  return { classInfo: { ...classInfo, serverDetails: {
+    learnerCount: learners.length, sessionCount: TUTOR_CLASS_SESSIONS.filter((session) => session.classId === classId).length,
+    capacity: classInfo.kind === "group" ? 20 : 1, programName: "Chương trình kiểm thử",
+    teachingOfferingId: null, openingAt: null, teachingMode: "ONLINE", sessionDurationMinutes: 60,
+    pricePerHour: 150000, numberOfSessions: 12, features: { attendance: classInfo.kind === "group", feedback: false },
+  } }, learners, loading: false, error: null, retry() {} };
+}
 const { ClassWorkspaceSidebar } = require("../components/ClassWorkspaceSidebar.tsx");
 const { ClassDetailScreen } = require("../components/ClassDetailScreen.tsx");
 const { ClassMembersScreen } = require("../components/ClassMembersScreen.tsx");
@@ -82,10 +99,11 @@ test("class sidebar has five scoped sections, current state, brand and escape to
   assert.doesNotMatch(html, /\/lms\/tutor\/messages|underline/);
 });
 
-test("overview keeps class facts and actionable attendance; sessions live on a separate screen", () => {
+test("overview keeps server facts and counts without fabricated attendance or roster; resource screens stay separate", () => {
   const html = render(ClassDetailScreen, { classId: group.id });
   assert.match(html, /BW-G201|Luyện tập hệ phương trình/);
-  assert.match(html, /2 buổi chưa xác nhận điểm danh/);
+  assert.match(html, /học viên đang tham gia|buổi trong lịch/);
+  assert.doesNotMatch(html, /chưa xác nhận điểm danh|Luyện tập hệ phương trình|example.com/);
   assert.ok(html.includes(`${group.id}/sessions`));
   assert.ok(html.includes(`${group.id}/members`));
   assert.doesNotMatch(html, /Tìm buổi học|class-session-status/);
@@ -95,10 +113,10 @@ test("overview keeps class facts and actionable attendance; sessions live on a s
   assert.doesNotMatch(archived, /chưa xác nhận điểm danh/);
 });
 
-test("member cards retain names and emails; missing class never renders a foreign roster", () => {
+test("member cards retain names without contacts omitted by BE; missing class never renders a foreign roster", () => {
   const html = render(ClassMembersScreen, { classId: group.id });
   assert.match(html, /Tìm học viên|minh.anh@example.com/);
-  assert.match(html, /gia.huy@example.com/);
+  assert.doesNotMatch(html, /gia.huy@example.com/);
   assert.match(html, /Võ Thảo My/);
   const missing = render(ClassMembersScreen, { classId: "unknown-class" });
   assert.match(missing, /Không tìm thấy lớp học/);

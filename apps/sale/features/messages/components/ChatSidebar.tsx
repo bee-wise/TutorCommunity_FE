@@ -21,8 +21,9 @@ import {
 
 const STATUS_ROOM_LABELS: Record<string, string> = {
   ACTIVE: "Đang hoạt động",
+  INACTIVE: "Tạm ngưng",
   CLOSED: "Đã đóng",
-  CONVERTED_TO_CLASS: "Tạo lớp học",
+  CONVERTED_TO_CLASS: "Đã tạo lớp",
 };
 
 function RoomRow({
@@ -32,7 +33,7 @@ function RoomRow({
   room: ChatRoom;
   currentUserRole: ChatParticipantRole;
 }) {
-  const isReadOnly = room.status !== "ACTIVE";
+  const isReadOnly = room.status === "CLOSED" || room.status === "INACTIVE";
   const peer = room.category === "SUPPORT"
     ? room.consultant
     : currentUserRole === "LEARNER" ? room.tutor : room.learner;
@@ -85,9 +86,11 @@ function RoomRow({
         </div>
 
         {/* Stage badge */}
-        {(isReadOnly || room.hasConnectionDetails || room.category === "SUPPORT") && <span
+        {(isReadOnly || room.status === "CONVERTED_TO_CLASS" || room.hasConnectionDetails || room.category === "SUPPORT") && <span
           className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${
             room.category === "SUPPORT" && !isReadOnly
+              ? "border-secondary/20 bg-secondary/10 text-secondary"
+              : room.status === "CONVERTED_TO_CLASS"
               ? "border-secondary/20 bg-secondary/10 text-secondary"
               : isReadOnly
               ? "border-gray-200 bg-gray-100 text-gray-500"
@@ -97,6 +100,8 @@ function RoomRow({
         >
           {room.category === "SUPPORT" && !isReadOnly
             ? "Đang hỗ trợ"
+            : room.status === "CONVERTED_TO_CLASS"
+            ? STATUS_ROOM_LABELS.CONVERTED_TO_CLASS
             : isReadOnly
             ? STATUS_ROOM_LABELS[room.status]
             : STAGE_LABELS[room.connectionStage]}

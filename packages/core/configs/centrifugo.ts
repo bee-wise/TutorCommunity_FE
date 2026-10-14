@@ -9,7 +9,7 @@ import { useCentrifugoStore } from "../store/useCentrifugoStore";
 import { ApiError } from "../sys-libs/error-handler";
 
 export const getCentrifugoUrl = (webSocketUrl?: string | null): string => {
-  const configuredUrl = process.env.NEXT_PUBLIC_CENTRIFUGO_WS_URL?.trim() || webSocketUrl?.trim();
+  const configuredUrl = webSocketUrl?.trim() || process.env.NEXT_PUBLIC_CENTRIFUGO_WS_URL?.trim();
   if (configuredUrl) {
     let normalized = configuredUrl.trim();
     if (normalized.startsWith("http://")) {

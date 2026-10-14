@@ -51,6 +51,7 @@ export function useCentrifugo() {
 export interface UseCentrifugoSubscriptionOptions<T = unknown> {
   enabled?: boolean;
   chatRoomId?: string;
+  subscriptionScope?: "chat-user";
   token?: string;
   onPublication?: (data: T, ctx: PublicationContext) => void;
   onSubscribed?: (ctx: SubscribedContext) => void;
@@ -62,7 +63,7 @@ export function useCentrifugoSubscription<T = unknown>(
   channel: string | null | undefined,
   options: UseCentrifugoSubscriptionOptions<T> = {},
 ) {
-  const { enabled = true, chatRoomId, token, onPublication, onSubscribed, onSubscribing, onError } = options;
+  const { enabled = true, chatRoomId, subscriptionScope, token, onPublication, onSubscribed, onSubscribing, onError } = options;
   const status = useCentrifugoStore((state) => state.status);
   const hasConnection = status !== "disconnected";
   const subRef = useRef<Subscription | null>(null);
@@ -95,7 +96,7 @@ export function useCentrifugoSubscription<T = unknown>(
         token: token || undefined,
         getToken: async () => {
           try {
-            const res = await centrifugoService.getSubscriptionToken(chatRoomId);
+            const res = await centrifugoService.getSubscriptionToken(chatRoomId, subscriptionScope);
             if (!res.success || !res.data?.token) {
               throw new Error("Máy chủ chưa cấp token đăng ký phòng chat.");
             }
@@ -163,7 +164,7 @@ export function useCentrifugoSubscription<T = unknown>(
       }
       subRef.current = null;
     };
-  }, [channel, enabled, hasConnection, chatRoomId, token]);
+  }, [channel, enabled, hasConnection, chatRoomId, subscriptionScope, token]);
 
   return {
     subscriptionRef: subRef,

@@ -66,7 +66,9 @@ export function mapChatRoom(
       ? "ACTIVE"
       : raw.status === "CONVERTED_TO_CLASS"
         ? "CONVERTED_TO_CLASS"
-        : "CLOSED";
+        : raw.status === "INACTIVE"
+          ? "INACTIVE"
+          : "CLOSED";
 
   return {
     id: raw.id,
@@ -100,7 +102,8 @@ export function mapChatRoom(
     gradeLevel: "",
     teachingMode: "BOTH",
     lastMessageAt: raw.lastMessageAt ?? undefined,
-    unreadCount: 0,
+    unreadCount: raw.unreadCount ?? 0,
+    lastReadMessageId: raw.lastReadMessageId,
     createdAt: raw.createdAt ?? raw.updatedAt ?? "",
     updatedAt: raw.updatedAt ?? raw.createdAt ?? "",
     hasConnectionDetails: false,

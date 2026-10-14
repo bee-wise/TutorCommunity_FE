@@ -14,7 +14,7 @@ import { MessageContextMenu } from "./MessageContextMenu";
 import { ConsultantSupportBanner } from "./ConsultantSupportBanner";
 import { ConnectionInfoPanel } from "./ConnectionInfoPanel";
 import { useChatRoom } from "../hooks/useChatRoom";
-import { selectTrialWidgetTimelineMessages } from "@workspace/core/services/trial-widget-timeline";
+import { selectChatWidgetTimelineMessages } from "@workspace/core/services/trial-widget-timeline";
 import { STAGE_LABELS, STAGE_COLORS, shouldShowSessionDivider } from "../constants/messages.utils";
 import type { ChatMessage } from "../types/messages.types";
 
@@ -57,7 +57,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
     </div>
   );
   const isSupport = room.category === "SUPPORT";
-  const visibleMessages = selectTrialWidgetTimelineMessages(
+  const visibleMessages = selectChatWidgetTimelineMessages(
     messages,
     (message) => message.senderRole === "CONSULTANT",
   );
@@ -201,6 +201,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                     message={msg}
                     currentUserId={currentUserId}
                     currentRole={currentUserRole}
+                    roomClosed={room.status === "CLOSED"}
                     isConsecutive={!!isConsecutive}
                     showTime={isLastInTurn}
                     onContextMenu={(e, message) => {

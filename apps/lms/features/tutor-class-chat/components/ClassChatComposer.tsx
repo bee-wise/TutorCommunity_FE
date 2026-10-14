@@ -9,15 +9,17 @@ export function ClassChatComposer({ form, sending, onSubmit }: {
   form: UseFormReturn<ClassChatMessageInput>; sending: boolean; onSubmit: () => Promise<void>;
 }) {
   const error = form.formState.errors.content?.message ?? form.formState.errors.root?.message;
-  return <form onSubmit={onSubmit} className="shrink-0 space-y-2 border-t border-border bg-card p-4" aria-label="Gửi tin nhắn lớp" aria-busy={sending}>
-    <label htmlFor="class-chat-content" className="block text-xs font-bold text-foreground">Tin nhắn cho cả lớp</label>
-    <div className="flex items-end gap-3">
-      <textarea id="class-chat-content" rows={2} maxLength={2000} {...form.register("content")} disabled={sending}
-        placeholder="Nhập nội dung trao đổi…" aria-invalid={Boolean(error)} aria-describedby="class-chat-help"
-        className="min-h-16 min-w-0 flex-1 resize-none rounded-2xl border border-input bg-card px-3.5 py-2.5 text-base outline-none transition-all placeholder:text-muted-foreground hover:border-primary/40 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+  return <form onSubmit={onSubmit} className="shrink-0 border-t border-border bg-card px-3 py-3 sm:px-5" aria-label="Gửi tin nhắn lớp" aria-busy={sending}>
+    <div className="mx-auto max-w-4xl rounded-2xl border border-input bg-background p-2 shadow-sm transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10">
+      <label htmlFor="class-chat-content" className="sr-only">Tin nhắn cho cả lớp</label>
+      <textarea id="class-chat-content" rows={1} maxLength={2000} {...form.register("content")} disabled={sending}
+        placeholder="Nhập tin nhắn cho cả lớp…" aria-invalid={Boolean(error)} aria-describedby="class-chat-help"
+        className="block max-h-32 min-h-11 w-full resize-none border-0 bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-muted-foreground [field-sizing:content] disabled:opacity-60"
         onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); if (!sending) void onSubmit(); } }} />
-      <Button type="submit" disabled={sending} className="min-h-11 shrink-0 rounded-xl px-4 font-bold transition-all active:scale-[0.98] motion-reduce:transform-none"><PaperAirplaneIcon className="size-4" aria-hidden="true" /><span>{sending ? "Đang gửi…" : "Gửi"}</span></Button>
+      <div className="flex items-center justify-between gap-2 border-t border-border/70 pt-2">
+        <p id="class-chat-help" className={`text-[11px] ${error ? "text-destructive" : "text-muted-foreground"}`} role={error ? "alert" : undefined}>{error ?? "Enter để gửi · Shift + Enter xuống dòng"}</p>
+        <Button type="submit" size="icon" disabled={sending} aria-label={sending ? "Đang gửi tin nhắn" : "Gửi tin nhắn"} className="size-9 shrink-0 rounded-lg transition-all active:scale-[0.98]"><PaperAirplaneIcon className="size-4" aria-hidden="true" /></Button>
+      </div>
     </div>
-    <p id="class-chat-help" className={`text-xs ${error ? "text-destructive" : "text-muted-foreground"}`} role={error ? "alert" : undefined}>{error ?? "Enter để gửi, Shift + Enter để xuống dòng. Tin nhắn mock chỉ lưu đến khi tải lại trang."}</p>
   </form>;
 }

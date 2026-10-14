@@ -17,7 +17,7 @@ export type ConnectionStage =
   | "AWAITING_DECISION"
   | "CONVERTED_TO_CLASS"
   | "UNKNOWN";
-export type ChatRoomStatus = "ACTIVE" | "CLOSED" | "CONVERTED_TO_CLASS";
+export type ChatRoomStatus = "ACTIVE" | "INACTIVE" | "CLOSED" | "CONVERTED_TO_CLASS";
 export type ChatRoomCategory = "CONNECTION" | "SUPPORT";
 export type ChatParticipantRole = "LEARNER" | "TUTOR" | "CONSULTANT";
 
@@ -205,6 +205,7 @@ export interface ChatRoom {
   lastMessage?: string;
   lastMessageAt?: string;
   unreadCount: number;
+  lastReadMessageId?: string | null;
 
   createdAt: string;
   updatedAt: string;

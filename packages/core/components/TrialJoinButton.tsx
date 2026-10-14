@@ -25,7 +25,7 @@ function startTimeLabel(value?: string | null) {
   }).format(date);
 }
 
-export function TrialJoinButton({ trial, href }: { trial: TrialSession; href: string }) {
+export function TrialJoinButton({ trial, href, disabled }: { trial: TrialSession; href: string; disabled: boolean }) {
   const [now, setNow] = useState(0);
   useEffect(() => {
     const refresh = () => setNow(Date.now());
@@ -45,7 +45,9 @@ export function TrialJoinButton({ trial, href }: { trial: TrialSession; href: st
   }, [trial.scheduledStartAt, trial.scheduledEndAt, now]);
 
   const availability = now ? getTrialJoinAvailability(trial, now) : { state: "NO_SCHEDULE" as const };
-  const reason = availability.state === "BEFORE_START"
+  const reason = disabled
+    ? "Phòng chat đã đóng. Không thể tham gia từ cuộc trò chuyện này."
+    : availability.state === "BEFORE_START"
     ? `Có thể tham gia từ ${startTimeLabel(trial.scheduledStartAt)}.`
     : availability.state === "AFTER_END"
       ? "Buổi học đã kết thúc."
@@ -56,7 +58,7 @@ export function TrialJoinButton({ trial, href }: { trial: TrialSession; href: st
           : "Chưa có thời gian học hợp lệ.";
   const className = "h-8 rounded-lg px-2.5 text-xs font-bold transition-all active:scale-[0.98]";
 
-  if (availability.state === "READY") {
+  if (availability.state === "READY" && !disabled) {
     return (
       <Button asChild className={className}>
         <a href={href} target="_blank" rel="noopener noreferrer">

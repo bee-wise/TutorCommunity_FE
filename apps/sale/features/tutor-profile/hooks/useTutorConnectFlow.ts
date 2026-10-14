@@ -3,14 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { connectRequestsApi } from "@workspace/core/api/connect-requests.api";
+import { ActiveConnectionExistsError, connectRequestsApi } from "@workspace/core/api/connect-requests.api";
 import { useConnectRequestEligibility, useCreateConnectRequest } from "@workspace/core/hooks/useConnectRequests";
-import { ensureChatRoomSubscribed } from "@workspace/core/services/chat-room-subscription.service";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { ApiError, getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import { queryKeys } from "@workspace/core/sys-libs/queryKeys";
 
-export type ConnectPhase = "idle" | "creating" | "checkingStatus" | "findingRoom" | "subscribing" | "redirecting" | "roomError" | "subscriptionError" | "navigationError" | "requestError";
+export type ConnectPhase = "idle" | "creating" | "checkingStatus" | "findingRoom" | "redirecting" | "roomError" | "navigationError" | "requestError";
 
 const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
 
@@ -47,12 +46,11 @@ export function useTutorConnectFlow(tutorUserId: string | undefined) {
   const [connectRequestId, setConnectRequestId] = useState<string | undefined>();
   const [requestSubmitted, setRequestSubmitted] = useState(false);
   const submitInFlight = useRef(false);
-  const roomOpenInFlight = useRef(false);
   const navigationTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const eligibility = useConnectRequestEligibility(open);
   const createRequest = useCreateConnectRequest();
-  const isProcessing = phase === "creating" || phase === "checkingStatus" || phase === "findingRoom" || phase === "subscribing" || phase === "redirecting";
+  const isProcessing = phase === "creating" || phase === "checkingStatus" || phase === "findingRoom" || phase === "redirecting";
   const isLearner = isAuthenticated && user?.role?.toUpperCase() === "LEARNER";
 
   useEffect(() => () => {
@@ -79,21 +77,11 @@ export function useTutorConnectFlow(tutorUserId: string | undefined) {
     }
   };
 
-  const openChat = async (id: string) => {
-    if (roomOpenInFlight.current) return;
-    roomOpenInFlight.current = true;
+  const openChat = (id: string) => {
     setRoomId(id);
     setError(null);
-    setPhase("subscribing");
-    try {
-      await ensureChatRoomSubscribed(id);
-      navigateToRoom(id);
-    } catch (subscriptionError) {
-      setPhase("subscriptionError");
-      setError(getApiErrorMessage(subscriptionError, "Không thể đăng ký phòng chat. Vui lòng thử lại."));
-    } finally {
-      roomOpenInFlight.current = false;
-    }
+    // The chat page starts realtime itself and can sync messages while reconnecting.
+    navigateToRoom(id);
   };
 
   const resolveRoom = async (targetTutorId: string, requestId?: string) => {
@@ -127,6 +115,19 @@ export function useTutorConnectFlow(tutorUserId: string | undefined) {
         await resolveRoom(tutorUserId, created?.connectRequestId);
       }
     } catch (requestError) {
+      if (requestError instanceof ActiveConnectionExistsError && requestError.activeChatRoomId) {
+        const id = requestError.activeChatRoomId;
+        if (requestError.activeTutorId === tutorUserId) {
+          setRequestSubmitted(true);
+          setConnectRequestId(requestError.activeConnectRequestId ?? undefined);
+          openChat(id);
+          return;
+        }
+        setRoomId(id);
+        setPhase("requestError");
+        setError("Bạn đang có một kết nối hoạt động. Có thể mở cuộc trò chuyện hiện tại.");
+        return;
+      }
       setPhase("checkingStatus");
       const current = await eligibility.refetch();
       if (current.data?.activeChatRoomId && current.data.activeTutorId === tutorUserId) {
@@ -197,14 +198,9 @@ export function useTutorConnectFlow(tutorUserId: string | undefined) {
     confirm,
     retryStatus,
     retryRoom: () => tutorUserId ? resolveRoom(tutorUserId, connectRequestId) : undefined,
-    retrySubscription: () => roomId ? openChat(roomId) : undefined,
     openExistingChat: (id: string) => {
       setRoomId(id);
       navigateToRoom(id);
-    },
-    continueWithoutRealtime: () => {
-      if (!roomId) return;
-      navigateToRoom(roomId);
     },
     forceOpenChat: () => roomId ? window.location.assign(`/learner/messages/${encodeURIComponent(roomId)}`) : undefined,
   };

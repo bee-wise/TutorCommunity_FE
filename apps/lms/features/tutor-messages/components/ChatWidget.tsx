@@ -33,6 +33,7 @@ type ScheduleWidget = Extract<
 interface ChatWidgetProps {
   widget: ChatWidgetType;
   currentRole: ChatParticipantRole;
+  roomClosed: boolean;
 }
 
 const money = (amount: number) => `${amount.toLocaleString("vi-VN")} ₫`;
@@ -336,9 +337,11 @@ function ClassConfirmationWidget({
 function PaymentRequestWidget({
   widget,
   currentRole,
+  roomClosed = false,
 }: {
   widget: PaymentWidget;
   currentRole: ChatParticipantRole;
+  roomClosed: boolean;
 }) {
   const data = widget.data;
   const labels = {
@@ -368,7 +371,11 @@ function PaymentRequestWidget({
       }
       footer={
         data.status === "PENDING" && currentRole === "LEARNER" ? (
-          canPay ? (
+          roomClosed ? (
+            <Button type="button" disabled className="h-12 w-full rounded-full font-nunito text-xs font-bold transition-all">
+              Thanh toán qua PayOS
+            </Button>
+          ) : canPay ? (
             <Button
               asChild
               className="h-12 w-full rounded-full font-nunito text-xs font-bold transition-all active:scale-[0.98]"
@@ -502,7 +509,7 @@ function ScheduleClassesWidget({
   );
 }
 
-export function ChatWidget({ widget, currentRole }: ChatWidgetProps) {
+export function ChatWidget({ widget, currentRole, roomClosed }: ChatWidgetProps) {
   switch (widget.widgetType) {
     case "TRIAL_SESSION":
       return <TrialSessionWidget widget={widget} currentRole={currentRole} />;
@@ -511,7 +518,7 @@ export function ChatWidget({ widget, currentRole }: ChatWidgetProps) {
         <ClassConfirmationWidget widget={widget} currentRole={currentRole} />
       );
     case "PAYMENT_REQUEST":
-      return <PaymentRequestWidget widget={widget} currentRole={currentRole} />;
+      return <PaymentRequestWidget widget={widget} currentRole={currentRole} roomClosed={roomClosed} />;
     case "SCHEDULE_CLASSES":
       return (
         <ScheduleClassesWidget widget={widget} currentRole={currentRole} />

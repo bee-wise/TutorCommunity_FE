@@ -242,10 +242,16 @@ export const chatRoomsService = {
   },
 
   async closeRoom(id: string, closeReason: string, closeNote?: string) {
-    const response: unknown = await apiClient.post(
-      `/chat-rooms/${encodeURIComponent(id)}/close`,
-      { closeReason, closeNote: closeNote || null },
-    );
-    return dataOf(roomSchema, response);
+    try {
+      const response: unknown = await apiClient.post(
+        `/chat-rooms/${encodeURIComponent(id)}/close`,
+        { closeReason, closeNote: closeNote || null },
+      );
+      return dataOf(roomSchema, response);
+    } catch (error) {
+      const room = await this.getRoom(id).catch(() => null);
+      if (room?.status === "CLOSED") return room;
+      throw error;
+    }
   },
 };
