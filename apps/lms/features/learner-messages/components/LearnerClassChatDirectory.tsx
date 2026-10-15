@@ -6,7 +6,7 @@ import { classMembersService } from "@workspace/core/lms-classes/members.service
 import { useLmsClassResource } from "@workspace/core/lms-classes/useLmsClassResource";
 import { Button } from "@workspace/ui/components/ui/button";
 import { ClassPagination } from "../../tutor-classes/components/ClassPagination";
-import { ClassQueryErrorState } from "../../tutor-classes/components/ClassQueryErrorState";
+import { LearnerClassQueryError } from "../../learner-classes/components/LearnerClassQueryError";
 import { ClassWorkspaceSkeleton } from "../../tutor-classes/components/ClassWorkspaceSkeleton";
 
 const button = "min-h-11 rounded-full transition-all active:scale-[0.98]";
@@ -26,7 +26,7 @@ export function LearnerClassChatDirectory() {
       {query.loading ? (
         <ClassWorkspaceSkeleton />
       ) : query.error ? (
-        <ClassQueryErrorState
+        <LearnerClassQueryError
           error={query.error}
           onRetry={() => void query.refetch()}
         />
@@ -44,7 +44,7 @@ export function LearnerClassChatDirectory() {
                 <h2 className="font-nunito text-lg font-extrabold text-primary">
                   {archived
                     ? "Cuộc trò chuyện chỉ xem lại"
-                    : "Lớp đang học & sắp khai giảng"}
+                    : "Lớp đang học"}
                 </h2>
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {classes.map((c) => (
@@ -69,7 +69,7 @@ export function LearnerClassChatDirectory() {
                           </Link>
                         </Button>
                         <Button asChild variant="outline" className={button}>
-                          <Link href={`/lms/learner/class-sessions/${c.id}`}>
+                          <Link href={`/lms/learner/classes/${c.id}/sessions`}>
                             Buổi học & bản ghi
                           </Link>
                         </Button>

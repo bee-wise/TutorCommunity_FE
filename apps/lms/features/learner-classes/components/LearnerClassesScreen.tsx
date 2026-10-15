@@ -1,63 +1,74 @@
 "use client";
-
+import Link from "next/link";
 import { Button } from "@workspace/ui/components/ui/button";
-import { useLearnerClassDirectory } from "../hooks/useLearnerClassDirectory";
-import { LearnerClassCard } from "./LearnerClassCard";
-import { LearnerClassFilters } from "./LearnerClassFilters";
+import { ClassPagination } from "../../tutor-classes/components/ClassPagination";
+import { LearnerClassQueryError } from "./LearnerClassQueryError";
+import { useLearnerClassesQuery } from "../hooks/useLearnerClassesQuery";
+import { LearnerApiClassCard, learnerAction } from "./LearnerApiClassCard";
+import { LearnerApiClassFilters } from "./LearnerApiClassFilters";
+import { LearnerWorkspaceSkeleton } from "./LearnerWorkspaceSkeleton";
 
-export function LearnerClassesScreen({ initialKind }: { initialKind?: string } = {}) {
-  const directory = useLearnerClassDirectory(initialKind);
-
+export function LearnerClassesScreen({
+  initialKind,
+}: { initialKind?: string } = {}) {
+  const directory = useLearnerClassesQuery(initialKind),
+    { query, filters } = directory;
   return (
-    <div className="mx-auto w-full max-w-[1400px] space-y-5 px-4 py-6 text-foreground sm:px-6 lg:px-8 lg:py-8">
-      <header>
-        <h1 className="font-nunito text-2xl font-extrabold leading-[1.25] text-primary sm:text-3xl">
+    <main className="mx-auto w-full max-w-[1400px] space-y-5 px-4 py-6 text-foreground sm:px-6 lg:px-8">
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-nunito text-2xl font-extrabold leading-tight text-primary sm:text-3xl">
           Lớp học
         </h1>
+        <Button asChild variant="outline" className={learnerAction}>
+          <Link href="/lms/learner/group-classes">Đăng ký lớp nhóm</Link>
+        </Button>
       </header>
-
-      <LearnerClassFilters
-        filters={directory.filters}
-        subjects={directory.subjects}
+      <LearnerApiClassFilters
+        filters={filters}
         counts={directory.counts}
-        resultCount={directory.filteredClasses.length}
-        hasFilters={directory.hasFilters}
-        onChange={directory.updateFilters}
-        onReset={directory.resetFilters}
+        onChange={directory.update}
+        onReset={directory.reset}
       />
-
-      <section aria-label="Danh sách lớp học">
-        {directory.filteredClasses.length ? (
-          <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {directory.filteredClasses.map((item) => (
-              <LearnerClassCard key={item.classInfo.id} {...item} />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-3xl border border-border bg-card px-5 py-10 text-center shadow-soft">
-            <h2 className="font-nunito text-lg font-extrabold text-primary">
-              Không tìm thấy lớp phù hợp
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Thử thay đổi từ khóa, môn học hoặc trạng thái.
-            </p>
-            {directory.hasFilters && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={directory.resetFilters}
-                className="mt-4 min-h-11 rounded-full border-border px-5 font-bold text-primary transition-all active:scale-[0.98]"
-              >
-                Xóa lọc
-              </Button>
+      {query.loading || directory.pendingSearch ? (
+        <LearnerWorkspaceSkeleton view="classes" />
+      ) : query.error ? (
+        <LearnerClassQueryError
+          error={query.error}
+          onRetry={() => void query.refetch()}
+        />
+      ) : (
+        <section aria-label="Danh sách lớp học" className="space-y-4">
+          <p role="status" className="text-sm text-muted-foreground">
+            {query.data?.total ?? 0} lớp phù hợp
+          </p>
+          {query.data?.items.length ? (
+            <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {query.data.items.map((data) => (
+                <LearnerApiClassCard key={data.id} data={data} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-border bg-card p-8 shadow-soft">
+              <h2 className="font-nunito text-lg font-extrabold text-primary">
+                Chưa có lớp phù hợp
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Chỉ hiển thị lớp đã được cấp quyền và đã khai giảng. Đăng ký
+                hoặc thanh toán chưa có quyền LMS được theo dõi riêng.
+              </p>
+            </div>
+          )}
+          <ClassPagination
+            page={filters.page - 1}
+            pageCount={Math.max(
+              1,
+              Math.ceil((query.data?.total ?? 0) / (query.data?.pageSize ?? 6)),
             )}
-          </div>
-        )}
-      </section>
-
-      <p className="text-xs text-muted-foreground">
-        Dữ liệu lớp học đang hiển thị là dữ liệu minh họa.
-      </p>
-    </div>
+            label="Phân trang lớp học"
+            onPageChange={(p) => directory.update({ page: p + 1 })}
+          />
+        </section>
+      )}
+    </main>
   );
 }

@@ -1,143 +1,140 @@
 "use client";
-
-import { useState } from "react";
-import { groupClassesService as service } from "@workspace/core/lms-classes/group.service";
-import {
-  useLmsClassResource,
-  useLmsClassCommand,
-} from "@workspace/core/lms-classes/useLmsClassResource";
-import { useGroupAdmission } from "@workspace/core/lms-classes/useGroupAdmission";
-import { AdmissionDetails } from "@workspace/ui/components/lms/AdmissionDetails";
-import { Button } from "@workspace/ui/components/ui/button";
-import { toast } from "@workspace/ui/components/ui/bee-toast";
 import Link from "next/link";
-
-const button = "min-h-11 rounded-full transition-all active:scale-[0.98]";
+import { Button } from "@workspace/ui/components/ui/button";
+import { Input } from "@workspace/ui/components/ui/input";
+import type { GroupDto } from "@workspace/core/lms-classes/group.schemas";
+import {
+  useLearnerRecruitment,
+  useJoinLearnerGroup,
+} from "../hooks/useLearnerRecruitment";
+import { LearnerAdmissionDetails } from "./LearnerAdmissionDetails";
+import { learnerAction } from "../../learner-classes/components/LearnerApiClassCard";
+import { LearnerWorkspaceSkeleton } from "../../learner-classes/components/LearnerWorkspaceSkeleton";
+import { LearnerClassQueryError } from "../../learner-classes/components/LearnerClassQueryError";
 export function LearnerAdmissionScreen({
   admissionId,
+  paymentId,
 }: {
   admissionId: string;
+  paymentId?: string;
 }) {
-  const controller = useGroupAdmission(admissionId);
   return (
     <main className="mx-auto max-w-4xl space-y-5 p-4 sm:p-6">
-      <h1 className="font-nunito text-2xl font-extrabold text-primary">
-        Đăng ký lớp nhóm
-      </h1>
-      <Button asChild variant="outline" className={button}>
-        <Link href="/lms/learner/group-classes">Danh sách tuyển sinh</Link>
-      </Button>
-      <AdmissionDetails controller={controller} />
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-nunito text-2xl font-extrabold text-primary">
+          Đăng ký lớp nhóm
+        </h1>
+        <Button asChild variant="outline" className={learnerAction}>
+          <Link href="/lms/learner/group-classes">Danh sách tuyển sinh</Link>
+        </Button>
+      </header>
+      <LearnerAdmissionDetails
+        key={admissionId}
+        id={admissionId}
+        paymentId={paymentId}
+      />
     </main>
   );
 }
-function RecruitingCard({
-  id,
-  title,
-  code,
-}: {
-  id: string;
-  title: string | null | undefined;
-  code: string | null | undefined;
-}) {
-  const [admissionId] = useState(() => crypto.randomUUID());
-  const [created, setCreated] = useState<string | null>(null);
-  const join = useLmsClassCommand(
-    id,
-    () => service.join(id, { admissionId, acknowledgeMissedLessons: false }),
-    ["LEARNER"],
-  );
-  async function request() {
-    try {
-      const data = await join.mutateAsync(undefined);
-      setCreated(data.id);
-      toast.success("Đã đăng ký", {
-        description: "Chưa cấp quyền LMS. Tiếp tục học thử và các bước duyệt.",
-      });
-    } catch {
-      toast.error("Chưa đăng ký được", {
-        description:
-          "Lớp đã ẩn/ACTIVE cần Tutor giới thiệu. Không tự đăng ký lớp đã ẩn.",
-      });
-    }
-  }
+function RecruitingCard({ data }: { data: GroupDto }) {
+  const { join, busy } = useJoinLearnerGroup(data.id);
   return (
-    <article className="space-y-3 rounded-3xl border border-border bg-card p-5 shadow-soft">
-      <h2 className="font-nunito text-lg font-extrabold text-primary">
-        {title ?? "Lớp nhóm"}
+    <article className="flex h-full flex-col gap-3 rounded-3xl border border-border bg-card p-5 shadow-soft">
+      <p className="text-xs font-bold text-muted-foreground">
+        {data.code ?? data.id.slice(0, 8)}
+      </p>
+      <h2 className="font-nunito text-lg font-extrabold leading-snug text-primary">
+        {data.title ?? "Chưa có tên lớp"}
       </h2>
-      <p className="text-xs text-muted-foreground">{code}</p>
-      {created ? (
-        <Button asChild className={button}>
-          <Link href={`/lms/learner/group-admissions/${created}`}>
-            Tiếp tục đăng ký
-          </Link>
-        </Button>
-      ) : (
-        <Button
-          className={button}
-          disabled={join.isPending}
-          onClick={() => void request()}
-        >
-          Đăng ký học thử
-        </Button>
-      )}
+      <p className="text-sm text-muted-foreground">
+        {data.teachingItemName ?? "Chưa có môn học"}
+        {data.contextName ? ` · ${data.contextName}` : ""}
+      </p>
+      <p className="text-sm">
+        {data.billingMode === "MONTHLY"
+          ? "Học phí theo tháng"
+          : data.billingMode === "FULL_COURSE"
+            ? "Học phí cả khóa"
+            : "Chưa có cách tính học phí"}
+      </p>
+      <p className="text-sm">
+        {data.numberOfSessions} buổi dự kiến, {data.sessionDurationMinutes}{" "}
+        phút/buổi
+      </p>
+      <Button
+        className={`${learnerAction} mt-auto`}
+        disabled={busy}
+        onClick={() => void join()}
+      >
+        {busy ? "Đang đăng ký..." : "Đăng ký học thử"}
+      </Button>
     </article>
   );
 }
 export function LearnerGroupAdmissionsScreen() {
-  const [page, setPage] = useState(1);
-  const query = useLmsClassResource(
-    "00000000-0000-0000-0000-000000000000",
-    "recruitment",
-    (s) => service.recruitment(page, s),
-    { roles: ["LEARNER"], params: [page] },
-  );
+  const controller = useLearnerRecruitment(),
+    { query, page, setPage, form } = controller;
   return (
     <main className="mx-auto max-w-[1400px] space-y-5 p-4 sm:p-6">
       <h1 className="font-nunito text-2xl font-extrabold text-primary">
         Lớp nhóm tuyển sinh
       </h1>
+      <form
+        onSubmit={controller.open}
+        className="flex flex-wrap items-end gap-3 rounded-3xl border border-border bg-card p-4 shadow-soft"
+      >
+        <label className="grid min-w-0 flex-1 gap-1.5 text-xs font-bold">
+          Tiếp tục đăng ký từ mã đã nhận
+          <Input
+            className="min-h-11 rounded-2xl"
+            {...form.register("id")}
+            placeholder="Mã đăng ký GUID từ gia sư hoặc thông báo"
+          />
+        </label>
+        <Button variant="outline" className={learnerAction}>
+          Mở đăng ký
+        </Button>
+        {form.formState.errors.id && (
+          <p role="alert" className="w-full text-sm text-destructive">
+            {form.formState.errors.id.message}
+          </p>
+        )}
+      </form>
       {query.loading ? (
-        <p role="status">Đang tải...</p>
+        <LearnerWorkspaceSkeleton view="classes" />
       ) : query.error ? (
-        <div role="alert">
-          <p>Không tải được danh sách hoặc không có quyền.</p>
-          <Button
-            variant="outline"
-            className={button}
-            onClick={() => void query.refetch()}
-          >
-            Tải lại
-          </Button>
-        </div>
+        <LearnerClassQueryError
+          error={query.error}
+          onRetry={() => void query.refetch()}
+        />
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {query.data?.map((g) => (
+          <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {query.data?.map((data) => (
               <RecruitingCard
-                key={g.id}
-                id={g.id}
-                title={g.title}
-                code={g.code}
+                key={`${query.actor.id}:${data.id}`}
+                data={data}
               />
             ))}
           </div>
           {!query.data?.length && (
-            <p>Chưa có lớp đang tuyển sinh ở trang này.</p>
+            <p className="rounded-3xl border border-border p-6">
+              Chưa có lớp đang tuyển sinh ở trang này.
+            </p>
           )}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
-              className={button}
+              className={learnerAction}
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
             >
               Trước
             </Button>
+            <span className="text-sm">Trang {page}</span>
             <Button
               variant="outline"
-              className={button}
+              className={learnerAction}
               disabled={(query.data?.length ?? 0) < 20}
               onClick={() => setPage((p) => p + 1)}
             >

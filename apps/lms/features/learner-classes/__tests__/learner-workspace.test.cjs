@@ -1,164 +1,500 @@
-/* eslint-disable @typescript-eslint/no-require-imports -- Node harness transpiles local TS and mocks Next boundaries. */
+/* eslint-disable @typescript-eslint/no-require-imports -- Native HTTP/SSR harness, not browser/provider E2E. */
 const { test, after } = require("node:test");
-const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const Module = require("node:module");
-const ts = require("typescript");
-const React = require("react");
+const assert = require("node:assert/strict"),
+  fs = require("node:fs"),
+  Module = require("node:module"),
+  path = require("node:path"),
+  ts = require("typescript"),
+  React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
-
-const originalTs = require.extensions[".ts"];
-const originalTsx = require.extensions[".tsx"];
-const originalLoad = Module._load;
-const compile = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, "utf8"), {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
-}).outputText, filename);
+const { QueryClient, QueryClientProvider } = require("@tanstack/react-query");
+const originalLoad = Module._load,
+  extensions = {
+    ts: require.extensions[".ts"],
+    tsx: require.extensions[".tsx"],
+  };
+const compile = (module, file) =>
+  module._compile(
+    ts.transpileModule(fs.readFileSync(file, "utf8"), {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES2022,
+        jsx: ts.JsxEmit.ReactJSX,
+        esModuleInterop: true,
+      },
+    }).outputText,
+    file,
+  );
 require.extensions[".ts"] = compile;
 require.extensions[".tsx"] = compile;
-
-const box = ({ children, className, "aria-label": label }) => React.createElement("div", { className, "aria-label": label }, children);
+const id = "3612984e-8929-8022-e3d0-01b6dae175ad",
+  actor = "11111111-1111-4111-8111-111111111111",
+  sessionId = "22222222-2222-4222-8222-222222222222",
+  foreign = "33333333-3333-4333-8333-333333333333";
+let auth = { user: { id: actor, role: "LEARNER" }, isAuthLoading: false },
+  payload,
+  failure;
+const calls = [],
+  box = ({ children, className, "aria-label": label }) =>
+    React.createElement("div", { className, "aria-label": label }, children);
 Module._load = function (name, parent, isMain) {
-  if (name === "next/link") return { __esModule: true, default: ({ children, ...props }) => React.createElement("a", props, children) };
-  if (name === "next/image") return { __esModule: true, default: ({ src, alt }) => React.createElement("img", { src, alt }) };
-  if (name === "@workspace/ui/components/ui/sidebar") return {
-    Sidebar: box, SidebarContent: box, SidebarFooter: box, SidebarGroup: box, SidebarGroupContent: box,
-    SidebarGroupLabel: box, SidebarHeader: box, SidebarMenu: box, SidebarMenuItem: box, SidebarRail: () => null,
-    SidebarTrigger: ({ className, "aria-label": label }) => React.createElement("button", { className, "aria-label": label }),
-    SidebarMenuButton: ({ children, className, isActive }) => React.cloneElement(React.Children.only(children), { className, "data-active": isActive }),
-    useSidebar: () => ({ setOpenMobile: () => {}, toggleSidebar: () => {} }),
-  };
+  if (name === "@workspace/core/apiClient")
+    return {
+      apiClient: Object.fromEntries(
+        ["get", "post", "put"].map((method) => [
+          method,
+          async (url, arg, config) => {
+            calls.push({
+              method,
+              url,
+              body: method === "get" ? undefined : arg,
+              config: method === "get" ? arg : config,
+            });
+            if (failure) throw failure;
+            return payload;
+          },
+        ]),
+      ),
+    };
+  if (name === "../store/useAuthStore")
+    return { useAuthStore: (selector) => selector(auth) };
+  if (name === "next/link")
+    return {
+      __esModule: true,
+      default: ({ children, ...props }) =>
+        React.createElement("a", props, children),
+    };
+  if (name === "next/image")
+    return {
+      __esModule: true,
+      default: ({ src, alt }) => React.createElement("img", { src, alt }),
+    };
+  if (name === "next/navigation")
+    return { useRouter: () => ({ push() {}, replace() {} }) };
+  if (name === "next/dynamic")
+    return { __esModule: true, default: () => () => null };
+  if (name === "@workspace/ui/components/ui/bee-toast")
+    return { toast: { success() {}, error() {} } };
+  if (name === "@workspace/ui/components/ui/sidebar")
+    return {
+      Sidebar: box,
+      SidebarContent: box,
+      SidebarFooter: box,
+      SidebarGroup: box,
+      SidebarGroupContent: box,
+      SidebarGroupLabel: box,
+      SidebarHeader: box,
+      SidebarMenu: box,
+      SidebarMenuItem: box,
+      SidebarRail: () => null,
+      SidebarTrigger: (props) =>
+        React.createElement("button", { "aria-label": props["aria-label"] }),
+      SidebarMenuButton: ({ children, asChild, disabled, isActive }) =>
+        asChild
+          ? React.cloneElement(React.Children.only(children), {
+              "data-active": isActive,
+            })
+          : React.createElement("button", { disabled }, children),
+      useSidebar: () => ({ setOpenMobile() {}, toggleSidebar() {} }),
+    };
   return originalLoad.call(this, name, parent, isMain);
 };
-
-const { navigationConfig } = require(path.resolve(__dirname, "../../../../../packages/core/configs/navigation.ts"));
-const { LEARNER_CLASSES } = require("../../learner-materials/data/learner-materials.mock.ts");
-const { LEARNER_EXERCISE_CLASSES, LEARNER_EXERCISES } = require("../../learner-exercises/data/learner-exercises.mock.ts");
-const { LEARNER_TUITION_CLASSES } = require("../../learner-tuition-fee/data/tuition-fee.mock.ts");
-const { LEARNER_CONVERSATIONS } = require("../../learner-messages/data/learner-messages.mock.ts");
-const { getLearnerClassSummaries, getLearnerWorkspaceSessions } = require("../services/learner-classes.mock.service.ts");
-const { getLearnerWorkspaceRoute, getLearnerWorkspaceLinks } = require("../utils/learner-class-workspace.utils.ts");
-const { LearnerClassSidebar } = require("../components/LearnerClassSidebar.tsx");
-const { LearnerClassCard } = require("../components/LearnerClassCard.tsx");
-const { LearnerClassFilters } = require("../components/LearnerClassFilters.tsx");
-const { LearnerClassesScreen } = require("../components/LearnerClassesScreen.tsx");
-const { LearnerWorkspaceSkeleton } = require("../components/LearnerWorkspaceSkeleton.tsx");
-const { LearnerClassOverviewScreen } = require("../components/LearnerClassOverviewScreen.tsx");
-const { LearnerClassSessionsScreen } = require("../components/LearnerClassSessionsScreen.tsx");
-const { LearnerReportScreen } = require("../../learner-overview/components/LearnerReportScreen.tsx");
-const { getLearnerLearningReport } = require("../../learner-overview/services/learner-overview.mock.service.ts");
-const render = (component, props = {}) => renderToStaticMarkup(React.createElement(component, props));
-
-test("learner navigation separates overview, class learning and class chat", () => {
-  const groups = navigationConfig.LEARNER;
-  assert.deepEqual(groups.find((group) => group.groupName === "Tổng Quan").items.map((item) => [item.title, item.url]), [["Báo cáo học tập", "/lms/learner"], ["Lịch học của tôi", "/lms/learner/schedule"]]);
-  const learning = groups.find((group) => group.groupName === "Học Tập").items;
-  assert.deepEqual(learning.map((item) => item.url), ["/lms/learner/classes", "/lms/learner/chat"]);
-  assert.equal(learning[1].title, "Tin nhắn lớp học");
-  assert.ok(!groups.some((group) => group.items.some((item) => ["/lms/learner/materials", "/lms/learner/exercises"].includes(item.url))));
+const core = path.resolve(__dirname, "../../../../../packages/core");
+const { lmsClassKeys: keys } = require(
+  path.join(core, "lms-classes/query-keys.ts"),
+);
+const { ApiError } = require(path.join(core, "sys-libs/error-handler.ts"));
+const {
+  learnerClassesService: service,
+} = require("../services/learner-classes.service.ts");
+const {
+  learnerAdmissionsService: admissions,
+  learnerAdmissionSchema,
+} = require("../../group-admissions/services/learner-admissions.service.ts");
+const calendar = require("../utils/learner-api-calendar.ts");
+const {
+  LearnerClassesScreen,
+} = require("../components/LearnerClassesScreen.tsx");
+const {
+  LearnerClassOverviewScreen,
+} = require("../components/LearnerClassOverviewScreen.tsx");
+const {
+  LearnerClassSidebar,
+} = require("../components/LearnerClassSidebar.tsx");
+const {
+  LearnerApiClassCard,
+} = require("../components/LearnerApiClassCard.tsx");
+const {
+  LearnerClassCalendar,
+} = require("../components/LearnerClassCalendar.tsx");
+const {
+  LearnerClassQueryError,
+} = require("../components/LearnerClassQueryError.tsx");
+const {
+  useLearnerSessionResources,
+} = require("../hooks/useLearnerSessionResources.ts");
+const {
+  LearnerAdmissionDetails,
+} = require("../../group-admissions/components/LearnerAdmissionDetails.tsx");
+const fixture = {
+  id,
+  type: "GROUP",
+  teachingOfferingId: null,
+  programName: null,
+  teachingItemName: "Toán",
+  contextName: null,
+  tutorId: foreign,
+  teachingMode: "ONLINE",
+  status: "ACTIVE",
+  capacity: 6,
+  activeMembers: 2,
+  pricePerHour: 100000,
+  sessionDurationMinutes: 60,
+  numberOfSessions: 8,
+  createdAt: "2026-10-13T02:00:00Z",
+  title: "Lớp kiểm thử tích hợp",
+  code: "TEST-L1",
+  approvalStatus: "APPROVED",
+  billingMode: "MONTHLY",
+  openingAt: null,
+  sessionCount: 4,
+  learnerCount: 2,
+  features: { attendance: true, feedback: false },
+};
+const session = {
+  id: sessionId,
+  classId: id,
+  tutorId: foreign,
+  learnerId: null,
+  startAt: "2026-10-13T16:30:00Z",
+  endAt: "2026-10-13T17:30:00Z",
+  actualEndAt: null,
+  teachingMode: "ONLINE",
+  locationOrMeetingInfo: "Phòng kiểm thử",
+  status: "COMPLETED",
+  replacesSessionId: null,
+  plannedScheduleId: null,
+  actualStartAt: null,
+  version: 1,
+  durationMinutes: 60,
+};
+const admission = {
+  id: sessionId,
+  classId: id,
+  learnerId: actor,
+  status: "REGISTERED",
+  version: 3,
+  trialStartAt: null,
+  trialEndAt: null,
+  trialMeetingInfo: null,
+  trialCompletedAt: null,
+  missedLessonsAcknowledgedAt: null,
+  enrollmentId: null,
+  missedSessionIds: [],
+  referredByTutorId: foreign,
+  firstMonthFee: null,
+  trialRequested: false,
+};
+function respond(data) {
+  failure = null;
+  payload = { success: true, data };
+}
+function client() {
+  return new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
+}
+function render(Component, props = {}, cache = client()) {
+  return renderToStaticMarkup(
+    React.createElement(
+      QueryClientProvider,
+      { client: cache },
+      React.createElement(Component, props),
+    ),
+  );
+}
+function seedClass(cache) {
+  cache.setQueryData(keys.resource(actor, id, "learner-class"), fixture);
+}
+test("Learner list sends role-aware contract with cookies, filters and server paging", async () => {
+  respond({ items: [fixture], total: 19, page: 2, pageSize: 6 });
+  const result = await service.list({
+    kind: "GROUP",
+    search: "Toán",
+    status: "ACTIVE",
+    sort: "OLDEST",
+    page: 2,
+  });
+  assert.equal(result.total, 19);
+  assert.equal(result.items.length, 1);
+  assert.equal(calls.at(-1).url, "/lms/classes");
+  assert.deepEqual(calls.at(-1).config.params, {
+    Type: "GROUP",
+    Search: "Toán",
+    Status: "ACTIVE",
+    Sort: "OLDEST",
+    Page: 2,
+    PageSize: 6,
+  });
+  assert.equal(calls.at(-1).config.withCredentials, true);
+  assert.equal("learnerId" in calls.at(-1).config.params, false);
 });
-
-test("class workspace keeps old deep links, maps tuition IDs and excludes chat/fullscreen exercises", () => {
-  const classId = "class-math-10";
-  for (const [url, section] of [
-    [`/lms/learner/classes/${classId}`, "overview"],
-    [`/lms/learner/classes/${classId}/sessions`, "sessions"],
-    [`/lms/learner/materials/classes/${classId}`, "materials"],
-    [`/lms/learner/materials/classes/${classId}/sessions/math-session-01`, "materials"],
-    [`/lms/learner/exercises/classes/${classId}`, "exercises"],
-    [`/lms/learner/exercises/classes/${classId}/sessions/math-session-01`, "exercises"],
-    ["/lms/learner/tuition-fee/tuition-math-10", "tuition"],
-  ]) assert.deepEqual(getLearnerWorkspaceRoute(url), { classId, section });
-  for (const url of ["/lms/learner/classes", "/lms/learner/chat/conversation-math-10", "/lms/learner/exercises/exercise-math-system", "/lms/learner/classes/a%2Fb", "/lms/learner/classes/%ZZ", "/lms/learner/tuition-fee/unknown"]) assert.equal(getLearnerWorkspaceRoute(url), null);
-  assert.equal(getLearnerWorkspaceLinks(classId).tuition, "/lms/learner/tuition-fee/tuition-math-10");
+test(".NET GUID and nullable fields validate; malformed envelopes fail closed", async () => {
+  respond(fixture);
+  assert.equal((await service.detail(id)).id, id);
+  respond({ ...fixture, sessionCount: "four" });
+  await assert.rejects(
+    () => service.detail(id),
+    (e) => e.statusCode === 502 && !e.message.includes("four"),
+  );
 });
-
-test("materials, exercises, tuition and conversations identify the same learner classes", () => {
-  const classes = new Map(LEARNER_CLASSES.map((item) => [item.id, item]));
-  assert.equal(classes.size, 4);
-  for (const item of LEARNER_EXERCISE_CLASSES) {
-    assert.equal(item.name, classes.get(item.id)?.title);
-    assert.equal(item.classCode, classes.get(item.id)?.code);
+test("session range/paging stay server-owned; a cross-class response is rejected", async () => {
+  respond({ items: [session], total: 21, page: 2, pageSize: 6 });
+  const result = await service.sessions(id, {
+    page: 2,
+    pageSize: 6,
+    status: "all",
+    ...calendar.monthRange("2026-10"),
+  });
+  assert.equal(result.total, 21);
+  assert.equal(calls.at(-1).config.params.from, "2026-10-01T00:00:00+07:00");
+  assert.equal(calls.at(-1).config.params.status, undefined);
+  respond({ ...session, classId: foreign });
+  await assert.rejects(
+    () => service.session(id, sessionId),
+    (e) => e.statusCode === 502,
+  );
+});
+test("calendar uses Vietnam boundaries, year rollover and overlapping midnight sessions", () => {
+  assert.equal(calendar.vietnamDate("2026-10-13T18:00:00Z"), "2026-10-14");
+  assert.equal(calendar.nextMonth("2026-12", 1), "2027-01");
+  assert.deepEqual(calendar.monthRange("2026-12"), {
+    from: "2026-12-01T00:00:00+07:00",
+    to: "2027-01-01T00:00:00+07:00",
+  });
+  assert.equal(
+    calendar.sessionOverlapsDate(session.startAt, session.endAt, "2026-10-13"),
+    true,
+  );
+  assert.equal(
+    calendar.sessionOverlapsDate(session.startAt, session.endAt, "2026-10-14"),
+    true,
+  );
+  assert.equal(
+    calendar.sessionOverlapsDate(
+      "2026-10-13T16:00:00Z",
+      "2026-10-13T17:00:00Z",
+      "2026-10-14",
+    ),
+    false,
+  );
+  const html = render(LearnerClassCalendar, {
+    month: "2026-10",
+    sessions: [session],
+    onSelect() {},
+  });
+  assert.match(html, /2026-10-13/);
+  assert.match(html, /2026-10-14/);
+  assert.match(html, /grid-cols-7/);
+});
+test("card has one target and actual server facts, not invented material/progress/Tutor names", () => {
+  const html = render(LearnerApiClassCard, { data: fixture });
+  assert.equal((html.match(/<a /g) || []).length, 1);
+  assert.match(html, /TEST-L1|4 buổi|Đang học|Vào lớp/);
+  assert.doesNotMatch(html, /bài tập cần làm|tài liệu|Cô Nguyễn|50%/);
+});
+test("directory uses total and tab counts, not visible page length", () => {
+  const cache = client(),
+    defaults = {
+      kind: "INDIVIDUAL",
+      search: "",
+      status: "all",
+      sort: "NEWEST",
+      page: 1,
+    };
+  cache.setQueryData(
+    keys.resource(
+      actor,
+      "00000000-0000-0000-0000-000000000000",
+      "learner-directory",
+      defaults,
+    ),
+    { items: [fixture], total: 19, page: 1, pageSize: 6 },
+  );
+  for (const kind of ["INDIVIDUAL", "GROUP"])
+    cache.setQueryData(
+      keys.resource(
+        actor,
+        "00000000-0000-0000-0000-000000000000",
+        "learner-count",
+        kind,
+      ),
+      { items: [], total: kind === "GROUP" ? 8 : 11, page: 1, pageSize: 6 },
+    );
+  const html = render(LearnerClassesScreen, {}, cache);
+  assert.match(html, /19 lớp phù hợp/);
+  assert.match(html, /Lớp nhóm \(8\)|Lớp 1:1 \(11\)/);
+  assert.match(html, /TEST-L1/);
+  assert.doesNotMatch(html, /Dữ liệu minh họa/);
+  cache.clear();
+});
+test("overview/sidebar share authorized detail; title only in sidebar and deferred modules gated", () => {
+  const cache = client();
+  seedClass(cache);
+  const overview = render(LearnerClassOverviewScreen, { classId: id }, cache),
+    sidebar = render(
+      LearnerClassSidebar,
+      { workspace: { classId: id, section: "overview" } },
+      cache,
+    );
+  assert.match(overview, /Thông tin lớp|4 buổi/);
+  assert.doesNotMatch(overview, /<h1[^>]*>Lớp kiểm thử/);
+  assert.match(sidebar, /Lớp kiểm thử tích hợp/);
+  assert.match(sidebar, /BeeWiseLMS-Logo-500x150.svg/);
+  assert.match(sidebar, /chưa tích hợp/);
+  assert.doesNotMatch(sidebar, /href="[^"]*materials/);
+  cache.clear();
+});
+test("wrong role/loading/403 hide seeded data; back remains Learner", async () => {
+  const cache = client();
+  seedClass(cache);
+  auth = { user: { id: actor, role: "TUTOR" }, isAuthLoading: false };
+  const html = render(LearnerClassOverviewScreen, { classId: id }, cache);
+  assert.doesNotMatch(html, /TEST-L1|Lớp kiểm thử/);
+  assert.match(html, /\/lms\/learner\/classes/);
+  assert.doesNotMatch(html, /\/lms\/tutor/);
+  auth = { user: { id: actor, role: "LEARNER" }, isAuthLoading: true };
+  assert.doesNotMatch(
+    render(LearnerClassOverviewScreen, { classId: id }, cache),
+    /TEST-L1/,
+  );
+  auth = { user: { id: actor, role: "LEARNER" }, isAuthLoading: false };
+  failure = new ApiError("Forbidden", 403);
+  await assert.rejects(
+    () => service.detail(id),
+    (e) => e.statusCode === 403,
+  );
+  failure = null;
+  cache.clear();
+});
+test("only own mark is visible; no roster/history write/read and recording not preloaded", () => {
+  const cache = client();
+  cache.setQueryData(
+    keys.resource(actor, id, "learner-session", sessionId),
+    session,
+  );
+  cache.setQueryData(
+    keys.resource(actor, id, "learner-personal-attendance", sessionId),
+    {
+      sessionId,
+      status: "DRAFT",
+      version: 0,
+      marks: [
+        { learnerId: foreign, status: "ABSENT" },
+        { learnerId: actor, status: "UNMARKED" },
+      ],
+    },
+  );
+  function Probe() {
+    const state = useLearnerSessionResources(id, sessionId, true, true);
+    return React.createElement(
+      "p",
+      null,
+      state.mark?.learnerId +
+        ":" +
+        state.mark?.status +
+        ":" +
+        (state.url ?? "no-recording"),
+    );
   }
-  for (const item of LEARNER_TUITION_CLASSES) assert.equal(item.className, classes.get(item.learnerClassId)?.title);
-  for (const item of LEARNER_CONVERSATIONS.filter((conversation) => classes.has(conversation.classId))) assert.equal(item.className, classes.get(item.classId)?.title);
-  for (const exercise of LEARNER_EXERCISES) assert.equal(exercise.className, classes.get(exercise.classId)?.title);
-  assert.equal(getLearnerClassSummaries().find((item) => item.classInfo.id === "class-literature-10")?.classInfo.status, "completed");
+  const before = calls.length,
+    html = render(Probe, {}, cache);
+  assert.match(html, new RegExp(actor + ":UNMARKED:no-recording"));
+  assert.doesNotMatch(html, new RegExp(foreign));
+  assert.equal(calls.length, before);
+  cache.clear();
 });
-
-test("learner class sidebar has scoped links and no in-class chat action", () => {
-  const html = render(LearnerClassSidebar, { workspace: { classId: "class-math-10", section: "materials" } });
-  const links = getLearnerWorkspaceLinks("class-math-10");
-  for (const href of Object.values(links)) assert.ok(html.includes(`href="${href}"`));
-  assert.equal((html.match(/aria-current="page"/g) ?? []).length, 1);
-  assert.match(html, /BeeWiseLMS-Logo-500x150\.svg/);
-  assert.match(html, /BeeWiseLMS-Logo-500x500\.svg/);
-  assert.ok(html.indexOf('aria-label="Về danh sách lớp"') < html.indexOf("<img "));
-  assert.doesNotMatch(html, /Tin nhắn lớp|\/lms\/learner\/chat/);
-  assert.equal(html.split("Toán 10 - Nền tảng").length - 1, 1);
+test("trial preference is typed/versioned, distinct from confirm/missed/fee actions", async () => {
+  assert.equal(learnerAdmissionSchema.parse(admission).trialRequested, false);
+  respond(admission);
+  await admissions.preference(sessionId, {
+    expectedVersion: 3,
+    trialRequested: true,
+  });
+  assert.equal(calls.at(-1).method, "put");
+  assert.equal(
+    calls.at(-1).url,
+    "/lms/group-admissions/" + sessionId + "/trial-preference",
+  );
+  assert.deepEqual(calls.at(-1).body, {
+    expectedVersion: 3,
+    trialRequested: true,
+  });
+  for (const action of [
+    "trial/confirm",
+    "acknowledge-missed",
+    "first-month-fee/accept",
+    "cancel",
+  ]) {
+    await admissions.action(sessionId, action, 3);
+    assert.equal(
+      calls.at(-1).url,
+      "/lms/group-admissions/" + sessionId + "/" + action,
+    );
+  }
+  failure = new ApiError("stale", 409);
+  await assert.rejects(
+    () =>
+      admissions.preference(sessionId, {
+        expectedVersion: 2,
+        trialRequested: true,
+      }),
+    (e) => e.statusCode === 409,
+  );
+  failure = null;
 });
-
-test("class directory, overview and session screen connect materials, exercises and tuition", () => {
-  const directory = render(LearnerClassesScreen);
-  assert.match(directory, /Lớp học|Dữ liệu minh họa/);
-  assert.match(directory, /\/lms\/learner\/classes\/class-math-10/);
-  const overview = render(LearnerClassOverviewScreen, { classId: "class-math-10" });
-  assert.match(overview, /Thông tin lớp|Gia sư phụ trách/);
-  assert.match(overview, /\/lms\/learner\/materials\/classes\/class-math-10/);
-  assert.match(overview, /\/lms\/learner\/exercises\/classes\/class-math-10/);
-  assert.doesNotMatch(overview, /<h1[^>]*>Toán 10 - Nền tảng/);
-  const sessions = getLearnerWorkspaceSessions("class-math-10");
-  assert.deepEqual(sessions.map((item) => item.session.sequence), [12, 13, 14]);
-  const sessionScreen = render(LearnerClassSessionsScreen, { classId: "class-math-10" });
-  assert.match(sessionScreen, /learner-class-session-search|learner-class-session-status/);
-  assert.match(sessionScreen, /\/materials\/classes\/class-math-10\/sessions\/math-session-01/);
-  assert.match(sessionScreen, /\/exercises\/classes\/class-math-10\/sessions\/math-session-01/);
+test("pre-opening auto-enrollment vs late optional trial, with no Tutor controls", () => {
+  const cache = client();
+  cache.setQueryData(
+    keys.resource(actor, sessionId, "learner-admission"),
+    admission,
+  );
+  let html = render(LearnerAdmissionDetails, { id: sessionId }, cache);
+  assert.match(html, /Không học thử|Tôi muốn học thử|Tutor gửi yêu cầu ADD/);
+  assert.doesNotMatch(html, /Báo giá lại|Duyệt báo giá|Xác nhận đã học thử/);
+  cache.setQueryData(keys.resource(actor, sessionId, "learner-admission"), {
+    ...admission,
+    referredByTutorId: null,
+    trialRequested: true,
+  });
+  html = render(LearnerAdmissionDetails, { id: sessionId }, cache);
+  assert.match(html, /tự tạo enrollment/);
+  assert.doesNotMatch(html, /Tôi muốn học thử|Tạo yêu cầu thanh toán/);
+  cache.clear();
 });
-
-test("learner class cards keep one target, clear status, tutor and actionable exercise notice", () => {
-  const summaries = getLearnerClassSummaries();
-  const active = render(LearnerClassCard, summaries.find((item) => item.classInfo.id === "class-math-10"));
-  assert.equal((active.match(/<a /g) ?? []).length, 1);
-  for (const detail of ["BW-MATH-1042", "Toán 10 - Nền tảng", "Cô Nguyễn Thu Hà", "Đang học", "bài tập cần làm", "Vào lớp"]) assert.ok(active.includes(detail));
-  assert.match(active, /rounded-3xl border border-border bg-card/);
-  assert.doesNotMatch(active, /rounded-2xl border border-border bg-background p-3/);
-  const completed = render(LearnerClassCard, summaries.find((item) => item.classInfo.id === "class-literature-10"));
-  assert.match(completed, /Đã kết thúc/);
-  assert.match(completed, /Xem lại lớp/);
-  assert.match(completed, /bài tập cần làm/);
+test("navigation keeps report/schedule and class chat outside workspace", () => {
+  const { navigationConfig } = require(
+    path.join(core, "configs/navigation.ts"),
+  );
+  const groups = navigationConfig.LEARNER;
+  assert.deepEqual(
+    groups.find((g) => g.groupName === "Tổng Quan").items.map((i) => i.url),
+    ["/lms/learner", "/lms/learner/schedule"],
+  );
+  assert.deepEqual(
+    groups.find((g) => g.groupName === "Học Tập").items.map((i) => i.url),
+    ["/lms/learner/classes", "/lms/learner/chat"],
+  );
+  const html = render(LearnerClassQueryError, {
+    error: new ApiError("Denied", 403),
+    onRetry() {},
+    detail: true,
+  });
+  assert.match(html, /\/lms\/learner\/classes/);
+  assert.doesNotMatch(html, /\/lms\/tutor/);
 });
-
-test("class filters and loading state match the compact responsive directory", () => {
-  const filters = { kind: "individual", search: "", subject: "all", status: "all", sort: "newest" };
-  const html = render(LearnerClassFilters, { filters, subjects: ["Toán", "Vật lý"], counts: { individual: 3, group: 1 }, resultCount: 2, hasFilters: false, onChange() {}, onReset() {} });
-  assert.match(html, /Bộ lọc lớp học|Loại lớp học|Tìm lớp hoặc gia sư/);
-  assert.match(html, /learner-class-search|learner-class-subject|learner-class-status|learner-class-sort/);
-  assert.match(html, /2 lớp phù hợp|aria-pressed="true"/);
-  assert.match(html, /role="combobox"/);
-  assert.match(html, /<select aria-hidden="true"/);
-  assert.doesNotMatch(html, /Xóa lọc/);
-  const emptyFilters = render(LearnerClassFilters, { filters, subjects: [], counts: { individual: 3, group: 1 }, resultCount: 0, hasFilters: true, onChange() {}, onReset() {} });
-  assert.doesNotMatch(emptyFilters, /Xóa lọc/);
-  const skeleton = render(LearnerWorkspaceSkeleton, { view: "classes" });
-  assert.match(skeleton, /Đang tải danh sách lớp học|motion-safe:animate-pulse/);
-  assert.match(skeleton, /md:grid-cols-2 xl:grid-cols-3/);
-});
-
-test("learning report is the sole overview and shows honest sample aggregates with class links", () => {
-  const report = getLearnerLearningReport();
-  assert.equal(report.length, LEARNER_CLASSES.length);
-  assert.equal(report.find((item) => item.classInfo.id === "class-math-10")?.exerciseCount, 2);
-  const reportHtml = render(LearnerReportScreen);
-  assert.match(reportHtml, /Báo cáo học tập|Tiến độ từ dữ liệu mẫu|chưa phải báo cáo chính thức/);
-  assert.match(reportHtml, /\/lms\/learner\/classes\/class-literature-10/);
-  const rootPage = fs.readFileSync(path.resolve(__dirname, "../../../app/lms/learner/page.tsx"), "utf8");
-  const legacyReportPage = fs.readFileSync(path.resolve(__dirname, "../../../app/lms/learner/report/page.tsx"), "utf8");
-  assert.match(rootPage, /<LearnerReportScreen \/>/);
-  assert.match(legacyReportPage, /redirect\("\/lms\/learner"\)/);
-});
-
 after(() => {
-  require.extensions[".ts"] = originalTs;
-  require.extensions[".tsx"] = originalTsx;
   Module._load = originalLoad;
+  require.extensions[".ts"] = extensions.ts;
+  require.extensions[".tsx"] = extensions.tsx;
 });
