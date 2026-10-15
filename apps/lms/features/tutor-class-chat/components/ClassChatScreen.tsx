@@ -1,7 +1,10 @@
 "use client";
 
 import { Button } from "@workspace/ui/components/ui/button";
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
+import { formatClassIdentifier } from "../../tutor-classes/utils/classes.utils";
 import { ClassMissingState } from "../../tutor-classes/components/ClassMissingState";
+import { ClassQueryErrorState } from "../../tutor-classes/components/ClassQueryErrorState";
 import { useClassChat } from "../hooks/useClassChat";
 import { ClassChatComposer } from "./ClassChatComposer";
 import { ClassChatHistory } from "./ClassChatHistory";
@@ -10,49 +13,51 @@ import { ClassChatSkeleton } from "./ClassChatSkeleton";
 
 export function ClassChatScreen({ classId }: { classId: string }) {
   const chat = useClassChat(classId);
-  if (!chat.classInfo) return <ClassMissingState />;
   if (chat.loading) return <ClassChatSkeleton />;
+  if (chat.error)
+    return (
+      <ClassQueryErrorState error={chat.error} onRetry={chat.retry} detail />
+    );
+  if (!chat.classInfo) return <ClassMissingState />;
   return (
-    <div className="mx-auto flex h-[calc(100dvh-4rem)] w-full max-w-[1400px] flex-col gap-4 p-1 sm:p-2 lg:px-1">
-      <h1 className="sr-only">Tin nhắn lớp</h1>
+    <div className="mx-auto flex h-[calc(100dvh-4rem)] w-full max-w-[1400px] flex-col p-0 sm:p-3 lg:p-4">
       <section
-        className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-soft"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden border border-border bg-card shadow-soft sm:rounded-2xl"
         aria-label="Phòng chat chung của lớp"
       >
-        {chat.error ? (
-          <div role="alert" className="space-y-4 p-6">
-            <p className="text-sm text-destructive">
-              Không tải được tin nhắn lớp. Hãy thử lại.
-            </p>
-            <Button
-              variant="outline"
-              className="min-h-11 rounded-xl transition-all active:scale-[0.98]"
-              onClick={() => {
-                void chat.retry();
-              }}
-            >
-              Thử lại
-            </Button>
-          </div>
-        ) : (
-          chat.room && (
-            <>
-              <ClassChatHistory
-                messages={chat.room.messages}
-                historyRef={chat.historyRef}
+        <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-5">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground"><ChatBubbleLeftRightIcon className="size-5" aria-hidden="true" /></span>
+          <div className="min-w-0 flex-1"><h1 className="truncate font-nunito text-base font-extrabold text-foreground">{chat.classInfo.title || "Tin nhắn lớp"}</h1><p className="truncate text-xs text-muted-foreground">Tin nhắn chung của lớp · {formatClassIdentifier(chat.classInfo.id)}</p></div>
+          <span className={`hidden shrink-0 rounded-full px-3 py-1 text-xs font-bold sm:inline-flex ${chat.room?.readOnly ? "bg-muted text-muted-foreground" : "bg-secondary/15 text-secondary"}`}>{chat.room?.readOnly ? "Chỉ xem" : "Đang trao đổi"}</span>
+        </header>
+        {chat.room && (
+          <>
+            {chat.room.readOnly && <ClassChatReadOnly />}
+            {chat.hasMore && (
+              <Button
+                variant="outline"
+                className="mx-auto mt-3 min-h-9 rounded-xl transition-all active:scale-[0.98]"
+                disabled={chat.loadingOlder}
+                onClick={() => void chat.loadOlder()}
+              >
+                Tin nhắn cũ hơn
+              </Button>
+            )}
+            <ClassChatHistory
+              messages={chat.room.messages}
+              historyRef={chat.historyRef}
+              currentUserId={chat.actorId}
+            />
+            {!chat.room.readOnly && (
+              <ClassChatComposer
+                form={chat.form}
+                sending={chat.sending}
+                onSubmit={chat.submit}
               />
-              {chat.room.readOnly ? (
-                <ClassChatReadOnly />
-              ) : (
-                <ClassChatComposer
-                  form={chat.form}
-                  sending={chat.sending}
-                  onSubmit={chat.submit}
-                />
-              )}
-            </>
-          )
+            )}
+          </>
         )}
+        {!chat.room && <div className="grid flex-1 place-items-center bg-muted/40 p-6 text-center text-sm text-muted-foreground">Phòng chat lớp chưa sẵn sàng.</div>}
       </section>
     </div>
   );

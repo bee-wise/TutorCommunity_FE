@@ -29,6 +29,8 @@ const roomSchema = z
     updatedAt: z.string().optional(),
     recipientUserId: z.string().nullable().optional(),
     recipientName: z.string().nullable().optional(),
+    unreadCount: z.number().int().nonnegative().nullable().optional(),
+    lastReadMessageId: z.guid().nullable().optional(),
     participants: z.array(participantSchema).nullable().optional(),
   })
   .passthrough();
@@ -50,6 +52,11 @@ export type ApiChatRoom = z.infer<typeof roomSchema>;
 export type ApiChatMessage = z.infer<typeof messageSchema>;
 const roomPageSchema = pageSchema(roomSchema);
 const messagePageSchema = pageSchema(messageSchema);
+const readReceiptSchema = z.object({
+  roomId: z.guid(),
+  lastReadMessageId: z.guid().nullable(),
+  unreadCount: z.number().int().nonnegative(),
+});
 export type ChatRoomPage = z.infer<typeof roomPageSchema>;
 export type ChatMessagePage = z.infer<typeof messagePageSchema>;
 
@@ -130,5 +137,10 @@ export const chatRoomsService = {
   async send(id: string, content: string): Promise<ApiChatMessage> {
     const raw: unknown = await apiClient.post(`/chat-rooms/${encodeURIComponent(id)}/messages`, { content });
     return parseResponse(raw, messageSchema);
+  },
+
+  async markRead(id: string, throughMessageId: string) {
+    const raw: unknown = await apiClient.post(`/chat-rooms/${encodeURIComponent(id)}/read`, { throughMessageId });
+    return parseResponse(raw, readReceiptSchema);
   },
 };

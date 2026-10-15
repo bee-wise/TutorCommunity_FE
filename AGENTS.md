@@ -24,6 +24,7 @@ Tất cả các AI Agent khi làm việc trong repository này **BẮT BUỘC** 
    - **Feature Modules (`features/[name]/`)**: Mọi domain logic thuộc về feature module.
    - **Dumb UI vs Smart Logic**: Tách biệt UI Component (`components/`), Business Hook (`hooks/`), API/Service (`api/` hoặc `services/`). Component không vượt quá 150-200 dòng (tối đa 300).
    - **Zero `any`**: Strict TypeScript, dùng Zod schema để validate form và dữ liệu ngoại vi.
+   - Dùng z.guid() bắt buộc khi validate trường UUID.
 
 3. **STATE MANAGEMENT & API INTEGRATION**:
    - **Server State**: Bắt buộc dùng TanStack Query (`useQuery`, `useMutation`), centralize query keys, tự động invalidate cache sau mutations. Không lưu server data trong Zustand.

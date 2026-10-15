@@ -13,7 +13,7 @@ import { chatRoomsService } from "@workspace/core/services/chat-rooms.service";
 import { toChatHistoryBusinessMessage } from "@workspace/core/services/chat-business-message";
 import { queryKeys } from "@workspace/core/sys-libs/queryKeys";
 import { subscribeToChatRoom } from "@workspace/core/sys-libs/centrifugo";
-import { toWorkspaceRoom, type WorkspaceMessage } from "../types/workspace";
+import { toWorkspaceRoom, type WorkspaceMessage, type WorkspaceRoom } from "../types/workspace";
 
 const MESSAGE_PAGE_SIZE = 50;
 
@@ -80,10 +80,20 @@ export function useConsultantConversation(roomId: string | null) {
   const close = useMutation({
     mutationFn: ({ reason, note }: { reason: string; note?: string }) =>
       chatRoomsService.closeRoom(roomId!, reason, note),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: queryKeys.consultantWorkspace.rooms(userId ?? ""),
-      });
+    onSuccess: (closedRoom) => {
+      const roomsKey = queryKeys.consultantWorkspace.rooms(userId ?? "");
+      queryClient.setQueryData<WorkspaceRoom[]>(roomsKey, (rooms) => rooms?.map((room) =>
+        room.id === closedRoom.id
+          ? {
+              ...room,
+              status: "CLOSED",
+              closedAt: closedRoom.closedAt ?? room.closedAt,
+              closeReason: closedRoom.closeReason ?? room.closeReason,
+              closeNote: closedRoom.closeNote ?? room.closeNote,
+            }
+          : room,
+      ));
+      void queryClient.invalidateQueries({ queryKey: roomsKey });
     },
   });
   const messages: WorkspaceMessage[] = [

@@ -56,7 +56,7 @@ export function ConnectionInfoPanel({ room }: ConnectionInfoPanelProps) {
     (s) => s.key === room.connectionStage,
   );
   const isReadOnly =
-    room.status === "CLOSED" || room.status === "CONVERTED_TO_CLASS";
+    room.status === "CLOSED" || room.status === "INACTIVE";
 
   return (
     <aside className="flex h-full flex-col overflow-y-auto">
@@ -65,8 +65,8 @@ export function ConnectionInfoPanel({ room }: ConnectionInfoPanelProps) {
         <div className="mb-4 flex items-center gap-2 rounded-xl bg-muted px-4 py-3">
           <Lock width={14} height={14} className="text-muted-foreground" />
           <p className="text-xs text-muted-foreground">
-            {room.status === "CONVERTED_TO_CLASS"
-              ? "Phòng chat đã chuyển thành lớp học."
+            {room.status === "INACTIVE"
+              ? "Phòng chat tạm ngưng. Chỉ đọc."
               : "Phòng chat đã đóng. Chỉ đọc."}
           </p>
         </div>

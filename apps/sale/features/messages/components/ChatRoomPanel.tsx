@@ -5,10 +5,12 @@ import {
   PaperAirplaneIcon as Send,
   BoltIcon as Zap,
   ArrowLeftIcon as ArrowLeft,
+  ArrowDownIcon as ArrowDown,
   LockClosedIcon as Lock,
   EllipsisVerticalIcon as MoreVertical,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { Button } from "@workspace/ui/components/ui/button";
 import { MessageBubble, SessionTimeDivider } from "./MessageBubble";
 import { MessageDetailsDialog } from "./MessageDetailsDialog";
 import { MessageContextMenu } from "./MessageContextMenu";
@@ -17,7 +19,6 @@ import { AutoMessageLibrary } from "./AutoMessageLibrary";
 import { ConsultantActions } from "./ConsultantActions";
 import { ConnectionInfoPanel } from "./ConnectionInfoPanel";
 import { useChatRoom } from "../hooks/useChatRoom";
-import { selectTrialWidgetTimelineMessages } from "@workspace/core/services/trial-widget-timeline";
 import {
   STAGE_LABELS,
   STAGE_COLORS,
@@ -44,6 +45,8 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
     currentUserRole,
     sendMessage,
     messagesEndRef,
+    showJumpToLatest,
+    jumpToLatest,
     loadOlder,
     hasOlder,
     loadingOlder,
@@ -84,10 +87,6 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
       </div>
     );
   const isSupport = room.category === "SUPPORT";
-  const visibleMessages = selectTrialWidgetTimelineMessages(
-    messages,
-    (message) => message.senderRole === "CONSULTANT",
-  );
   const peer = isSupport
     ? room.consultant
     : currentUserRole === "LEARNER"
@@ -209,7 +208,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         </header>
 
         {/* Consultant quick-action bar */}
-        {currentUserRole === "CONSULTANT" && !isSupport && !isReadOnly && (
+        {currentUserRole === "CONSULTANT" && !isSupport && room.status === "ACTIVE" && (
           <div className="flex shrink-0 items-center gap-2 overflow-x-auto border-b border-border bg-muted px-4 py-2">
             <ConsultantActions currentRole={currentUserRole} roomId={room.id} />
           </div>
@@ -219,8 +218,8 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         {isReadOnly && (
           <div className="flex shrink-0 items-center gap-2 border-b border-border bg-muted px-4 py-2.5 text-xs text-muted-foreground">
             <Lock width={13} height={13} />
-            {room.status === "CONVERTED_TO_CLASS"
-              ? "Phòng chat đã chuyển thành lớp học. Chỉ đọc."
+            {room.status === "INACTIVE"
+              ? "Phòng chat tạm ngưng. Chỉ đọc."
               : isSupport
                 ? "Cuộc trò chuyện hỗ trợ đã đóng. Chỉ đọc."
                 : "Phòng chat đã đóng. Chỉ đọc."}
@@ -228,7 +227,8 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         )}
 
         {/* Messages area */}
-        <div className="min-h-0 flex-1 overflow-y-auto [scroll-behavior:auto] bg-muted px-3 py-5 sm:px-6">
+        <div className="relative min-h-0 flex-1">
+          <div className="h-full overflow-y-auto [scroll-behavior:auto] bg-muted px-3 py-5 sm:px-6">
           <div className="mx-auto max-w-4xl space-y-1">
             {hasOlder && (
               <div className="flex justify-center pb-3">
@@ -265,9 +265,9 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                 Chưa có tin nhắn nào.
               </p>
             )}
-            {visibleMessages.map((msg, idx) => {
-              const prev = visibleMessages[idx - 1];
-              const next = visibleMessages[idx + 1];
+            {messages.map((msg, idx) => {
+              const prev = messages[idx - 1];
+              const next = messages[idx + 1];
 
               const isNewSession =
                 !prev ||
@@ -301,6 +301,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                     message={msg}
                     currentUserId={currentUserId}
                     currentRole={currentUserRole}
+                    roomClosed={room.status === "CLOSED"}
                     isConsecutive={!!isConsecutive}
                     showTime={isLastInTurn}
                     onContextMenu={(e, message) => {
@@ -322,8 +323,20 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} className="h-px" />
           </div>
+          </div>
+          {showJumpToLatest && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={jumpToLatest}
+              className="absolute bottom-4 right-4 gap-2 rounded-xl bg-card shadow-sm transition-all active:scale-[0.98]"
+            >
+              <ArrowDown className="h-4 w-4" aria-hidden="true" />
+              Tin mới nhất
+            </Button>
+          )}
         </div>
 
         {/* Composer */}

@@ -388,7 +388,8 @@ export function DateTimePicker({
             sideOffset={8}
             avoidCollisions={true}
             collisionPadding={16}
-            className="z-[99999] w-[min(320px,calc(100vw-24px))] rounded-2xl border border-border bg-card p-3.5 shadow-2xl text-foreground outline-none animate-in fade-in-0 zoom-in-95 duration-150"
+            style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
+            className="z-[99999] w-[min(320px,calc(100vw-24px))] overflow-y-auto overscroll-contain rounded-2xl border border-border bg-card p-3.5 shadow-2xl text-foreground outline-none animate-in fade-in-0 zoom-in-95 duration-150"
           >
             {/* Calendar Header */}
             <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/80">

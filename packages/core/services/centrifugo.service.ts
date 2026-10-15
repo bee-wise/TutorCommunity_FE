@@ -22,9 +22,10 @@ export const centrifugoService = {
    */
   getSubscriptionToken: async (
     chatRoomId?: string,
+    scope?: "chat-user",
   ): Promise<ApiResponse<CentrifugoSubscriptionTokenResponse>> => {
     return await apiClient.get("/realtime/centrifugo/subscription-token", {
-      params: chatRoomId ? { chatRoomId } : undefined,
+      params: chatRoomId ? { chatRoomId } : scope ? { scope } : undefined,
     });
   },
 

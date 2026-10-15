@@ -100,6 +100,7 @@ function TextBubble({
 interface MessageBubbleProps {
   message: WorkspaceMessage;
   consultantId: string;
+  roomClosed: boolean;
   sender?: WorkspaceParticipant;
   isConsecutive?: boolean;
   showTime?: boolean;
@@ -108,6 +109,7 @@ interface MessageBubbleProps {
 export function MessageBubble({
   message,
   consultantId,
+  roomClosed,
   sender,
   isConsecutive = false,
   showTime = true,
@@ -161,7 +163,7 @@ export function MessageBubble({
 
         {message.business ? (
           <div className="mt-1 w-full max-w-[440px]">
-            <BusinessChatWidget business={message.business} currentRole="CONSULTANT" />
+            <BusinessChatWidget business={message.business} currentRole="CONSULTANT" roomClosed={roomClosed} />
             {bubbleTime && <time className="mt-1 block text-right text-[10px] text-muted-foreground">{bubbleTime}</time>}
           </div>
         ) : <TextBubble text={message.content} isMine={isMine} time={bubbleTime} />}

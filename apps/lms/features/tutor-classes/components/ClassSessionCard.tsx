@@ -1,6 +1,6 @@
 import { Button } from "@workspace/ui/components/ui/button";
 import type { SessionAttendance, TutorClass, TutorClassSession } from "../types/classes.types";
-import { canMarkAttendance, formatClassDate } from "../utils/classes.utils";
+import { canMarkAttendance, formatClassDate, formatClassIdentifier } from "../utils/classes.utils";
 import { AttendanceStateBadge, SessionStatusBadge } from "./ClassBadges";
 import { classButton, classOutlineButton } from "./classes-ui";
 
@@ -19,7 +19,7 @@ export function ClassSessionCard({ classInfo, session, record, onAttendance }: {
         <SessionStatusBadge status={session.status} />
       </div>
       <h3 className="mt-2 font-nunito text-base font-extrabold leading-6 text-primary [overflow-wrap:anywhere]">{session.topic}</h3>
-      <p className="mt-1 text-[11px] leading-5 text-muted-foreground [overflow-wrap:anywhere]">Mã buổi: {session.id}</p>
+      <p className="mt-1 text-[11px] leading-5 text-muted-foreground">Mã buổi: {formatClassIdentifier(session.id)}</p>
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1.5">
           <AttendanceStateBadge record={record} />
