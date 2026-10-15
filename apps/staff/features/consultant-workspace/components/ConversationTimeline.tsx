@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
-import { selectTrialWidgetTimelineMessages } from "@workspace/core/services/trial-widget-timeline";
+import { selectChatWidgetTimelineMessages } from "@workspace/core/services/trial-widget-timeline";
 import { shouldShowSessionDivider } from "../utils/format";
 import type { WorkspaceMessage, WorkspaceRoom } from "../types/workspace";
 import { MessageBubble, SessionTimeDivider } from "./MessageBubble";
@@ -34,7 +34,7 @@ export function ConversationTimeline({
 }) {
   const initialScrollDoneRef = useRef<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const visibleMessages = selectTrialWidgetTimelineMessages(
+  const visibleMessages = selectChatWidgetTimelineMessages(
     messages,
     (message) => message.senderId === consultantId,
   );
@@ -110,6 +110,7 @@ export function ConversationTimeline({
               <MessageBubble
                 message={message}
                 consultantId={consultantId}
+                roomClosed={room.status === "CLOSED"}
                 sender={sender}
                 isConsecutive={isConsecutive}
                 showTime={isLastInTurn}

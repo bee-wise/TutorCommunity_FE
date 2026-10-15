@@ -132,6 +132,7 @@ export function ConversationPanel({
 
   async function submitClose(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (readOnly) return;
     setActionError(null);
     try {
       await onClose(reason, note.trim() || undefined);
@@ -204,7 +205,7 @@ export function ConversationPanel({
         />
       )}
 
-      <Dialog open={showWidgets} onOpenChange={setShowWidgets}>
+      <Dialog open={showWidgets && !readOnly} onOpenChange={setShowWidgets}>
         <DialogContent
           ref={setWidgetDialogElement}
           className="flex max-h-[calc(100dvh-1.5rem)] w-[calc(100vw-1.5rem)] max-w-[1120px] xl:max-w-[1180px] flex-col gap-0 overflow-visible rounded-3xl border-border bg-background p-0 shadow-soft [&>button]:right-4 [&>button]:top-4 [&>button]:rounded-xl [&>button]:border [&>button]:border-border [&>button]:bg-background [&>button]:p-2 [&>button]:transition-all [&>button]:active:scale-[0.98]"
@@ -278,7 +279,7 @@ export function ConversationPanel({
       </Dialog>
 
       {/* Dialog đóng chat */}
-      <Dialog open={showClose} onOpenChange={setShowClose}>
+      <Dialog open={showClose && !readOnly} onOpenChange={setShowClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Đóng cuộc trò chuyện</DialogTitle>
@@ -331,7 +332,7 @@ export function ConversationPanel({
               </Button>
               <Button
                 type="submit"
-                disabled={closing}
+                disabled={readOnly || closing}
                 className="h-9 rounded-xl px-4 text-sm font-semibold transition-all active:scale-[0.98]"
               >
                 {closing ? "Đang đóng..." : "Xác nhận đóng"}

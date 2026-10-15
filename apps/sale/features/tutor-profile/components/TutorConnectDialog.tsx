@@ -48,12 +48,10 @@ export function TutorConnectDialog({
   const hasCreatedRequest =
     requestSubmitted ||
     phase === "findingRoom" ||
-    phase === "subscribing" ||
     phase === "redirecting" ||
     phase === "roomError" ||
-    phase === "subscriptionError" ||
     phase === "navigationError";
-  const connectingChat = phase === "subscribing" || phase === "redirecting";
+  const connectingChat = phase === "redirecting";
   const activeChatRoomId = roomId || eligibility.data?.activeChatRoomId;
   const profileHref = `/tutors/${profileId}${tutorUserId ? `?tutorUserId=${encodeURIComponent(tutorUserId)}` : ""}`;
   const loginHref = `/login?returnUrl=${encodeURIComponent(profileHref)}`;
@@ -61,7 +59,7 @@ export function TutorConnectDialog({
   return (
     <Dialog open={flow.open} onOpenChange={flow.setDialogOpen}>
       <DialogContent
-        className={`w-[calc(100vw-2rem)] max-w-md gap-0 rounded-2xl border-border bg-card p-0 shadow-xl ${isProcessing ? "[&>button]:hidden" : ""}`}
+        className={`w-[calc(100vw-2rem)] max-w-2xl gap-0 rounded-2xl border-border bg-card p-0 shadow-xl ${isProcessing ? "[&>button]:hidden" : ""}`}
         onEscapeKeyDown={(event) => {
           if (isProcessing) event.preventDefault();
         }}
@@ -120,16 +118,14 @@ export function TutorConnectDialog({
             </span>
             <div>
               <p className="font-semibold text-foreground">
-                Đăng ký trò chuyện
+                Mở cuộc trò chuyện
               </p>
               <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
                 {phase === "findingRoom"
                   ? "Đang tìm phòng chat vừa tạo..."
-                  : phase === "subscribing"
-                    ? "Đang kết nối realtime..."
-                    : phase === "redirecting"
-                      ? "Đang mở cuộc trò chuyện..."
-                      : "Bạn sẽ được chuyển vào chat ngay khi kết nối xong."}
+                  : phase === "redirecting"
+                    ? "Đang mở cuộc trò chuyện..."
+                    : "Bạn sẽ được chuyển vào chat ngay khi phòng sẵn sàng."}
               </p>
             </div>
           </div>
@@ -150,9 +146,7 @@ export function TutorConnectDialog({
                   ? "Đang xác minh yêu cầu..."
                   : phase === "findingRoom"
                     ? "Đang chờ phòng chat sẵn sàng..."
-                    : phase === "subscribing"
-                      ? "Đang đăng ký phòng chat..."
-                      : "Đang chuyển trang..."}
+                    : "Đang chuyển trang..."}
             </div>
           )}
           {isProcessing && waitSeconds >= 6 && (
@@ -309,24 +303,6 @@ export function TutorConnectDialog({
                 Tìm lại phòng chat
               </button>
             )}
-          {flow.isLearner && !isProcessing && phase === "subscriptionError" && (
-            <>
-              <button
-                type="button"
-                onClick={() => void flow.continueWithoutRealtime()}
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-primary px-4 text-sm font-semibold text-primary"
-              >
-                Mở chat ngay
-              </button>
-              <button
-                type="button"
-                onClick={() => void flow.retrySubscription()}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground"
-              >
-                Kết nối lại
-              </button>
-            </>
-          )}
           {flow.isLearner && !isProcessing && phase === "navigationError" && (
             <button
               type="button"

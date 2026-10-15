@@ -1,19 +1,25 @@
 "use client";
 
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@workspace/ui/components/ui/button";
 import { useTutorClasses } from "../hooks/useTutorClasses";
 import { ClassFilters } from "./ClassFilters";
 import { ClassPagination } from "./ClassPagination";
 import { TutorClassCard } from "./TutorClassCard";
+import { ClassesSkeleton } from "./ClassesSkeleton";
+import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import {
   classHeading,
   classOutlineButton,
   classPage,
   classPanel,
 } from "./classes-ui";
+const GroupDraftDialog = dynamic(() => import("./GroupDraftDialog").then(m => m.GroupDraftDialog));
 
 export function TutorClassesScreen() {
   const library = useTutorClasses();
+  const [creating,setCreating] = useState(false);
   const hasFilters = Boolean(
     library.filters.search ||
     library.filters.status !== "all" ||
@@ -21,8 +27,9 @@ export function TutorClassesScreen() {
   );
   return (
     <div className={classPage}>
-      <header>
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className={classHeading}>Quản lý lớp học</h1>
+        {!library.loading && !library.error && library.filters.kind === "group" && <Button className="min-h-11 rounded-full transition-all active:scale-[0.98]" onClick={()=>setCreating(true)}>Tạo lớp nhóm</Button>}
       </header>
 
       <ClassFilters
@@ -31,8 +38,9 @@ export function TutorClassesScreen() {
         onChange={library.updateFilters}
       />
       <section aria-labelledby="classes-results-title" className="space-y-4">
+        <h2 id="classes-results-title" className="sr-only">Danh sách lớp học</h2>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          {hasFilters && library.total > 0 && (
+          {hasFilters && !library.loading && !library.error && library.total > 0 && (
             <Button
               type="button"
               variant="outline"
@@ -43,21 +51,21 @@ export function TutorClassesScreen() {
             </Button>
           )}
         </div>
-        {!library.total ? (
+        {library.loading ? <ClassesSkeleton resultsOnly /> : library.error ? <ClassQueryErrorState error={library.error} onRetry={library.retry} /> : !library.cards.length ? (
           <div className={`${classPanel} space-y-3 py-10 text-center`}>
             <h3 className="font-nunito text-lg font-extrabold text-primary">
-              Không tìm thấy lớp phù hợp
+              {library.outOfRange ? "Trang hiện tại không còn lớp học" : "Không tìm thấy lớp phù hợp"}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Thử thay đổi từ khóa hoặc trạng thái lớp.
+              {library.outOfRange ? "Danh sách có thể đã thay đổi. Quay về trang đầu để tải lại." : "Thử thay đổi từ khóa hoặc trạng thái lớp."}
             </p>
             <Button
               type="button"
               variant="outline"
               className={classOutlineButton}
-              onClick={library.resetFilters}
+              onClick={library.outOfRange ? () => library.setPage(1) : library.resetFilters}
             >
-              Đặt lại bộ lọc
+              {library.outOfRange ? "Về trang đầu" : "Đặt lại bộ lọc"}
             </Button>
           </div>
         ) : (
@@ -67,17 +75,14 @@ export function TutorClassesScreen() {
             ))}
           </div>
         )}
-        <ClassPagination
-          page={library.page}
+        {!library.loading && !library.error && !library.outOfRange && <ClassPagination
+          page={library.page - 1}
           pageCount={library.pageCount}
           label="Phân trang lớp học"
-          onPageChange={library.setPage}
-        />
+          onPageChange={(page) => library.setPage(page + 1)}
+        />}
       </section>
-      <p className="rounded-2xl border border-border bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-        Dữ liệu minh họa · Mã lớp đồng bộ với Quản lý tài liệu. Điểm danh chỉ
-        lưu trong phiên hiện tại, tải lại trang sẽ xóa thay đổi.
-      </p>
+      {creating && <GroupDraftDialog onClose={()=>setCreating(false)} />}
     </div>
   );
 }

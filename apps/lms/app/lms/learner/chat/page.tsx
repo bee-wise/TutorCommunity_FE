@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LearnerMessagesScreen } from "@/features/learner-messages/components/LearnerMessagesScreen";
+import { LearnerClassChatDirectory } from "@/features/learner-messages/components/LearnerClassChatDirectory";
 
 export const metadata: Metadata = {
   title: "Tin nhắn với gia sư | BeeWise Learner",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function LearnerMessagesPage() {
-  return <LearnerMessagesScreen />;
+  return <LearnerClassChatDirectory />;
 }

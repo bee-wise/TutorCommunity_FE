@@ -82,6 +82,9 @@ export const paymentRequestSchema = z
     currency: nullableString,
     provider: nullableString,
     checkoutUrl: nullableString,
+    bin: nullableString,
+    bankName: nullableString,
+    qrCode: nullableString,
     qrCodeUrl: nullableString,
     status: nullableString,
     expiredAt: nullableString,
@@ -254,6 +257,13 @@ export const connectionWidgetsService = {
   async getPayment(id: string) {
     const response: unknown = await apiClient.get(
       `/payment-requests/${idPath(id)}`,
+    );
+    return dataOf(paymentRequestSchema, response);
+  },
+  // Asks BE to verify with PayOS; the only client path that can settle a payment when no webhook arrives.
+  async refreshPayment(id: string) {
+    const response: unknown = await apiClient.post(
+      `/payment-requests/${idPath(id)}/refresh`,
     );
     return dataOf(paymentRequestSchema, response);
   },

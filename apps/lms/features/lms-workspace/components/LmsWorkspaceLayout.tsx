@@ -50,6 +50,8 @@ export function LmsWorkspaceLayout({ children }: { children: ReactNode }) {
       breadcrumb={
         tutorWorkspace ? (
           <ClassWorkspaceBreadcrumb workspace={tutorWorkspace} />
+        ) : role === "TUTOR" && pathname === "/lms/tutor/classes" ? (
+          <nav aria-label="Vị trí hiện tại" className="text-sm font-bold text-primary"><span aria-current="page">Quản lý lớp học</span></nav>
         ) : learnerWorkspace ? (
           <LearnerClassBreadcrumb workspace={learnerWorkspace} />
         ) : undefined

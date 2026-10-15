@@ -1,5 +1,35 @@
 # Quản lý lớp học TUTOR - Đặc tả FE & Hợp đồng tích hợp BE
 
+## FE-01: tích hợp list/detail - 13/10/2026
+
+Nguồn contract thực tế: [Swagger API test](https://api-test.beewise.vn/swagger/v1/swagger.json), schemas `LmsClassView`, `LmsClassPage`, `LmsClassFeatures` và các query parameters của `GET /lms/classes`. Task: [FE-01 Danh sách và chi tiết lớp Tutor](https://app.clickup.com/t/z8rctehm4b).
+
+Phần này thay thế mô tả **mock list/detail** ở các mục cũ bên dưới. Các route API trong đặc tả UI cũ là đề xuất, không phải contract BE.
+
+- API thật: `GET /lms/classes`, `GET /lms/classes/{classId}`; `/lms/tutor/classes` chỉ là URL màn hình FE.
+- Tầng tích hợp: `services/classes.service.ts` dùng core `apiClient`/cookies và `AbortSignal`; `schemas/lms-class.schema.ts` kiểm tra response Zod; hooks dùng TanStack Query. Không lưu dữ liệu server trong Zustand.
+- Query: `Search`, `Type=INDIVIDUAL|GROUP`, `Status`, `Sort`, `Page`, `PageSize` theo Swagger. Paging API 1-based, mặc định 6; component phân trang dùng 0-based nội bộ nên chuyển đổi tại screen. Không gửi `limit` hay `sortBy` xung đột với compatibility sort.
+- Bộ lọc UI hiện có: loại lớp, từ khóa (debounce 300ms, tối đa 100 ký tự), trạng thái và mới nhất/cũ nhất/trạng thái. Search/filter/sort do BE thực hiện; không lọc hoặc cắt trang từ mock. Service hỗ trợ optional `TeachingOfferingId` GUID; chưa thêm dropdown Offering vì contract list/detail không cung cấp danh mục đầy đủ để xây bộ chọn.
+- ID theo `.NET Guid` của BE: dùng `z.guid()`, không dùng `z.uuid()` yêu cầu version/variant RFC. Dữ liệu demo thật chứa GUID hợp lệ với BE nhưng không có các bit RFC; list, offering filter và detail vẫn phải nhận được những ID này.
+- Tổng số lớp của từng tab lấy từ `total` của hai query `Type`, `Page=1`, `PageSize=1`, không tính từ số item trong một trang. Các count không phụ thuộc bộ lọc tìm kiếm/trạng thái. Khi count chưa tải được, không hiển thị số 0 giả.
+- Card/detail dùng `learnerCount`, `sessionCount`; không tạo tên học viên, buổi kế tiếp hoặc số buổi thiếu điểm danh. Roster, lịch và trạng thái điểm danh thuộc API riêng trong các task tiếp theo.
+- `teachingItemName` thay cho subject mock; `contextName` là bối cảnh, không tự đổi thành program. Giữ `programName`, `teachingOfferingId`, `approvalStatus`, `billingMode`, các counts và `features` trong `serverDetails`. Offering/program/context null có fallback rõ ràng. Không suy ra `features` từ loại lớp; không tự bật feedback đang hoãn.
+- Status UI phân biệt `PENDING_PAYMENT`, `UPCOMING`, `ACTIVE`, `COMPLETED`, `CANCELLED`. Type/status nullable hoặc mới chưa biết hiển thị chưa xác định, không mặc định thành lớp 1:1/đang học. Không tự hoàn thành lớp theo đồng hồ FE.
+- Query keys nằm ở `query-keys.ts`, bao gồm actor ID, filter/page hoặc class ID; sidebar/breadcrumb/detail dùng chung detail cache. Dữ liệu cache bị ẩn khi mất quyền/đổi role, kiểm tra session chưa xong hoặc query lỗi. BE vẫn là nơi kiểm tra quyền động và ownership; không gửi actor ID làm query parameter.
+- Loading dùng skeleton; empty, trang hết dữ liệu, 401, 403, 404 và lỗi có retry là các trạng thái riêng. Không retry tự động lỗi 400/401/403/404 hoặc contract mismatch. Filter input giữ mounted trong lúc tìm kiếm để không mất focus.
+- Các màn buổi học/điểm danh, thành viên, tài liệu, chat vẫn chưa tích hợp resource API trong FE-01. Chúng không được coi là BE E2E hoàn tất chỉ vì overview đã có dữ liệu thật.
+
+### Kiểm chứng FE-01
+
+- `node --test apps/lms/features/tutor-classes/__tests__/classes.test.cjs apps/lms/features/tutor-classes/__tests__/class-workspace.test.cjs apps/lms/features/tutor-classes/__tests__/class-api.test.cjs`: 33 test pass (8 contract/API-hook/SSR tests mới, gồm regression GUID). Client HTTP và dữ liệu trong bộ test được stub; **không phải browser E2E**.
+- Lint feature, `npx tsc --noEmit -p apps/lms/tsconfig.json` và `npm run build --workspace=lms` pass. Lint toàn LMS còn lỗi có sẵn `react-hooks/purity` ở `features/tutor-messages/components/ChatWidget.tsx:191` (`Date.now()` trong render), không sửa trong FE-01.
+- GET không có cookie/token trên API test: list và detail trả `401`, `error.code=UNAUTHORIZED`.
+- Đã kiểm chứng API test có đăng nhập bằng tài khoản trong attachment `accounts.md` của task BE: Tutor 1 trả 6 lớp (2 INDIVIDUAL, 4 GROUP), Tutor 2 trả 2 lớp; mỗi list chỉ chứa lớp của chính Tutor. Chạy trực tiếp **production service + core apiClient + Zod** với cookie trong RAM: list/detail, tổng tab với PageSize=1, Page=2, Type, Status, search mã lớp/empty, Sort=OLDEST/STATUS và TeachingOfferingId đều pass. Search tiêu đề không dấu cũng tìm được lớp gốc. Các lớp demo có cùng createdAt nên chưa chứng minh được thứ tự thời gian giữa các ngày khác nhau.
+- Cross-Tutor detail trả `403` cả hai chiều sau đăng nhập mới; GUID không tồn tại trả `404`; Page=0 trả `400`. Learner có thể dùng endpoint list chung (`200`, chỉ lớp tham gia), nhưng detail lớp không tham gia trả `403`. FE Tutor vẫn chặn role khác và không đọc cache của actor khác; không coi endpoint chung là Tutor-only.
+- Không lưu credentials, JWT hay cookie vào repo, log bàn giao hoặc test fixtures. Chưa kiểm chứng **browser E2E/responsive với session** và lớp legacy null trên DB test (nullable được kiểm tra unit/SSR). Các resource screen khác thuộc task sau; FE-01 chuyển review, chưa đánh dấu Done.
+
+---
+
 Tài liệu này đặc tả toàn bộ luồng giao diện người dùng (UI Logic), quy tắc nghiệp vụ, mô hình dữ liệu (Read/Write Models), API Contracts và kế hoạch tích hợp Backend cho tính năng **Quản lý lớp học của Gia sư** (`tutor-classes`) trong phân hệ LMS của **BeeWise**.
 
 **Bố cục workspace theo lớp và contract chat lớp mới:** xem [WORKSPACE.md](./WORKSPACE.md). Tài liệu này tiếp tục là nguồn quy tắc điểm danh và hợp đồng dữ liệu lớp/buổi học. Các API trong hai tài liệu là đề xuất tích hợp, không phải endpoint FE đã gọi.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   useQuery,
   useQueryClient,
@@ -38,6 +38,7 @@ import {
 } from "../services/chat-business-message";
 import { DateTimePicker } from "@workspace/ui/components/ui/date-time-picker";
 import { Button } from "@workspace/ui/components/ui/button";
+import { PaymentQrCode } from "@workspace/ui/components/PaymentQrCode";
 import {
   Dialog,
   DialogContent,
@@ -47,10 +48,11 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/ui/dialog";
 import { queryKeys } from "../sys-libs/queryKeys";
+import { getVietQrBankBin, getVietQrBankName } from "../services/vietqr-bank";
 import { TrialJoinButton } from "./TrialJoinButton";
 
 type Role = "CONSULTANT" | "LEARNER" | "TUTOR";
-type Props = { business: ChatBusinessMessage; currentRole: Role };
+type Props = { business: ChatBusinessMessage; currentRole: Role; roomClosed: boolean };
 
 async function refreshChatHistory(queryClient: QueryClient, roomId?: string) {
   if (!roomId) return;
@@ -295,7 +297,7 @@ function ErrorBanner({ message }: { message: string }) {
   );
 }
 
-function TrialWidget({ business, currentRole }: Props) {
+function TrialWidget({ business, currentRole, roomClosed }: Props) {
   const id = business.referenceId ?? payloadString(business.payload, "id");
   const queryClient = useQueryClient();
   const query = useQuery({
@@ -349,7 +351,7 @@ function TrialWidget({ business, currentRole }: Props) {
   const [cancelBusy, setCancelBusy] = useState(false);
 
   async function cancelTrial() {
-    if (!id || data?.version === undefined || data?.version === null) return;
+    if (roomClosed || !id || data?.version === undefined || data?.version === null) return;
     if (!cancelReason.trim()) {
       setCancelError("Vui lòng nhập lý do hủy buổi học thử.");
       return;
@@ -376,7 +378,7 @@ function TrialWidget({ business, currentRole }: Props) {
   }
 
   async function confirm() {
-    if (!id || data?.version === undefined || data?.version === null) return;
+    if (roomClosed || !id || data?.version === undefined || data?.version === null) return;
     setBusy(true);
     setError("");
     try {
@@ -446,7 +448,7 @@ function TrialWidget({ business, currentRole }: Props) {
               <span className="min-w-0 basis-40 flex-1 break-all font-medium leading-5 text-foreground/80 select-text">
                 {meetingInfo}
               </span>
-              {joinUrl && <TrialJoinButton trial={data} href={joinUrl} />}
+              {joinUrl && <TrialJoinButton trial={data} href={joinUrl} disabled={roomClosed} />}
             </div>
           </div>
         )}
@@ -480,7 +482,7 @@ function TrialWidget({ business, currentRole }: Props) {
             <Button
               type="button"
               onClick={() => void confirm()}
-              disabled={busy || !data}
+              disabled={roomClosed || busy || !data}
               className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
             >
               {busy ? (
@@ -514,7 +516,7 @@ function TrialWidget({ business, currentRole }: Props) {
                   setCancelError("");
                   setShowCancelModal(true);
                 }}
-                disabled={busy || cancelBusy}
+                disabled={roomClosed || busy || cancelBusy}
                 className="h-10 w-full rounded-xl border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/40 font-nunito text-xs font-bold transition-all active:scale-[0.98]"
               >
                 <XCircle width={15} height={15} className="shrink-0" />
@@ -582,7 +584,7 @@ function TrialWidget({ business, currentRole }: Props) {
                   type="button"
                   variant="destructive"
                   onClick={() => void cancelTrial()}
-                  disabled={cancelBusy || !cancelReason.trim()}
+                  disabled={roomClosed || cancelBusy || !cancelReason.trim()}
                   className="h-9 rounded-xl px-4 text-xs font-bold shadow-xs transition-all active:scale-95"
                 >
                   {cancelBusy ? (
@@ -609,17 +611,17 @@ function TrialWidget({ business, currentRole }: Props) {
           <div className="h-px flex-1 bg-border/80" />
           <div
             className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border border-amber-500/35 bg-card px-3 py-1 text-center text-[11px] font-bold text-amber-900 dark:text-amber-200 shadow-2xs backdrop-blur-xs transition-all ${
-              currentRole === "CONSULTANT"
+              currentRole === "CONSULTANT" && !roomClosed
                 ? "cursor-pointer hover:bg-muted active:scale-95"
                 : ""
             }`}
             title={
-              currentRole === "CONSULTANT"
+              currentRole === "CONSULTANT" && !roomClosed
                 ? "Nhấn để mở công cụ xác nhận lớp học"
                 : undefined
             }
             onClick={
-              currentRole === "CONSULTANT"
+              currentRole === "CONSULTANT" && !roomClosed
                 ? () => {
                     window.dispatchEvent(
                       new CustomEvent("beewise:open-consultant-widget", {
@@ -650,7 +652,7 @@ function TrialWidget({ business, currentRole }: Props) {
   );
 }
 
-function ConfirmationWidget({ business, currentRole }: Props) {
+function ConfirmationWidget({ business, currentRole, roomClosed }: Props) {
   const id = business.referenceId ?? payloadString(business.payload, "id");
   const queryClient = useQueryClient();
   const query = useQuery({
@@ -676,7 +678,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
     currentRole === "TUTOR" ? data?.tutorConfirmedAt : data?.learnerConfirmedAt;
 
   async function confirm() {
-    if (!id || data?.version === undefined || data?.version === null) return;
+    if (roomClosed || !id || data?.version === undefined || data?.version === null) return;
     setBusy(true);
     setError("");
     try {
@@ -693,6 +695,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
   }
 
   function handleOpenEdit() {
+    if (roomClosed) return;
     const confirmationId = data?.id ?? id;
     if (typeof window !== "undefined") {
       window.dispatchEvent(
@@ -717,6 +720,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
           <button
             type="button"
             onClick={handleOpenEdit}
+            disabled={roomClosed}
             className="inline-flex size-6 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground transition-all active:scale-95 shadow-2xs"
             title="Chỉnh sửa điều khoản lớp học"
             aria-label="Chỉnh sửa điều khoản lớp học"
@@ -781,7 +785,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
           <Button
             type="button"
             onClick={() => void confirm()}
-            disabled={busy || !data}
+            disabled={roomClosed || busy || !data}
             className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
           >
             {busy ? (
@@ -804,7 +808,7 @@ function ConfirmationWidget({ business, currentRole }: Props) {
   );
 }
 
-function PaymentWidget({ business, currentRole }: Props) {
+function PaymentWidget({ business, currentRole, roomClosed }: Props) {
   const id = business.referenceId ?? payloadString(business.payload, "id");
   const classIdFromPayload = payloadString(business.payload, "classId");
   const queryClient = useQueryClient();
@@ -824,16 +828,41 @@ function PaymentWidget({ business, currentRole }: Props) {
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const data =
+  const storedData =
     business.current?.kind === "PAYMENT_REQUEST"
       ? business.current.data
       : (createdQuery.data ?? query.data);
+  // GET only reads DB; while PENDING the learner polls refresh so PayOS is checked even without a webhook.
+  const verify = useQuery({
+    queryKey: ["connection-widget", "payment-refresh", storedData?.id],
+    queryFn: () => connectionWidgetsService.refreshPayment(storedData!.id),
+    enabled:
+      currentRole === "LEARNER" &&
+      !roomClosed &&
+      storedData?.status === "PENDING" &&
+      !!storedData.id,
+    refetchInterval: 10_000,
+    refetchOnWindowFocus: true,
+    retry: false,
+  });
+  const data = verify.data ?? storedData;
+  const verifiedStatus = verify.data?.status;
+  useEffect(() => {
+    if (!verifiedStatus || verifiedStatus === "PENDING") return;
+    void queryClient.invalidateQueries({
+      queryKey: ["connection-widget", "payment"],
+    });
+    void refreshChatHistory(queryClient, business.roomId);
+  }, [verifiedStatus, queryClient, business.roomId]);
   const classId =
     data?.classId ?? (business.current ? undefined : classIdFromPayload);
   const checkout = safeCheckout(data?.checkoutUrl);
+  const qrCode = data?.qrCode?.trim() ? data.qrCode : null;
+  const bankBin = data?.bin?.trim() || (qrCode ? getVietQrBankBin(qrCode) : undefined);
+  const bankName = data?.bankName?.trim() || getVietQrBankName(bankBin);
 
   async function create() {
-    if (!classId) return;
+    if (roomClosed || !classId) return;
     setBusy(true);
     setError("");
     try {
@@ -866,14 +895,18 @@ function PaymentWidget({ business, currentRole }: Props) {
         )}
       </div>
 
+      {data?.status === "PENDING" && !roomClosed && qrCode && (
+        <PaymentQrCode value={qrCode} bankName={bankName} bankBin={bankBin} />
+      )}
+
       {currentRole === "LEARNER" &&
         data?.status !== "PAID" &&
-        (data?.status === "EXPIRED" || !checkout) &&
+        (data?.status === "EXPIRED" || (!checkout && !qrCode)) &&
         classId && (
           <Button
             type="button"
             onClick={() => void create()}
-            disabled={busy}
+            disabled={roomClosed || busy}
             className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
           >
             {busy ? (
@@ -891,16 +924,20 @@ function PaymentWidget({ business, currentRole }: Props) {
         )}
 
       {currentRole === "LEARNER" && checkout && data?.status === "PENDING" && (
-        <Button
-          asChild
-          className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
-        >
-          <a href={checkout} target="_blank" rel="noopener noreferrer">
+        roomClosed ? (
+          <Button type="button" disabled className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all">
             <CreditCard width={15} height={15} />
             <span>Thanh toán ngay qua PayOS</span>
-            <ArrowRight width={16} height={16} />
-          </a>
-        </Button>
+          </Button>
+        ) : (
+          <Button asChild className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]">
+            <a href={checkout} target="_blank" rel="noopener noreferrer">
+              <CreditCard width={15} height={15} />
+              <span>Thanh toán ngay qua PayOS</span>
+              <ArrowRight width={16} height={16} />
+            </a>
+          </Button>
+        )
       )}
 
       {(query.error || createdQuery.error) && (
@@ -913,7 +950,7 @@ function PaymentWidget({ business, currentRole }: Props) {
   );
 }
 
-function SessionsWidget({ business, currentRole }: Props) {
+function SessionsWidget({ business, currentRole, roomClosed }: Props) {
   const classId =
     business.current?.kind === "CLASS_SCHEDULE"
       ? business.current.data.classId
@@ -946,7 +983,7 @@ function SessionsWidget({ business, currentRole }: Props) {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (!classId) return;
+    if (roomClosed || !classId) return;
     const start = new Date(startAt);
     const end = new Date(endAt);
     if (
@@ -1071,6 +1108,7 @@ function SessionsWidget({ business, currentRole }: Props) {
             type="button"
             variant="outline"
             onClick={() => setShowForm((value) => !value)}
+            disabled={roomClosed}
             className="h-12 w-full rounded-full border-primary/40 font-nunito text-xs font-bold text-primary transition-all hover:border-primary hover:bg-muted active:scale-[0.98]"
           >
             {showForm ? (
@@ -1084,7 +1122,7 @@ function SessionsWidget({ business, currentRole }: Props) {
           </Button>
         )}
 
-      {showForm && (
+      {showForm && !roomClosed && (
         <form
           onSubmit={(event) => void submit(event)}
           className="space-y-3 rounded-xl border border-border bg-background p-3.5"
@@ -1135,7 +1173,7 @@ function SessionsWidget({ business, currentRole }: Props) {
 
           <Button
             type="submit"
-            disabled={busy}
+            disabled={roomClosed || busy}
             className="h-12 w-full rounded-full font-nunito text-xs font-extrabold transition-all active:scale-[0.98]"
           >
             {busy ? (

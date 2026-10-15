@@ -171,6 +171,7 @@ interface MessageBubbleProps {
   message: ChatMessage;
   currentUserId: string;
   currentRole: ChatParticipantRole;
+  roomClosed: boolean;
   isConsecutive?: boolean;
   showTime?: boolean;
   onContextMenu?: (e: React.MouseEvent, message: ChatMessage) => void;
@@ -180,6 +181,7 @@ export function MessageBubble({
   message,
   currentUserId,
   currentRole,
+  roomClosed,
   isConsecutive = false,
   showTime = true,
   onContextMenu,
@@ -285,9 +287,9 @@ export function MessageBubble({
             onContextMenu={handleContextMenu}
           >
             {message.business ? (
-              <BusinessChatWidget business={message.business} currentRole={currentRole} />
+              <BusinessChatWidget business={message.business} currentRole={currentRole} roomClosed={roomClosed} />
             ) : message.widget ? (
-              <ChatWidget widget={message.widget} currentRole={currentRole} />
+              <ChatWidget widget={message.widget} currentRole={currentRole} roomClosed={roomClosed} />
             ) : null}
             {showTime && (
               <div className={`mt-1 flex ${isMine ? "justify-end" : "justify-start"} px-1`}>
