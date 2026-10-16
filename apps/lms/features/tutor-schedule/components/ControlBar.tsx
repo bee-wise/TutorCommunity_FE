@@ -1,8 +1,6 @@
-"use client";
-
-import { CalendarDays, List, ChevronDown, Check } from "lucide-react";
-import { useState } from "react";
-import { cn } from "@workspace/core/helpers/utils";
+import { CalendarDaysIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
+import { LmsSelect } from "@/components/LmsSelect";
 import type { ViewMode, FilterState } from "../types/schedule.types";
 import { SUBJECT_OPTIONS, STATUS_OPTIONS } from "../types/schedule.types";
 
@@ -14,133 +12,17 @@ interface ControlBarProps {
   onStatusChange: (value: string) => void;
 }
 
-// Minimal dropdown since existing dropdown-menu uses radix and needs careful usage
-function FilterDropdown({
-  options,
-  value,
-  onChange,
-  placeholder,
-}: {
-  options: { value: string; label: string }[];
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
-}) {
-  const [open, setOpen] = useState(false);
-  const selected = options.find((o) => o.value === value);
-
+export function ControlBar({ viewMode, onViewModeChange, filters, onSubjectChange, onStatusChange }: ControlBarProps) {
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((p) => !p)}
-        className="flex items-center gap-2 h-9 pl-3 pr-2 rounded-xl border border-border/60 bg-white text-sm font-medium text-foreground shadow-xs hover:bg-muted/50 hover:border-primary/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 select-none min-w-[160px]"
-      >
-        <span className="flex-1 text-left truncate">
-          {selected?.label ?? placeholder}
-        </span>
-        <ChevronDown
-          className={cn(
-            "size-4 text-muted-foreground shrink-0 transition-transform duration-200",
-            open && "rotate-180",
-          )}
-          strokeWidth={1.75}
-        />
-      </button>
-
-      {open && (
-        <>
-          {/* Backdrop */}
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute top-full mt-1.5 right-0 z-20 w-full min-w-[160px] bg-white border border-border/60 rounded-xl shadow-lg py-1 overflow-hidden">
-            {options.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => {
-                  onChange(opt.value);
-                  setOpen(false);
-                }}
-                className={cn(
-                  "flex items-center gap-2 w-full text-left px-3 py-2 text-sm transition-colors hover:bg-muted/60",
-                  value === opt.value
-                    ? "text-primary font-semibold"
-                    : "text-foreground",
-                )}
-              >
-                <span className="flex-1">{opt.label}</span>
-                {value === opt.value && (
-                  <Check
-                    className="size-3.5 text-primary shrink-0"
-                    strokeWidth={2.5}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-export function ControlBar({
-  viewMode,
-  onViewModeChange,
-  filters,
-  onSubjectChange,
-  onStatusChange,
-}: ControlBarProps) {
-  return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      {/* Left: View mode toggle */}
-      <div className="flex items-center gap-1 p-1 bg-muted/60 rounded-xl border border-border/40">
-        <button
-          type="button"
-          onClick={() => onViewModeChange("calendar")}
-          className={cn(
-            "flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 select-none",
-            viewMode === "calendar"
-              ? "bg-white text-primary shadow-sm border border-border/50"
-              : "text-muted-foreground hover:text-foreground",
-          )}
-        >
-          <CalendarDays className="size-4 shrink-0" strokeWidth={1.75} />
-          Lịch tháng
-        </button>
-        <button
-          type="button"
-          onClick={() => onViewModeChange("list")}
-          className={cn(
-            "flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 select-none",
-            viewMode === "list"
-              ? "bg-white text-primary shadow-sm border border-border/50"
-              : "text-muted-foreground hover:text-foreground",
-          )}
-        >
-          <List className="size-4 shrink-0" strokeWidth={1.75} />
-          Danh sách
-        </button>
+    <section className="flex flex-col gap-4 rounded-3xl border border-border bg-card p-4 shadow-soft lg:flex-row lg:items-end" aria-label="Bộ lọc lịch dạy">
+      <div className="mr-auto flex gap-1 self-start rounded-xl bg-muted p-1" role="group" aria-label="Kiểu hiển thị lịch dạy">
+        <Button variant="ghost" aria-pressed={viewMode === "calendar"} onClick={() => onViewModeChange("calendar")} className={viewMode === "calendar" ? "min-h-11 bg-card text-primary shadow-sm hover:bg-card" : "min-h-11 text-muted-foreground hover:bg-card"}><CalendarDaysIcon className="size-4" aria-hidden="true" />Lịch tháng</Button>
+        <Button variant="ghost" aria-pressed={viewMode === "list"} onClick={() => onViewModeChange("list")} className={viewMode === "list" ? "min-h-11 bg-card text-primary shadow-sm hover:bg-card" : "min-h-11 text-muted-foreground hover:bg-card"}><ListBulletIcon className="size-4" aria-hidden="true" />Danh sách</Button>
       </div>
-
-      {/* Right: Filters */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-medium text-muted-foreground hidden sm:inline">
-          Lọc:
-        </span>
-        <FilterDropdown
-          options={SUBJECT_OPTIONS}
-          value={filters.subject}
-          onChange={onSubjectChange}
-          placeholder="Tất cả môn"
-        />
-        <FilterDropdown
-          options={STATUS_OPTIONS}
-          value={filters.status}
-          onChange={onStatusChange}
-          placeholder="Tất cả trạng thái"
-        />
+      <div className="grid gap-3 sm:grid-cols-2 lg:w-[360px]">
+        <div className="space-y-1.5"><label htmlFor="tutor-schedule-subject" className="text-xs font-medium text-muted-foreground">Môn học</label><LmsSelect id="tutor-schedule-subject" options={SUBJECT_OPTIONS} value={filters.subject} onValueChange={onSubjectChange} /></div>
+        <div className="space-y-1.5"><label htmlFor="tutor-schedule-status" className="text-xs font-medium text-muted-foreground">Trạng thái</label><LmsSelect id="tutor-schedule-status" options={STATUS_OPTIONS} value={filters.status} onValueChange={onStatusChange} /></div>
       </div>
-    </div>
+    </section>
   );
 }

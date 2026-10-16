@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Warning } from "@phosphor-icons/react";
+import { ExclamationTriangleIcon as Warning } from "@heroicons/react/24/outline";
 import {
   Dialog,
   DialogContent,
@@ -80,7 +80,7 @@ export function CancelLearnerSessionDialog({
     >
       <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-extrabold text-slate-950">
+          <DialogTitle className="text-xl font-extrabold text-foreground">
             Hủy lịch học?
           </DialogTitle>
           <DialogDescription className="leading-6">
@@ -91,9 +91,9 @@ export function CancelLearnerSessionDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="rounded-xl border border-[#FADC76] bg-[#FFF9E8] p-3.5 text-[#6D4A13]">
+        <div className="rounded-xl border border-highlight bg-accent/15 p-3.5 text-warning">
           <div className="flex items-center gap-1.5 text-sm font-extrabold">
-            <Warning size={17} weight="fill" />
+            <Warning width={17} height={17} />
             Có thể mất học phí
           </div>
           <p className="mt-1 text-sm leading-6">
@@ -103,14 +103,14 @@ export function CancelLearnerSessionDialog({
         </div>
 
         <fieldset>
-          <legend className="mb-2 text-sm font-extrabold text-slate-900">
+          <legend className="mb-2 text-sm font-extrabold text-foreground">
             Chọn lý do hủy
           </legend>
           <div className="grid gap-2">
             {CANCELLATION_REASONS.map((reason) => (
               <label
                 key={reason.value}
-                className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-3 text-sm font-semibold transition-colors ${reasonCode === reason.value ? "border-[#280F91] bg-[#EEF2FF] text-[#280F91]" : "border-border text-slate-700 hover:bg-slate-50"}`}
+                className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-3 text-sm font-semibold transition-colors ${reasonCode === reason.value ? "border-primary bg-muted text-primary" : "border-border text-foreground hover:bg-muted"}`}
               >
                 <input
                   type="radio"
@@ -118,7 +118,7 @@ export function CancelLearnerSessionDialog({
                   value={reason.value}
                   checked={reasonCode === reason.value}
                   onChange={() => setReasonCode(reason.value)}
-                  className="size-4 accent-[#280F91]"
+                  className="size-4 accent-primary"
                 />
                 {reason.label}
               </label>
@@ -128,7 +128,7 @@ export function CancelLearnerSessionDialog({
 
         {reasonCode === "other" ? (
           <label className="block">
-            <span className="text-sm font-extrabold text-slate-900">
+            <span className="text-sm font-extrabold text-foreground">
               Nhập lý do khác
             </span>
             <textarea
@@ -137,9 +137,9 @@ export function CancelLearnerSessionDialog({
               maxLength={300}
               rows={3}
               placeholder="Mô tả ngắn lý do bạn không thể tham gia..."
-              className="mt-2 w-full resize-none rounded-xl border border-input px-3.5 py-3 text-sm outline-none placeholder:text-slate-400 focus:border-[#280F91] focus:ring-2 focus:ring-[#280F91]/20"
+              className="mt-2 w-full resize-none rounded-xl border border-input px-3.5 py-3 text-sm outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
-            <span className="mt-1 flex justify-between text-xs text-slate-500">
+            <span className="mt-1 flex justify-between text-xs text-muted-foreground">
               <span>Tối thiểu 5 ký tự</span>
               <span>{otherReason.length}/300</span>
             </span>
@@ -150,7 +150,7 @@ export function CancelLearnerSessionDialog({
           <button
             type="button"
             onClick={closeDialog}
-            className="h-10 rounded-xl border border-input px-4 text-sm font-bold text-slate-700 hover:bg-slate-50"
+            className="h-10 rounded-xl border border-input px-4 text-sm font-bold text-foreground hover:bg-muted"
           >
             Giữ lịch học
           </button>
@@ -158,7 +158,7 @@ export function CancelLearnerSessionDialog({
             type="button"
             disabled={!valid}
             onClick={submitCancellation}
-            className="h-10 rounded-xl bg-[#9B3E38] px-4 text-sm font-bold text-white hover:bg-[#82332E] disabled:cursor-not-allowed disabled:opacity-40"
+            className="h-10 rounded-xl bg-destructive px-4 text-sm font-bold text-white hover:bg-destructive disabled:cursor-not-allowed disabled:opacity-40"
           >
             Xác nhận hủy
           </button>

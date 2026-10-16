@@ -338,7 +338,7 @@ test("directory uses total and tab counts, not visible page length", () => {
   assert.doesNotMatch(html, /Dữ liệu minh họa/);
   cache.clear();
 });
-test("overview/sidebar share authorized detail; title only in sidebar and deferred modules gated", () => {
+test("overview/sidebar share authorized identity and deferred modules stay gated", () => {
   const cache = client();
   seedClass(cache);
   const overview = render(LearnerClassOverviewScreen, { classId: id }, cache),
@@ -347,8 +347,8 @@ test("overview/sidebar share authorized detail; title only in sidebar and deferr
       { workspace: { classId: id, section: "overview" } },
       cache,
     );
-  assert.match(overview, /Thông tin lớp|4 buổi/);
-  assert.doesNotMatch(overview, /<h1[^>]*>Lớp kiểm thử/);
+  assert.match(overview, /Nội dung &amp; lịch học|4.*buổi/);
+  assert.match(overview, /<h1[^>]*>Lớp kiểm thử/);
   assert.match(sidebar, /Lớp kiểm thử tích hợp/);
   assert.match(sidebar, /BeeWiseLMS-Logo-500x150.svg/);
   assert.match(sidebar, /chưa tích hợp/);
@@ -492,6 +492,72 @@ test("navigation keeps report/schedule and class chat outside workspace", () => 
   });
   assert.match(html, /\/lms\/learner\/classes/);
   assert.doesNotMatch(html, /\/lms\/tutor/);
+});
+test("class progress uses server total, handles missing plans and never invents completion", () => {
+  const { LearnerClassProgress } = require("../components/LearnerClassProgress.tsx");
+  const cache = client();
+  cache.setQueryData(keys.resource(actor, id, "learner-completed-count"), {items: [], total: 3, page: 1, pageSize: 1});
+  const html = render(LearnerClassProgress, {classId:id, planned:8}, cache);
+  assert.match(html, /aria-valuenow="38"/);
+  assert.match(html, /3 buổi hoàn thành trên 8 buổi dự kiến/);
+  const unplanned = render(LearnerClassProgress, {classId:id, planned:0}, cache);
+  assert.doesNotMatch(unplanned, /role="progressbar"/);
+  assert.match(unplanned, /Chưa có số buổi dự kiến/);
+  cache.clear();
+});
+test("sessions retain server pagination and contextual details without a monthly calendar", () => {
+  const { LearnerClassSessionsScreen } = require("../components/LearnerClassSessionsScreen.tsx");
+  const cache = client();
+  seedClass(cache);
+  const params = {page:1,pageSize:6,status:"all",...calendar.monthRange(calendar.vietnamDate(new Date().toISOString()).slice(0,7))};
+  cache.setQueryData(keys.resource(actor,id,"learner-sessions",params), {items:[session,{...session,id:foreign,status:"SCHEDULED"}],total:21,page:1,pageSize:6});
+  const html = render(LearnerClassSessionsScreen,{classId:id},cache);
+  assert.doesNotMatch(html, /Lịch tháng|grid-cols-7/);
+  assert.match(html, /21.*buổi trong tháng/);
+  assert.ok(html.indexOf("Đang diễn ra &amp; sắp tới") < html.indexOf('<h2 class="text-base font-extrabold">Đã hoàn thành'));
+  assert.equal((html.match(/>Xem buổi học</g)||[]).length,2);
+  if (process.env.LMS_QA_DIR) fs.writeFileSync(path.join(process.env.LMS_QA_DIR,"sessions.html"), html);
+  cache.clear();
+});
+test("sessions render metadata name and description when present and fallback to date when absent", () => {
+  const { LearnerClassSessionsScreen } = require("../components/LearnerClassSessionsScreen.tsx");
+  const cache = client();
+  seedClass(cache);
+  const params = {page:1,pageSize:6,status:"all",...calendar.monthRange(calendar.vietnamDate(new Date().toISOString()).slice(0,7))};
+  const namedSession = {
+    ...session,
+    id: foreign,
+    name: "Buổi 1: Giới thiệu lập trình",
+    description: "Nội dung tổng quan về biến, vòng lặp và cấu trúc dữ liệu.",
+    status: "SCHEDULED",
+  };
+  cache.setQueryData(keys.resource(actor,id,"learner-sessions",params), {items:[namedSession],total:1,page:1,pageSize:6});
+  const html = render(LearnerClassSessionsScreen,{classId:id},cache);
+  assert.match(html, /Buổi 1: Giới thiệu lập trình/);
+  assert.match(html, /Nội dung tổng quan về biến, vòng lặp và cấu trúc dữ liệu/);
+  cache.clear();
+});
+test("learning dashboard explicitly uses a coherent mock report without charts or live class targets", () => {
+  const { LearnerReportScreen } = require("../../learner-overview/components/LearnerReportScreen.tsx");
+  const { getLearnerDashboardMock } = require("../../learner-overview/services/learner-dashboard.mock.service.ts");
+  const data = getLearnerDashboardMock();
+  assert.equal(data.summary.completed, data.courses.reduce((sum,item) => sum+item.completed,0));
+  assert.equal(data.summary.total,40);
+  assert.equal(data.summary.pending,3);
+  assert.equal(data.summary.average,8);
+  assert.ok(data.assignments.every(item => data.courses.some(course => course.id===item.courseId)));
+  assert.ok(data.sessions.every(item => data.courses.some(course => course.id===item.courseId)));
+  const html = render(LearnerReportScreen);
+  assert.match(html,/Dữ liệu minh họa/);
+  assert.match(html,/Minh Anh Nguyễn/);
+  assert.match(html,/26\/40/);
+  assert.match(html,/Lớp đang theo học/);
+  assert.match(html,/Bài tập của bạn/);
+  assert.match(html,/Hồ sơ và lịch học/);
+  assert.match(html,/Nhận xét từ gia sư/);
+  assert.doesNotMatch(html,/Thời gian học tập|Lịch tháng|grid-cols-7.*grid-cols-7|<canvas/);
+  assert.doesNotMatch(html,/href="[^"]*classes\/(math|english|physics)/);
+  if(process.env.LMS_QA_DIR) fs.writeFileSync(path.join(process.env.LMS_QA_DIR,"dashboard.html"),html);
 });
 after(() => {
   Module._load = originalLoad;

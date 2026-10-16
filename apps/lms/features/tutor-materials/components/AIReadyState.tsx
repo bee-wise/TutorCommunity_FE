@@ -17,7 +17,7 @@ export function AIReadyState({ material, readOnly, onPublish }: {
         {published ? "Đã xuất bản cho cả lớp" : "Đã lưu bản nháp"}
       </span>
       <div className="space-y-3">
-        <h2 id="ai-ready-title" className="text-2xl leading-[1.25] text-primary [overflow-wrap:anywhere]">{material.title}</h2>
+        <h2 id="ai-ready-title" className="text-2xl leading-[1.25] text-foreground [overflow-wrap:anywhere]">{material.title}</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
           Mở bản xem trước để đọc và chỉnh sửa nội dung trước khi xuất bản.
         </p>

@@ -1,7 +1,9 @@
 "use client";
 
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@workspace/ui/components/ui/collapsible";
+
 import { useState } from "react";
-import { CaretDown, FileText } from "@phosphor-icons/react";
+import { ChevronDownIcon as CaretDown, DocumentTextIcon as FileText } from "@heroicons/react/24/outline";
 import { EARNING_SESSIONS } from "../data/earnings.mock";
 import { REPORT_LABELS, type EarningsReport, type ReportStatus } from "../types/earnings.types";
 import { formatDateTime } from "../utils/earnings.utils";
@@ -17,7 +19,7 @@ export function EarningsReportsPanel({ reports }: { reports: EarningsReport[] })
   return (
     <section aria-labelledby="reports-title" className="space-y-4">
       <div className={`${panelClass} flex flex-col justify-between gap-4 p-4 sm:flex-row sm:items-center sm:p-5`}>
-        <div><h2 id="reports-title" className="font-nunito text-lg font-extrabold text-primary">Đơn báo cáo</h2><p className="mt-1 text-sm text-muted-foreground">{visibleReports.length} đơn · Theo dõi nội dung và phản hồi từ admin.</p></div>
+        <div><h2 id="reports-title" className="font-lms text-lg font-extrabold text-foreground">Đơn báo cáo</h2><p className="mt-1 text-sm text-muted-foreground">{visibleReports.length} đơn · Theo dõi nội dung và phản hồi từ admin.</p></div>
         <div className="grid gap-2 sm:w-56"><label htmlFor="earnings-report-status" className="text-xs font-bold text-muted-foreground">Trạng thái báo cáo</label><EarningsSelect id="earnings-report-status" options={OPTIONS} value={status} onValueChange={(value) => {
           if (value === "all" || value === "received" || value === "processing" || value === "resolved") setStatus(value);
         }} /></div>
@@ -29,17 +31,18 @@ export function EarningsReportsPanel({ reports }: { reports: EarningsReport[] })
           return (
             <article key={report.id} className={`${panelClass} p-4 sm:p-5`}>
               <div className="flex flex-wrap items-center justify-between gap-3"><span className="text-xs font-bold text-muted-foreground">{report.reportCode}</span><EarningsReportStatusBadge status={report.status} /></div>
-              <h3 className="mt-4 font-nunito text-lg font-extrabold leading-relaxed text-primary">{report.title}</h3>
+              <h3 className="mt-4 font-lms text-lg font-extrabold leading-relaxed text-foreground">{report.title}</h3>
               {session && <p className="mt-1 text-sm text-foreground">{session.sessionCode} · {session.learnerName}</p>}
               <p className="mt-2 text-xs text-muted-foreground">Tạo lúc {formatDateTime(report.createdAt)}</p>
-              <details className="group mt-4 overflow-hidden rounded-2xl border border-border/80 bg-muted/20 transition-all hover:border-primary/30">
-                <summary className="flex cursor-pointer list-none items-center justify-between px-3.5 py-2.5 text-xs font-bold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+              <Collapsible className="group mt-4 overflow-hidden rounded-2xl border border-border/80 bg-muted/20 transition-all hover:border-primary/30">
+<CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between px-3.5 py-2.5 text-xs font-bold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
                   <span className="flex items-center gap-2">
-                    <FileText size={15} weight="bold" />
+                    <FileText width={15} height={15} />
                     Xem nội dung đơn
                   </span>
-                  <CaretDown size={15} weight="bold" className="text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
-                </summary>
+                  <CaretDown width={15} height={15} className="text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                </CollapsibleTrigger>
+<CollapsibleContent>
                 <div className="border-t border-border/60 bg-card/60 p-4 pt-3">
                   <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground">{report.description}</p>
                   {report.adminResponse ? (
@@ -51,7 +54,8 @@ export function EarningsReportsPanel({ reports }: { reports: EarningsReport[] })
                     <p className="mt-3 text-xs text-muted-foreground">Chưa có phản hồi từ admin.</p>
                   )}
                 </div>
-              </details>
+              </CollapsibleContent>
+</Collapsible>
             </article>
           );
         })}

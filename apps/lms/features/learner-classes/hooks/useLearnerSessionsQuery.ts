@@ -14,7 +14,7 @@ import { useLearnerClassQuery } from "./useLearnerClassesQuery";
 
 export function useLearnerSessionsQuery(classId: string) {
   const overview = useLearnerClassQuery(classId);
-  const [view, setView] = useState<"list" | "calendar" | "planned">("list");
+  const [view, setView] = useState<"list" | "planned">("list");
   const [status, setStatus] = useState<LearnerSessionFilters["status"]>("all");
   const [month, setMonth] = useState(() =>
     vietnamDate(new Date().toISOString()).slice(0, 7),
@@ -23,7 +23,7 @@ export function useLearnerSessionsQuery(classId: string) {
   const range = monthRange(month);
   const params = {
     page,
-    pageSize: view === "calendar" ? 100 : 6,
+    pageSize: 6,
     status,
     ...range,
   };

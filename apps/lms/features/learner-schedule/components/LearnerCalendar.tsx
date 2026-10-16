@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { ChevronLeftIcon as CaretLeft, ChevronRightIcon as CaretRight } from "@heroicons/react/24/outline";
 import { cn } from "@workspace/core/helpers/utils";
 import { LEARNER_TODAY } from "../data/learner-schedule.mock";
 import type { LearnerSession } from "../types/learner-schedule.types";
@@ -19,9 +19,9 @@ interface LearnerCalendarProps {
 }
 
 const STATUS_STYLE = {
-  UPCOMING: "border-[#FFC500]/45 bg-[#FFC500]/15 text-[#905B0F]",
-  COMPLETED: "border-[#447353]/25 bg-[#447353]/10 text-[#447353]",
-  CANCELED: "border-[#E1ABA7]/60 bg-[#E1ABA7]/18 text-[#9B5E5A]",
+  UPCOMING: "border-accent/45 bg-accent/15 text-warning",
+  COMPLETED: "border-secondary/25 bg-secondary/10 text-foreground",
+  CANCELED: "border-error/60 bg-error/18 text-destructive",
 } as const;
 
 export function LearnerCalendar({ sessions, onSessionClick }: LearnerCalendarProps) {
@@ -38,15 +38,15 @@ export function LearnerCalendar({ sessions, onSessionClick }: LearnerCalendarPro
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm" aria-label="Lịch học theo tháng">
+    <section className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft" aria-label="Lịch học theo tháng">
       <div className="flex items-center justify-between border-b border-border px-4 py-4 sm:px-5">
-        <h2 className="font-nunito text-base font-extrabold capitalize">
+        <h2 className="font-lms text-base font-extrabold capitalize">
           {`Tháng ${view.month + 1} năm ${view.year}`}
         </h2>
         <div className="flex items-center gap-1">
-          <button type="button" onClick={() => changeMonth(-1)} aria-label="Tháng trước" className="grid size-8 place-items-center rounded-lg border border-input text-muted-foreground hover:bg-muted"><CaretLeft size={16} weight="bold" /></button>
-          <button type="button" onClick={() => setView({ year: 2026, month: 7 })} className="h-8 rounded-lg border border-input px-3 text-xs font-bold text-[#280F91] hover:bg-[#280F91]/5">Hôm nay</button>
-          <button type="button" onClick={() => changeMonth(1)} aria-label="Tháng sau" className="grid size-8 place-items-center rounded-lg border border-input text-muted-foreground hover:bg-muted"><CaretRight size={16} weight="bold" /></button>
+          <button type="button" onClick={() => changeMonth(-1)} aria-label="Tháng trước" className="grid size-8 place-items-center rounded-lg border border-input text-muted-foreground hover:bg-muted"><CaretLeft width={16} height={16} /></button>
+          <button type="button" onClick={() => setView({ year: 2026, month: 7 })} className="h-8 rounded-lg border border-input px-3 text-xs font-bold text-primary hover:bg-primary/5">Hôm nay</button>
+          <button type="button" onClick={() => changeMonth(1)} aria-label="Tháng sau" className="grid size-8 place-items-center rounded-lg border border-input text-muted-foreground hover:bg-muted"><CaretRight width={16} height={16} /></button>
         </div>
       </div>
 
@@ -63,10 +63,10 @@ export function LearnerCalendar({ sessions, onSessionClick }: LearnerCalendarPro
           const isToday = date === LEARNER_TODAY;
           const isWeekend = index % 7 >= 5;
           return (
-            <div key={`${view.year}-${view.month}-${index}`} className={cn("min-h-20 border-b border-r border-border/60 p-1 sm:min-h-28 sm:p-1.5", index % 7 === 6 && "border-r-0", !inMonth && "bg-muted/20", isWeekend && inMonth && "bg-[#F8FAFC]")}>
+            <div key={`${view.year}-${view.month}-${index}`} className={cn("min-h-20 border-b border-r border-border/60 p-1 sm:min-h-28 sm:p-1.5", index % 7 === 6 && "border-r-0", !inMonth && "bg-muted/20", isWeekend && inMonth && "bg-muted")}>
               {inMonth && (
                 <>
-                  <div className="mb-1 flex justify-end"><span className={cn("grid size-6 place-items-center rounded-full text-xs font-bold", isToday ? "bg-[#280F91] text-white" : "text-foreground")}>{day}</span></div>
+                  <div className="mb-1 flex justify-end"><span className={cn("grid size-6 place-items-center rounded-full text-xs font-bold", isToday ? "bg-primary text-white" : "text-foreground")}>{day}</span></div>
                   <div className="space-y-1">
                     {daySessions.slice(0, 2).map((session) => (
                       <button key={session.id} type="button" onClick={() => onSessionClick(session)} className={cn("w-full truncate rounded-md border px-1 py-1 text-left text-[9px] font-bold transition-transform active:scale-[0.98] sm:rounded-lg sm:px-2 sm:text-[11px]", STATUS_STYLE[session.status])} title={`${session.startTime} - ${session.subject}`}>

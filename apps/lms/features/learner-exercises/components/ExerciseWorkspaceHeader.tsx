@@ -1,9 +1,28 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowLeft, Info } from "@phosphor-icons/react";
+import { ArrowLeftIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
+import { Popover } from "radix-ui";
+import { Button } from "@workspace/ui/components/ui/button";
 import type { LearnerExercise } from "../types/learner-exercises.types";
 import { formatExerciseDate, getExerciseSessionHref } from "../utils/learner-exercises.utils";
 import { ExerciseBadges } from "./ExerciseBadges";
 
 export function ExerciseWorkspaceHeader({ exercise, helperText }: { exercise: LearnerExercise; helperText: string }) {
-  return <header className="relative flex h-16 shrink-0 items-center gap-3 rounded-2xl border border-border bg-white px-3 shadow-sm sm:px-4"><Link href={getExerciseSessionHref(exercise)} className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl text-[#280F91] hover:bg-[#EEF2FF]" aria-label="Quay lại bài tập của buổi học"><ArrowLeft size={19} weight="bold" /></Link><div className="min-w-0 flex-1"><h1 className="truncate text-sm font-extrabold text-slate-950 sm:text-base">{exercise.title}</h1><p className="mt-0.5 truncate text-xs font-semibold text-slate-500">{exercise.className} | {exercise.lessonTopic}</p></div><div className="hidden shrink-0 lg:block"><ExerciseBadges source={exercise.source} status={exercise.status} difficulty={exercise.difficulty} /></div><details className="group relative shrink-0 [&>summary::-webkit-details-marker]:hidden"><summary className="grid size-10 cursor-pointer list-none place-items-center rounded-xl border border-border text-slate-600 hover:bg-slate-50 hover:text-[#280F91]" aria-label="Xem thông tin bài tập"><Info size={19} weight="bold" /></summary><div className="absolute right-0 top-12 z-20 w-[min(340px,calc(100vw-2rem))] rounded-2xl border border-border bg-white p-4 shadow-xl shadow-[#280F91]/10"><ExerciseBadges source={exercise.source} status={exercise.status} difficulty={exercise.difficulty} /><h2 className="mt-3 text-sm font-extrabold text-slate-950">Thông tin bài tập</h2><p className="mt-1.5 text-sm leading-6 text-slate-600">{exercise.description}</p><dl className="mt-3 grid gap-2 text-xs"><div><dt className="text-slate-500">Gia sư</dt><dd className="mt-0.5 font-bold text-slate-800">{exercise.tutorName}</dd></div><div><dt className="text-slate-500">Hạn hoàn thành</dt><dd className="mt-0.5 font-bold text-slate-800">{formatExerciseDate(exercise.dueAt)}</dd></div><div><dt className="text-slate-500">Thời gian dự kiến</dt><dd className="mt-0.5 font-bold text-slate-800">{exercise.estimatedMinutes} phút</dd></div></dl><p className="mt-3 rounded-xl bg-[#FFF9E8] px-3 py-2.5 text-xs font-semibold leading-5 text-[#6D4A13]">{helperText}</p></div></details></header>;
+  return (
+    <header className="relative flex h-16 shrink-0 items-center gap-3 rounded-2xl border border-border bg-card px-3 shadow-sm sm:px-4">
+      <Button asChild variant="ghost" size="icon" className="size-11 shrink-0 text-primary hover:bg-muted"><Link href={getExerciseSessionHref(exercise)} aria-label="Quay lại bài tập của buổi học"><ArrowLeftIcon className="size-[18px]" aria-hidden="true" /></Link></Button>
+      <div className="min-w-0 flex-1"><h1 className="truncate text-sm font-extrabold text-foreground sm:text-base">{exercise.title}</h1><p className="mt-0.5 truncate text-xs font-medium text-muted-foreground">{exercise.className} · {exercise.lessonTopic}</p></div>
+      <div className="hidden shrink-0 lg:block"><ExerciseBadges source={exercise.source} status={exercise.status} difficulty={exercise.difficulty} /></div>
+      <Popover.Root>
+        <Popover.Trigger asChild><Button variant="outline" size="icon" className="size-11 shrink-0" aria-label="Xem thông tin bài tập"><InformationCircleIcon className="size-[18px]" aria-hidden="true" /></Button></Popover.Trigger>
+        <Popover.Portal><Popover.Content data-slot="popover-content" align="end" sideOffset={8} collisionPadding={16} className="z-50 w-[min(340px,calc(100vw-2rem))] rounded-3xl border border-border bg-card p-5 shadow-soft">
+          <ExerciseBadges source={exercise.source} status={exercise.status} difficulty={exercise.difficulty} />
+          <h2 className="mt-4 text-sm font-extrabold text-foreground">Thông tin bài tập</h2><p className="mt-1.5 text-sm leading-6 text-muted-foreground">{exercise.description}</p>
+          <dl className="mt-4 grid gap-3 text-xs"><div><dt className="text-muted-foreground">Gia sư</dt><dd className="mt-1 font-bold">{exercise.tutorName}</dd></div><div><dt className="text-muted-foreground">Hạn hoàn thành</dt><dd className="mt-1 font-bold">{formatExerciseDate(exercise.dueAt)}</dd></div><div><dt className="text-muted-foreground">Thời gian dự kiến</dt><dd className="mt-1 font-bold">{exercise.estimatedMinutes} phút</dd></div></dl>
+          <p className="mt-4 rounded-xl bg-accent/15 px-3 py-2.5 text-xs font-medium leading-5 text-warning">{helperText}</p>
+        </Popover.Content></Popover.Portal>
+      </Popover.Root>
+    </header>
+  );
 }

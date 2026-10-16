@@ -28,7 +28,7 @@ export function LearnerAdmissionTrial({
     <section className="space-y-4">
       {late && (
         <div className="space-y-3">
-          <h3 className="font-bold text-primary">Bạn có muốn học thử?</h3>
+          <h3 className="font-bold text-foreground">Bạn có muốn học thử?</h3>
           <p className="text-sm text-muted-foreground">
             Học thử là tùy chọn với học viên vào muộn. Không thể đổi lựa chọn
             sau khi phát sinh checkout/thanh toán/đối soát.
@@ -58,7 +58,7 @@ export function LearnerAdmissionTrial({
       )}
       {(!late || data.trialRequested) && (
         <div className="space-y-3">
-          <h3 className="font-bold text-primary">Lịch học thử</h3>
+          <h3 className="font-bold text-foreground">Lịch học thử</h3>
           <p className="text-sm">
             {date(data.trialStartAt)} - {date(data.trialEndAt)} (giờ Việt Nam)
           </p>

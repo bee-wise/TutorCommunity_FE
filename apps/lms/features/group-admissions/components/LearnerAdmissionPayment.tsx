@@ -33,7 +33,7 @@ export function LearnerAdmissionPayment({
     (Boolean(data.referredByTutorId) && !data.trialRequested);
   return (
     <section className="space-y-4 border-t border-border pt-5">
-      <h3 className="font-bold text-primary">Thanh toán học phí</h3>
+      <h3 className="font-bold text-foreground">Thanh toán học phí</h3>
       {!terminal && ready && (
         <>
           <p className="text-sm text-muted-foreground">
@@ -79,7 +79,7 @@ export function LearnerAdmissionPayment({
       )}
       {payment && (
         <div className="space-y-3 rounded-2xl border border-border p-4">
-          <p className="font-nunito text-xl font-extrabold text-primary">
+          <p className="font-lms text-xl font-extrabold text-primary">
             {learnerMoney(payment.amount)}
           </p>
           <p className="text-sm font-bold">

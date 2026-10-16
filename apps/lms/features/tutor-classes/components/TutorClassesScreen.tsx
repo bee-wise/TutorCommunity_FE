@@ -53,7 +53,7 @@ export function TutorClassesScreen() {
         </div>
         {library.loading ? <ClassesSkeleton resultsOnly /> : library.error ? <ClassQueryErrorState error={library.error} onRetry={library.retry} /> : !library.cards.length ? (
           <div className={`${classPanel} space-y-3 py-10 text-center`}>
-            <h3 className="font-nunito text-lg font-extrabold text-primary">
+            <h3 className="font-lms text-lg font-extrabold text-foreground">
               {library.outOfRange ? "Trang hiện tại không còn lớp học" : "Không tìm thấy lớp phù hợp"}
             </h3>
             <p className="text-sm text-muted-foreground">

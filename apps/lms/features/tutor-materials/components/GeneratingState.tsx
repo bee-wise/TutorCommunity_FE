@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import beeWiseAiIcon from "../../../../sale/public/icons/BeeWiseAI-icon.svg";
-import styles from "./GeneratingState.module.css";
 
 const TIPS = [
   "Mẹo: Bạn có thể chỉnh sửa nội dung bài tóm tắt nếu AI tóm tắt thiếu ý.",
@@ -69,21 +68,21 @@ export function GeneratingState({ compact = false, startedAt }: { compact?: bool
             className="mb-5 h-auto w-48 sm:w-60"
           />
 
-          <h2 className={`${styles.animatedTitle} mb-2 font-nunito text-xl font-extrabold leading-[1.25] sm:text-2xl`}>
+          <h2 className="mb-2 font-lms text-xl font-extrabold leading-[1.25] sm:text-2xl text-foreground">
             Đang phân tích bản ghi Zoom...
           </h2>
           <p className="mx-auto mb-8 max-w-sm text-sm leading-6 text-muted-foreground sm:text-base">
             BeeWise AI đang trích xuất ý chính và tạo bài tập từ nội dung buổi học.
           </p>
 
-          <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-[#e8ebf0]" aria-hidden="true">
+          <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-muted" aria-hidden="true">
             <div
               className="h-full rounded-full bg-primary transition-[width] duration-100 ease-linear motion-reduce:transition-none"
               style={{ width: `${progress}%` }}
             />
           </div>
 
-          <p className="min-h-10 text-sm font-medium leading-5 text-secondary sm:min-h-6" aria-live="off">
+          <p className="min-h-10 text-sm font-medium leading-5 text-muted-foreground sm:min-h-6" aria-live="off">
             {TIPS[tipIndex]}
           </p>
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Thanh tiến trình là minh họa. Bạn có thể đóng modal để AI tiếp tục chạy nền trong tab này.</p>

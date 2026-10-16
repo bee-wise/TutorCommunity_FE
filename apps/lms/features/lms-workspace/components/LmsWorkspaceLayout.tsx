@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { DashboardLayout } from "@workspace/ui/components/layout/DashboardLayout";
+import { LmsDashboardShell } from "./LmsDashboardShell";
 import { ClassWorkspaceSidebar } from "@/features/tutor-classes/components/ClassWorkspaceSidebar";
 import { ClassWorkspaceBreadcrumb } from "@/features/tutor-classes/components/ClassWorkspaceBreadcrumb";
 import { getClassWorkspaceRoute } from "@/features/tutor-classes/utils/class-workspace.utils";
@@ -39,7 +39,7 @@ export function LmsWorkspaceLayout({ children }: { children: ReactNode }) {
   const learnerWorkspace =
     role === "LEARNER" ? getLearnerWorkspaceRoute(pathname) : null;
   return (
-    <DashboardLayout
+    <LmsDashboardShell pathname={pathname} role={role}
       sidebar={
         tutorWorkspace ? (
           <ClassWorkspaceSidebar workspace={tutorWorkspace} />
@@ -59,6 +59,6 @@ export function LmsWorkspaceLayout({ children }: { children: ReactNode }) {
     >
       <AIJobNavigationGuard />
       {children}
-    </DashboardLayout>
+    </LmsDashboardShell>
   );
 }

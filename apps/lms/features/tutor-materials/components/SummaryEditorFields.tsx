@@ -12,7 +12,7 @@ function ConceptFields({ index, onRemove }: { index: number; onRemove: () => voi
 export function SummaryEditorFields() {
   const { control } = useFormContext<AIAnalyzeResponse>();
   const concepts = useFieldArray({ control, name: "summary.key_concepts" });
-  return <section className="space-y-5"><h2 className="text-xl text-primary">Tóm tắt lý thuyết</h2><MaterialTextField name="summary.title" label="Tiêu đề tài liệu" /><MaterialTextField name="summary.overview" label="Tổng quan" multiline />
+  return <section className="space-y-5"><h2 className="text-xl text-foreground">Tóm tắt lý thuyết</h2><MaterialTextField name="summary.title" label="Tiêu đề tài liệu" /><MaterialTextField name="summary.overview" label="Tổng quan" multiline />
     <label className="grid gap-2 text-sm font-bold">Kiến thức cần nhớ (mỗi dòng một ý)<Controller control={control} name="summary.prerequisites" render={({ field }) => <textarea rows={3} className={inputClass} value={field.value.join("\n")} onBlur={field.onBlur} ref={field.ref} onChange={(event) => field.onChange(event.target.value.split("\n"))} />} /></label>
     {concepts.fields.map((field, index) => <ConceptFields key={field.id} index={index} onRemove={() => concepts.remove(index)} />)}<button type="button" onClick={() => concepts.append({ name: "", explanation: "", formulas: [] })} className={outlineActionClass}>Thêm ý chính</button>
   </section>;

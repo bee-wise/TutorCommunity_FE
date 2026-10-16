@@ -17,16 +17,29 @@ import type { ClassSessionDto } from "@workspace/core/lms-classes/schemas";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
 import { tutorClassQueryKeys } from "../query-keys";
 import { getTutorClassDetail } from "../services/classes.service";
-import { calculateSessionEndAt } from "../utils/session-schedule.utils";
+import {
+  calculateSessionEndAt,
+  mapSchedulerSlots,
+  computeSchedulerSignature,
+  computeIdempotencySignature,
+} from "../utils/session-schedule.utils";
 import { useTutorClassAccess } from "./useTutorClassAccess";
 const row = z.object({
+  name: z.string().max(200, "Tên buổi học tối đa 200 ký tự."),
+  description: z.string().max(2000, "Mô tả buổi học tối đa 2.000 ký tự."),
   start: z.string().min(1),
   meeting: z.string(),
   planned: z.string(),
 });
 const formSchema = z.object({ slots: z.array(row).min(1).max(100) });
 type Values = z.infer<typeof formSchema>;
-const empty = { start: "", meeting: "", planned: "" };
+const empty = {
+  name: "",
+  description: "",
+  start: "",
+  meeting: "",
+  planned: "",
+};
 const vietnamNow = () => utcToVietnamInput(new Date().toISOString());
 
 export function useSessionScheduler(
@@ -42,7 +55,10 @@ export function useSessionScheduler(
   const access = useTutorClassAccess();
   const [minimumDate, setMinimumDate] = useState(vietnamNow);
   useEffect(() => {
-    const timer = window.setInterval(() => setMinimumDate(vietnamNow()), 30_000);
+    const timer = window.setInterval(
+      () => setMinimumDate(vietnamNow()),
+      30_000,
+    );
     return () => window.clearInterval(timer);
   }, []);
   const form = useForm<Values>({
@@ -51,6 +67,8 @@ export function useSessionScheduler(
       slots: [
         session
           ? {
+              name: "",
+              description: "",
               start: utcToVietnamInput(session.startAt),
               meeting: session.locationOrMeetingInfo ?? "",
               planned: session.plannedScheduleId ?? "",
@@ -94,16 +112,19 @@ export function useSessionScheduler(
     create.isPending ||
     createPlan.isPending ||
     reschedule.isPending;
-  const signature = JSON.stringify({
-    slots: values.slots,
-    durationMinutes: sessionDurationMinutes,
-  });
+  const signature = computeSchedulerSignature(
+    values.slots,
+    sessionDurationMinutes,
+  );
   const remainingSlots = Math.max(0, numberOfSessions - sessionCount);
 
   function derivedEndAt(start: string) {
     if (!start) return null;
     try {
-      return calculateSessionEndAt(vietnamTimeToUtc(start), sessionDurationMinutes);
+      return calculateSessionEndAt(
+        vietnamTimeToUtc(start),
+        sessionDurationMinutes,
+      );
     } catch {
       return null;
     }
@@ -118,63 +139,55 @@ export function useSessionScheduler(
       staleTime: 0,
     });
     if (!session) {
-      const available = Math.max(0, latest.numberOfSessions - latest.sessionCount);
+      const available = Math.max(
+        0,
+        latest.numberOfSessions - latest.sessionCount,
+      );
       if (requested > available)
-        throw new Error(`Lớp chỉ còn ${available} buổi có thể tạo. Vui lòng kiểm tra lại.`);
+        throw new Error(
+          `Lớp chỉ còn ${available} buổi có thể tạo. Vui lòng kiểm tra lại.`,
+        );
     }
     return latest.sessionDurationMinutes;
   }
 
   function slots(v: Values, durationMinutes: number) {
-    return v.slots.map((s) => {
-      const startAt = vietnamTimeToUtc(s.start);
-      const endAt = calculateSessionEndAt(startAt, durationMinutes);
-      if (Date.parse(startAt) < Date.now())
-        throw new Error("Giờ bắt đầu không được ở trong quá khứ.");
-      if (Date.parse(endAt) < Date.now())
-        throw new Error("Giờ kết thúc không được ở trong quá khứ.");
-      if (Date.parse(endAt) <= Date.parse(startAt))
-        throw new Error("Giờ kết thúc phải sau giờ bắt đầu.");
-      if (group && !s.planned && !session)
-        throw new Error("Chọn hoặc tạo lịch dự kiến cho từng buổi GROUP.");
-      return {
-        startAt,
-        endAt,
-        locationOrMeetingInfo: s.meeting || null,
-        plannedScheduleId: s.planned || null,
-      };
+    return mapSchedulerSlots(v.slots, durationMinutes, {
+      isReschedule: Boolean(session),
+      group,
     });
   }
-  const check = form.handleSubmit(async (v) => {
-    setCheckedSignature("");
-    setCheckingCapacity(true);
-    try {
-      const durationMinutes = await ensureCapacity(v.slots.length);
-      const input = slots(v, durationMinutes);
-      await preview.mutateAsync(input);
-      setCheckedSignature(JSON.stringify({
-        slots: v.slots,
-        durationMinutes,
-      }));
-    } catch (e) {
-      toast.error("Chưa xem trước được lịch", {
-        description:
-          e instanceof Error && !("statusCode" in e)
-            ? e.message
-            : "Kiểm tra quyền, trạng thái lớp và lịch dự kiến.",
-      });
-    } finally {
-      setCheckingCapacity(false);
-    }
-  }, () => toast.error("Chọn giờ bắt đầu cho từng buổi."));
+  const check = form.handleSubmit(
+    async (v) => {
+      setCheckedSignature("");
+      setCheckingCapacity(true);
+      try {
+        const durationMinutes = await ensureCapacity(v.slots.length);
+        const input = slots(v, durationMinutes);
+        await preview.mutateAsync(input);
+        setCheckedSignature(
+          computeSchedulerSignature(v.slots, durationMinutes),
+        );
+      } catch (e) {
+        toast.error("Chưa xem trước được lịch", {
+          description:
+            e instanceof Error && !("statusCode" in e)
+              ? e.message
+              : "Kiểm tra quyền, trạng thái lớp và lịch dự kiến.",
+        });
+      } finally {
+        setCheckingCapacity(false);
+      }
+    },
+    () => toast.error("Chọn giờ bắt đầu cho từng buổi."),
+  );
   const submit = (event?: BaseSyntheticEvent) =>
     form.handleSubmit(async (v) => {
       if (
-        busy || preview.isError ||
-        checkedSignature !== JSON.stringify({
-          slots: v.slots,
-          durationMinutes: sessionDurationMinutes,
-        }) ||
+        busy ||
+        preview.isError ||
+        checkedSignature !==
+          computeSchedulerSignature(v.slots, sessionDurationMinutes) ||
         preview.data?.conflicts.length
       )
         return;
@@ -182,7 +195,9 @@ export function useSessionScheduler(
       try {
         const durationMinutes = await ensureCapacity(v.slots.length);
         if (durationMinutes !== sessionDurationMinutes)
-          throw new Error("Thời lượng buổi học đã thay đổi. Xem trước lại lịch.");
+          throw new Error(
+            "Thời lượng buổi học đã thay đổi. Xem trước lại lịch.",
+          );
         const input = slots(v, durationMinutes);
         if (session) {
           const result = await reschedule.mutateAsync(input[0]);
@@ -192,12 +207,13 @@ export function useSessionScheduler(
             return;
           }
         } else {
+          const inputSignature = computeIdempotencySignature(input);
           if (
             !intent.current ||
-            intent.current.signature !== JSON.stringify(input)
+            intent.current.signature !== inputSignature
           )
             intent.current = {
-              signature: JSON.stringify(input),
+              signature: inputSignature,
               key: crypto.randomUUID(),
             };
           const result = await create.mutateAsync({
@@ -248,7 +264,8 @@ export function useSessionScheduler(
       toast.success("Đã tạo lịch dự kiến");
     } catch (e) {
       toast.error("Chưa tạo được lịch dự kiến", {
-        description: e instanceof Error && !("statusCode" in e) ? e.message : undefined,
+        description:
+          e instanceof Error && !("statusCode" in e) ? e.message : undefined,
       });
     } finally {
       setCheckingCapacity(false);

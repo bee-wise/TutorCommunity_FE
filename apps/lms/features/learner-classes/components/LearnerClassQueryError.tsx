@@ -18,7 +18,7 @@ export function LearnerClassQueryError({
       role="alert"
       className="space-y-4 rounded-3xl border border-border bg-card p-5 shadow-soft"
     >
-      <h2 className="font-nunito text-lg font-extrabold text-primary">
+      <h2 className="font-lms text-lg font-extrabold text-foreground">
         {statusCode === 401
           ? "Bạn cần đăng nhập"
           : statusCode === 403

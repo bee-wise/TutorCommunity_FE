@@ -21,7 +21,7 @@ export function LearnerAdmissionScreen({
   return (
     <main className="mx-auto max-w-4xl space-y-5 p-4 sm:p-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-nunito text-2xl font-extrabold text-primary">
+        <h1 className="font-lms text-2xl font-extrabold text-foreground">
           Đăng ký lớp nhóm
         </h1>
         <Button asChild variant="outline" className={learnerAction}>
@@ -43,7 +43,7 @@ function RecruitingCard({ data }: { data: GroupDto }) {
       <p className="text-xs font-bold text-muted-foreground">
         {data.code ?? data.id.slice(0, 8)}
       </p>
-      <h2 className="font-nunito text-lg font-extrabold leading-snug text-primary">
+      <h2 className="font-lms text-lg font-extrabold leading-snug text-foreground">
         {data.title ?? "Chưa có tên lớp"}
       </h2>
       <p className="text-sm text-muted-foreground">
@@ -76,7 +76,7 @@ export function LearnerGroupAdmissionsScreen() {
     { query, page, setPage, form } = controller;
   return (
     <main className="mx-auto max-w-[1400px] space-y-5 p-4 sm:p-6">
-      <h1 className="font-nunito text-2xl font-extrabold text-primary">
+      <h1 className="font-lms text-2xl font-extrabold text-foreground">
         Lớp nhóm tuyển sinh
       </h1>
       <form

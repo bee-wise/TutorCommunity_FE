@@ -101,7 +101,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           </div>
 
           <div className="min-w-0 flex-1">
-            <h1 className="font-nunito truncate text-base font-extrabold text-foreground">
+            <h1 className="font-lms truncate text-base font-extrabold text-foreground">
               {peer.name}
             </h1>
             <p className="truncate text-xs text-muted-foreground">
@@ -116,7 +116,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
             className={`hidden shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-bold sm:block ${
               isSupport
                 ? "border-secondary/20 bg-secondary/10 text-secondary"
-                : STAGE_COLORS[room.connectionStage] ?? "bg-gray-100 text-gray-700 border-gray-200"
+                : STAGE_COLORS[room.connectionStage] ?? "bg-muted text-foreground border-border"
             }`}
           >
             {isSupport ? "Đang hỗ trợ" : STAGE_LABELS[room.connectionStage]}

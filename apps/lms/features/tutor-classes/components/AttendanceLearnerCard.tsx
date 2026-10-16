@@ -23,7 +23,7 @@ export function AttendanceLearnerCard({ learner, index, form, editable }: Attend
   const pending = form.formState.isSubmitting;
 
   return (
-    <article aria-labelledby={`${id}-name`} className="min-w-0 space-y-4 rounded-2xl border border-border bg-card p-4">
+    <article aria-labelledby={`${id}-name`} className="min-w-0 space-y-4 rounded-3xl border border-border bg-card p-4">
       <ClassLearnerIdentity learner={learner} nameId={`${id}-name`} />
       {editable ? (
         <fieldset aria-describedby={statusError ? `${id}-status-error` : undefined}>

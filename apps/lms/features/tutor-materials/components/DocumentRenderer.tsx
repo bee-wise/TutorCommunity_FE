@@ -1,21 +1,23 @@
 "use client";
 
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@workspace/ui/components/ui/collapsible";
+
 import Latex from "react-latex-next";
 import "katex/dist/katex.min.css";
-import { CaretDown, CheckCircle, Lightbulb } from "@phosphor-icons/react";
+import { ChevronDownIcon as CaretDown, CheckCircleIcon as CheckCircle, LightBulbIcon as Lightbulb } from "@heroicons/react/24/outline";
 import type { AIAnalyzeResponse } from "../types";
 
 export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
   return (
     <article className="space-y-8 text-base leading-relaxed text-foreground [overflow-wrap:anywhere]">
       <header>
-        <h2 className="text-2xl leading-[1.25] text-primary sm:text-3xl">{data.summary.title}</h2>
+        <h2 className="text-2xl leading-[1.25] text-foreground sm:text-3xl">{data.summary.title}</h2>
         <div className="mt-4"><Latex>{data.summary.overview}</Latex></div>
       </header>
 
       {data.summary.prerequisites.length > 0 && (
         <section>
-          <h2 className="mb-3 text-xl text-primary">Kiến thức cần nhớ</h2>
+          <h2 className="mb-3 text-xl text-foreground">Kiến thức cần nhớ</h2>
           <ul className="list-disc space-y-2 pl-5">
             {data.summary.prerequisites.map((item, index) => (
               <li key={index}><Latex>{item}</Latex></li>
@@ -27,7 +29,7 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
       <section className="space-y-5" aria-label="Nội dung lý thuyết">
         {data.summary.key_concepts.map((concept, index) => (
           <div key={index} className="space-y-3 rounded-3xl border border-border bg-card p-5 shadow-soft">
-            <h2 className="text-xl leading-[1.25] text-primary">{concept.name}</h2>
+            <h2 className="text-xl leading-[1.25] text-foreground">{concept.name}</h2>
             <p><Latex>{concept.explanation}</Latex></p>
             {concept.formulas.map((formula, formulaIndex) => (
               <div key={formulaIndex}>
@@ -43,7 +45,7 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
 
       {data.quiz.multiple_choice.length > 0 && (
         <section className="space-y-5">
-          <h2 className="text-xl text-primary">Bài tập trắc nghiệm</h2>
+          <h2 className="text-xl text-foreground">Bài tập trắc nghiệm</h2>
           {data.quiz.multiple_choice.map((question, index) => (
             <div key={index} className="space-y-4 rounded-3xl border border-border bg-card p-5 shadow-soft">
               <p>
@@ -58,20 +60,20 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
                   </li>
                 ))}
               </ul>
-              <details className="group mt-4 overflow-hidden rounded-2xl border border-border/80 bg-muted/20 transition-all hover:border-primary/40">
-                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 font-nunito text-sm font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+              <Collapsible className="group mt-4 overflow-hidden rounded-2xl border border-border/80 bg-muted/20 transition-all hover:border-primary/40">
+<CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between px-4 py-3 font-lms text-sm font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
                   <span className="flex items-center gap-2.5">
-                    <span className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600">
-                      <Lightbulb size={16} weight="bold" />
+                    <span className="flex size-7 items-center justify-center rounded-lg bg-accent/10 text-warning">
+                      <Lightbulb width={16} height={16} />
                     </span>
                     <span>Đáp án & giải thích</span>
                   </span>
                   <CaretDown
-                    size={16}
-                    weight="bold"
-                    className="text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+                    width={16} height={16}
+                    className="text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
                   />
-                </summary>
+                </CollapsibleTrigger>
+<CollapsibleContent>
                 <div className="border-t border-border/60 bg-card/60 p-4 pt-3.5 text-sm">
                   <div className="inline-flex items-center gap-2 rounded-lg bg-secondary/15 px-3 py-1.5 font-bold text-secondary">
                     <span>Đáp án đúng:</span>
@@ -83,7 +85,8 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
                     <Latex>{question.explanation}</Latex>
                   </div>
                 </div>
-              </details>
+              </CollapsibleContent>
+</Collapsible>
             </div>
           ))}
         </section>
@@ -91,27 +94,27 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
 
       {data.quiz.exercises.length > 0 && (
         <section className="space-y-5">
-          <h2 className="text-xl text-primary">Bài tập tự luận</h2>
+          <h2 className="text-xl text-foreground">Bài tập tự luận</h2>
           {data.quiz.exercises.map((exercise, index) => (
             <div key={index} className="space-y-4 rounded-3xl border border-border bg-card p-5 shadow-soft">
               <p>
                 <strong className="text-primary">Bài {index + 1}: </strong>
                 <Latex>{exercise.problem}</Latex>
               </p>
-              <details className="group mt-4 overflow-hidden rounded-2xl border border-border/80 bg-muted/20 transition-all hover:border-primary/40">
-                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 font-nunito text-sm font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+              <Collapsible className="group mt-4 overflow-hidden rounded-2xl border border-border/80 bg-muted/20 transition-all hover:border-primary/40">
+<CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between px-4 py-3 font-lms text-sm font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
                   <span className="flex items-center gap-2.5">
                     <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <CheckCircle size={16} weight="bold" />
+                      <CheckCircle width={16} height={16} />
                     </span>
                     <span>Xem lời giải chi tiết</span>
                   </span>
                   <CaretDown
-                    size={16}
-                    weight="bold"
-                    className="text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+                    width={16} height={16}
+                    className="text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
                   />
-                </summary>
+                </CollapsibleTrigger>
+<CollapsibleContent>
                 <div className="space-y-3.5 border-t border-border/60 bg-card/60 p-4 pt-3.5 text-sm">
                   <ol className="space-y-2.5 divide-y divide-border/40">
                     {exercise.solution_steps.map((step, stepIndex) => (
@@ -126,7 +129,8 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
                     <Latex>{exercise.final_answer}</Latex>
                   </div>
                 </div>
-              </details>
+              </CollapsibleContent>
+</Collapsible>
             </div>
           ))}
         </section>

@@ -85,6 +85,7 @@ export function useClassChat(classId: string) {
           .map((m) => ({
             ...m,
             content: m.content ?? "",
+            avatarUrl: m.avatarUrl ?? null,
             senderRole:
               m.senderId === classInfo?.tutorId
                 ? ("TUTOR" as const)

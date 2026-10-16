@@ -58,7 +58,7 @@ export function LearnerAdmissionDetails({
   return (
     <section className="space-y-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="font-nunito text-lg font-extrabold text-primary">
+        <h2 className="font-lms text-lg font-extrabold text-foreground">
           Theo dõi đăng ký
         </h2>
         <span className="rounded-full border border-border px-3 py-1 text-xs font-bold text-primary">
@@ -82,7 +82,7 @@ export function LearnerAdmissionDetails({
           />
           {data.missedSessionIds.length > 0 && (
             <section className="space-y-3">
-              <h3 className="font-bold text-primary">Buổi học đã bỏ lỡ</h3>
+              <h3 className="font-bold text-foreground">Buổi học đã bỏ lỡ</h3>
               <p className="text-sm">
                 Có {data.missedSessionIds.length} buổi trước khi bạn tham gia.{" "}
                 {data.missedLessonsAcknowledgedAt
@@ -102,10 +102,10 @@ export function LearnerAdmissionDetails({
             </section>
           )}
           {late && fee && (
-            <section className="space-y-3 rounded-2xl border border-border p-4">
-              <h3 className="font-bold text-primary">Phí tháng tham gia</h3>
+            <section className="space-y-3 rounded-3xl border border-border p-4">
+              <h3 className="font-bold text-foreground">Phí tháng tham gia</h3>
               <p className="text-sm">Tháng {fee.month}</p>
-              <p className="font-nunito text-xl font-extrabold text-primary">
+              <p className="font-lms text-xl font-extrabold text-primary">
                 {learnerMoney(fee.amount)}
               </p>
               <p className="text-sm">

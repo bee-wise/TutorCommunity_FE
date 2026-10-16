@@ -4,15 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import aiIcon from "../../../../sale/public/icons/AI-icon.svg";
 import { useState } from "react";
-import {
-  BookmarkSimple,
-  DotsThreeVertical,
-  DownloadSimple,
-  Eye,
-  EyeSlash,
-  PencilSimple,
-  UploadSimple,
-} from "@phosphor-icons/react";
+import { BookmarkIcon as BookmarkSimple, EllipsisVerticalIcon as DotsThreeVertical, ArrowDownTrayIcon as DownloadSimple, EyeIcon as Eye, EyeSlashIcon as EyeSlash, PencilSquareIcon as PencilSimple, DocumentPlusIcon as UploadSimple } from "@heroicons/react/24/outline";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
 import {
   DropdownMenu,
@@ -53,7 +45,7 @@ export function ClassMaterialRow({ material, readOnly }: { material: ClassMateri
               {MATERIAL_STATUS_LABELS[material.status]}
             </span>
           </div>
-          <h3 className="text-lg leading-[1.25] text-primary [overflow-wrap:anywhere]">{material.title}</h3>
+          <h3 className="text-lg leading-[1.25] text-foreground [overflow-wrap:anywhere]">{material.title}</h3>
           <p className="text-xs text-muted-foreground">
             {material.fileType}
             {material.fileSize ? ` · ${material.fileSize}` : ""}
@@ -76,7 +68,7 @@ export function ClassMaterialRow({ material, readOnly }: { material: ClassMateri
               aria-label="Thao tác tài liệu"
               className="flex size-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <DotsThreeVertical size={20} weight="bold" />
+              <DotsThreeVertical width={20} height={20} />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 rounded-2xl border-border bg-card p-1.5 shadow-pop">
               {material.data && (
@@ -85,7 +77,7 @@ export function ClassMaterialRow({ material, readOnly }: { material: ClassMateri
                     href={`/lms/tutor/materials/${material.sessionId}/preview?materialId=${material.id}`}
                     className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-muted hover:text-primary"
                   >
-                    <Eye size={16} weight="bold" />
+                    <Eye width={16} height={16} />
                     <span>Preview & chỉnh sửa</span>
                   </Link>
                 </DropdownMenuItem>
@@ -100,7 +92,7 @@ export function ClassMaterialRow({ material, readOnly }: { material: ClassMateri
                     download={material.fileType !== "PDF" ? `${material.title}.${material.fileType.toLowerCase()}` : undefined}
                     className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-muted hover:text-primary"
                   >
-                    <DownloadSimple size={16} weight="bold" />
+                    <DownloadSimple width={16} height={16} />
                     <span>{material.fileType === "PDF" ? "Mở tài liệu (PDF)" : "Tải tài liệu"}</span>
                   </a>
                 </DropdownMenuItem>
@@ -117,7 +109,7 @@ export function ClassMaterialRow({ material, readOnly }: { material: ClassMateri
                     }}
                     className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-muted hover:text-primary"
                   >
-                    <PencilSimple size={16} weight="bold" />
+                    <PencilSimple width={16} height={16} />
                     <span>Đổi tên</span>
                   </DropdownMenuItem>
 
@@ -133,12 +125,12 @@ export function ClassMaterialRow({ material, readOnly }: { material: ClassMateri
                   >
                     {material.status === "published" ? (
                       <>
-                        <EyeSlash size={16} weight="bold" />
+                        <EyeSlash width={16} height={16} />
                         <span>Ẩn tài liệu</span>
                       </>
                     ) : (
                       <>
-                        <UploadSimple size={16} weight="bold" />
+                        <UploadSimple width={16} height={16} />
                         <span className="text-primary font-bold">Xuất bản</span>
                       </>
                     )}
@@ -152,7 +144,7 @@ export function ClassMaterialRow({ material, readOnly }: { material: ClassMateri
                       }}
                       className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-muted hover:text-primary"
                     >
-                      <BookmarkSimple size={16} weight="bold" />
+                      <BookmarkSimple width={16} height={16} />
                       <span>Lưu nháp</span>
                     </DropdownMenuItem>
                   )}

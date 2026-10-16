@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { UploadSimple } from "@phosphor-icons/react";
+import { DocumentPlusIcon as UploadSimple } from "@heroicons/react/24/outline";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
 import { validateMaterialFile, saveLocalFile } from "../services/local-files.service";
 import { useClassMaterialsStore, canEditClass } from "../store/class-materials.store";
@@ -52,7 +52,7 @@ export function ClassUploadSpace({ classInfo, sessions }: { classInfo: MaterialC
 
   return (
     <section aria-labelledby="upload-space-title" className="space-y-4">
-      <h2 id="upload-space-title" className="text-xl leading-[1.25] text-primary">Không gian tài liệu của lớp</h2>
+      <h2 id="upload-space-title" className="text-xl leading-[1.25] text-foreground">Không gian tài liệu của lớp</h2>
       <div
         onDragOver={(event) => { event.preventDefault(); if (!locked && !isSubmitting) setDragging(true); }}
         onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false); }}
@@ -60,7 +60,7 @@ export function ClassUploadSpace({ classInfo, sessions }: { classInfo: MaterialC
         className={`grid min-h-48 place-items-center rounded-3xl border-2 border-dashed bg-card px-5 py-6 text-center ${dragging ? "border-primary" : "border-border"}`}
       >
         <div>
-          <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-accent text-accent-foreground"><UploadSimple size={25} weight="bold" aria-hidden="true" /></span>
+          <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-accent text-accent-foreground"><UploadSimple width={25} height={25} aria-hidden="true" /></span>
           <p className="mt-3 font-bold text-primary">{file ? file.name : "Kéo thả tài liệu vào đây"}</p>
           <p className="mt-2 text-sm text-muted-foreground">PDF, DOCX, PPTX (tối đa 20 MB mỗi tệp)</p>
           <button type="button" disabled={locked || isSubmitting} onClick={() => picker.current?.click()} className={`${outlineActionClass} mt-4`}>{file ? "Chọn tệp khác" : "Chọn tài liệu"}</button>

@@ -15,7 +15,7 @@ export function MessagesScreen() {
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
             <ChatsCircleIcon width={30} height={30} aria-hidden="true" />
           </div>
-          <h2 className="font-nunito text-xl font-black text-foreground">Chọn cuộc trò chuyện</h2>
+          <h2 className="font-lms text-xl font-black text-foreground">Chọn cuộc trò chuyện</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Xem lại trao đổi, lịch học thử và các bước xác nhận lớp ngay trong cuộc trò chuyện.
           </p>

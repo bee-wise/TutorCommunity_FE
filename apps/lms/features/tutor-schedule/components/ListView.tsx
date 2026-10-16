@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Eye } from "lucide-react";
+import { ArrowRightCircleIcon as ExternalLink, EyeIcon as Eye } from "@heroicons/react/24/outline";
 import { cn } from "@workspace/core/helpers/utils";
 import type { Session } from "../types/schedule.types";
 import { STATUS_COLORS, STATUS_LABELS } from "../types/schedule.types";
@@ -43,12 +43,11 @@ function formatFee(fee: number): string {
 export function ListView({ sessions, onSessionClick }: ListViewProps) {
   if (sessions.length === 0) {
     return (
-      <div className="rounded-2xl border border-border/60 bg-white shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card shadow-sm">
         <div className="flex flex-col items-center justify-center py-20 gap-3">
           <div className="size-14 rounded-2xl bg-muted/60 flex items-center justify-center">
             <Eye
               className="size-7 text-muted-foreground/40"
-              strokeWidth={1.5}
             />
           </div>
           <p className="text-sm font-semibold text-muted-foreground">
@@ -63,7 +62,7 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
   }
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           {/* Sticky header */}
@@ -122,7 +121,7 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
                 {/* Student */}
                 <td className="px-4 py-3.5 whitespace-nowrap">
                   <div className="flex items-center gap-2">
-                    <div className="size-7 rounded-full bg-[#cfe1fa] flex items-center justify-center shrink-0">
+                    <div className="size-7 rounded-full bg-muted flex items-center justify-center shrink-0">
                       <span className="text-[10px] font-bold text-primary">
                         {session.studentFullName.charAt(0)}
                       </span>
@@ -158,9 +157,9 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#cfe1fa]/60 text-primary text-xs font-semibold hover:bg-primary hover:text-white transition-colors border border-primary/20"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted/60 text-primary text-xs font-semibold hover:bg-primary hover:text-white transition-colors border border-primary/20"
                     >
-                      <ExternalLink className="size-3" strokeWidth={2} />
+                      <ExternalLink className="size-3" />
                       Meet
                     </a>
                   ) : (
@@ -183,7 +182,7 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
                     }}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground border border-border/50 hover:bg-primary hover:text-white hover:border-primary transition-all duration-150"
                   >
-                    <Eye className="size-3.5" strokeWidth={1.75} />
+                    <Eye className="size-3.5" />
                     Chi tiết
                   </button>
                 </td>

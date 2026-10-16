@@ -105,12 +105,12 @@ export function LearnerClassSidebar({
           </span>
         </button>
       </SidebarHeader>
-      <SidebarContent className="gap-2 bg-card py-4">
-        <div className="space-y-3 px-4 pb-4 group-data-[collapsible=icon]:hidden">
+      <SidebarContent className="gap-1 overflow-x-hidden overflow-y-auto bg-card py-2">
+        <div className="shrink-0 space-y-2 px-4 pb-2 group-data-[collapsible=icon]:hidden">
           <p className="text-xs font-bold tabular-nums text-muted-foreground">
             {data?.code ?? ""}
           </p>
-          <p className="font-nunito text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">
+          <p className="font-lms text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">
             {query.loading
               ? "Đang tải lớp..."
               : (data?.title ?? "Không truy cập được lớp")}
@@ -128,12 +128,12 @@ export function LearnerClassSidebar({
             </div>
           )}
         </div>
-        <SidebarGroup className="group-data-[collapsible=icon]:p-0.5">
+        <SidebarGroup className="shrink-0 py-1 group-data-[collapsible=icon]:p-0.5">
           <SidebarGroupLabel className="text-xs font-bold text-muted-foreground group-data-[collapsible=icon]:hidden">
             Không gian lớp học
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-2">
+            <SidebarMenu className="gap-1">
               {data &&
                 SECTIONS.map(({ id, icon: Icon }) => {
                   if (id !== "overview" && id !== "sessions")
@@ -142,10 +142,10 @@ export function LearnerClassSidebar({
                         <SidebarMenuButton
                           disabled
                           tooltip="Chưa tích hợp API"
-                          className="min-h-11 rounded-xl px-3 text-muted-foreground"
+                          className="min-h-11 rounded-xl px-3 text-muted-foreground group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
                         >
-                          <Icon className="size-4" />
-                          <span>
+                          <Icon className="size-4 shrink-0" />
+                          <span className="group-data-[collapsible=icon]:hidden">
                             {LEARNER_WORKSPACE_LABELS[id]} (chưa tích hợp)
                           </span>
                         </SidebarMenuButton>
@@ -159,7 +159,7 @@ export function LearnerClassSidebar({
                         asChild
                         tooltip={LEARNER_WORKSPACE_LABELS[id]}
                         isActive={workspace.section === id}
-                        className={`min-h-11 rounded-xl px-3 font-semibold transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-ring group-data-[collapsible=icon]:size-11! motion-reduce:transform-none ${workspace.section === id ? "bg-primary! text-primary-foreground! hover:bg-primary/90!" : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
+                        className="lms-navigation-item group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0 motion-reduce:transform-none"
                       >
                         <Link
                           href={href}
@@ -168,8 +168,8 @@ export function LearnerClassSidebar({
                           }
                           onClick={() => setOpenMobile(false)}
                         >
-                          <Icon className="size-4" aria-hidden="true" />
-                          <span>{LEARNER_WORKSPACE_LABELS[id]}</span>
+                          <Icon className="size-4 shrink-0" aria-hidden="true" />
+                          <span className="group-data-[collapsible=icon]:hidden">{LEARNER_WORKSPACE_LABELS[id]}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

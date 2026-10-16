@@ -57,23 +57,39 @@ export function LearnerSessionDetailDialog({
           />
         ) : (
           <div className="space-y-5">
-            <div>
-              <h2 className="font-nunito text-lg font-extrabold text-primary">
-                {vietnamDate(data.startAt)}
-              </h2>
-              <p className="mt-2 text-sm">
-                {displaySessionTime(data.startAt, data.endAt)} ·{" "}
-                {learnerSessionLabels[data.status ?? ""] ?? "Chưa xác định"}
-              </p>
-              <p className="mt-2 break-words text-sm">
+            <div className="space-y-4">
+              <div>
+                <h2 className="font-lms text-lg font-extrabold text-foreground [overflow-wrap:anywhere] break-words">
+                  {data.name ? data.name : vietnamDate(data.startAt)}
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {data.name && <span>{vietnamDate(data.startAt)} · </span>}
+                  {displaySessionTime(data.startAt, data.endAt)} ·{" "}
+                  {learnerSessionLabels[data.status ?? ""] ?? "Chưa xác định"}
+                </p>
+              </div>
+
+              {data.description && (
+                <div className="rounded-2xl border border-border/70 bg-muted/30 p-3.5 text-sm leading-relaxed text-foreground [overflow-wrap:anywhere]">
+                  <p className="mb-1 text-xs font-bold text-muted-foreground">
+                    Mô tả buổi học
+                  </p>
+                  <p className="whitespace-pre-line">{data.description}</p>
+                </div>
+              )}
+
+              <p className="break-words text-sm">
+                <span className="font-medium text-muted-foreground">
+                  Phòng học:{" "}
+                </span>
                 {data.locationOrMeetingInfo ?? "Chưa có thông tin phòng học"}
               </p>
             </div>
             {group &&
               attendanceEnabled &&
               ["ONGOING", "COMPLETED"].includes(data.status ?? "") && (
-                <section className="space-y-2 rounded-2xl border border-border p-4">
-                  <h3 className="font-bold text-primary">Điểm danh của bạn</h3>
+                <section className="space-y-2 rounded-3xl border border-border p-4">
+                  <h3 className="font-bold text-foreground">Điểm danh của bạn</h3>
                   {state.attendance.loading ? (
                     <p role="status">Đang tải...</p>
                   ) : state.attendance.error ? (
@@ -111,7 +127,7 @@ export function LearnerSessionDetailDialog({
               )}
             {group && data.status === "COMPLETED" && (
               <section className="space-y-3">
-                <h3 className="font-bold text-primary">Bản ghi buổi học</h3>
+                <h3 className="font-bold text-foreground">Bản ghi buổi học</h3>
                 <Button
                   variant="outline"
                   className={learnerAction}

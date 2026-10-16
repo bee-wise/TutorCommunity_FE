@@ -446,6 +446,52 @@ test("class chat cursor/UUID/service isolate the room from connection chat", asy
   await chat.subscription(id);
   assert.equal(calls.at(-1).url, `/lms/classes/${id}/chat/subscription-token`);
 });
+test("class chat parses sender avatarUrl across GET history and POST send, supporting HTTPS, null, and legacy omitted fields", async () => {
+  const msgValid = {
+    id,
+    classId: id,
+    senderId: actor,
+    content: "Chào bạn",
+    createdAt: session().startAt,
+    avatarUrl: "https://example.com/avatar1.jpg",
+  };
+  const msgNull = {
+    id: learner,
+    classId: id,
+    senderId: learner,
+    content: "Chào gia sư",
+    createdAt: session().startAt,
+    avatarUrl: null,
+  };
+  const msgLegacy = {
+    id: "33333333-3333-4333-8333-333333333334",
+    classId: id,
+    senderId: learner,
+    content: "Tin nhắn cũ không có field avatar",
+    createdAt: session().startAt,
+  };
+  respond({ items: [msgValid, msgNull, msgLegacy], nextCursor: null, hasMore: false });
+  const page = await chat.messages(id);
+  assert.equal(page.items.length, 3);
+  assert.equal(page.items[0].avatarUrl, "https://example.com/avatar1.jpg");
+  assert.equal(page.items[1].avatarUrl, null);
+  assert.equal(page.items[2].avatarUrl, undefined);
+
+  // POST response with avatarUrl
+  respond({ ...msgValid, id, avatarUrl: "https://example.com/avatar-sent.png" });
+  const sentWithAvatar = await chat.send(id, { messageId: id, content: "Tin mới có avatar" });
+  assert.equal(sentWithAvatar.avatarUrl, "https://example.com/avatar-sent.png");
+
+  // POST response with null avatarUrl
+  respond({ ...msgNull, id });
+  const sentNullAvatar = await chat.send(id, { messageId: id, content: "Tin mới null avatar" });
+  assert.equal(sentNullAvatar.avatarUrl, null);
+
+  // POST response with omitted avatarUrl (legacy backend response)
+  respond({ ...msgLegacy, id });
+  const sentLegacyAvatar = await chat.send(id, { messageId: id, content: "Tin mới legacy" });
+  assert.equal(sentLegacyAvatar.avatarUrl, undefined);
+});
 test("403/409 are propagated without mock or URL leakage; malformed envelope fails closed", async () => {
   failure = new ApiError("Forbidden", 403);
   await assert.rejects(
@@ -503,6 +549,86 @@ test("TanStack resource keys isolate class/actor/version scope; forbidden auth h
   assert.doesNotMatch(render(), /fixture/);
   client.clear();
   auth = { user: { id: actor, role: "TUTOR" }, isAuthLoading: false };
+});
+test("session metadata supports separate name/description per slot, limits, blank-to-null, and legacy compatibility", async () => {
+  const vnName = "Buổi 1: Giới thiệu lập trình & Thuật toán cơ bản";
+  const vnDesc = "Nội dung: Biến, kiểu dữ liệu, cấu trúc điều khiển. Tài liệu: Chương 1-3.";
+  const slot1 = {
+    name: vnName,
+    description: vnDesc,
+    startAt: "2026-10-20T08:00:00Z",
+    endAt: "2026-10-20T09:30:00Z",
+    locationOrMeetingInfo: "Phòng A101",
+    plannedScheduleId: null,
+  };
+  const slot2 = {
+    name: "   ",
+    description: "",
+    startAt: "2026-10-22T08:00:00Z",
+    endAt: "2026-10-22T09:30:00Z",
+    locationOrMeetingInfo: "https://zoom.us/j/123456",
+    plannedScheduleId: null,
+  };
+
+  // Preview sends both slots with separate metadata and blank converted to null
+  respond({ sessions: [slot1, slot2], conflicts: [] });
+  await sessions.preview(id, [slot1, slot2]);
+  const previewBody = calls.at(-1).body;
+  assert.equal(previewBody.sessions[0].name, vnName);
+  assert.equal(previewBody.sessions[0].description, vnDesc);
+  assert.equal(previewBody.sessions[1].name, null);
+  assert.equal(previewBody.sessions[1].description, null);
+
+  // Batch create sends exact payload
+  respond({ sessions: [session({ name: vnName, description: vnDesc })], conflicts: [] });
+  await sessions.createBatch(id, { sessions: [slot1, slot2], submitKey: "test-submit-key" });
+  const batchBody = calls.at(-1).body;
+  assert.equal(batchBody.sessions[0].name, vnName);
+  assert.equal(batchBody.sessions[0].description, vnDesc);
+  assert.equal(batchBody.sessions[1].name, null);
+  assert.equal(batchBody.sessions[1].description, null);
+
+  // Exceeding limits fails validation
+  assert.throws(() =>
+    schemas.slotSchema.parse({
+      ...slot1,
+      name: "a".repeat(201),
+    }),
+  );
+  assert.throws(() =>
+    schemas.slotSchema.parse({
+      ...slot1,
+      description: "b".repeat(2001),
+    }),
+  );
+
+  // Reschedule without metadata strictly omits name and description
+  const rescheduleSlot = {
+    startAt: "2026-10-25T08:00:00Z",
+    endAt: "2026-10-25T09:30:00Z",
+    locationOrMeetingInfo: "Phòng B202",
+  };
+  respond({ sessions: [session()], conflicts: [] });
+  await sessions.reschedule(id, rescheduleSlot);
+  const rescheduleBody = calls.at(-1).body;
+  assert.equal("name" in rescheduleBody.session, false);
+  assert.equal("description" in rescheduleBody.session, false);
+  assert.equal(rescheduleBody.session.locationOrMeetingInfo, "Phòng B202");
+
+  // Legacy response without name/description parses cleanly
+  const legacyData = session();
+  delete legacyData.name;
+  delete legacyData.description;
+  const parsedLegacy = schemas.sessionSchema.parse(legacyData);
+  assert.equal(parsedLegacy.id, id);
+  assert.equal(parsedLegacy.name, undefined);
+  assert.equal(parsedLegacy.description, undefined);
+
+  // Modern response with name/description parses cleanly
+  const modernData = session({ name: vnName, description: vnDesc });
+  const parsedModern = schemas.sessionSchema.parse(modernData);
+  assert.equal(parsedModern.name, vnName);
+  assert.equal(parsedModern.description, vnDesc);
 });
 after(() => {
   Module._load = originalLoad;

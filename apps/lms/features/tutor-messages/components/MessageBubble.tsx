@@ -20,7 +20,7 @@ import { isDraftWidget, isDraftWidgetMessage } from "@workspace/core/services/ch
 export function SessionTimeDivider({ timestamp }: { timestamp: string }) {
   return (
     <div className="flex justify-center py-2.5 my-1 select-none" role="separator">
-      <span className="max-w-[min(100%,560px)] rounded-full border border-border/60 bg-card/80 px-3.5 py-1 text-center text-[11px] font-semibold text-muted-foreground shadow-2xs backdrop-blur-xs">
+      <span className="max-w-[min(100%,560px)] rounded-full border border-border/60 bg-card px-3.5 py-1 text-center text-[11px] font-semibold text-muted-foreground shadow-2xs">
         {formatSessionTime(timestamp)}
       </span>
     </div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { LearnerApiClass } from "../services/learner-classes.service";
 
 export const learnerAction =
-  "min-h-11 rounded-full transition-all active:scale-[0.98] motion-reduce:transform-none";
+  "min-h-11 rounded-xl transition-all active:scale-[0.98] motion-reduce:transform-none";
 export function LearnerClassStatus({
   status,
 }: {
@@ -32,7 +32,7 @@ export function LearnerApiClassCard({ data }: { data: LearnerApiClass }) {
         </span>
         <LearnerClassStatus status={data.status} />
       </div>
-      <h2 className="mt-4 line-clamp-2 font-nunito text-lg font-extrabold leading-snug text-primary">
+      <h2 className="mt-4 line-clamp-2 font-lms text-lg font-extrabold leading-snug text-foreground">
         {data.title ?? "Chưa có tên lớp"}
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
@@ -57,7 +57,7 @@ export function LearnerApiClassCard({ data }: { data: LearnerApiClass }) {
           </dd>
         </div>
       </dl>
-      <span className="mt-auto flex min-h-11 items-center justify-center rounded-full border border-primary px-4 text-sm font-bold text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground">
+      <span className="mt-auto flex min-h-11 items-center justify-center rounded-xl border border-primary px-4 text-sm font-bold text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground">
         {data.status === "COMPLETED" ? "Xem lại lớp" : "Vào lớp"}
       </span>
     </Link>
