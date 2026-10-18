@@ -1,4 +1,4 @@
-import type { LmsClassDto } from "../schemas/lms-class.schema";
+import type { LmsClassDto, LmsClassLearnerPreview } from "../schemas/lms-class.schema";
 
 export type ClassKind = "individual" | "group";
 export type ClassStatus = "active" | "upcoming" | "completed" | "pending_payment" | "cancelled" | "unknown";
@@ -22,6 +22,7 @@ export interface TutorClassSession {
 export interface TutorClassCardModel {
   classInfo: TutorClass;
   learners: readonly ClassLearner[];
+  learnerPreviews?: readonly LmsClassLearnerPreview[];
   sessionCount: number;
   attendancePendingCount?: number;
   learnerCount?: number;

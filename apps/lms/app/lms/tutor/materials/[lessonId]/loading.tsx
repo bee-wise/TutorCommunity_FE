@@ -1,5 +1,5 @@
 function Skeleton({ className }: { className: string }) {
-  return <div className={`rounded-lg bg-[#e8ebf0] motion-safe:animate-pulse ${className}`} />;
+  return <div className={`rounded-lg bg-muted motion-safe:animate-pulse ${className}`} />;
 }
 
 export default function LessonDetailLoading() {

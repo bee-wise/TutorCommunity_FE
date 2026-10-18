@@ -33,7 +33,7 @@ export function MaterialPreviewScreen({ sessionId, materialId, returnToAI = fals
     return () => window.removeEventListener("beforeunload", warn);
   }, [editing]);
   if (!library.ready) return <MaterialPreviewShell {...shellProps}><ClassMaterialsSkeleton workspace /></MaterialPreviewShell>;
-  if (!material?.data || !classInfo) return <MaterialPreviewShell {...shellProps}><div className="p-8 text-center"><h1 className="text-2xl text-primary">Không tìm thấy tài liệu</h1><p className="mt-3 text-muted-foreground">Bản nháp có thể chưa được lưu hoặc thuộc một trình duyệt khác.</p><button type="button" onClick={transition.leave} className={`${outlineActionClass} mt-5`}>Về danh sách lớp</button></div></MaterialPreviewShell>;
+  if (!material?.data || !classInfo) return <MaterialPreviewShell {...shellProps}><div className="p-8 text-center"><h1 className="text-2xl text-foreground">Không tìm thấy tài liệu</h1><p className="mt-3 text-muted-foreground">Bản nháp có thể chưa được lưu hoặc thuộc một trình duyệt khác.</p><button type="button" onClick={transition.leave} className={`${outlineActionClass} mt-5`}>Về danh sách lớp</button></div></MaterialPreviewShell>;
   const readOnly = classInfo.status === "completed";
 
   function save(data: AIAnalyzeResponse) {
@@ -53,7 +53,7 @@ export function MaterialPreviewScreen({ sessionId, materialId, returnToAI = fals
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6">
       <header className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3"><span className={`rounded-full border px-3 py-1 text-sm font-bold ${material.status === "published" ? "border-secondary bg-secondary text-secondary-foreground" : "border-border text-primary"}`}>{MATERIAL_STATUS_LABELS[material.status]}</span></div>
-        <h1 className="text-2xl leading-[1.25] text-primary">{editing ? "Chỉnh sửa tài liệu" : "Bản xem trước tài liệu"}</h1>
+        <h1 className="text-2xl leading-[1.25] text-foreground">{editing ? "Chỉnh sửa tài liệu" : "Bản xem trước tài liệu"}</h1>
         <p className="text-sm text-muted-foreground">{classInfo.title} · Xuất bản cho {classInfo.learnerIds.length} học viên trong lớp.</p>
         {library.storageError && <p role="alert" className="text-sm text-destructive">{library.storageError}</p>}
         {!readOnly && !editing && <div className="flex flex-wrap gap-3"><button type="button" onClick={() => { setEditVersion(material.updatedAt); setEditing(true); }} className={outlineActionClass}>Chỉnh sửa nội dung</button><button type="button" disabled={material.status === "published"} onClick={() => { library.updateMaterial(material.id, { status: "published" }); toast.success("Đã xuất bản cho cả lớp", { description: "Trạng thái được lưu cục bộ và đồng bộ về không gian tài liệu." }); }} className={actionClass}>Xuất bản cho cả lớp</button></div>}

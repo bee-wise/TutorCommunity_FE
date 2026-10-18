@@ -18,12 +18,15 @@ import {
   attemptGrantRequestSchema,
   auditLogSchema,
   decisionRequestSchema,
+  integrityEventBatchSchema,
+  integrityEventPageSchema,
   interviewListItemSchema,
   overrideRequestSchema,
   packageSchema,
   summarySchema,
   type AttemptGrantRequest,
   type DecisionRequest,
+  type IntegrityEvent,
   type OverrideRequest,
 } from "../schemas/review.schema";
 import {
@@ -118,6 +121,23 @@ export const interviewApi = {
     get("/interviews", z.array(interviewListItemSchema), params, signal),
   getPackage: (id: string) =>
     get(`/interviews/${pathId(id)}/package`, packageSchema),
+  sendIntegrityEvents: (id: string, events: IntegrityEvent[]) =>
+    post(
+      `/interviews/${pathId(id)}/integrity-events`,
+      integrityEventBatchSchema.parse({ events }),
+      z.unknown(),
+    ),
+  getIntegrityEvents: (
+    id: string,
+    params?: { page?: number; pageSize?: number },
+    signal?: AbortSignal,
+  ) =>
+    get(
+      `/interviews/${pathId(id)}/integrity-events`,
+      integrityEventPageSchema,
+      params,
+      signal,
+    ),
   overrideCriterion: (id: string, values: OverrideRequest) =>
     post(
       `/interviews/${pathId(id)}/override`,

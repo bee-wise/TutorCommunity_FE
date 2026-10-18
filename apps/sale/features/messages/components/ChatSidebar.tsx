@@ -12,11 +12,16 @@ import { usePathname } from "next/navigation";
 import { useMessages } from "../hooks/useMessages";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
-import type { ChatRoom, ChatParticipantRole, ChatRoomCategory } from "../types/messages.types";
+import type {
+  ChatRoom,
+  ChatParticipantRole,
+  ChatRoomCategory,
+} from "../types/messages.types";
 import {
   STAGE_LABELS,
   STAGE_COLORS,
   formatRelativeTime,
+  saveLastActiveChatRoomId,
 } from "../constants/messages.utils";
 
 const STATUS_ROOM_LABELS: Record<string, string> = {
@@ -34,9 +39,12 @@ function RoomRow({
   currentUserRole: ChatParticipantRole;
 }) {
   const isReadOnly = room.status === "CLOSED" || room.status === "INACTIVE";
-  const peer = room.category === "SUPPORT"
-    ? room.consultant
-    : currentUserRole === "LEARNER" ? room.tutor : room.learner;
+  const peer =
+    room.category === "SUPPORT"
+      ? room.consultant
+      : currentUserRole === "LEARNER"
+        ? room.tutor
+        : room.learner;
   const pathname = usePathname();
 
   const basePath =
@@ -45,16 +53,26 @@ function RoomRow({
   return (
     <Link
       href={`${basePath}/${room.id}`}
+      onClick={() => saveLastActiveChatRoomId(room.id, currentUserRole)}
       aria-current={pathname === `${basePath}/${room.id}` ? "page" : undefined}
       className={`group flex items-start gap-3 rounded-xl border px-3 py-3.5 transition ${pathname === `${basePath}/${room.id}` ? "border-primary bg-muted" : "border-transparent hover:border-border hover:bg-muted"}`}
     >
       {/* Avatar */}
       <div className="relative shrink-0">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
-          {(room.recipientName || peer.name).split(/\s+/).filter(Boolean).slice(-2).map((part) => part[0]).join("").toUpperCase() || "BW"}
+          {(room.recipientName || peer.name)
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(-2)
+            .map((part) => part[0])
+            .join("")
+            .toUpperCase() || "BW"}
         </div>
         {peer.isOnline && !isReadOnly && (
-          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-card bg-secondary" aria-label="Đang trực tuyến" />
+          <span
+            className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-card bg-secondary"
+            aria-label="Đang trực tuyến"
+          />
         )}
       </div>
 
@@ -72,7 +90,11 @@ function RoomRow({
         </div>
 
         {/* Subject + Stage */}
-        {room.hasConnectionDetails && <p className="mb-0.5 text-[11px] text-muted-foreground">{room.subject} {room.gradeLevel}</p>}
+        {room.hasConnectionDetails && (
+          <p className="mb-0.5 text-[11px] text-muted-foreground">
+            {room.subject} {room.gradeLevel}
+          </p>
+        )}
 
         <div className="flex items-center justify-between gap-2">
           <p className="truncate text-xs text-muted-foreground">
@@ -86,43 +108,59 @@ function RoomRow({
         </div>
 
         {/* Stage badge */}
-        {(isReadOnly || room.status === "CONVERTED_TO_CLASS" || room.hasConnectionDetails || room.category === "SUPPORT") && <span
-          className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${
-            room.category === "SUPPORT" && !isReadOnly
-              ? "border-secondary/20 bg-secondary/10 text-secondary"
+        {(isReadOnly ||
+          room.status === "CONVERTED_TO_CLASS" ||
+          room.hasConnectionDetails ||
+          room.category === "SUPPORT") && (
+          <span
+            className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${
+              room.category === "SUPPORT" && !isReadOnly
+                ? "border-secondary/20 bg-secondary/10 text-secondary"
+                : room.status === "CONVERTED_TO_CLASS"
+                  ? "border-secondary/20 bg-secondary/10 text-secondary"
+                  : isReadOnly
+                    ? "border-gray-200 bg-gray-100 text-gray-500"
+                    : (STAGE_COLORS[room.connectionStage] ??
+                      "bg-gray-100 text-gray-600 border-gray-200")
+            }`}
+          >
+            {room.category === "SUPPORT" && !isReadOnly
+              ? "Đang hỗ trợ"
               : room.status === "CONVERTED_TO_CLASS"
-              ? "border-secondary/20 bg-secondary/10 text-secondary"
-              : isReadOnly
-              ? "border-gray-200 bg-gray-100 text-gray-500"
-              : (STAGE_COLORS[room.connectionStage] ??
-                "bg-gray-100 text-gray-600 border-gray-200")
-          }`}
-        >
-          {room.category === "SUPPORT" && !isReadOnly
-            ? "Đang hỗ trợ"
-            : room.status === "CONVERTED_TO_CLASS"
-            ? STATUS_ROOM_LABELS.CONVERTED_TO_CLASS
-            : isReadOnly
-            ? STATUS_ROOM_LABELS[room.status]
-            : STAGE_LABELS[room.connectionStage]}
-        </span>}
+                ? STATUS_ROOM_LABELS.CONVERTED_TO_CLASS
+                : isReadOnly
+                  ? STATUS_ROOM_LABELS[room.status]
+                  : STAGE_LABELS[room.connectionStage]}
+          </span>
+        )}
       </div>
     </Link>
   );
 }
 
 export function ChatSidebar() {
-  const { rooms, loading, error, refetch, fetchNextPage, hasNextPage, fetchingNextPage } = useMessages();
+  const {
+    rooms,
+    loading,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    fetchingNextPage,
+  } = useMessages();
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
   const currentUserRole = (user?.role?.toUpperCase() ||
     "LEARNER") as ChatParticipantRole;
   const activeRoom = rooms.find((room) => pathname?.endsWith(`/${room.id}`));
-  const [category, setCategory] = useState<ChatRoomCategory>(activeRoom?.category ?? "CONNECTION");
+  const [category, setCategory] = useState<ChatRoomCategory>(
+    activeRoom?.category ?? "CONNECTION",
+  );
 
   const availableRooms = rooms.filter(
-    (room) => room.category === "CONNECTION" || room.supportFor === currentUserRole,
+    (room) =>
+      room.category === "CONNECTION" || room.supportFor === currentUserRole,
   );
   const normalizedQuery = query.trim().toLowerCase();
   const selectCategory = (nextCategory: ChatRoomCategory) => {
@@ -132,13 +170,18 @@ export function ChatSidebar() {
 
   const filtered = availableRooms.filter(
     (r) =>
-      r.category === category && (
+      r.category === category &&
       (normalizedQuery === "" ||
-      (r.category === "SUPPORT" ? r.consultant.name : currentUserRole === "LEARNER" ? r.tutor.name : r.learner.name)
-        .toLowerCase()
-        .includes(normalizedQuery) ||
-      r.subject.toLowerCase().includes(normalizedQuery) ||
-      r.recipientName?.toLowerCase().includes(normalizedQuery))),
+        (r.category === "SUPPORT"
+          ? r.consultant.name
+          : currentUserRole === "LEARNER"
+            ? r.tutor.name
+            : r.learner.name
+        )
+          .toLowerCase()
+          .includes(normalizedQuery) ||
+        r.subject.toLowerCase().includes(normalizedQuery) ||
+        r.recipientName?.toLowerCase().includes(normalizedQuery)),
   );
 
   return (
@@ -146,7 +189,11 @@ export function ChatSidebar() {
       {/* Header */}
       <div className="flex shrink-0 flex-col gap-4 border-b border-border px-4 py-4">
         {/* Brand */}
-        <Link href="/" className="inline-flex w-fit items-center rounded-full bg-white px-3 py-1 shadow-sm ring-1 ring-primary" aria-label="BeeWise - Trang chủ">
+        <Link
+          href="/"
+          className="inline-flex w-fit items-center rounded-full bg-white px-3 py-1 shadow-sm ring-1 ring-primary"
+          aria-label="BeeWise - Trang chủ"
+        >
           <span className="relative block h-6 w-28">
             <Image
               src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
@@ -169,8 +216,9 @@ export function ChatSidebar() {
             <ArrowLeft width={18} height={18} />
           </Link>
           <div>
-            <h2 className="font-nunito text-lg font-extrabold text-foreground">Tin nhắn</h2>
-            <p className="text-xs text-muted-foreground">Kết nối cùng gia sư và tư vấn viên</p>
+            <h2 className="font-nunito text-lg font-extrabold text-primary">
+              Tin nhắn
+            </h2>
           </div>
         </div>
       </div>
@@ -178,7 +226,9 @@ export function ChatSidebar() {
       {/* Search */}
       <div className="shrink-0 border-b border-border px-3 py-2.5">
         <div className="relative">
-          <Search width={14} height={14}
+          <Search
+            width={14}
+            height={14}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           />
           <input
@@ -192,7 +242,11 @@ export function ChatSidebar() {
       </div>
 
       <div className="shrink-0 border-b border-border px-3 py-2.5">
-        <div role="group" aria-label="Loại cuộc trò chuyện" className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1">
+        <div
+          role="group"
+          aria-label="Loại cuộc trò chuyện"
+          className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1"
+        >
           {(["CONNECTION", "SUPPORT"] as const).map((item) => (
             <button
               key={item}
@@ -202,7 +256,9 @@ export function ChatSidebar() {
               className={`flex items-center justify-center gap-2 rounded-lg px-2 py-2 text-xs font-bold transition ${category === item ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
             >
               {item === "CONNECTION" ? "Kết nối" : "Hỗ trợ"}
-              <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${category === item ? "bg-muted text-primary" : "bg-card text-muted-foreground"}`}>
+              <span
+                className={`rounded-full px-1.5 py-0.5 text-[10px] ${category === item ? "bg-muted text-primary" : "bg-card text-muted-foreground"}`}
+              >
                 {availableRooms.filter((room) => room.category === item).length}
               </span>
             </button>
@@ -218,15 +274,27 @@ export function ChatSidebar() {
           </p>
         ) : error ? (
           <div className="px-4 py-10 text-center text-xs text-muted-foreground">
-            <p role="alert">{getApiErrorMessage(error, "Không tải được danh sách trò chuyện.")}</p>
-            <button type="button" onClick={() => void refetch()} className="mt-2 font-semibold text-primary underline">
+            <p role="alert">
+              {getApiErrorMessage(
+                error,
+                "Không tải được danh sách trò chuyện.",
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={() => void refetch()}
+              className="mt-2 font-semibold text-primary underline"
+            >
               Thử lại
             </button>
           </div>
         ) : filtered.length === 0 ? (
-
           <div className="flex flex-col items-center px-4 py-12 text-center">
-            <MessageCircleIcon width={32} height={32} className="mb-3 text-muted-foreground" />
+            <MessageCircleIcon
+              width={32}
+              height={32}
+              className="mb-3 text-muted-foreground"
+            />
             <strong className="text-sm text-foreground">
               {query ? "Không tìm thấy" : "Chưa có cuộc trò chuyện"}
             </strong>
@@ -247,7 +315,16 @@ export function ChatSidebar() {
                 currentUserRole={currentUserRole}
               />
             ))}
-            {hasNextPage && <button type="button" disabled={fetchingNextPage} onClick={() => void fetchNextPage()} className="w-full rounded-lg py-3 text-xs font-semibold text-primary disabled:opacity-50">{fetchingNextPage ? "Đang tải..." : "Xem thêm cuộc trò chuyện"}</button>}
+            {hasNextPage && (
+              <button
+                type="button"
+                disabled={fetchingNextPage}
+                onClick={() => void fetchNextPage()}
+                className="w-full rounded-lg py-3 text-xs font-semibold text-primary disabled:opacity-50"
+              >
+                {fetchingNextPage ? "Đang tải..." : "Xem thêm cuộc trò chuyện"}
+              </button>
+            )}
           </div>
         )}
       </div>

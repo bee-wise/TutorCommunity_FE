@@ -1,5 +1,5 @@
 "use client";
-import { CalendarBlank } from "@phosphor-icons/react";
+import { CalendarDaysIcon as CalendarBlank } from "@heroicons/react/24/outline";
 import type { LearnerSession } from "../types/learner-schedule.types";
 import { formatLearnerSessionDate } from "../utils/calendar.utils";
 
@@ -14,7 +14,7 @@ export function UpcomingClassesPanel({
 }: UpcomingClassesPanelProps) {
   return (
     <aside
-      className="rounded-2xl border border-border bg-white p-3 shadow-sm sm:p-4"
+      className="rounded-3xl border border-border bg-card p-3 shadow-soft sm:p-4"
       aria-labelledby="upcoming-classes-title"
     >
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -30,7 +30,7 @@ export function UpcomingClassesPanel({
               3 buổi gần nhất.
             </p>
           </div>
-          <span className="rounded-full bg-[#280F91]/8 px-2.5 py-1 text-xs font-bold text-[#280F91] lg:mt-2 lg:inline-flex">
+          <span className="rounded-full bg-primary/8 px-2.5 py-1 text-xs font-bold text-primary lg:mt-2 lg:inline-flex">
             {sessions.length} buổi
           </span>
         </div>
@@ -41,10 +41,10 @@ export function UpcomingClassesPanel({
                 key={session.id}
                 type="button"
                 onClick={() => onSelect(session)}
-                className={`min-w-[260px] snap-start rounded-xl border p-3 text-left transition-colors hover:border-[#280F91]/25 lg:min-w-0 ${index === 0 ? "border-[#FADC76] bg-[#FFF9E8]" : "border-border bg-[#F8FAFC]"}`}
+                className={`min-w-[260px] snap-start rounded-xl border p-3 text-left transition-colors hover:border-primary/25 lg:min-w-0 ${index === 0 ? "border-highlight bg-accent/15" : "border-border bg-muted"}`}
               >
                 <div className="flex items-start gap-2.5">
-                  <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#CFE1FA] text-[11px] font-extrabold text-[#280F91]">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-[11px] font-extrabold text-primary">
                     {session.tutorInitials}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -53,7 +53,7 @@ export function UpcomingClassesPanel({
                         {session.subject}
                       </p>
                       {index === 0 ? (
-                        <span className="shrink-0 text-[10px] font-bold text-[#905B0F]">
+                        <span className="shrink-0 text-[10px] font-bold text-warning">
                           Gần nhất
                         </span>
                       ) : null}
@@ -61,7 +61,7 @@ export function UpcomingClassesPanel({
                     <p className="mt-0.5 truncate text-xs text-muted-foreground">
                       {session.topic}
                     </p>
-                    <p className="mt-1.5 truncate text-xs font-semibold text-[#280F91]">
+                    <p className="mt-1.5 truncate text-xs font-semibold text-primary">
                       {formatLearnerSessionDate(session.date)} |{" "}
                       {session.startTime}-{session.endTime}
                     </p>
@@ -72,7 +72,7 @@ export function UpcomingClassesPanel({
           </div>
         ) : (
           <div className="flex min-h-20 flex-1 items-center justify-center gap-2 rounded-xl bg-muted/40 px-4 text-sm font-semibold text-muted-foreground">
-            <CalendarBlank size={19} />
+            <CalendarBlank width={19} height={19} />
             Không có lịch sắp tới phù hợp
           </div>
         )}

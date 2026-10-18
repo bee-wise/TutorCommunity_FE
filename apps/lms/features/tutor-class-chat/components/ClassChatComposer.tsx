@@ -17,7 +17,7 @@ export function ClassChatComposer({ form, sending, onSubmit }: {
         className="block max-h-32 min-h-11 w-full resize-none border-0 bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-muted-foreground [field-sizing:content] disabled:opacity-60"
         onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); if (!sending) void onSubmit(); } }} />
       <div className="flex items-center justify-between gap-2 border-t border-border/70 pt-2">
-        <p id="class-chat-help" className={`text-[11px] ${error ? "text-destructive" : "text-muted-foreground"}`} role={error ? "alert" : undefined}>{error ?? "Enter để gửi · Shift + Enter xuống dòng"}</p>
+        <p id="class-chat-help" className={`text-[11px] ${error ? "text-destructive" : "text-muted-foreground"}`} role={error ? "alert" : undefined}>{error ?? "Enter để gửi · Shift + Enter xuống dòng. Tin nhắn mock chỉ lưu đến khi tải lại trang."}</p>
         <Button type="submit" size="icon" disabled={sending} aria-label={sending ? "Đang gửi tin nhắn" : "Gửi tin nhắn"} className="size-9 shrink-0 rounded-lg transition-all active:scale-[0.98]"><PaperAirplaneIcon className="size-4" aria-hidden="true" /></Button>
       </div>
     </div>

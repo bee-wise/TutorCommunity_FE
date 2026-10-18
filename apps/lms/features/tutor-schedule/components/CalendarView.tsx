@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeftIcon as ChevronLeft, ChevronRightIcon as ChevronRight } from "@heroicons/react/24/outline";
 import { cn } from "@workspace/core/helpers/utils";
 import type { Session } from "../types/schedule.types";
 import { getSessionsForDate } from "../hooks/useScheduleFilters";
@@ -76,10 +76,10 @@ export function CalendarView({ sessions, onSessionClick }: CalendarViewProps) {
   };
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
       {/* Calendar Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
-        <h2 className="text-base font-bold font-nunito text-foreground">
+        <h2 className="text-base font-bold font-lms text-foreground">
           {MONTH_NAMES[viewMonth]}, {viewYear}
         </h2>
         <div className="flex items-center gap-1">
@@ -88,7 +88,7 @@ export function CalendarView({ sessions, onSessionClick }: CalendarViewProps) {
             onClick={handlePrev}
             className="flex items-center justify-center size-8 rounded-lg border border-border/50 text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors"
           >
-            <ChevronLeft className="size-4" strokeWidth={1.75} />
+            <ChevronLeft className="size-4" />
           </button>
           <button
             type="button"
@@ -105,7 +105,7 @@ export function CalendarView({ sessions, onSessionClick }: CalendarViewProps) {
             onClick={handleNext}
             className="flex items-center justify-center size-8 rounded-lg border border-border/50 text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors"
           >
-            <ChevronRight className="size-4" strokeWidth={1.75} />
+            <ChevronRight className="size-4" />
           </button>
         </div>
       </div>
@@ -147,7 +147,7 @@ export function CalendarView({ sessions, onSessionClick }: CalendarViewProps) {
                 "min-h-[100px] p-1.5 border-b border-r border-border/30 transition-colors",
                 !isLastRow && "border-b",
                 i % 7 === 6 && "border-r-0",
-                isWeekend && isCurrentMonth && "bg-slate-50/60",
+                isWeekend && isCurrentMonth && "bg-muted/60",
                 !isCurrentMonth && "bg-muted/20",
               )}
             >

@@ -1,11 +1,23 @@
 "use client";
-
+import { useEffect } from "react";
+import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { ChatRoomPanel } from "./ChatRoomPanel";
 import { MessagesScreen } from "./MessagesScreen";
 import { ChatSidebar } from "./ChatSidebar";
+import { saveLastActiveChatRoomId } from "../constants/messages.utils";
+import type { ChatParticipantRole } from "../types/messages.types";
 
 /** Chat room page: panel only (mobile) or sidebar + panel (desktop) */
 export function ChatRoomScreen({ chatRoomId }: { chatRoomId?: string }) {
+  const user = useAuthStore((s) => s.user);
+  const currentUserRole = (user?.role?.toUpperCase() || "LEARNER") as ChatParticipantRole;
+
+  useEffect(() => {
+    if (chatRoomId) {
+      saveLastActiveChatRoomId(chatRoomId, currentUserRole);
+    }
+  }, [chatRoomId, currentUserRole]);
+
   if (!chatRoomId) return <MessagesScreen />;
 
 

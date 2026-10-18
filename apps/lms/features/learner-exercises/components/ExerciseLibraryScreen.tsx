@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { WarningCircle } from "@phosphor-icons/react";
+import { ExclamationCircleIcon as WarningCircle } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
 import { LibrarySearch, LibrarySelect } from "../../learner-materials/components/LibraryFilterControls";
 import { useSessionExercises } from "../hooks/useLearnerExercises";
@@ -25,7 +25,7 @@ export function ExerciseLibraryScreen({ classId, sessionId }: { classId: string;
         <Button asChild variant="outline" className="min-h-11 rounded-xl transition-all active:scale-[0.98]"><Link href={`/lms/learner/exercises/classes/${encodeURIComponent(classId)}`}>Danh sách buổi học</Link></Button>
         <header>
           <p className="text-sm font-bold text-primary">Buổi {library.session.sequence}</p>
-          <h1 className="mt-1 font-nunito text-2xl font-extrabold text-primary sm:text-3xl">{library.session.topic}</h1>
+          <h1 className="mt-1 font-lms text-2xl font-extrabold text-foreground sm:text-3xl">{library.session.topic}</h1>
           <p className="mt-1.5 text-sm text-muted-foreground">{formatExerciseDate(library.session.taughtAt)} · {library.session.durationMinutes} phút</p>
         </header>
 
@@ -53,5 +53,5 @@ const SOURCE_OPTIONS: readonly { value: "all" | ExerciseSource; label: string }[
 ];
 
 function MissingState({ classId }: { classId: string }) {
-  return <div className="grid min-h-[60dvh] place-items-center bg-[#F8FAFC] p-6 text-center"><div><WarningCircle className="mx-auto text-[#905B0F]" size={36} weight="duotone" /><h1 className="mt-3 text-xl font-extrabold">Không tìm thấy buổi học</h1><Button asChild variant="outline" className="mt-4 min-h-11 rounded-xl transition-all active:scale-[0.98]"><Link href={`/lms/learner/exercises/classes/${encodeURIComponent(classId)}`}>Quay lại danh sách buổi học</Link></Button></div></div>;
+  return <div className="grid min-h-[60dvh] place-items-center bg-muted p-6 text-center"><div><WarningCircle className="mx-auto text-warning" width={36} height={36} /><h1 className="mt-3 text-xl font-extrabold">Không tìm thấy buổi học</h1><Button asChild variant="outline" className="mt-4 min-h-11 rounded-xl transition-all active:scale-[0.98]"><Link href={`/lms/learner/exercises/classes/${encodeURIComponent(classId)}`}>Quay lại danh sách buổi học</Link></Button></div></div>;
 }

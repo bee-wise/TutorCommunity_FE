@@ -39,7 +39,7 @@ export function ClassWorkspaceSidebar({ workspace }: { workspace: ClassWorkspace
       <SidebarContent className="gap-2 bg-card py-4">
         <div className="space-y-3 px-4 pb-4 group-data-[collapsible=icon]:hidden">
           <p className="text-xs font-bold text-muted-foreground">{formatClassIdentifier(classInfo?.code ?? workspace.classId)}</p>
-          <p className="font-nunito text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{classInfo?.title ?? (loading ? "Đang tải lớp học…" : error ? "Không thể xem lớp học" : "Không tìm thấy lớp")}</p>
+          <p className="font-lms text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{classInfo?.title ?? (loading ? "Đang tải lớp học…" : error ? "Không thể xem lớp học" : "Không tìm thấy lớp")}</p>
           {classInfo && <div className="flex flex-wrap gap-1.5"><ClassStatusBadge status={classInfo.status} /><ClassKindBadge kind={classInfo.kind} /></div>}
         </div>
         <SidebarGroup className="group-data-[collapsible=icon]:p-0.5">
@@ -47,9 +47,9 @@ export function ClassWorkspaceSidebar({ workspace }: { workspace: ClassWorkspace
           <SidebarGroupContent><SidebarMenu className="gap-2">
             {classInfo && SECTIONS.map(({ id, icon: Icon }) => <SidebarMenuItem key={id}>
               <SidebarMenuButton asChild tooltip={CLASS_WORKSPACE_LABELS[id]} isActive={workspace.section === id}
-                className={`min-h-11 rounded-xl px-3 font-semibold transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-ring group-data-[collapsible=icon]:size-11! motion-reduce:transform-none ${workspace.section === id ? "bg-primary! text-primary-foreground! hover:bg-primary/90!" : "text-muted-foreground hover:bg-muted hover:text-primary"}`}>
+                className="lms-navigation-item group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0 motion-reduce:transform-none">
                 <Link href={links[id]} aria-current={workspace.section === id ? "page" : undefined} onClick={() => setOpenMobile(false)}>
-                  <Icon className="size-4" aria-hidden="true" /><span>{CLASS_WORKSPACE_LABELS[id]}</span>
+                  <Icon className="size-4 shrink-0" aria-hidden="true" /><span className="group-data-[collapsible=icon]:hidden">{CLASS_WORKSPACE_LABELS[id]}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>)}

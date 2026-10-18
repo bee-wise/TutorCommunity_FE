@@ -3,7 +3,11 @@ import { LearnerClassSessionsScreen } from "@/features/learner-classes/component
 
 export const metadata: Metadata = { title: "Buổi học | BeeWise Learner" };
 
-export default async function LearnerClassSessionsPage({ params }: { params: Promise<{ classId: string }> }) {
+export default async function LearnerClassSessionsPage({
+  params,
+}: {
+  params: Promise<{ classId: string }>;
+}) {
   const { classId } = await params;
-  return <LearnerClassSessionsScreen classId={classId} />;
+  return <LearnerClassSessionsScreen key={classId} classId={classId} />;
 }

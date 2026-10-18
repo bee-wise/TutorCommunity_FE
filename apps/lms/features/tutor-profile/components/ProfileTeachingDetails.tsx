@@ -1,10 +1,6 @@
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@workspace/ui/components/ui/collapsible";
 import { panelClass } from "@/components/lms-page-ui";
-import {
-  CalendarBlank,
-  CaretDown,
-  Certificate,
-  ChalkboardTeacher,
-} from "@phosphor-icons/react";
+import { CalendarDaysIcon as CalendarBlank, ChevronDownIcon as CaretDown, AcademicCapIcon as Certificate, PresentationChartBarIcon as ChalkboardTeacher } from "@heroicons/react/24/outline";
 import type { TutorProfile } from "../types/profile.schemas";
 
 const modeLabels: Record<string, string> = {
@@ -33,7 +29,7 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
       >
         <h2
           id="profile-intro-title"
-          className="font-nunito text-lg font-extrabold text-primary"
+          className="font-lms text-lg font-extrabold text-foreground"
         >
           Giới thiệu & học vấn
         </h2>
@@ -81,7 +77,7 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
       >
         <h2
           id="profile-offerings-title"
-          className="font-nunito text-lg font-extrabold text-primary"
+          className="font-lms text-lg font-extrabold text-foreground"
         >
           Nội dung giảng dạy
         </h2>
@@ -112,7 +108,7 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
                 </div>
                 <div className="shrink-0 space-y-2 sm:text-right">
                   {item.basePrice != null && (
-                    <p className="font-nunito text-lg font-extrabold tabular-nums text-primary">
+                    <p className="font-lms text-lg font-extrabold tabular-nums text-primary">
                       {currency.format(item.basePrice)}
                       <span className="ml-1 font-sans text-xs font-normal text-muted-foreground">
                         mức phí cơ bản
@@ -134,20 +130,20 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
         )}
       </section>
       <section className={panelClass} aria-label="Thông tin bổ sung">
-        <details open className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-between py-2 font-nunito text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        <Collapsible defaultOpen className="group">
+<CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between py-2 font-lms text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
             <span className="flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <CalendarBlank size={16} weight="bold" />
+                <CalendarBlank width={16} height={16} />
               </span>
               Lịch có thể nhận lớp
             </span>
             <CaretDown
-              size={16}
-              weight="bold"
-              className="text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+              width={16} height={16}
+              className="text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
             />
-          </summary>
+          </CollapsibleTrigger>
+<CollapsibleContent>
           <div className="mt-3 grid gap-4 text-sm sm:grid-cols-2">
             {profile.availability.length ? (
               profile.availability.map((slot, index) => (
@@ -168,21 +164,22 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
             Đây là khung giờ nhận lớp trong hồ sơ, không thay thế lịch dạy đã
             được xác nhận.
           </p>
-        </details>
-        <details className="group mt-4 border-t border-border pt-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between py-2 font-nunito text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        </CollapsibleContent>
+</Collapsible>
+        <Collapsible className="group mt-4 border-t border-border pt-4">
+<CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between py-2 font-lms text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
             <span className="flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <ChalkboardTeacher size={16} weight="bold" />
+                <ChalkboardTeacher width={16} height={16} />
               </span>
               Phương pháp giảng dạy
             </span>
             <CaretDown
-              size={16}
-              weight="bold"
-              className="text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+              width={16} height={16}
+              className="text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
             />
-          </summary>
+          </CollapsibleTrigger>
+<CollapsibleContent>
           <div className="mt-3 space-y-4">
             {profile.teachingMethods.length ? (
               profile.teachingMethods.map((method, index) => (
@@ -199,21 +196,22 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
               </p>
             )}
           </div>
-        </details>
-        <details className="group mt-4 border-t border-border pt-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between py-2 font-nunito text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        </CollapsibleContent>
+</Collapsible>
+        <Collapsible className="group mt-4 border-t border-border pt-4">
+<CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between py-2 font-lms text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
             <span className="flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Certificate size={16} weight="bold" />
+                <Certificate width={16} height={16} />
               </span>
               Thành tích & minh chứng
             </span>
             <CaretDown
-              size={16}
-              weight="bold"
-              className="text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+              width={16} height={16}
+              className="text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
             />
-          </summary>
+          </CollapsibleTrigger>
+<CollapsibleContent>
           <div className="mt-3 space-y-4">
             {profile.achievements.length ? (
               profile.achievements.map((item, index) => (
@@ -234,7 +232,8 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
               </p>
             )}
           </div>
-        </details>
+        </CollapsibleContent>
+</Collapsible>
       </section>
     </div>
   );

@@ -7,7 +7,22 @@ const text = z.string().nullish();
 const count = z.number().int().nonnegative();
 const optionalDate = dateTime.nullish();
 export const versionCommand = z.object({ expectedVersion: count });
+export const slotNameSchema = z
+  .string()
+  .trim()
+  .max(200, "Tên buổi học tối đa 200 ký tự.")
+  .transform((v) => (v.length > 0 ? v : null))
+  .nullish();
+export const slotDescriptionSchema = z
+  .string()
+  .trim()
+  .max(2000, "Mô tả buổi học tối đa 2.000 ký tự.")
+  .transform((v) => (v.length > 0 ? v : null))
+  .nullish();
+
 export const slotSchema = z.object({
+  name: slotNameSchema,
+  description: slotDescriptionSchema,
   startAt: dateTime,
   endAt: dateTime,
   locationOrMeetingInfo: text,
@@ -18,6 +33,10 @@ export const sessionSchema = z.object({
   classId: guid,
   tutorId: guid,
   learnerId: guid.nullish(),
+  name: text,
+  description: text,
+  tutorName: text,
+  teachingItemName: text,
   startAt: dateTime,
   endAt: dateTime,
   actualEndAt: optionalDate,
@@ -185,6 +204,7 @@ export const chatMessageSchema = z.object({
   senderId: guid,
   content: text,
   createdAt: dateTime,
+  avatarUrl: text,
 });
 export const chatPageSchema = z.object({
   items: z

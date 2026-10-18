@@ -15,7 +15,7 @@ export function LearnerSessionCard({ classId, session, materialCount }: LearnerS
   return (
     <article className={`${libraryPanel} flex min-w-0 flex-col gap-4`}>
       <header className="space-y-3">
-        <h3 className="font-nunito text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{session.topic}</h3>
+        <h3 className="font-lms text-lg font-extrabold leading-[1.3] text-foreground [overflow-wrap:anywhere]">{session.topic}</h3>
         <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-bold text-muted-foreground">Buổi {session.sequence}</span><span className={`${libraryBadge} ${STATUS_STYLES[session.status]}`}>{LEARNER_SESSION_STATUS_LABELS[session.status]}</span></div>
       </header>
       <dl className="space-y-2 rounded-2xl border border-border bg-card p-3 text-sm">

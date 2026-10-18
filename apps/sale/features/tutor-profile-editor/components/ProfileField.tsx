@@ -5,19 +5,20 @@ interface ProfileFieldProps {
   label: string;
   description?: string;
   reviewRequired?: boolean;
-  error?: FieldError;
+  error?: FieldError | { message?: string };
   registration: UseFormRegisterReturn;
   multiline?: boolean;
   rows?: number;
   placeholder?: string;
   inputMode?: "text" | "url";
-  type?: "text" | "file";
+  type?: "text" | "file" | "date";
+  disabled?: boolean;
   accept?: string;
   options?: { value: string; label: string }[];
 }
 
 const fieldClassName =
-  "w-full rounded-xl border border-[#c7d6eb] bg-white px-3 py-2.5 text-sm leading-6 text-[#0c0c0b] outline-none transition placeholder:text-[#667085] focus:border-primary focus:ring-2 focus:ring-primary/18 aria-[invalid=true]:border-[#b42318] aria-[invalid=true]:ring-[#e1aba7]/35";
+  "w-full rounded-xl border border-[#c7d6eb] bg-white px-3 py-2.5 text-sm leading-6 text-[#0c0c0b] outline-none transition placeholder:text-[#667085] focus:border-primary focus:ring-2 focus:ring-primary/18 disabled:cursor-not-allowed disabled:bg-muted/40 disabled:text-muted-foreground aria-[invalid=true]:border-[#b42318] aria-[invalid=true]:ring-[#e1aba7]/35";
 
 export function ProfileField({
   id,
@@ -31,6 +32,7 @@ export function ProfileField({
   placeholder,
   inputMode = "text",
   type = "text",
+  disabled,
   accept,
   options,
 }: ProfileFieldProps) {
@@ -62,6 +64,7 @@ export function ProfileField({
       {options ? (
         <select
           id={id}
+          disabled={disabled}
           aria-invalid={Boolean(error)}
           aria-describedby={describedBy}
           className={`${fieldClassName} appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22currentColor%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[position:right_0.75rem_center] bg-[length:1.25em_1.25em] bg-no-repeat pr-10`}
@@ -80,6 +83,7 @@ export function ProfileField({
         <textarea
           id={id}
           rows={rows}
+          disabled={disabled}
           placeholder={placeholder}
           aria-invalid={Boolean(error)}
           aria-describedby={describedBy}
@@ -89,10 +93,19 @@ export function ProfileField({
       ) : (
         <input
           id={id}
-          type={type === "file" ? "file" : inputMode === "url" ? "url" : "text"}
-          inputMode={type === "file" ? undefined : inputMode}
+          type={
+            type === "file"
+              ? "file"
+              : type === "date"
+                ? "date"
+                : inputMode === "url"
+                  ? "url"
+                  : "text"
+          }
+          disabled={disabled}
+          inputMode={type === "file" || type === "date" ? undefined : inputMode}
           accept={accept}
-          placeholder={type === "file" ? undefined : placeholder}
+          placeholder={type === "file" || type === "date" ? undefined : placeholder}
           aria-invalid={Boolean(error)}
           aria-describedby={describedBy}
           className={

@@ -19,7 +19,7 @@ export function MaterialClassCard({ classInfo, learners, sessionCount, materialC
         aria-label={`Xem tài liệu lớp ${classInfo.title}, mã ${classInfo.code}`}
         className={`${styles.card} group flex h-full min-w-0 flex-col gap-3 p-4 transition-all motion-reduce:transition-none`}>
         <header className="space-y-3">
-          <h2 className="font-nunito text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{classInfo.title}</h2>
+          <h2 className="font-lms text-lg font-extrabold leading-[1.3] text-foreground [overflow-wrap:anywhere]">{classInfo.title}</h2>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-bold tabular-nums text-muted-foreground">{classInfo.code}</span>
             <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold leading-5 ${STATUS_STYLES[classInfo.status]}`}>
@@ -34,7 +34,7 @@ export function MaterialClassCard({ classInfo, learners, sessionCount, materialC
         <div className="space-y-3 rounded-2xl border border-border bg-card p-3">
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="flex shrink-0 -space-x-2" aria-hidden="true">
-              {learners.slice(0, 3).map((learner) => <span key={learner.id} className="grid size-8 shrink-0 place-items-center rounded-full border-2 border-card bg-primary font-nunito text-[11px] font-extrabold text-primary-foreground">{learner.initials}</span>)}
+              {learners.slice(0, 3).map((learner) => <span key={learner.id} className="grid size-8 shrink-0 place-items-center rounded-full border-2 border-card bg-primary font-lms text-[11px] font-extrabold text-primary-foreground">{learner.initials}</span>)}
             </div>
             <div className="min-w-0 space-y-0.5">
               <p className="text-[11px] leading-4 text-muted-foreground">Học viên</p>
@@ -44,11 +44,11 @@ export function MaterialClassCard({ classInfo, learners, sessionCount, materialC
           <dl className="grid grid-cols-2 gap-3 border-t border-border pt-3">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
               <dt className="text-xs text-muted-foreground">Buổi học</dt>
-              <dd className="font-nunito text-sm font-extrabold tabular-nums text-foreground">{sessionCount}</dd>
+              <dd className="font-lms text-sm font-extrabold tabular-nums text-foreground">{sessionCount}</dd>
             </div>
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
               <dt className="text-xs text-muted-foreground">Tài liệu</dt>
-              <dd className="font-nunito text-sm font-extrabold tabular-nums text-foreground">{materialCount}</dd>
+              <dd className="font-lms text-sm font-extrabold tabular-nums text-foreground">{materialCount}</dd>
             </div>
           </dl>
         </div>

@@ -1,75 +1,15 @@
-<!-- BEGIN:user-request-scope -->
+# BeeWise agent instructions
 
-# PHẠM VI CÔNG VIỆC THEO YÊU CẦU NGƯỜI DÙNG
+## Scope
 
-- Chỉ thực hiện đúng yêu cầu cụ thể của người dùng. Chỉ sửa các file và phần code cần thiết trực tiếp để hoàn thành yêu cầu đó; không tự mở rộng phạm vi, chỉnh sửa, tái cấu trúc hoặc "dọn dẹp" phần khác.
-- Nếu phát hiện lỗi hoặc vấn đề ngoài phạm vi yêu cầu, chỉ báo cho người dùng biết vị trí và tác động; không tự sửa khi chưa có yêu cầu riêng từ người dùng.
-- Không sửa file theo dõi công việc, tài liệu, cấu hình, định dạng hay các thay đổi có sẵn của người khác nếu yêu cầu hiện tại không liên quan trực tiếp. Các bước kiểm tra chỉ được đọc và báo cáo lỗi ngoài phạm vi.
-- Nếu một thay đổi ngoài phạm vi thực sự cần thiết để hoàn thành yêu cầu, giải thích sự phụ thuộc và hỏi người dùng trước khi sửa.
+- Do only what the user requests. Change only files and code directly needed; do not expand scope, refactor, or clean up unrelated work.
+- Report out-of-scope issues with their location and impact; do not fix them without a separate request.
+- Do not change task tracking, documentation, configuration, formatting, or others' existing changes unless the request directly involves them.
+- If an out-of-scope change is necessary, explain the dependency and ask before making it.
 
-<!-- END:user-request-scope -->
+## Task-specific guidance
 
-<!-- BEGIN:beewise-core-rules -->
-
-# MANDATORY BEEWISE DEVELOPMENT STANDARDS & AGENT WORKFLOW
-
-Tất cả các AI Agent khi làm việc trong repository này **BẮT BUỘC** phải tuân thủ nghiêm ngặt các nguyên tắc sau trong MỌI prompt:
-
-1. **SINGLE SOURCE OF TRUTH**:
-   - Mọi quy chuẩn kiến trúc Monorepo, quản lý State, quy trình gọi API 10 bước, phân tách tầng (Dumb Component ➔ Smart Hook ➔ Service) và Definition of Done đều nằm tại: [.agents/workflows/beewise-workflow.md](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/workflows/beewise-workflow.md).
-   - Trước khi tạo mới hoặc sửa đổi code, Agent phải đọc và đối chiếu với workflow trên.
-
-2. **CLEAN ARCHITECTURE & SEPARATION OF CONCERNS**:
-   - **App Router (`app/`)**: Chỉ để định tuyến và compose page. Tuyệt đối không viết business logic, state phức tạp hay gọi API trực tiếp trong `app/`.
-   - **Feature Modules (`features/[name]/`)**: Mọi domain logic thuộc về feature module.
-   - **Dumb UI vs Smart Logic**: Tách biệt UI Component (`components/`), Business Hook (`hooks/`), API/Service (`api/` hoặc `services/`). Component không vượt quá 150-200 dòng (tối đa 300).
-   - **Zero `any`**: Strict TypeScript, dùng Zod schema để validate form và dữ liệu ngoại vi.
-   - Dùng z.guid() bắt buộc khi validate trường UUID.
-
-3. **STATE MANAGEMENT & API INTEGRATION**:
-   - **Server State**: Bắt buộc dùng TanStack Query (`useQuery`, `useMutation`), centralize query keys, tự động invalidate cache sau mutations. Không lưu server data trong Zustand.
-   - **Global UI State**: Chỉ dùng Zustand cho Auth session, global notification queue, theme/settings.
-   - **API Client**: Bắt buộc gọi qua `apiClient` từ `@workspace/core/apiClient` với `withCredentials: true`. Cấm gọi trực tiếp `axios` trong components.
-
-4. **TERMINAL REQUIREMENT**:
-   - Bắt buộc dùng **PowerShell** khi chạy lệnh trong project.
-   - Dùng cú pháp và cmdlet PowerShell (`New-Item`, `Remove-Item`, `Copy-Item`); không dùng Git Bash hoặc cú pháp Bash.
-
-<!-- END:beewise-core-rules -->
-
-<!-- BEGIN:nextjs-agent-rules -->
-
-# NEXT.JS 16 & REACT 19 RULES
-
-- Mặc định sử dụng **Server Components** (`.tsx` không có `'use client'`).
-- Chỉ gắn `'use client'` ở các leaf-node tương tác ngoài cùng (sử dụng hooks, event listeners, animations).
-
-<!-- END:nextjs-agent-rules -->
-
-<!-- BEGIN:beewise-ui-standards -->
-
-# MANDATORY BEEWISE UI & ANTI-SLOP STANDARDS
-
-Khi phát triển hoặc sửa đổi BẤT KỲ giao diện người dùng, button, form, chip, badge, card, bảng biểu nào trong TOÀN BỘ hệ thống BeeWise (`apps/sale`, `apps/lms`, `apps/staff`, `apps/admin`):
-
-1. **GOLDEN UI BENCHMARK & DESIGN SYSTEM**: Luôn tuân theo tiêu chuẩn thiết kế trực quan tại [.agents/skills/design-taste-frontend/references/beewise-ui-standards.html](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/references/beewise-ui-standards.html) và hướng dẫn thiết kế toàn diện tại [.agents/skills/design-taste-frontend/SKILL.md](file:///d:/FPTUNI/MECODE/MyProject/BeeWise/TutorCommunity_FE/.agents/skills/design-taste-frontend/SKILL.md) (áp dụng cho cả Landing, Marketplace, LMS Workspaces, và Staff/Admin Dashboards).
-
-2. **ICON USAGE STANDARDS**:
-   - **Ưu tiên sử dụng Heroicons (`@heroicons/react`)** làm thư viện icon chính cho toàn bộ UI components, buttons, navigation, badges, cards, tables và status indicators.
-   - Bắt buộc import đúng subpath tương ứng với kích thước/style:
-     - 24x24 Outline: `@heroicons/react/24/outline` (mặc định cho các nút, menu, card, standard actions)
-     - 24x24 Solid: `@heroicons/react/24/solid` (cho active/filled state, rating, high-emphasis)
-     - 20x20 Mini Solid: `@heroicons/react/20/solid` (cho input icons, dropdown select, compact buttons)
-     - 16x16 Micro: `@heroicons/react/16/solid` (cho badges, action chips, tags)
-   - Đảm bảo tính đồng bộ kích thước và phong cách xuyên suốt màn hình (stroke/solid nhất quán).
-3. **FORBIDDEN BUTTON / ACTION PATTERNS**:
-   - **CẤM HOÀN TOÀN** tạo các button/link hành động dạng text trần có gạch chân (`hover:underline`, `underline`) kèm icon mũi tên thô sơ (ví dụ: `← Đổi email`, `← Quay lại`).
-   - Mọi nút bấm/action chips bắt buộc phải là:
-     - **Action Chips / Badges**: Đóng gói trong container (`rounded-xl border bg-muted/40 px-3.5 py-2.5`) kèm nút chip/badge tinh tế (`rounded-lg border bg-background px-2.5 py-1 text-xs font-bold hover:bg-muted active:scale-95`).
-     - **Standard Button Variants**: Dùng Button chuẩn từ `@workspace/ui` (`variant="default" | "accent" | "secondary" | "outline" | "ghost" | "destructive"`).
-     - **Interactive Text Links**: Dùng `transition-colors hover:text-primary/80` (KHÔNG dùng `hover:underline` trừ nội dung chính sách pháp lý).
-4. **MANDATORY MICRO-INTERACTIONS**: Mọi nút tương tác phải có `active:scale-[0.98]` hoặc `active:scale-95`, `transition-all`, và hiệu ứng bo góc mượt mà theo đúng triết lý Edutech Soft-Modern của BeeWise.
-5. **FORBIDDEN REDUNDANT SUBTITLE PARAGRAPHS**: CẤM HOÀN TOÀN việc tự động sinh các đoạn paragraph mô tả sáo rỗng, lặp lại ý tiêu đề (`<p className="text-sm text-muted-foreground">...</p>`) dưới các thẻ `h1`, `h2`, page headers. Mặc định chỉ giữ tiêu đề sạch sẽ, gọn gàng; CHỈ THÊM đoạn mô tả khi mang lại thông tin chỉ dẫn thao tác nghiệp vụ thiết yếu hoặc cảnh báo thực sự hữu ích.
-6. **FORBIDDEN NATIVE TRIANGLE DISCLOSURE (<details><summary> / ▶)**: CẤM TUYỆT ĐỐI dùng thẻ `<details><summary>` mặc định của trình duyệt để lộ glyph hình tam giác đen thô sơ (`▶`). Mọi tính năng mở rộng/thu gọn nội dung bắt buộc dùng component `DisclosureCard`, `Collapsible` từ `@workspace/ui/components/ui/collapsible` hoặc `Accordion` từ `@workspace/ui/components/ui/accordion`.
-
-<!-- END:beewise-ui-standards -->
+- [`.agents/workflows/beewise-workflow.md`](.agents/workflows/beewise-workflow.md) is the source of truth for implementation. Read only sections relevant to the task: §§2, 4 for architecture; §§5–7 for state, types, and API; §3 for UI implementation; §17 for completion. Planning and review tasks should inspect only the sections needed for their analysis, not the entire workflow. The scope rules above take precedence over its task-tracking guidance.
+- Use **PowerShell** for project commands, with PowerShell syntax and cmdlets; do not use Bash or Git Bash.
+- When implementing or changing UI in `apps/sale`, `apps/lms`, `apps/staff`, or `apps/admin`, use [`design-taste-frontend/SKILL.md`](.agents/skills/design-taste-frontend/SKILL.md). For `apps/lms`, also use [`design-taste-lms/SKILL.md`](.agents/skills/design-taste-lms/SKILL.md). Consult their visual references when the task requires layout or visual-design decisions. Planning-only and non-visual tasks do not require these UI skills unless the user explicitly invokes them.
+- Before nontrivial code changes, use CodeGraph for targeted symbol and usage discovery, then confirm critical findings in source. If unavailable or stale, use repository search. Check shared usages before editing and run relevant checks afterward; CodeGraph is not a source of business requirements.

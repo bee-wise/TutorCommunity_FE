@@ -57,7 +57,7 @@ export function ClassAIFlowModal({
       <Dialog open={open} onOpenChange={requestClose}>
         <DialogContent className="flex max-h-[92dvh] w-[calc(100%-1rem)] max-w-5xl flex-col gap-5 overflow-hidden rounded-3xl border-border bg-card p-2 shadow-soft sm:rounded-[32px] sm:p-8 motion-reduce:animate-none [&>button]:grid [&>button]:size-11 [&>button]:place-items-center [&>button]:rounded-full">
           <div className="shrink-0 pr-10">
-            <DialogTitle className="font-nunito text-2xl font-extrabold leading-[1.25] text-primary">
+            <DialogTitle className="font-lms text-2xl font-extrabold leading-[1.25] text-primary">
               Tạo tài liệu với BeeWise AI
             </DialogTitle>
             <DialogDescription className="mt-2 leading-relaxed">
@@ -70,7 +70,7 @@ export function ClassAIFlowModal({
           <div className="min-h-0 overflow-y-auto overscroll-contain px-2 py-2">
             {flow.step === 1 && (
               <div className="space-y-5 py-3">
-                <h2 className="text-xl text-primary">
+                <h2 className="text-xl text-foreground">
                   Bạn muốn tạo tài liệu cho buổi nào?
                 </h2>
                 <p className="text-sm text-muted-foreground">
@@ -123,7 +123,7 @@ export function ClassAIFlowModal({
                 <GeneratingState compact startedAt={flow.job?.startedAt} />
               ) : (
                 <div className="space-y-4">
-                  <h2 className="text-xl text-primary">
+                  <h2 className="text-xl text-foreground">
                     Kiểm tra nội dung buổi học
                   </h2>
                   <p className="text-sm leading-relaxed text-muted-foreground">

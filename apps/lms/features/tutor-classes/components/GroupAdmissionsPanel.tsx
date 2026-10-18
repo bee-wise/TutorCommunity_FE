@@ -86,7 +86,7 @@ export function GroupAdmissionsPanel({
   }
   return (
     <section className="space-y-4">
-      <h2 className="font-nunito text-lg font-extrabold text-primary">
+      <h2 className="font-lms text-lg font-extrabold text-foreground">
         Đăng ký & giới thiệu học viên
       </h2>
       {active && <Button className={classButton} onClick={() => setReferring(true)}>Giới thiệu học viên</Button>}

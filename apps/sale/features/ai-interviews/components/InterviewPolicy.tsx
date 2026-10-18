@@ -16,16 +16,16 @@ const guidance = [
   {
     Icon: ClockIcon,
     title: "Có thời gian chuẩn bị",
-    text: "Đọc câu hỏi trước khi ghi hình. Hệ thống hiển thị thời gian cho từng câu.",
+    text: "Bee dành thời gian cho bạn suy nghĩ về câu trả lời.",
   },
   {
     Icon: MicrophoneIcon,
-    title: "Chia sẻ bằng lời nói",
-    text: "Trả lời tự nhiên, rõ ràng và có ví dụ từ kinh nghiệm giảng dạy của bạn.",
+    title: "Trao đổi với Bee",
+    text: "Hãy tự nhiên chia sẻ kinh nghiệm và góc nhìn của bạn.",
   },
   {
     Icon: VideoCameraIcon,
-    title: "Camera và micro luôn bật",
+    title: "Bee sẽ đồng hành cùng bạn",
     text: "Chọn nơi yên tĩnh, đủ ánh sáng và giữ kết nối Internet ổn định.",
   },
 ];
@@ -44,12 +44,9 @@ export function InterviewPolicy({
               <DocumentTextIcon aria-hidden="true" className="size-5" />
             </span>
             <h2 className="font-nunito text-xl font-extrabold">
-              Quy định nền tảng
+              Bước 1: Xác nhận quy định
             </h2>
           </div>
-          <span className="rounded-full border border-border bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground">
-            Phiên bản {interview.policy.data?.version}
-          </span>
         </div>
         <div className="space-y-5 p-5 sm:p-7">
           <div
@@ -67,8 +64,8 @@ export function InterviewPolicy({
               {interview.policy.data?.confirmation_text}
             </InterviewCheck>
             <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-              <p className="max-w-60 text-xs leading-5 text-muted-foreground">
-                Đọc và xác nhận quy định trước khi kiểm tra thiết bị.
+              <p className="max-w-70 text-xs leading-5 text-muted-foreground">
+                Đọc cẩn thận và xác nhận quy định phỏng vấn.
               </p>
               <Button
                 className={`w-full sm:w-auto ${interviewButtonClass}`}

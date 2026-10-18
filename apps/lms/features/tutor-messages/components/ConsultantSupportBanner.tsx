@@ -23,8 +23,8 @@ export function ConsultantSupportBanner({
         <Headset width={22} height={22} className="text-secondary" />
       </div>
 
-      <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+      <div className="inline-flex items-center gap-1.5 rounded-full bg-secondary/10 px-2.5 py-0.5 text-[11px] font-bold text-foreground dark:text-foreground">
+        <span className="h-1.5 w-1.5 rounded-full bg-secondary" />
         Kết nối thành công
       </div>
 

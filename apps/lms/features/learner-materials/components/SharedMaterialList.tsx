@@ -26,7 +26,7 @@ export function SharedMaterialList({
       {materials.map((material) => (
         <article key={material.id} className={`${libraryPanel} grid min-w-0 gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center`}>
           <div className="min-w-0">
-            <h3 className="font-nunito text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{material.title}</h3>
+            <h3 className="font-lms text-lg font-extrabold leading-[1.3] text-foreground [overflow-wrap:anywhere]">{material.title}</h3>
             <div className="mt-3">
               <LearnerMaterialBadges source={material.source} fileType={material.fileType} isNew={material.isNew} />
             </div>

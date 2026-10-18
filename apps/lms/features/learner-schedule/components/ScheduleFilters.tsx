@@ -1,9 +1,7 @@
-import { CalendarDots, ListBullets } from "@phosphor-icons/react";
-import type {
-  LearnerScheduleFilters,
-  LearnerScheduleView,
-  LearnerSessionStatus,
-} from "../types/learner-schedule.types";
+import { CalendarDaysIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
+import { LmsSelect } from "@/components/LmsSelect";
+import type { LearnerScheduleFilters, LearnerScheduleView, LearnerSessionStatus } from "../types/learner-schedule.types";
 
 interface ScheduleFiltersProps {
   filters: LearnerScheduleFilters;
@@ -13,51 +11,24 @@ interface ScheduleFiltersProps {
   onStatusChange: (status: "all" | LearnerSessionStatus) => void;
   onViewChange: (view: LearnerScheduleView) => void;
 }
+const STATUS_OPTIONS = [
+  { value: "all", label: "Tất cả trạng thái" },
+  { value: "UPCOMING", label: "Sắp diễn ra" },
+  { value: "COMPLETED", label: "Đã hoàn thành" },
+  { value: "CANCELED", label: "Đã hủy" },
+];
 
-export function ScheduleFilters({
-  filters,
-  subjects,
-  view,
-  onSubjectChange,
-  onStatusChange,
-  onViewChange,
-}: ScheduleFiltersProps) {
+export function ScheduleFilters({ filters, subjects, view, onSubjectChange, onStatusChange, onViewChange }: ScheduleFiltersProps) {
   return (
-    <section className="flex flex-col gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:flex-row sm:items-center" aria-label="Bộ lọc lịch học">
-      <div className="mr-auto grid grid-cols-2 rounded-xl bg-muted p-1" aria-label="Kiểu hiển thị lịch học">
-        <ViewButton active={view === "calendar"} onClick={() => onViewChange("calendar")} icon={<CalendarDots size={16} />} label="Lịch tháng" />
-        <ViewButton active={view === "list"} onClick={() => onViewChange("list")} icon={<ListBullets size={16} />} label="Danh sách" />
+    <section className="flex flex-col gap-4 rounded-3xl border border-border bg-card p-4 shadow-soft lg:flex-row lg:items-end" aria-label="Bộ lọc lịch học">
+      <div className="mr-auto flex gap-1 self-start rounded-xl bg-muted p-1" role="group" aria-label="Kiểu hiển thị lịch học">
+        <Button variant="ghost" aria-pressed={view === "calendar"} onClick={() => onViewChange("calendar")} className={view === "calendar" ? "min-h-11 bg-card text-primary shadow-sm hover:bg-card" : "min-h-11 text-muted-foreground hover:bg-card"}><CalendarDaysIcon className="size-4" aria-hidden="true" />Lịch tháng</Button>
+        <Button variant="ghost" aria-pressed={view === "list"} onClick={() => onViewChange("list")} className={view === "list" ? "min-h-11 bg-card text-primary shadow-sm hover:bg-card" : "min-h-11 text-muted-foreground hover:bg-card"}><ListBulletIcon className="size-4" aria-hidden="true" />Danh sách</Button>
       </div>
-      <label>
-        <span className="sr-only">Môn học</span>
-        <select
-          value={filters.subject}
-          onChange={(event) => onSubjectChange(event.target.value)}
-          className="h-10 w-full rounded-xl border border-input bg-white px-3 text-sm font-semibold outline-none focus:ring-2 focus:ring-[#280F91]/25 sm:w-44"
-        >
-          <option value="all">Tất cả môn học</option>
-          {subjects.map((subject) => (
-            <option key={subject} value={subject}>{subject}</option>
-          ))}
-        </select>
-      </label>
-      <label>
-        <span className="sr-only">Trạng thái buổi học</span>
-        <select
-          value={filters.status}
-          onChange={(event) => onStatusChange(event.target.value as "all" | LearnerSessionStatus)}
-          className="h-10 w-full rounded-xl border border-input bg-white px-3 text-sm font-semibold outline-none focus:ring-2 focus:ring-[#280F91]/25 sm:w-44"
-        >
-          <option value="all">Tất cả trạng thái</option>
-          <option value="UPCOMING">Sắp diễn ra</option>
-          <option value="COMPLETED">Đã hoàn thành</option>
-          <option value="CANCELED">Đã hủy</option>
-        </select>
-      </label>
+      <div className="grid gap-3 sm:grid-cols-2 lg:w-[360px]">
+        <div className="space-y-1.5"><label htmlFor="learner-schedule-subject" className="text-xs font-medium text-muted-foreground">Môn học</label><LmsSelect id="learner-schedule-subject" value={filters.subject} options={[{ value: "all", label: "Tất cả môn học" }, ...subjects.map((subject) => ({ value: subject, label: subject }))]} onValueChange={onSubjectChange} /></div>
+        <div className="space-y-1.5"><label htmlFor="learner-schedule-status" className="text-xs font-medium text-muted-foreground">Trạng thái</label><LmsSelect id="learner-schedule-status" value={filters.status} options={STATUS_OPTIONS} onValueChange={(value) => { if (value === "all" || value === "UPCOMING" || value === "COMPLETED" || value === "CANCELED") onStatusChange(value); }} /></div>
+      </div>
     </section>
   );
-}
-
-function ViewButton({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
-  return <button type="button" onClick={onClick} aria-pressed={active} className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-bold transition-colors ${active ? "bg-white text-[#280F91] shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>{icon}{label}</button>;
 }

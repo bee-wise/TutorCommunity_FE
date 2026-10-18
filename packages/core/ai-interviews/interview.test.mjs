@@ -23,7 +23,14 @@ function loadTs(file) {
   return compiledModule.exports;
 }
 const { consentRequestSchema, startRequestSchema, interviewStateSchema } = loadTs("schemas/tutor.schema.ts");
-const { decisionRequestSchema, overrideRequestSchema } = loadTs("schemas/review.schema.ts");
+const {
+  decisionRequestSchema,
+  overrideRequestSchema,
+  integrityEventSchema,
+  integrityEventBatchSchema,
+  integritySummarySchema,
+  packageSchema,
+} = loadTs("schemas/review.schema.ts");
 const { interviewApi, validateInterviewAudio } = loadTs("services/interview.api.ts");
 const { apiClient } = loadTs("../apiClient.ts");
 const { ApiError, handleApiError } = loadTs("../sys-libs/error-handler.ts");
@@ -153,4 +160,97 @@ test("MediaRecorder produces audio-only mic samples and separate audio/video ans
     await recorder.start(false); tracks[0].readyState = "ended";
     await assert.rejects(recorder.stop(), /Micro/);
   } finally { recorder.dispose(); Object.assign(global, previous); }
+});
+
+test("integrity event schemas validate allowed types, batch constraints and summary fields", () => {
+  const event = {
+    event_id: id,
+    client_session_id: "22222222-2222-4222-8222-222222222222",
+    sequence: 1,
+    type: "PAGE_HIDDEN",
+    occurred_at: "2026-10-18T10:00:00Z",
+    q_code: "Q1",
+    kind: "main",
+  };
+  assert.equal(integrityEventSchema.safeParse(event).success, true);
+  assert.equal(integrityEventSchema.safeParse({ ...event, type: "INVALID_EVENT" }).success, false);
+
+  const batch = { events: [event] };
+  assert.equal(integrityEventBatchSchema.safeParse(batch).success, true);
+  assert.equal(integrityEventBatchSchema.safeParse({ events: [] }).success, false);
+
+  const summary = {
+    fullscreen_exit_count: 2,
+    page_hidden_count: 1,
+    requires_review: true,
+    review_reasons: ["Thoát toàn màn hình 2 lần"],
+    telemetry_complete: true,
+  };
+  assert.equal(integritySummarySchema.safeParse(summary).success, true);
+  assert.equal(integritySummarySchema.safeParse({ ...summary, fullscreen_exit_count: -1 }).success, false);
+});
+
+test("package schema parses integrity_summary when present and allows nullish for legacy packages", () => {
+  const basePackage = {
+    interview: {
+      interview_id: id,
+      tutor_id: id,
+      status: "COMPLETED",
+      rubric_version: "v1",
+      language: "vi",
+      overall_score: 85,
+      manual_review_required: false,
+      started_at: "2026-10-18T09:00:00Z",
+      submitted_at: "2026-10-18T09:30:00Z",
+    },
+    summary: null,
+    report: null,
+    questions: [],
+    decisions: [],
+    tutor: null,
+    tutor_error: null,
+  };
+
+  const legacyParsed = packageSchema.parse(basePackage);
+  assert.equal(legacyParsed.integrity_summary, undefined);
+
+  const modernParsed = packageSchema.parse({
+    ...basePackage,
+    integrity_summary: {
+      fullscreen_exit_count: 0,
+      page_hidden_count: 0,
+      requires_review: false,
+      review_reasons: [],
+      telemetry_complete: true,
+    },
+  });
+  assert.equal(modernParsed.integrity_summary?.telemetry_complete, true);
+  assert.equal(modernParsed.integrity_summary?.requires_review, false);
+});
+
+test("API routes integrity event batch correctly", async () => {
+  const original = apiClient.defaults.adapter;
+  const calls = [];
+  apiClient.defaults.adapter = async (request) => {
+    calls.push(request);
+    return { data: { success: true }, status: 200, statusText: "OK", headers: {}, config: request };
+  };
+  try {
+    const events = [
+      {
+        event_id: id,
+        client_session_id: id,
+        sequence: 1,
+        type: "FULLSCREEN_EXITED",
+        occurred_at: "2026-10-18T10:00:00Z",
+      },
+    ];
+    await interviewApi.sendIntegrityEvents(id, events);
+    assert.equal(calls[0].method, "post");
+    assert.equal(calls[0].url, `/ai/interview/interviews/${id}/integrity-events`);
+    assert.equal(calls[0].withCredentials, true);
+    assert.deepEqual(JSON.parse(calls[0].data), { events });
+  } finally {
+    apiClient.defaults.adapter = original;
+  }
 });

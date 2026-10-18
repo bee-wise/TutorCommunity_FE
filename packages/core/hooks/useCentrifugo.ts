@@ -159,8 +159,10 @@ export function useCentrifugoSubscription<T = unknown>(
         sub.removeListener("subscribing", subscribingHandler);
         sub.removeListener("unsubscribed", unsubscribedHandler);
         sub.removeListener("error", errHandler);
-        sub.unsubscribe();
-        client.removeSubscription(sub);
+        if (sub.listeners("publication").length === 0) {
+          sub.unsubscribe();
+          client.removeSubscription(sub);
+        }
       }
       subRef.current = null;
     };

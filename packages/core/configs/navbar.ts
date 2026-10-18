@@ -117,9 +117,7 @@ const learnerMenu: NavbarItem[] = [
   { label: "Gia sư yêu thích", href: "/favorite-tutors" },
 ];
 
-const tutorOnboardingMenu: NavbarItem[] = [
-  { label: "Quy trình đăng ký", href: "/tutor/onboarding" },
-];
+const tutorOnboardingMenu: NavbarItem[] = [];
 
 const tutorApprovedMenu: NavbarItem[] = [
   { label: "Trang chủ", href: "/tutor/home" },

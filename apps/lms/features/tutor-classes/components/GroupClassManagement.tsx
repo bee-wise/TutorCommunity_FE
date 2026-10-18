@@ -90,19 +90,37 @@ export function GroupClassManagement({ classId }: { classId: string }) {
   return (
     <section className="space-y-5">
       <div className={`${classPanel} space-y-4`}>
-        <h2 className="font-nunito text-lg font-extrabold text-primary">
+        <h2 className="font-lms text-lg font-extrabold text-foreground">
           Vận hành lớp nhóm
         </h2>
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full border border-border px-3 py-1 text-xs">
+          <span
+            className={`rounded-full border px-3 py-0.5 text-xs font-bold ${
+              data.approvalStatus === "APPROVED"
+                ? "border-secondary/40 bg-secondary/15 text-foreground"
+                : data.approvalStatus === "REJECTED"
+                  ? "border-destructive/30 bg-destructive/10 text-destructive"
+                  : data.approvalStatus === "DRAFT"
+                    ? "border-border bg-card text-muted-foreground"
+                    : "border-accent/40 bg-accent/20 text-warning"
+            }`}
+          >
             {approvalLabels[data.approvalStatus ?? ""] ?? "Chưa có trạng thái duyệt"}
           </span>
-          <span className="rounded-full border border-border px-3 py-1 text-xs">
+          <span
+            className={`rounded-full border px-3 py-0.5 text-xs font-bold ${
+              data.isPublished
+                ? "border-primary/30 bg-primary/10 text-primary"
+                : "border-border bg-card text-muted-foreground"
+            }`}
+          >
             {data.isPublished ? "Đã công khai tuyển sinh" : "Không công khai"}
           </span>
         </div>
         {data.approvalNote && (
-          <p className="text-sm">Phản hồi tư vấn viên: {data.approvalNote}</p>
+          <p className="rounded-xl border border-accent/30 bg-accent/15 px-3 py-2 text-sm text-foreground">
+            Phản hồi tư vấn viên: {data.approvalNote}
+          </p>
         )}
         <div className="flex flex-wrap gap-2">
           {editable && (
@@ -161,23 +179,42 @@ export function GroupClassManagement({ classId }: { classId: string }) {
         <p className="text-xs text-muted-foreground">
           Công khai tuyển sinh không tự khai giảng hoặc thêm học viên. Học viên đã thanh toán vẫn cần tư vấn viên duyệt yêu cầu tham gia.
         </p>
-        <section className="space-y-3">
-          <h3 className="text-sm font-bold">Lộ trình</h3>
-          {!data.roadmap.length && <p className="rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">Chưa có lộ trình cho lớp này.</p>}
-          {data.roadmap.map((stage) => (
-            <div
-              key={stage.id}
-              className="rounded-2xl border border-border p-3"
-            >
-              <h4 className="font-bold">{stage.title}</h4>
-              <p className="text-sm">{stage.objective}</p>
-              {stage.lessons.map((l) => (
-                <p key={l.id} className="mt-2 text-sm">
-                  {l.order}. {l.title}
-                </p>
-              ))}
-            </div>
-          ))}
+        <section className="space-y-3 pt-2">
+          <div className="flex items-center justify-between">
+            <h3 className="font-lms text-sm font-extrabold text-foreground">Lộ trình học tập</h3>
+            <span className="text-xs text-muted-foreground">{data.roadmap.length} chặng đào tạo</span>
+          </div>
+          {!data.roadmap.length && (
+            <p className="rounded-2xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
+              Chưa có lộ trình cho lớp này.
+            </p>
+          )}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {data.roadmap.map((stage, idx) => (
+              <div
+                key={stage.id}
+                className="space-y-2 rounded-2xl border border-border/70 bg-muted/20 p-4 transition-colors hover:bg-muted/40"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="rounded-lg bg-card px-2 py-0.5 font-mono text-[10px] font-extrabold text-primary shadow-2xs">
+                    Chặng {idx + 1}
+                  </span>
+                  <h4 className="font-lms text-sm font-extrabold text-foreground">{stage.title}</h4>
+                </div>
+                {stage.objective && <p className="text-xs text-muted-foreground">{stage.objective}</p>}
+                <div className="mt-2 space-y-1.5 border-t border-border/60 pt-2">
+                  {stage.lessons.map((l) => (
+                    <div key={l.id} className="flex items-center gap-2 text-xs font-medium text-foreground">
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-border/80 bg-card text-[10px] font-bold text-muted-foreground">
+                        {l.order}
+                      </span>
+                      <span className="truncate">{l.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
         <section className="space-y-2">
           <h3 className="text-sm font-bold">Lịch sử duyệt</h3>

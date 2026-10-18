@@ -125,3 +125,31 @@ export const CLOSE_REASON_LABELS: Record<string, string> = {
   POLICY_VIOLATION: "Vi phạm chính sách",
   OTHER: "Lý do khác",
 };
+
+export const LAST_ACTIVE_CHAT_ROOM_ID_KEY = "beewise_last_active_chat_room_id";
+
+export function saveLastActiveChatRoomId(roomId: string, role?: string): void {
+  if (typeof window === "undefined" || !roomId) return;
+  try {
+    localStorage.setItem(LAST_ACTIVE_CHAT_ROOM_ID_KEY, roomId);
+    if (role) {
+      localStorage.setItem(`${LAST_ACTIVE_CHAT_ROOM_ID_KEY}_${role.toLowerCase()}`, roomId);
+    }
+  } catch {
+    // Ignore storage quota or access errors
+  }
+}
+
+export function getLastActiveChatRoomId(role?: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    if (role) {
+      const roleSpecific = localStorage.getItem(`${LAST_ACTIVE_CHAT_ROOM_ID_KEY}_${role.toLowerCase()}`);
+      if (roleSpecific) return roleSpecific;
+    }
+    return localStorage.getItem(LAST_ACTIVE_CHAT_ROOM_ID_KEY);
+  } catch {
+    return null;
+  }
+}
+

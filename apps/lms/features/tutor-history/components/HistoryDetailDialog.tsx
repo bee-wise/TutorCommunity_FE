@@ -11,7 +11,7 @@ export function HistoryDetailDialog({ connection, onClose }: { connection: Histo
   return (
     <Dialog open={!!connection} onOpenChange={(open) => { if (!open) onClose(); }}>
       {connection && <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto rounded-3xl border-border bg-card p-5 shadow-soft sm:p-6">
-        <DialogHeader className="pr-6 text-left"><DialogTitle className="font-nunito text-xl font-extrabold leading-relaxed text-primary">{connection.learnerName}</DialogTitle><DialogDescription className="break-all">Mã kết nối: {connection.id}</DialogDescription></DialogHeader>
+        <DialogHeader className="pr-6 text-left"><DialogTitle className="font-lms text-xl font-extrabold leading-relaxed text-primary">{connection.learnerName}</DialogTitle><DialogDescription className="break-all">Mã kết nối: {connection.id}</DialogDescription></DialogHeader>
         <HistoryStatusBadge status={connection.status} />
         <dl className="grid gap-4 text-sm sm:grid-cols-2">
           <div><dt className="text-muted-foreground">Ngày kết nối</dt><dd className="mt-1 font-bold">{formatHistoryDate(connection.createdAt)}</dd></div>
