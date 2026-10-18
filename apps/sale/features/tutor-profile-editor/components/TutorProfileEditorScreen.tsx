@@ -9,6 +9,7 @@ import { TutorTeachingMethods } from "../../tutor-profile/components/TutorTeachi
 import { useTutorProfileInlineEditor } from "../hooks/useTutorProfileInlineEditor";
 import { EditableProfileBlock } from "./EditableProfileBlock";
 import { ProfileEditModalRouter } from "./ProfileEditModalRouter";
+import { ProfileEditorSkeleton } from "./ProfileEditorSkeleton";
 import { ProfileEditorToolbar } from "./ProfileEditorToolbar";
 import { TutorEvidenceEditorPreview } from "./TutorEvidenceEditorPreview";
 import { TutorProfileSidebarPreview } from "./TutorProfileSidebarPreview";
@@ -16,6 +17,30 @@ import { TutorVideoEditorPreview } from "./TutorVideoEditorPreview";
 
 export function TutorProfileEditorScreen() {
   const editor = useTutorProfileInlineEditor();
+
+  if (editor.isLoading) {
+    return <ProfileEditorSkeleton />;
+  }
+
+  if (editor.isError && !editor.isDevPreview) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center">
+        <h2 className="font-nunito text-xl font-bold text-foreground">
+          Không thể tải thông tin hồ sơ
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Đã có lỗi xảy ra trong quá trình tải dữ liệu hồ sơ. Vui lòng thử lại.
+        </p>
+        <button
+          type="button"
+          onClick={() => void editor.refetch()}
+          className="mt-4 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-105"
+        >
+          Thử lại
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[100dvh] bg-[radial-gradient(circle_at_top_left,rgba(250,220,120,0.55),transparent_34%),linear-gradient(180deg,#fff3cb_0%,#fffaf0_38%,#ffffff_100%)] text-[#17142f]">

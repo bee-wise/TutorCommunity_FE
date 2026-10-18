@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,12 +8,7 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/ui/dialog";
 import { Button } from "@workspace/ui/components/ui/button";
-import { validatePreviewFile } from "../../utils/file-preview";
-
-const videoRule = {
-  acceptedTypes: ["video/mp4", "video/webm"],
-  maxBytes: 50 * 1024 * 1024,
-};
+import { FileUploadField } from "../../../tutor-profile-registration/components/FileUploadField";
 
 export function VideoEditDialog({
   videoUrl,
@@ -24,29 +19,7 @@ export function VideoEditDialog({
   onClose: () => void;
   onSave: (videoUrl: string) => void;
 }) {
-  const [previewUrl, setPreviewUrl] = useState(videoUrl);
-  const [fileError, setFileError] = useState<string | null>(null);
-  const generatedUrl = useRef<string | null>(null);
-  const committed = useRef(false);
-
-  useEffect(
-    () => () => {
-      if (!committed.current && generatedUrl.current) {
-        URL.revokeObjectURL(generatedUrl.current);
-      }
-    },
-    [],
-  );
-
-  const handleFileChange = (file?: File) => {
-    if (!file) return;
-    const error = validatePreviewFile(file, videoRule);
-    setFileError(error);
-    if (error) return;
-    if (generatedUrl.current) URL.revokeObjectURL(generatedUrl.current);
-    generatedUrl.current = URL.createObjectURL(file);
-    setPreviewUrl(generatedUrl.current);
-  };
+  const [currentUrl, setCurrentUrl] = useState(videoUrl);
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -56,42 +29,17 @@ export function VideoEditDialog({
             Chỉnh sửa video giới thiệu
           </DialogTitle>
           <DialogDescription className="mt-1.5 leading-6 text-[#56516a]">
-            Tải video MP4 hoặc WEBM, tối đa 50 MB và xem trước trước khi lưu.
+            Tải video MP4, WebM hoặc QuickTime (tối đa 100 MB). Video giúp học
+            viên hiểu rõ phong cách truyền đạt của bạn.
           </DialogDescription>
         </div>
-        <div className="grid gap-4 px-5 py-5 sm:px-6">
-          <video
-            key={previewUrl}
-            src={previewUrl}
-            controls
-            preload="metadata"
-            className="aspect-video w-full rounded-2xl bg-black object-contain"
-          >
-            Trình duyệt không hỗ trợ phát video.
-          </video>
-          <div>
-            <label
-              htmlFor="profile-video-file"
-              className="text-sm font-bold text-[#17142f]"
-            >
-              Tệp video
-            </label>
-            <input
-              id="profile-video-file"
-              type="file"
-              accept="video/mp4,video/webm"
-              onChange={(event) => handleFileChange(event.target.files?.[0])}
-              className="mt-2 block w-full text-xs text-[#56516a] file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:font-bold file:text-white hover:file:bg-[#200c76]"
-            />
-            {fileError ? (
-              <p
-                role="alert"
-                className="mt-2 text-xs font-semibold text-[#9f2017]"
-              >
-                {fileError}
-              </p>
-            ) : null}
-          </div>
+        <div className="px-5 py-5 sm:px-6">
+          <FileUploadField
+            value={currentUrl}
+            folder="intro-videos"
+            kind="video"
+            onChange={(url: string) => setCurrentUrl(url)}
+          />
         </div>
         <div className="flex flex-col-reverse gap-2 border-t border-[#dce7f7] px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
           <Button
@@ -104,10 +52,7 @@ export function VideoEditDialog({
           </Button>
           <Button
             type="button"
-            onClick={() => {
-              committed.current = true;
-              onSave(previewUrl);
-            }}
+            onClick={() => onSave(currentUrl)}
             className="rounded-full bg-primary px-5 text-white hover:bg-[#200c76]"
           >
             Lưu video
@@ -117,3 +62,4 @@ export function VideoEditDialog({
     </Dialog>
   );
 }
+

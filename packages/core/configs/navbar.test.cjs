@@ -77,9 +77,7 @@ test("onboarding tutor navbar is restricted to the onboarding journey", () => {
     tutorOnboardingStatus: "REJECTED",
   });
 
-  assert.deepEqual(config.centerItems, [
-    { label: "Quy trình đăng ký", href: "/tutor/onboarding" },
-  ]);
+  assert.deepEqual(config.centerItems, []);
   assert.equal(config.homeHref, "/tutor/onboarding");
   assert.equal(config.showNotifications, false);
   assert.deepEqual(config.accountItems, [

@@ -1,7 +1,8 @@
 "use client";
 
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import type { TutorProfileEditorValues } from "../schemas/profile-editor.schema";
+import { AvailabilityTimeRangeField } from "../../tutor-profile-registration/components/AvailabilityTimeRangeField";
 import { ProfileField } from "./ProfileField";
 import { RepeaterError, RepeaterHeader, RepeaterItem } from "./RepeaterPrimitives";
 
@@ -30,9 +31,9 @@ export function AvailabilityListField() {
     <div className="grid gap-3">
       <RepeaterHeader
         label="Lịch rảnh dự kiến"
-        description="Tách riêng ngày dạy và khung giờ để học viên dễ theo dõi."
+        description="Tách riêng ngày dạy và khung giờ theo bước 30 phút để học viên dễ theo dõi."
         addLabel="Thêm lịch rảnh"
-        onAdd={() => append({ day: "", time: "" })}
+        onAdd={() => append({ day: "Thứ 2", time: "18:00 - 20:00" })}
         canAdd={fields.length < 10}
       />
       <div className="grid gap-3">
@@ -43,7 +44,7 @@ export function AvailabilityListField() {
             canRemove={fields.length > 1}
             onRemove={() => remove(index)}
           >
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2 md:items-start">
               <ProfileField
                 id={`availability-${field.id}-day`}
                 label="Ngày dạy"
@@ -51,13 +52,22 @@ export function AvailabilityListField() {
                 registration={register(`availability.${index}.day`)}
                 options={DAY_OPTIONS}
               />
-              <ProfileField
-                id={`availability-${field.id}-time`}
-                label="Khung giờ"
-                error={errors.availability?.[index]?.time}
-                registration={register(`availability.${index}.time`)}
-                placeholder="Ví dụ: 19:00 - 21:00"
-              />
+              <div className="space-y-1.5">
+                <span className="text-xs font-bold text-[#56516a]">
+                  Khung giờ dạy
+                </span>
+                <Controller
+                  control={control}
+                  name={`availability.${index}.time`}
+                  render={({ field: timeField }) => (
+                    <AvailabilityTimeRangeField
+                      value={timeField.value}
+                      error={errors.availability?.[index]?.time?.message}
+                      onChange={timeField.onChange}
+                    />
+                  )}
+                />
+              </div>
             </div>
           </RepeaterItem>
         ))}

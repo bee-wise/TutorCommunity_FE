@@ -33,23 +33,23 @@ function InterviewBanner() {
   return (
     <section
       aria-label="Giới thiệu phỏng vấn AI"
-      className="overflow-hidden rounded-2xl border border-primary/15 bg-[#edf0ff] shadow-sm"
+      className="overflow-hidden rounded-2xl border border-primary/15 bg-primary/5 shadow-sm"
     >
-      <div className="grid items-center sm:grid-cols-[minmax(0,1fr)_minmax(220px,42%)]">
-        <div className="px-6 pt-7 sm:px-8 sm:py-8">
-          <h2 className="mt-4 font-nunito text-2xl font-extrabold leading-tight text-primary sm:text-3xl">
-            Phỏng vấn cùng trợ lý BeeWise AI
+      <div className="grid items-center sm:grid-cols-[minmax(0,1fr)_minmax(180px,32%)]">
+        <div className="px-5 py-3 sm:px-6 sm:py-3.5">
+          <h2 className="font-nunito text-lg font-extrabold leading-tight text-primary sm:text-xl">
+            Phỏng vấn cùng trợ lý Bee
           </h2>
-          <p className="mt-2 max-w-md text-sm leading-6 text-foreground/75">
+          <p className="mt-0.5 max-w-md text-xs leading-5 text-foreground/75">
             Chia sẻ kinh nghiệm và cách bạn đồng hành cùng học viên.
           </p>
         </div>
-        <div className="relative h-32 sm:h-40">
+        <div className="relative h-16 sm:h-20">
           <Image
-            src="/icons/BeeWiseAI-icon.svg"
+            src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1792319158/Bee.svg"
             alt=""
             fill
-            sizes="(max-width: 640px) 100vw, 42vw"
+            sizes="(max-width: 640px) 100vw, 32vw"
             className="object-contain object-center"
           />
         </div>
@@ -63,10 +63,7 @@ export function InterviewScreen() {
 
   if (!isPreview)
     return (
-      <div className="space-y-5">
-        <InterviewBanner />
-        <TutorInterviewScreen />
-      </div>
+      <TutorInterviewScreen />
     );
 
   return (

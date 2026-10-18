@@ -630,6 +630,41 @@ test("session metadata supports separate name/description per slot, limits, blan
   assert.equal(parsedModern.name, vnName);
   assert.equal(parsedModern.description, vnDesc);
 });
+test("session schema parses tutorName and teachingItemName across list and detail, supporting legacy/null/string", () => {
+  const legacySession = session();
+  assert.equal("tutorName" in legacySession, false);
+  assert.equal("teachingItemName" in legacySession, false);
+  const parsedLegacy = schemas.sessionSchema.parse(legacySession);
+  assert.equal(parsedLegacy.tutorName, undefined);
+  assert.equal(parsedLegacy.teachingItemName, undefined);
+
+  const populatedSession = session({
+    tutorName: "Thầy Minh",
+    teachingItemName: "Toán 10",
+  });
+  const parsedPopulated = schemas.sessionSchema.parse(populatedSession);
+  assert.equal(parsedPopulated.tutorName, "Thầy Minh");
+  assert.equal(parsedPopulated.teachingItemName, "Toán 10");
+
+  const nullSession = session({
+    tutorName: null,
+    teachingItemName: null,
+  });
+  const parsedNull = schemas.sessionSchema.parse(nullSession);
+  assert.equal(parsedNull.tutorName, null);
+  assert.equal(parsedNull.teachingItemName, null);
+
+  const page = schemas.sessionPageSchema.parse({
+    items: [legacySession, populatedSession, nullSession],
+    total: 3,
+    page: 1,
+    pageSize: 6,
+  });
+  assert.equal(page.items.length, 3);
+  assert.equal(page.items[0].tutorName, undefined);
+  assert.equal(page.items[1].tutorName, "Thầy Minh");
+  assert.equal(page.items[2].teachingItemName, null);
+});
 after(() => {
   Module._load = originalLoad;
   require.extensions[".ts"] = extensions.ts;

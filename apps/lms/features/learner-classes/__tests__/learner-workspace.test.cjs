@@ -505,7 +505,7 @@ test("class progress uses server total, handles missing plans and never invents 
   assert.match(unplanned, /Chưa có số buổi dự kiến/);
   cache.clear();
 });
-test("sessions retain server pagination and contextual details without a monthly calendar", () => {
+test("sessions retain server pagination and contextual details without status grouping or a monthly calendar", () => {
   const { LearnerClassSessionsScreen } = require("../components/LearnerClassSessionsScreen.tsx");
   const cache = client();
   seedClass(cache);
@@ -513,13 +513,15 @@ test("sessions retain server pagination and contextual details without a monthly
   cache.setQueryData(keys.resource(actor,id,"learner-sessions",params), {items:[session,{...session,id:foreign,status:"SCHEDULED"}],total:21,page:1,pageSize:6});
   const html = render(LearnerClassSessionsScreen,{classId:id},cache);
   assert.doesNotMatch(html, /Lịch tháng|grid-cols-7/);
+  assert.doesNotMatch(html, /Đang diễn ra &amp; sắp tới|Các buổi khác/);
   assert.match(html, /21.*buổi trong tháng/);
-  assert.ok(html.indexOf("Đang diễn ra &amp; sắp tới") < html.indexOf('<h2 class="text-base font-extrabold">Đã hoàn thành'));
+  // Preserves server order: COMPLETED (session) precedes SCHEDULED (foreign)
+  assert.ok(html.indexOf("Đã hoàn thành") < html.indexOf("Chưa bắt đầu"));
   assert.equal((html.match(/>Xem buổi học</g)||[]).length,2);
   if (process.env.LMS_QA_DIR) fs.writeFileSync(path.join(process.env.LMS_QA_DIR,"sessions.html"), html);
   cache.clear();
 });
-test("sessions render metadata name and description when present and fallback to date when absent", () => {
+test("sessions render metadata name, description, tutorName, and teachingItemName with neutral fallbacks", () => {
   const { LearnerClassSessionsScreen } = require("../components/LearnerClassSessionsScreen.tsx");
   const cache = client();
   seedClass(cache);
@@ -530,12 +532,98 @@ test("sessions render metadata name and description when present and fallback to
     name: "Buổi 1: Giới thiệu lập trình",
     description: "Nội dung tổng quan về biến, vòng lặp và cấu trúc dữ liệu.",
     status: "SCHEDULED",
+    tutorName: "Thầy Hoàng",
+    teachingItemName: "Lập trình C++",
   };
-  cache.setQueryData(keys.resource(actor,id,"learner-sessions",params), {items:[namedSession],total:1,page:1,pageSize:6});
+  const fallbackSession = {
+    ...session,
+    id: id,
+    name: null,
+    description: null,
+    tutorName: null,
+    teachingItemName: null,
+    status: "ONGOING",
+  };
+  cache.setQueryData(keys.resource(actor,id,"learner-sessions",params), {items:[namedSession, fallbackSession],total:2,page:1,pageSize:6});
   const html = render(LearnerClassSessionsScreen,{classId:id},cache);
   assert.match(html, /Buổi 1: Giới thiệu lập trình/);
   assert.match(html, /Nội dung tổng quan về biến, vòng lặp và cấu trúc dữ liệu/);
+  assert.match(html, /Gia sư: Thầy Hoàng/);
+  assert.match(html, /Lập trình C\+\+/);
+  assert.match(html, /Chưa có thông tin gia sư/);
+  assert.match(html, /Chưa có môn học/);
   cache.clear();
+});
+test("Vietnam date-time range formatting and validation enforce UTC+7 without local timezone corruption", () => {
+  // Midnight and month rollover in UTC+7
+  const fromIso = calendar.toVietnamOffsetIso("2026-10-31T23:30");
+  const toIso = calendar.toVietnamOffsetIso("2026-11-01T01:00");
+  assert.equal(fromIso, "2026-10-31T23:30:00+07:00");
+  assert.equal(toIso, "2026-11-01T01:00:00+07:00");
+  assert.ok(Date.parse(toIso) > Date.parse(fromIso));
+
+  const valid = calendar.validateCustomRange("2026-10-31T23:30", "2026-11-01T01:00");
+  assert.equal(valid.valid, true);
+  if (valid.valid) {
+    assert.equal(valid.from, "2026-10-31T23:30:00+07:00");
+    assert.equal(valid.to, "2026-11-01T01:00:00+07:00");
+  }
+
+  // Same time or start after end fails validation
+  const equalTime = calendar.validateCustomRange("2026-11-01T01:00", "2026-11-01T01:00");
+  assert.equal(equalTime.valid, false);
+  assert.match(equalTime.error, /Thời gian bắt đầu phải trước thời gian kết thúc/);
+
+  const reversed = calendar.validateCustomRange("2026-11-02T10:00", "2026-11-01T10:00");
+  assert.equal(reversed.valid, false);
+
+  // Missing fields fail validation
+  const empty = calendar.validateCustomRange("", "2026-11-01T10:00");
+  assert.equal(empty.valid, false);
+  assert.match(empty.error, /Vui lòng chọn đầy đủ/);
+});
+test("LearnerActualSessionList renders custom date-time range and preserves server chronological order across mixed statuses", () => {
+  const { LearnerActualSessionList } = require("../components/LearnerActualSessionList.tsx");
+  const session1 = { ...session, id: foreign, name: "Buổi mở đầu", status: "COMPLETED", startAt: "2026-10-12T02:00:00Z" };
+  const session2 = { ...session, id: "44444444-4444-4444-8444-444444444444", name: "Buổi giữa kỳ", status: "ONGOING", startAt: "2026-10-14T02:00:00Z" };
+  const session3 = { ...session, id: id, name: "Buổi tổng kết", status: "SCHEDULED", startAt: "2026-10-18T02:00:00Z" };
+
+  const html = renderToStaticMarkup(
+    React.createElement(LearnerActualSessionList, {
+      items: [session1, session2, session3],
+      total: 3,
+      page: 1,
+      pageSize: 6,
+      isCustom: true,
+      onSelectSession() {},
+      onPageChange() {},
+    }),
+  );
+  assert.match(html, /3.*buổi học trong khoảng thời gian đã chọn/);
+  // Chronological order across mixed statuses preserved
+  const idx1 = html.indexOf("Buổi mở đầu");
+  const idx2 = html.indexOf("Buổi giữa kỳ");
+  const idx3 = html.indexOf("Buổi tổng kết");
+  assert.ok(idx1 !== -1 && idx2 !== -1 && idx3 !== -1);
+  assert.ok(idx1 < idx2 && idx2 < idx3);
+  assert.equal((html.match(/>Xem buổi học</g) || []).length, 3);
+});
+test("LearnerSessionFilterBar displays Vietnam time labeling and responds to presets", () => {
+  const { LearnerSessionFilterBar } = require("../components/LearnerSessionFilterBar.tsx");
+  const html = renderToStaticMarkup(
+    React.createElement(LearnerSessionFilterBar, {
+      month: "2026-10",
+      isCustom: true,
+      status: "all",
+      onChangeMonth() {},
+      onApplyCustomRange() {},
+      onResetMonthPreset() {},
+      onChangeStatus() {},
+    }),
+  );
+  assert.match(html, /Lọc theo khoảng ngày - giờ · Giờ Việt Nam \(UTC\+7\)/);
+  assert.match(html, /Đang dùng lọc tùy chỉnh/);
+  assert.match(html, /Đặt lại theo tháng/);
 });
 test("learning dashboard explicitly uses a coherent mock report without charts or live class targets", () => {
   const { LearnerReportScreen } = require("../../learner-overview/components/LearnerReportScreen.tsx");

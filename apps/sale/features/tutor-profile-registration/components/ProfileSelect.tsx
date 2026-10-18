@@ -81,6 +81,7 @@ export function ProfileSelect({
   return (
     <Popover.Root
       open={open}
+      modal={true}
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen);
         if (!nextOpen) {

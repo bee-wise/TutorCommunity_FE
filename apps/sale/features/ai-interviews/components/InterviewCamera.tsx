@@ -3,16 +3,28 @@
 import { useEffect, useRef } from "react";
 import { VideoCameraIcon } from "@heroicons/react/24/outline";
 
-export function InterviewCamera({ stream, recording = false }: { stream: MediaStream | null; recording?: boolean }) {
+export function InterviewCamera({
+  stream,
+  recording = false,
+  className = "",
+}: {
+  stream: MediaStream | null;
+  recording?: boolean;
+  className?: string;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     video.srcObject = stream;
-    return () => { video.srcObject = null; };
+    return () => {
+      video.srcObject = null;
+    };
   }, [stream]);
   return (
-    <div className="relative aspect-video overflow-hidden rounded-2xl border border-border bg-primary">
+    <div
+      className={`relative aspect-video overflow-hidden rounded-2xl border border-border bg-primary ${className}`}
+    >
       <video ref={videoRef} autoPlay muted playsInline aria-label="Hình ảnh camera của bạn" className="h-full w-full object-cover" />
       {!stream ? <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-5 text-center text-primary-foreground">
         <VideoCameraIcon aria-hidden="true" className="size-8 opacity-80" />

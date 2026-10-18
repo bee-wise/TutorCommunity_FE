@@ -35,6 +35,8 @@ export const sessionSchema = z.object({
   learnerId: guid.nullish(),
   name: text,
   description: text,
+  tutorName: text,
+  teachingItemName: text,
   startAt: dateTime,
   endAt: dateTime,
   actualEndAt: optionalDate,

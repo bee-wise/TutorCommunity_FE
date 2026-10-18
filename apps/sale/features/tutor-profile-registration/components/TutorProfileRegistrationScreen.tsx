@@ -11,9 +11,10 @@ import {
 } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
-import { Header } from "@workspace/ui/components/layout/Header";
 import { Button } from "@workspace/ui/components/ui/button";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import { useLogout } from "@workspace/core/hooks/useLogout";
+import { TutorOnboardingHeader } from "@/features/tutor-onboarding/components/TutorOnboardingHeader";
 import { useTutorProfileRegistration } from "../hooks/useTutorProfileRegistration";
 import {
   getProfileStepIssues,
@@ -46,6 +47,7 @@ export function TutorProfileRegistrationScreen() {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+  const { mutate: logout } = useLogout();
   const registration = useTutorProfileRegistration();
   const [activeStep, setActiveStep] = useState(0);
   const [guideStep, setGuideStep] = useState<number | null>(null);
@@ -86,26 +88,49 @@ export function TutorProfileRegistrationScreen() {
     const params = new URLSearchParams(window.location.search);
     const fieldName = params.get("field");
     const offeringId = params.get("offeringId");
-    const rejected = rejectedFields.find((field) =>
-      field.fieldName === fieldName && (field.offeringId ?? null) === offeringId,
+    const rejected = rejectedFields.find(
+      (field) =>
+        field.fieldName === fieldName &&
+        (field.offeringId ?? null) === offeringId,
     );
     if (!rejected) return;
-    const frame = window.requestAnimationFrame(() => locateField(rejected.fieldName, rejected.offeringId));
+    const frame = window.requestAnimationFrame(() =>
+      locateField(rejected.fieldName, rejected.offeringId),
+    );
     return () => window.cancelAnimationFrame(frame);
   }, [registration.isReviewCorrection, registration.reviewQuery.data]);
 
   useEffect(() => {
     if (!locateRequest || registration.profileQuery.isLoading) return;
     const rootField = locateRequest.fieldName.split(/[.[\]]+/).find(Boolean);
-    const targetField = ["subjectIds", "gradeLevelIds", "hourlyRate", "basePrice", "teachingMode", "teachingModes"].includes(rootField ?? "")
+    const targetField = [
+      "subjectIds",
+      "gradeLevelIds",
+      "hourlyRate",
+      "basePrice",
+      "teachingMode",
+      "teachingModes",
+    ].includes(rootField ?? "")
       ? "teachingOfferings"
-      : rootField === "offlineDistrict" ? "area" : rootField;
+      : rootField === "offlineDistrict"
+        ? "area"
+        : rootField;
     const offering = locateRequest.offeringId
-      ? [...document.querySelectorAll<HTMLElement>("[data-review-offering-id]")]
-          .find((element) => element.dataset.reviewOfferingId === locateRequest.offeringId)
+      ? [
+          ...document.querySelectorAll<HTMLElement>(
+            "[data-review-offering-id]",
+          ),
+        ].find(
+          (element) =>
+            element.dataset.reviewOfferingId === locateRequest.offeringId,
+        )
       : undefined;
-    const target = offering ?? (targetField ? document.getElementById(`profile-review-field-${targetField}`) : null)
-      ?? document.getElementById("profile-review-step-content");
+    const target =
+      offering ??
+      (targetField
+        ? document.getElementById(`profile-review-field-${targetField}`)
+        : null) ??
+      document.getElementById("profile-review-step-content");
     target?.scrollIntoView({ behavior: "smooth", block: "center" });
     target?.focus({ preventScroll: true });
   }, [activeStep, locateRequest, registration.profileQuery.isLoading]);
@@ -131,8 +156,12 @@ export function TutorProfileRegistrationScreen() {
   if (registration.profileQuery.isError) {
     return (
       <div className="min-h-[100dvh] bg-background">
-        <Header />
-        <main className="mx-auto max-w-xl px-4 pt-32 text-center">
+        <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-sm pt-3 pb-1">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <TutorOnboardingHeader user={user} onLogout={() => void logout()} />
+          </div>
+        </header>
+        <main className="mx-auto max-w-xl px-4 pt-16 text-center">
           <h1 className="text-2xl font-extrabold text-foreground">
             Không tải được hồ sơ
           </h1>
@@ -152,8 +181,12 @@ export function TutorProfileRegistrationScreen() {
 
   return (
     <div className="min-h-[100dvh] bg-background text-foreground">
-      <Header />
-      <main className="mx-auto w-full max-w-6xl px-4 pb-28 pt-24 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-sm pt-3 pb-1">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <TutorOnboardingHeader user={user} onLogout={() => void logout()} />
+        </div>
+      </header>
+      <main className="mx-auto w-full max-w-6xl px-4 pb-28 pt-3 sm:pt-4 sm:px-6 lg:px-8">
         <section className="overflow-hidden rounded-2xl bg-primary px-5 py-6 text-primary-foreground shadow-sm sm:px-8">
           <p className="text-sm font-semibold text-accent">
             Hồ sơ gia sư BeeWise
@@ -178,7 +211,10 @@ export function TutorProfileRegistrationScreen() {
         </section>
 
         {registration.isReviewCorrection && registration.reviewQuery.data ? (
-          <ProfileReviewFeedback review={registration.reviewQuery.data} onLocateField={locateField} />
+          <ProfileReviewFeedback
+            review={registration.reviewQuery.data}
+            onLocateField={locateField}
+          />
         ) : null}
 
         <div className="mt-5 grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
@@ -253,81 +289,89 @@ export function TutorProfileRegistrationScreen() {
           </nav>
 
           <ProfileReviewHighlightProvider
-            rejectedFields={registration.isReviewCorrection ? (registration.reviewQuery.data?.rejectedFields ?? []) : []}
+            rejectedFields={
+              registration.isReviewCorrection
+                ? (registration.reviewQuery.data?.rejectedFields ?? [])
+                : []
+            }
           >
-          <FormProvider {...registration.form}>
-            <form
-              id="profile-review-step-content"
-              onSubmit={registration.submit}
-              className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7"
-              noValidate
-            >
-              {activeStep === 0 ? <BasicInformationSection /> : null}
-              {activeStep === 1 ? <TeachingInformationSection /> : null}
-              {activeStep === 2 ? (
-                <div className="space-y-6">
-                  <IntroductionSection />
-                  <AchievementsFields />
-                </div>
-              ) : null}
-              {activeStep === 3 ? <TeachingAreaAndVerificationSection /> : null}
-              <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-5">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="rounded-xl transition-all active:scale-[0.98]"
-                  disabled={activeStep === 0}
-                  onClick={() => setActiveStep((step) => Math.max(0, step - 1))}
-                >
-                  <ArrowLeft /> Quay lại
-                </Button>
-                {!registration.isReviewCorrection ? (
+            <FormProvider {...registration.form}>
+              <form
+                id="profile-review-step-content"
+                onSubmit={registration.submit}
+                className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7"
+                noValidate
+              >
+                {activeStep === 0 ? <BasicInformationSection /> : null}
+                {activeStep === 1 ? <TeachingInformationSection /> : null}
+                {activeStep === 2 ? (
+                  <div className="space-y-6">
+                    <IntroductionSection />
+                    <AchievementsFields />
+                  </div>
+                ) : null}
+                {activeStep === 3 ? (
+                  <TeachingAreaAndVerificationSection />
+                ) : null}
+                <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-5">
                   <Button
                     type="button"
                     variant="outline"
                     className="rounded-xl transition-all active:scale-[0.98]"
-                    disabled={registration.isSaving}
-                    onClick={registration.saveDraft}
-                  >
-                    <FloppyDisk />{" "}
-                    {registration.isSaving ? "Đang lưu..." : "Lưu nháp"}
-                  </Button>
-                ) : null}
-                {activeStep < steps.length - 1 ? (
-                  <Button
-                    type="button"
+                    disabled={activeStep === 0}
                     onClick={() =>
-                      setActiveStep((step) =>
-                        Math.min(steps.length - 1, step + 1),
-                      )
+                      setActiveStep((step) => Math.max(0, step - 1))
                     }
-                    className="ml-auto rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
                   >
-                    Tiếp tục <ArrowRight />
+                    <ArrowLeft /> Quay lại
                   </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={registration.isSubmitting}
-                    className="ml-auto rounded-xl bg-accent font-bold text-accent-foreground transition-all hover:bg-accent/90 active:scale-[0.98]"
-                  >
-                    {registration.isSubmitting
-                      ? "Đang gửi..."
-                      : registration.isReviewCorrection
-                        ? "Gửi lại hồ sơ"
-                        : "Gửi hồ sơ xét duyệt"}
-                  </Button>
-                )}
-              </div>
-              {Object.keys(registration.form.formState.errors).length > 0 &&
-              activeStep === steps.length - 1 ? (
-                <p role="alert" className="mt-3 text-sm text-destructive">
-                  Hồ sơ còn thiếu thông tin bắt buộc. Vui lòng kiểm tra lại các
-                  bước có lỗi.
-                </p>
-              ) : null}
-            </form>
-          </FormProvider>
+                  {!registration.isReviewCorrection ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="rounded-xl transition-all active:scale-[0.98]"
+                      disabled={registration.isSaving}
+                      onClick={registration.saveDraft}
+                    >
+                      <FloppyDisk />{" "}
+                      {registration.isSaving ? "Đang lưu..." : "Lưu nháp"}
+                    </Button>
+                  ) : null}
+                  {activeStep < steps.length - 1 ? (
+                    <Button
+                      type="button"
+                      onClick={() =>
+                        setActiveStep((step) =>
+                          Math.min(steps.length - 1, step + 1),
+                        )
+                      }
+                      className="ml-auto rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
+                    >
+                      Tiếp tục <ArrowRight />
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      disabled={registration.isSubmitting}
+                      className="ml-auto rounded-xl bg-accent font-bold text-accent-foreground transition-all hover:bg-accent/90 active:scale-[0.98]"
+                    >
+                      {registration.isSubmitting
+                        ? "Đang gửi..."
+                        : registration.isReviewCorrection
+                          ? "Gửi lại hồ sơ"
+                          : "Gửi hồ sơ xét duyệt"}
+                    </Button>
+                  )}
+                </div>
+                {Object.keys(registration.form.formState.errors).length > 0 &&
+                activeStep === steps.length - 1 ? (
+                  <p role="alert" className="mt-3 text-sm text-destructive">
+                    Hồ sơ còn thiếu thông tin bắt buộc. Vui lòng kiểm tra lại
+                    các bước có lỗi.
+                  </p>
+                ) : null}
+              </form>
+            </FormProvider>
           </ProfileReviewHighlightProvider>
         </div>
       </main>

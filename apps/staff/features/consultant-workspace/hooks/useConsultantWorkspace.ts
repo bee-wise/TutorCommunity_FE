@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { useChatRoomListRealtime } from "@workspace/core/hooks/useChatRoomListRealtime";
+import { useChatConnectionStatus } from "@workspace/core/hooks/useChatConnectionStatus";
 import { chatRoomsService } from "@workspace/core/services/chat-rooms.service";
 import { toChatHistoryBusinessMessage } from "@workspace/core/services/chat-business-message";
 import { queryKeys } from "@workspace/core/sys-libs/queryKeys";
@@ -44,6 +45,7 @@ export function useConsultantRooms() {
 export function useConsultantConversation(roomId: string | null) {
   const queryClient = useQueryClient();
   const userId = useAuthStore((state) => state.user?.id);
+  const realtimeConnected = useChatConnectionStatus(userId);
   useEffect(() => {
     if (!userId || !roomId) return;
     return subscribeToChatRoom(userId, roomId, () => {
@@ -61,7 +63,7 @@ export function useConsultantConversation(roomId: string | null) {
     getNextPageParam: (page) => page.pagination && page.pagination.page < page.pagination.totalPages
       ? page.pagination.page + 1
       : undefined,
-    refetchInterval: 10_000,
+    refetchInterval: realtimeConnected ? false : 10_000,
   });
   const send = useMutation({
     mutationFn: (content: string) =>

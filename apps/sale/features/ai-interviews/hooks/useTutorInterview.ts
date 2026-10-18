@@ -1,15 +1,34 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  useInterviewEligibilityQuery, useInterviewIdentity, useInterviewPolicyQuery, useInterviewStateQuery,
+  useInterviewEligibilityQuery,
+  useInterviewIdentity,
+  useInterviewPolicyQuery,
+  useInterviewStateQuery,
 } from "@workspace/core/ai-interviews/hooks/useInterviewQueries";
 import { interviewKeys } from "@workspace/core/ai-interviews/queryKeys";
 import { isAnswerStillProcessing } from "@workspace/core/ai-interviews/interview-status";
-import { interviewApi, validateInterviewAudio } from "@workspace/core/ai-interviews/services/interview.api";
+import {
+  interviewApi,
+  validateInterviewAudio,
+} from "@workspace/core/ai-interviews/services/interview.api";
 import type { InterviewState } from "@workspace/core/ai-interviews/schemas/tutor.schema";
-import { ApiError, getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
+import type {
+  IntegrityEvent,
+  IntegrityEventType,
+} from "@workspace/core/ai-interviews/schemas/review.schema";
+import {
+  ApiError,
+  getApiErrorMessage,
+} from "@workspace/core/sys-libs/error-handler";
 import { authService } from "@workspace/core/services/auth.service";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
@@ -17,7 +36,16 @@ import { useInterviewMedia } from "./useInterviewMedia";
 import { useInterviewUploads } from "./useInterviewUploads";
 import type { CapturedAnswer } from "../services/interview-recorder";
 
-export type InterviewPhase = "policy" | "precheck" | "ready" | "intro" | "preparing" | "starting" | "recording" | "processing" | "complete" | "paused";
+export type InterviewPhase =
+  | "policy"
+  | "precheck"
+  | "intro"
+  | "preparing"
+  | "starting"
+  | "recording"
+  | "processing"
+  | "complete"
+  | "paused";
 
 export function useTutorInterview() {
   const userId = useInterviewIdentity();
@@ -26,7 +54,13 @@ export function useTutorInterview() {
   const eligibility = useInterviewEligibilityQuery();
   const [createdId, setCreatedId] = useState("");
   const [newAttempt, setNewAttempt] = useState(false);
-  const interviewId = createdId || (newAttempt ? "" : eligibility.data?.interview_id || eligibility.data?.resumable_interview_id || "");
+  const interviewId =
+    createdId ||
+    (newAttempt
+      ? ""
+      : eligibility.data?.interview_id ||
+        eligibility.data?.resumable_interview_id ||
+        "");
   const stateQuery = useInterviewStateQuery(interviewId);
   const state = stateQuery.data;
   const media = useInterviewMedia();
@@ -40,148 +74,347 @@ export function useTutorInterview() {
   const [deadline, setDeadline] = useState(0);
   const [error, setError] = useState("");
   const [hasDraft, setHasDraft] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showTabExitWarning, setShowTabExitWarning] = useState(false);
   const busy = useRef(false);
-  const draft = useRef<{ recording: CapturedAnswer; prompt: NonNullable<InterviewState["prompt"]> } | null>(null);
+  const clientSessionId = useRef("");
+  const integritySequence = useRef(1);
+  const integrityQueue = useRef<IntegrityEvent[]>([]);
+  const flushingIntegrity = useRef(false);
+
+  const fullscreenSupported =
+    typeof document !== "undefined" &&
+    Boolean(
+      document.fullscreenEnabled !== undefined
+        ? document.fullscreenEnabled
+        : document.documentElement?.requestFullscreen,
+    );
+
+  const enterFullscreen = useCallback(async () => {
+    try {
+      if (typeof document !== "undefined") {
+        if (document.fullscreenElement) {
+          setIsFullscreen(true);
+          return true;
+        }
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+          setIsFullscreen(true);
+          return true;
+        }
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  }, []);
+
+  const exitFullscreen = useCallback(async () => {
+    try {
+      if (
+        typeof document !== "undefined" &&
+        document.fullscreenElement &&
+        document.exitFullscreen
+      ) {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+  const draft = useRef<{
+    recording: CapturedAnswer;
+    prompt: NonNullable<InterviewState["prompt"]>;
+  } | null>(null);
   const micTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resyncTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const consent = useMutation({ mutationFn: interviewApi.createConsent, retry: false });
-  const start = useMutation({ mutationFn: interviewApi.startInterview, retry: false });
-  const resume = useMutation({ mutationFn: interviewApi.resumeInterview, retry: false });
-  const answer = useMutation({ mutationFn: (values: Parameters<typeof interviewApi.answerInterview>[1]) => interviewApi.answerInterview(interviewId, values), retry: false });
-  const submit = useMutation({ mutationFn: interviewApi.submitInterview, retry: false });
-  const abandon = useMutation({ mutationFn: interviewApi.abandonInterview, retry: false });
-  const microphone = useMutation({ mutationFn: interviewApi.checkMicrophone, retry: false });
-  const heartbeat = useMutation({ mutationFn: interviewApi.heartbeat, retry: false });
+  const consent = useMutation({
+    mutationFn: interviewApi.createConsent,
+    retry: false,
+  });
+  const start = useMutation({
+    mutationFn: interviewApi.startInterview,
+    retry: false,
+  });
+  const resume = useMutation({
+    mutationFn: interviewApi.resumeInterview,
+    retry: false,
+  });
+  const answer = useMutation({
+    mutationFn: (values: Parameters<typeof interviewApi.answerInterview>[1]) =>
+      interviewApi.answerInterview(interviewId, values),
+    retry: false,
+  });
+  const submit = useMutation({
+    mutationFn: interviewApi.submitInterview,
+    retry: false,
+  });
+  const abandon = useMutation({
+    mutationFn: interviewApi.abandonInterview,
+    retry: false,
+  });
+  const microphone = useMutation({
+    mutationFn: interviewApi.checkMicrophone,
+    retry: false,
+  });
+  const heartbeat = useMutation({
+    mutationFn: interviewApi.heartbeat,
+    retry: false,
+  });
 
-  useEffect(() => () => {
-    if (micTimer.current) clearTimeout(micTimer.current);
-    if (resyncTimer.current) clearTimeout(resyncTimer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (micTimer.current) clearTimeout(micTimer.current);
+      if (resyncTimer.current) clearTimeout(resyncTimer.current);
+    },
+    [],
+  );
   function showError(value: unknown) {
-    const message = getApiErrorMessage(value); setError(message); toast.error(message);
+    const message = getApiErrorMessage(value);
+    setError(message);
+    toast.error(message);
   }
   function cacheState(next: InterviewState) {
     setNewAttempt(false);
     setCreatedId(next.interview_id);
     client.setQueryData(interviewKeys.state(userId, next.interview_id), next);
-    void client.invalidateQueries({ queryKey: interviewKeys.eligibility(userId) });
+    void client.invalidateQueries({
+      queryKey: interviewKeys.eligibility(userId),
+    });
   }
   function prepare(next: InterviewState | undefined = state) {
     if (!next) return;
-    setError(""); draft.current = null; setHasDraft(false);
-    if (next.all_answered) { setPhase("complete"); return; }
-    if (!next.prompt || next.status !== "IN_PROGRESS") { setPhase("paused"); return; }
+    setError("");
+    draft.current = null;
+    setHasDraft(false);
+    if (next.all_answered) {
+      setPhase("complete");
+      return;
+    }
+    if (!next.prompt || next.status !== "IN_PROGRESS") {
+      setPhase("paused");
+      return;
+    }
     setRemaining(next.prompt.prep_seconds);
-    setDeadline(Date.now() + next.prompt.prep_seconds * 1000); setPhase("preparing");
+    setDeadline(Date.now() + next.prompt.prep_seconds * 1000);
+    setPhase("preparing");
   }
   async function syncState(waitForProcessing = false) {
     try {
-      const next = await interviewApi.getState(interviewId); cacheState(next);
+      const next = await interviewApi.getState(interviewId);
+      cacheState(next);
       const previous = draft.current?.prompt;
-      if (waitForProcessing && previous && isAnswerStillProcessing(next, previous)) {
-        resyncTimer.current = setTimeout(() => { void syncState(true); }, 3000);
+      if (
+        waitForProcessing &&
+        previous &&
+        isAnswerStillProcessing(next, previous)
+      ) {
+        resyncTimer.current = setTimeout(() => {
+          void syncState(true);
+        }, 3000);
         return;
       }
-      draft.current = null; setHasDraft(false);
-      if (next.status === "IN_PROGRESS") prepare(next); else setPhase("paused");
-    } catch (value) { showError(value); setPhase("paused"); }
+      draft.current = null;
+      setHasDraft(false);
+      if (next.status === "IN_PROGRESS") prepare(next);
+      else setPhase("paused");
+    } catch (value) {
+      showError(value);
+      setPhase("paused");
+    }
   }
   async function handleFailure(value: unknown) {
-    showError(value); setPhase("paused");
+    showError(value);
+    setPhase("paused");
     if (!(value instanceof ApiError)) return;
     if (["policy_outdated", "consent_invalid"].includes(value.code ?? "")) {
-      setPolicyConfirmed(false); setMicOk(false); setPhase("policy");
-      await policy.refetch(); await eligibility.refetch();
+      setPolicyConfirmed(false);
+      setMicOk(false);
+      setPhase("policy");
+      await policy.refetch();
+      await eligibility.refetch();
     } else if (value.code === "processing") {
       setPhase("processing");
-      resyncTimer.current = setTimeout(() => { void syncState(true); }, 3000);
-    } else if (["unexpected_question", "not_all_answered"].includes(value.code ?? "")) {
+      resyncTimer.current = setTimeout(() => {
+        void syncState(true);
+      }, 3000);
+    } else if (
+      ["unexpected_question", "not_all_answered"].includes(value.code ?? "")
+    ) {
       await syncState();
-    } else if (["system_error", "not_in_progress", "interview_open", "no_attempts_left", "resume_window_expired", "not_resumable"].includes(value.code ?? "")) {
-      draft.current = null; setHasDraft(false); await eligibility.refetch(); await stateQuery.refetch();
+    } else if (
+      [
+        "system_error",
+        "not_in_progress",
+        "interview_open",
+        "no_attempts_left",
+        "resume_window_expired",
+        "not_resumable",
+      ].includes(value.code ?? "")
+    ) {
+      draft.current = null;
+      setHasDraft(false);
+      await eligibility.refetch();
+      if (interviewId) await stateQuery.refetch();
     }
   }
   async function checkMic() {
     if (busy.current) return;
     const recorder = media.recorderRef.current;
     if (!recorder) return;
-    busy.current = true; setMicOk(false); setError(""); setMicRecording(true);
+    busy.current = true;
+    setMicOk(false);
+    setError("");
+    setMicRecording(true);
     try {
       await recorder.start(false);
-      await new Promise<void>((resolve) => { micTimer.current = setTimeout(resolve, 5000); });
+      await new Promise<void>((resolve) => {
+        micTimer.current = setTimeout(resolve, 5000);
+      });
       const recording = await recorder.stop();
       const result = await microphone.mutateAsync(recording.audio);
-      if (!result.ok) throw new Error(result.message || "Micro chưa đạt. Hãy nói rõ hơn và thử lại.");
-      setMicOk(true); toast.success("Micro đã đạt kiểm tra.");
-    } catch (value) { showError(value); }
-    finally { busy.current = false; setMicRecording(false); }
+      if (!result.ok)
+        throw new Error(
+          result.message || "Micro chưa đạt. Hãy nói rõ hơn và thử lại.",
+        );
+      setMicOk(true);
+    } catch (value) {
+      showError(value);
+    } finally {
+      busy.current = false;
+      setMicRecording(false);
+    }
   }
   async function confirmChecks() {
-    if (!policy.data || !micOk || !timeConfirmed || !media.stream || busy.current) return;
-    if (!navigator.onLine) { showError(new Error("Hãy kết nối Internet trước khi xác nhận kiểm tra.")); return; }
-    setError(""); busy.current = true;
-    try {
-      const open = eligibility.data?.state === "IN_PROGRESS" || Boolean(eligibility.data?.resumable_interview_id);
-      if (!open) await consent.mutateAsync({ policy_version: policy.data.version, checks: { camera: true, mic: true, network: true, time_confirmed: true } });
-      setPhase("ready");
-    } catch (value) { await handleFailure(value); }
-    finally { busy.current = false; }
-  }
-  async function beginInterview() {
+    const openId =
+      eligibility.data?.resumable_interview_id ||
+      (eligibility.data?.state === "IN_PROGRESS"
+        ? eligibility.data.interview_id
+        : null);
+    if (
+      (!openId && !policy.data) ||
+      !micOk ||
+      !timeConfirmed ||
+      !media.stream ||
+      busy.current
+    )
+      return;
+    if (!navigator.onLine) {
+      showError(new Error("Hãy kết nối Internet trước khi xác nhận kiểm tra."));
+      return;
+    }
     const recorder = media.recorderRef.current;
-    if (!recorder || !micOk || busy.current) return;
-    busy.current = true; setError("");
+    if (!recorder) return;
+    setError("");
+    busy.current = true;
     try {
-      const openId = eligibility.data?.resumable_interview_id || (eligibility.data?.state === "IN_PROGRESS" ? eligibility.data.interview_id : null);
+      if (fullscreenSupported && !(await enterFullscreen()))
+        throw new Error("Không thể mở toàn màn hình. Hãy cho phép trình duyệt và thử lại.");
+      let consentId = consent.data?.consent_id || eligibility.data?.consent_id || "";
+      if (!openId) {
+        if (!policy.data) throw new Error("Không tải được quy định phỏng vấn.");
+        const result = await consent.mutateAsync({
+          policy_version: policy.data.version,
+          checks: {
+            camera: true,
+            mic: true,
+            network: true,
+            time_confirmed: true,
+          },
+        });
+        consentId = result.consent_id;
+      }
+      const current = openId ? await interviewApi.getState(openId) : null;
       const next = openId
-        ? await resume.mutateAsync(openId)
-        : await start.mutateAsync({ consent_id: consent.data?.consent_id || eligibility.data?.consent_id || "", video_mime: recorder.formats.videoMime });
+        ? current?.status === "IN_PROGRESS"
+          ? current
+          : await resume.mutateAsync(openId)
+        : await start.mutateAsync({
+            consent_id: consentId,
+            video_mime: recorder.formats.videoMime,
+          });
       cacheState(next);
-      if (next.intro) setPhase("intro"); else prepare(next);
+      if (!openId && next.intro) setPhase("intro");
+      else prepare(next);
     } catch (value) {
       await eligibility.refetch();
       await handleFailure(value);
+      if (!(value instanceof ApiError && ["policy_outdated", "consent_invalid"].includes(value.code ?? ""))) setPhase("precheck");
+      void exitFullscreen();
+    } finally {
+      busy.current = false;
     }
-    finally { busy.current = false; }
   }
   async function beginRecording() {
     if (busy.current || !state?.prompt) return;
-    busy.current = true; setPhase("starting"); setError("");
+    busy.current = true;
+    setPhase("starting");
+    setError("");
     try {
-      if (!media.recorderRef.current) throw new Error("Hãy kiểm tra lại camera và micro.");
+      if (!media.recorderRef.current)
+        throw new Error("Hãy kiểm tra lại camera và micro.");
       const videoMime = state.prompt.video_upload.content_type.split(";")[0];
-      if (media.recorderRef.current.formats.videoMime !== videoMime) throw new Error("Buổi trước dùng định dạng video khác. Hãy tiếp tục bằng trình duyệt đã bắt đầu buổi này.");
+      if (media.recorderRef.current.formats.videoMime !== videoMime)
+        throw new Error(
+          "Buổi trước dùng định dạng video khác. Hãy tiếp tục bằng trình duyệt đã bắt đầu buổi này.",
+        );
       await media.recorderRef.current.start(true);
       setRemaining(state.prompt.answer_seconds);
-      setDeadline(Date.now() + state.prompt.answer_seconds * 1000); setPhase("recording");
-    } catch (value) { showError(value); setPhase("paused"); }
-    finally { busy.current = false; }
+      setDeadline(Date.now() + state.prompt.answer_seconds * 1000);
+      setPhase("recording");
+    } catch (value) {
+      showError(value);
+      setPhase("paused");
+    } finally {
+      busy.current = false;
+    }
   }
   async function sendAnswer() {
     if (!draft.current) return;
     const { recording, prompt } = draft.current;
-    const next = await answer.mutateAsync({ q_code: prompt.q_code, kind: prompt.kind, duration_ms: recording.durationMs, audio: recording.audio });
-    cacheState(next); prepare(next);
+    const next = await answer.mutateAsync({
+      q_code: prompt.q_code,
+      kind: prompt.kind,
+      duration_ms: recording.durationMs,
+      audio: recording.audio,
+    });
+    cacheState(next);
+    prepare(next);
   }
   async function finishRecording() {
     if (busy.current || !state?.prompt) return;
-    busy.current = true; setPhase("processing");
+    busy.current = true;
+    setPhase("processing");
     try {
-      if (!media.recorderRef.current) throw new Error("Không có thiết bị ghi hình.");
+      if (!media.recorderRef.current)
+        throw new Error("Không có thiết bị ghi hình.");
       const recording = await media.recorderRef.current.stop();
-      if (!recording.video?.size) throw new Error("Không thu được video. Hãy kiểm tra lại camera.");
+      if (!recording.video?.size)
+        throw new Error("Không thu được video. Hãy kiểm tra lại camera.");
       validateInterviewAudio(recording.audio);
       draft.current = { recording, prompt: state.prompt };
       setHasDraft(true);
-      uploads.upload(state.prompt, recording.video); await sendAnswer();
-    } catch (value) { await handleFailure(value); }
-    finally { busy.current = false; }
+      uploads.upload(state.prompt, recording.video);
+      await sendAnswer();
+    } catch (value) {
+      await handleFailure(value);
+    } finally {
+      busy.current = false;
+    }
   }
   async function retryAnswer() {
     if (busy.current) return;
-    busy.current = true; setPhase("processing"); setError("");
-    try { await sendAnswer(); } catch (value) { await handleFailure(value); }
-    finally { busy.current = false; }
+    busy.current = true;
+    setPhase("processing");
+    setError("");
+    try {
+      await sendAnswer();
+    } catch (value) {
+      await handleFailure(value);
+    } finally {
+      busy.current = false;
+    }
   }
   const onDeadline = useEffectEvent(() => {
     if (phase === "preparing") void beginRecording();
@@ -191,58 +424,239 @@ export function useTutorInterview() {
     if (phase !== "preparing" && phase !== "recording") return;
     let triggered = false;
     const tick = () => {
-      const seconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000)); setRemaining(seconds);
-      if (!seconds && !triggered) { triggered = true; onDeadline(); }
+      const seconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+      setRemaining(seconds);
+      if (!seconds && !triggered) {
+        triggered = true;
+        onDeadline();
+      }
     };
-    const timer = setInterval(tick, 200); tick();
+    const timer = setInterval(tick, 200);
+    tick();
     return () => clearInterval(timer);
   }, [phase, deadline]);
   const onHeartbeat = useEffectEvent(() => {
-    heartbeat.mutate(interviewId, { onError: (value) => {
-      showError(value);
-      if (phase !== "recording" && phase !== "processing") setPhase("paused");
-    } });
+    heartbeat.mutate(interviewId, {
+      onError: (value) => {
+        showError(value);
+        if (phase !== "recording" && phase !== "processing") setPhase("paused");
+      },
+    });
   });
-  const sessionActive = ["intro", "preparing", "starting", "recording", "processing", "complete", "paused"].includes(phase) && state?.status === "IN_PROGRESS";
+  const enqueueIntegrityEvent = useCallback(
+    (type: IntegrityEventType) => {
+      if (!interviewId) return;
+      if (!clientSessionId.current) {
+        clientSessionId.current =
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : "11111111-1111-4111-8111-111111111111";
+      }
+      const eventId =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+      integrityQueue.current.push({
+        event_id: eventId,
+        client_session_id: clientSessionId.current,
+        sequence: integritySequence.current++,
+        type,
+        occurred_at: new Date().toISOString(),
+        q_code: state?.prompt?.q_code ?? null,
+        kind: state?.prompt?.kind ?? null,
+      });
+    },
+    [interviewId, state?.prompt?.q_code, state?.prompt?.kind],
+  );
+  const flushIntegrityQueue = useCallback(async () => {
+    if (
+      !interviewId ||
+      integrityQueue.current.length === 0 ||
+      flushingIntegrity.current
+    )
+      return;
+    flushingIntegrity.current = true;
+    const batch = integrityQueue.current.slice(0, 50);
+    try {
+      await interviewApi.sendIntegrityEvents(interviewId, batch);
+      integrityQueue.current = integrityQueue.current.slice(batch.length);
+    } catch {
+      /* Keep in queue for next flush retry */
+    } finally {
+      flushingIntegrity.current = false;
+    }
+  }, [interviewId]);
+  const sessionActive =
+    [
+      "intro",
+      "preparing",
+      "starting",
+      "recording",
+      "processing",
+      "complete",
+      "paused",
+    ].includes(phase) && state?.status === "IN_PROGRESS";
   useEffect(() => {
     if (!sessionActive || !interviewId) return;
+    if (!clientSessionId.current) {
+      clientSessionId.current =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : "11111111-1111-4111-8111-111111111111";
+    }
     const timer = setInterval(onHeartbeat, 30000);
-    const beforeUnload = (event: BeforeUnloadEvent) => { event.preventDefault(); };
+    const flushTimer = setInterval(() => {
+      void flushIntegrityQueue();
+    }, 15000);
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      void flushIntegrityQueue();
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    const onFullscreen = () => {
+      const active = Boolean(document.fullscreenElement);
+      setIsFullscreen(active);
+      if (active) setShowTabExitWarning(false);
+      enqueueIntegrityEvent(
+        active ? "FULLSCREEN_ENTERED" : "FULLSCREEN_EXITED",
+      );
+    };
+    const onVisibility = () => {
+      const hidden = document.visibilityState === "hidden";
+      if (hidden) {
+        setShowTabExitWarning(true);
+      }
+      enqueueIntegrityEvent(
+        hidden ? "PAGE_HIDDEN" : "PAGE_VISIBLE",
+      );
+    };
+    const onBlur = () => {
+      enqueueIntegrityEvent("WINDOW_BLURRED");
+    };
+    const onFocus = () => {
+      enqueueIntegrityEvent("WINDOW_FOCUSED");
+    };
+
     window.addEventListener("beforeunload", beforeUnload);
-    return () => { clearInterval(timer); window.removeEventListener("beforeunload", beforeUnload); };
-  }, [sessionActive, interviewId]);
+    document.addEventListener("fullscreenchange", onFullscreen);
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("blur", onBlur);
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(flushTimer);
+      window.removeEventListener("beforeunload", beforeUnload);
+      document.removeEventListener("fullscreenchange", onFullscreen);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("blur", onBlur);
+      window.removeEventListener("focus", onFocus);
+      void flushIntegrityQueue();
+    };
+  }, [sessionActive, interviewId, enqueueIntegrityEvent, flushIntegrityQueue]);
   async function submitInterview() {
     if (busy.current || !state?.all_answered) return;
-    busy.current = true; setError("");
+    busy.current = true;
+    setError("");
     try {
       await uploads.waitForUploads();
+      await flushIntegrityQueue();
       const result = await submit.mutateAsync(interviewId);
-      cacheState({ ...state, ...result }); media.releaseDevices();
+      cacheState({ ...state, ...result });
+      media.releaseDevices();
+      void exitFullscreen();
       toast.success("Đã nộp bài phỏng vấn. BeeWise sẽ xét duyệt kết quả.");
       void client.invalidateQueries({ queryKey: ["me"] });
-      try { const me = await authService.getMe(); if (me.success && me.data) useAuthStore.getState().login(me.data); }
-      catch { /* Submission succeeded; auth is refreshed again on the next navigation. */ }
-    } catch (value) { await handleFailure(value); }
-    finally { busy.current = false; }
+      try {
+        const me = await authService.getMe();
+        if (me.success && me.data) useAuthStore.getState().login(me.data);
+      } catch {
+        /* Submission succeeded; auth is refreshed again on the next navigation. */
+      }
+    } catch (value) {
+      await handleFailure(value);
+    } finally {
+      busy.current = false;
+    }
   }
   async function abandonInterview() {
     if (busy.current) return;
     busy.current = true;
     try {
+      void flushIntegrityQueue();
       const result = await abandon.mutateAsync(interviewId);
       if (state) cacheState({ ...state, ...result });
-      media.releaseDevices(); setPhase("paused"); toast.success("Đã kết thúc buổi phỏng vấn.");
-    } catch (value) { await handleFailure(value); }
-    finally { busy.current = false; }
+      media.releaseDevices();
+      void exitFullscreen();
+      setPhase("paused");
+      toast.success("Đã kết thúc buổi phỏng vấn.");
+    } catch (value) {
+      await handleFailure(value);
+    } finally {
+      busy.current = false;
+    }
   }
   return {
-    policy, eligibility, stateQuery, state, phase, policyConfirmed, setPolicyConfirmed, timeConfirmed, setTimeConfirmed,
-    micOk, setMicOk, micRecording, remaining, error, media, uploads,
-    pending: consent.isPending || start.isPending || resume.isPending || submit.isPending || abandon.isPending,
-    micPending: microphone.isPending, hasDraft,
-    startNewAttempt: () => { setCreatedId(""); setNewAttempt(true); setPolicyConfirmed(false); setMicOk(false); setPhase("policy"); },
-    nextFromPolicy: () => { if (policyConfirmed) setPhase("precheck"); },
-    checkMic, confirmChecks, beginInterview, prepare, beginRecording, finishRecording, retryAnswer, syncState, submitInterview, abandonInterview,
-    recheckDevices: () => { setMicOk(false); setPhase("precheck"); void media.requestDevices(); },
+    policy,
+    eligibility,
+    stateQuery,
+    state,
+    phase,
+    policyConfirmed,
+    setPolicyConfirmed,
+    timeConfirmed,
+    setTimeConfirmed,
+    micOk,
+    setMicOk,
+    micRecording,
+    remaining,
+    error,
+    media,
+    uploads,
+    pending:
+      consent.isPending ||
+      start.isPending ||
+      resume.isPending ||
+      submit.isPending ||
+      abandon.isPending,
+    micPending: microphone.isPending,
+    hasDraft,
+    isFullscreen,
+    fullscreenSupported,
+    showTabExitWarning,
+    dismissTabWarning: () => setShowTabExitWarning(false),
+    enterFullscreen,
+    exitFullscreen,
+    startNewAttempt: () => {
+      setCreatedId("");
+      setNewAttempt(true);
+      setPolicyConfirmed(false);
+      setTimeConfirmed(false);
+      setMicOk(false);
+      setPhase("policy");
+    },
+    nextFromPolicy: () => {
+      if (policyConfirmed) setPhase("precheck");
+    },
+    continueExisting: () => {
+      setError("");
+      setMicOk(false);
+      setTimeConfirmed(false);
+      setPhase("precheck");
+    },
+    checkMic,
+    confirmChecks,
+    prepare,
+    beginRecording,
+    finishRecording,
+    retryAnswer,
+    syncState,
+    submitInterview,
+    abandonInterview,
+    recheckDevices: () => {
+      setMicOk(false);
+      setPhase("precheck");
+      void media.requestDevices();
+    },
   };
 }

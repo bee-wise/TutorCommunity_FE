@@ -6,8 +6,13 @@ export interface TutorAvailabilitySlot {
 }
 
 export interface TutorAchievementItem {
+  id?: string;
   title: string;
   type: string;
+  issuer?: string;
+  score?: string;
+  startDate?: string;
+  endDate?: string;
   imageUrl?: string;
   status?: string;
   description: string;
@@ -19,9 +24,14 @@ export interface TeachingMethod {
 }
 
 export interface TeachingHistoryItem {
+  id?: string;
   title: string;
+  organization?: string;
+  startDate?: string;
+  endDate?: string;
+  isCurrent?: boolean;
   detail: string;
-  outcome: string;
+  outcome?: string;
 }
 
 export interface TutorReviewItem {

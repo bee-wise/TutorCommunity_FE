@@ -19,12 +19,14 @@ export function CatalogSelect({
   onChange,
   multiple = false,
   placeholder,
+  valueMode = "id",
 }: {
   resource: CatalogResource;
   value: string | string[];
   onChange: (value: string | string[]) => void;
   multiple?: boolean;
   placeholder: string;
+  valueMode?: "id" | "name";
 }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -48,15 +50,22 @@ export function CatalogSelect({
         resource,
         selectedId ?? "",
       ),
-    enabled: Boolean(selectedId) && !multiple,
+    enabled: Boolean(selectedId) && !multiple && valueMode === "id",
     staleTime: 5 * 60 * 1000,
   });
   const items = catalogQuery.data ?? [];
   const selectedItem =
-    items.find((item) => item.id === selectedId) ?? selectedItemQuery.data;
-  const selectedName = selectedItem?.name && selectedItem.name !== selectedId
-    ? selectedItem.name
-    : undefined;
+    items.find((item) =>
+      valueMode === "name"
+        ? item.name.toLocaleLowerCase("vi") ===
+          selectedId?.toLocaleLowerCase("vi")
+        : item.id === selectedId ||
+          item.name.toLocaleLowerCase("vi") ===
+            selectedId?.toLocaleLowerCase("vi"),
+    ) ?? (valueMode === "id" ? selectedItemQuery.data : undefined);
+  const selectedName =
+    selectedItem?.name ||
+    (valueMode === "name" && selectedId ? selectedId : undefined);
   const hasExactMatch = items.some(
     (item) =>
       item.name.toLocaleLowerCase("vi") ===
@@ -71,22 +80,23 @@ export function CatalogSelect({
         ["catalog", resource, name],
         (current: typeof items | undefined) => [...(current ?? []), item],
       );
-      onChange(multiple ? [...selected, item.id] : item.id);
+      const chosen = valueMode === "name" ? item.name : item.id;
+      onChange(multiple ? [...selected, chosen] : chosen);
       setSearch("");
       if (!multiple) setOpen(false);
     },
   });
 
-  const choose = (id: string) => {
+  const choose = (target: string) => {
     if (multiple) {
       onChange(
-        selected.includes(id)
-          ? selected.filter((item) => item !== id)
-          : [...selected, id],
+        selected.includes(target)
+          ? selected.filter((item) => item !== target)
+          : [...selected, target],
       );
       return;
     }
-    onChange(id);
+    onChange(target);
     setOpen(false);
     setSearch("");
   };
@@ -99,7 +109,7 @@ export function CatalogSelect({
       (selectedId
         ? selectedItemQuery.isPending
           ? "Đang tải lựa chọn..."
-          : "Đã chọn"
+          : selectedId
         : placeholder));
 
   const focusOption = (index: number) => {
@@ -109,6 +119,7 @@ export function CatalogSelect({
   return (
     <Popover.Root
       open={open}
+      modal={true}
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen);
         if (!nextOpen) setSearch("");
@@ -187,7 +198,8 @@ export function CatalogSelect({
               </p>
             ) : items.length ? (
               items.map((item, index) => {
-                const isSelected = selected.includes(item.id);
+                const targetValue = valueMode === "name" ? item.name : item.id;
+                const isSelected = selected.includes(targetValue);
                 return (
                   <button
                     key={item.id}
@@ -197,7 +209,7 @@ export function CatalogSelect({
                     type="button"
                     role="option"
                     aria-selected={isSelected}
-                    onClick={() => choose(item.id)}
+                    onClick={() => choose(targetValue)}
                     onKeyDown={(event) => {
                       if (
                         event.key === "ArrowDown" &&

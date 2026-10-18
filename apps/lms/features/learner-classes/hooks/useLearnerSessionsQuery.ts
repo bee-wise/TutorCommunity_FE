@@ -19,9 +19,14 @@ export function useLearnerSessionsQuery(classId: string) {
   const [month, setMonth] = useState(() =>
     vietnamDate(new Date().toISOString()).slice(0, 7),
   );
+  const [customRange, setCustomRange] = useState<{
+    from: string;
+    to: string;
+  } | null>(null);
   const [page, setPage] = useState(1);
-  const range = monthRange(month);
-  const params = {
+
+  const range = customRange ?? monthRange(month);
+  const params: LearnerSessionFilters = {
     page,
     pageSize: 6,
     status,
@@ -53,6 +58,9 @@ export function useLearnerSessionsQuery(classId: string) {
     view,
     status,
     month,
+    customRange,
+    isCustom: Boolean(customRange),
+    appliedRange: range,
     page,
     changeView: (v: typeof view) => {
       setView(v);
@@ -63,7 +71,16 @@ export function useLearnerSessionsQuery(classId: string) {
       setPage(1);
     },
     changeMonth: (offset: number) => {
+      setCustomRange(null);
       setMonth((v) => nextMonth(v, offset));
+      setPage(1);
+    },
+    applyCustomRange: (from: string, to: string) => {
+      setCustomRange({ from, to });
+      setPage(1);
+    },
+    resetMonthPreset: () => {
+      setCustomRange(null);
       setPage(1);
     },
     setPage,
