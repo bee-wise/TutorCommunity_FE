@@ -1,4 +1,4 @@
-import { Check } from "@phosphor-icons/react";
+import { CheckIcon as Check } from "@heroicons/react/24/outline";
 
 const LABELS = [
   "Chọn buổi học",
@@ -27,7 +27,7 @@ export function AIFlowSteps({ step }: { step: number }) {
             className={`relative mx-auto grid size-10 place-items-center rounded-full border text-sm font-bold ${step > index + 1 ? "border-secondary bg-secondary text-secondary-foreground" : step === index + 1 ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground"}`}
           >
             {step > index + 1 ? (
-              <Check weight="bold" aria-hidden="true" />
+              <Check aria-hidden="true" />
             ) : (
               index + 1
             )}

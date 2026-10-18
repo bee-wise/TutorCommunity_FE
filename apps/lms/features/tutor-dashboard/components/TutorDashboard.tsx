@@ -3,18 +3,20 @@ import { DashboardSchedule } from "./DashboardSchedule";
 import { DashboardTools } from "./DashboardTools";
 import { DashboardNotifications } from "./DashboardNotifications";
 import { DASHBOARD_SESSIONS } from "../data/dashboard.data";
+import { LmsProfileSummary } from "@/features/lms-workspace/components/LmsProfileSummary";
 
 export function TutorDashboard() {
   return (
-    <div className="space-y-5">
-      <DashboardWelcome />
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.8fr)_minmax(300px,1fr)]">
+    <div className="grid min-h-full xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0 space-y-7 p-4 sm:p-6 lg:p-8">
+        <DashboardWelcome />
         <DashboardSchedule sessions={DASHBOARD_SESSIONS} />
-        <aside className="grid min-w-0 gap-5 md:grid-cols-2 xl:grid-cols-1" aria-label="Công cụ và thông báo">
-          <DashboardTools />
-          <DashboardNotifications />
-        </aside>
       </div>
+      <aside className="grid min-w-0 content-start gap-7 border-t border-border bg-card p-5 sm:grid-cols-2 sm:p-6 xl:grid-cols-1 xl:border-l xl:border-t-0" aria-label="Tài khoản, công cụ và thông báo">
+        <LmsProfileSummary />
+        <DashboardTools />
+        <DashboardNotifications />
+      </aside>
     </div>
   );
 }

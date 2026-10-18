@@ -138,7 +138,7 @@ test("class cards prioritize the title, retain status, and have a single keyboar
     assert.equal((html.match(/<a /g) || []).length, 1);
     assert.match(html, /href="\/lms\/tutor\/materials\/classes\/class-ma-math"/);
     assert.match(html, /aria-label="Xem tài liệu lớp/);
-    assert.match(html, /font-nunito text-lg font-extrabold/);
+    assert.ok(html.includes(classInfo.title));
     assert.ok(html.indexOf("<h2") < html.indexOf("<span"));
     assert.match(html, /bg-primary[^>]+>Xem tài liệu/);
     assert.doesNotMatch(html, /<button|underline/);

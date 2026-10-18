@@ -4,6 +4,7 @@ export interface ClassChatParticipant {
 export interface ClassChatMessage {
   id: string; classId: string; senderId: string; senderName: string;
   senderRole: "TUTOR" | "LEARNER"; content: string; createdAt: string;
+  avatarUrl?: string | null;
 }
 export interface ClassChatRoom {
   classId: string; readOnly: boolean; participants: readonly ClassChatParticipant[];

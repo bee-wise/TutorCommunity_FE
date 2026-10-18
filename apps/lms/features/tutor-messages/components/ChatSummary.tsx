@@ -70,7 +70,7 @@ export function ChatSummary() {
   return (
     <section className={card}>
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-extrabold text-primary">Tin nhắn và kết nối gần đây</h2>
+        <h2 className="text-lg font-extrabold text-foreground">Tin nhắn và kết nối gần đây</h2>
         <Link className="rounded-lg px-2 py-1 text-sm font-bold text-primary transition-all hover:bg-muted hover:text-primary/80 active:scale-[0.98]" href="/lms/tutor/messages">
           Xem tất cả
         </Link>

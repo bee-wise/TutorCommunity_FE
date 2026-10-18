@@ -9,16 +9,20 @@ import { dashboardDateLabel, dashboardWeekday } from "../utils/dashboard-schedul
 import { DashboardLink } from "./DashboardLink";
 import { DashboardNextSession } from "./DashboardNextSession";
 import { DashboardSessionDialog } from "./DashboardSessionDialog";
+import { DashboardStats } from "./DashboardStats";
 
 export function DashboardSchedule({ sessions }: { sessions: readonly Session[] }) {
   const schedule = useDashboardSchedule(sessions);
   return (
     <Dialog open={schedule.open} onOpenChange={schedule.setOpen}>
       <div className="min-w-0 space-y-5">
-        {schedule.upcoming[0] && <DashboardNextSession session={schedule.upcoming[0]} onSelect={schedule.selectSession} />}
+        <div className="grid items-stretch gap-4 xl:grid-cols-[190px_minmax(0,1fr)]">
+          <DashboardStats sessions={sessions} />
+          {schedule.upcoming[0] && <DashboardNextSession session={schedule.upcoming[0]} onSelect={schedule.selectSession} />}
+        </div>
         <section className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6" aria-labelledby="dashboard-schedule">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 id="dashboard-schedule" className="font-nunito text-xl font-extrabold leading-[1.3] text-primary">Lịch dạy sắp tới</h2>
+            <h2 id="dashboard-schedule" className="font-lms text-xl font-extrabold leading-[1.3] text-foreground">Lịch dạy sắp tới</h2>
             <DashboardLink href="/lms/tutor/schedule" variant="outline">Mở lịch dạy</DashboardLink>
           </div>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Dữ liệu minh họa tháng 7/2026, không phải lịch thực tế.</p>
@@ -30,11 +34,11 @@ export function DashboardSchedule({ sessions }: { sessions: readonly Session[] }
             {schedule.visibleSessions.map((session) => <li key={session.id} className="py-2 first:pt-0 last:pb-0">
               <Button type="button" variant="ghost" onClick={(event) => schedule.selectSession(session, event.currentTarget)} className="h-auto min-h-24 w-full justify-start gap-4 whitespace-normal rounded-2xl px-2 py-4 text-left transition-all hover:bg-muted/40 active:scale-[0.98] motion-reduce:transform-none" aria-label={`Chi tiết ${session.subject} ${session.subjectLevel}, ${session.studentFullName}, ${dashboardDateLabel(session.date)}, ${session.startTime}`}>
                 <span className="flex w-16 shrink-0 flex-col gap-1">
-                  <span className="font-nunito text-lg font-extrabold tabular-nums text-primary">{session.startTime}</span>
+                  <span className="font-lms text-lg font-extrabold tabular-nums text-primary">{session.startTime}</span>
                   <span className="text-xs tabular-nums text-muted-foreground">{dashboardDateLabel(session.date).slice(0, 5)}</span>
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block font-nunito text-base font-extrabold leading-relaxed text-foreground">{session.subject} {session.subjectLevel}</span>
+                  <span className="block font-lms text-base font-extrabold leading-relaxed text-foreground">{session.subject} {session.subjectLevel}</span>
                   <span className="mt-1 block text-sm font-normal leading-relaxed text-muted-foreground">{session.studentFullName}</span>
                   <span className="mt-1 block break-all text-xs font-normal text-muted-foreground">{session.classId} · {session.startTime} - {session.endTime}</span>
                 </span>

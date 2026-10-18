@@ -28,7 +28,7 @@ export function EarningsTable(props: EarningsTableProps) {
   if (!props.totalCount) return (
     <section className={`${panelClass} grid min-h-64 place-items-center p-6 text-center`}>
       <div>
-        <h2 className="font-nunito text-xl font-extrabold text-primary">Không có buổi học phù hợp</h2>
+        <h2 className="font-lms text-xl font-extrabold text-foreground">Không có buổi học phù hợp</h2>
         <p className="mt-2 max-w-md text-sm text-muted-foreground">Thử đổi mốc thời gian, trạng thái hoặc từ khóa tìm kiếm.</p>
         <button type="button" className={`${outlineActionClass} mt-5`} onClick={props.onResetFilters}>Đặt lại bộ lọc</button>
       </div>
@@ -38,7 +38,7 @@ export function EarningsTable(props: EarningsTableProps) {
     <section className={`${panelClass} overflow-hidden`} aria-labelledby="earnings-list-title">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-4 sm:px-5">
         <div>
-          <h2 id="earnings-list-title" className="font-nunito text-lg font-extrabold text-primary">Thu nhập theo buổi</h2>
+          <h2 id="earnings-list-title" className="font-lms text-lg font-extrabold text-foreground">Thu nhập theo buổi</h2>
           <p className="mt-1 text-xs text-muted-foreground">Chỉ ghi nhận buổi học đã hoàn thành.</p>
         </div>
         <span className="text-sm font-bold text-muted-foreground">{props.totalCount} buổi phù hợp</span>
@@ -54,7 +54,7 @@ export function EarningsTable(props: EarningsTableProps) {
               <tr key={session.id} className="border-t border-border">
                 <td className="max-w-64 px-5 py-4"><p className="font-bold text-foreground">{session.className}</p><p className="mt-1 text-muted-foreground">{session.learnerName}</p><p className="mt-1 text-xs text-muted-foreground">{session.sessionCode}</p></td>
                 <td className="px-5 py-4"><p>{formatDateTime(session.taughtAt)}</p><p className="mt-1 text-xs text-muted-foreground">{session.durationMinutes} phút</p></td>
-                <td className="whitespace-nowrap px-5 py-4 font-nunito text-lg font-extrabold tabular-nums text-primary">{formatCurrency(session.fee)}</td>
+                <td className="whitespace-nowrap px-5 py-4 font-lms text-lg font-extrabold tabular-nums text-primary">{formatCurrency(session.fee)}</td>
                 <td className="px-5 py-4"><EarningsStatusBadge status={session.settlementStatus} /></td>
                 <td className="px-5 py-4"><ActionButtons {...props} session={session} /></td>
               </tr>
@@ -71,14 +71,14 @@ export function EarningsTable(props: EarningsTableProps) {
             </div>
             <dl className="flex flex-wrap justify-between gap-4 text-sm">
               <div><dt className="text-xs text-muted-foreground">Thời gian dạy</dt><dd className="mt-1">{formatDateTime(session.taughtAt)} · {session.durationMinutes} phút</dd></div>
-              <div><dt className="text-xs text-muted-foreground">Thu nhập</dt><dd className="mt-1 font-nunito text-lg font-extrabold tabular-nums text-primary">{formatCurrency(session.fee)}</dd></div>
+              <div><dt className="text-xs text-muted-foreground">Thu nhập</dt><dd className="mt-1 font-lms text-lg font-extrabold tabular-nums text-primary">{formatCurrency(session.fee)}</dd></div>
             </dl>
             <ActionButtons {...props} session={session} />
           </article>
         ))}
       </div>
       <footer className="flex flex-col gap-4 border-t border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-        <p className="text-sm text-muted-foreground">Tổng theo bộ lọc <strong className="ml-2 font-nunito text-lg font-extrabold tabular-nums text-primary">{formatCurrency(props.totalFee)}</strong></p>
+        <p className="text-sm text-muted-foreground">Tổng theo bộ lọc <strong className="ml-2 font-lms text-lg font-extrabold tabular-nums text-primary">{formatCurrency(props.totalFee)}</strong></p>
         <nav aria-label="Phân trang thu nhập" className="flex items-center justify-between gap-3">
           <button type="button" className={outlineActionClass} disabled={props.page === 0} onClick={() => props.onPageChange(props.page - 1)}>Trước</button>
           <span aria-live="polite" className="text-xs text-muted-foreground">{props.page + 1} / {props.pageCount}</span>

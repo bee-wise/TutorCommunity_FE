@@ -147,11 +147,11 @@ export function ChatSidebar() {
   );
 
   return (
-    <aside className="flex h-full w-full shrink-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm lg:w-80">
+    <aside className="flex h-full w-full shrink-0 flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft lg:w-80">
       {/* Header */}
       <div className="flex shrink-0 flex-col gap-4 border-b border-border px-4 py-4">
         {/* Brand */}
-        <Link href="/lms/tutor/dashboard" className="inline-flex w-fit items-center rounded-full bg-white px-3 py-1 shadow-sm ring-1 ring-primary" aria-label="BeeWise - Trang chủ gia sư">
+        <Link href="/lms/tutor/dashboard" className="inline-flex w-fit items-center rounded-full bg-card px-3 py-1 shadow-sm ring-1 ring-primary" aria-label="BeeWise - Trang chủ gia sư">
           <span className="relative block h-6 w-28">
             <Image
               src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
@@ -174,7 +174,7 @@ export function ChatSidebar() {
             <ArrowLeft width={18} height={18} />
           </Link>
           <div>
-            <h2 className="font-nunito text-lg font-extrabold text-foreground">Tin nhắn</h2>
+            <h2 className="font-lms text-lg font-extrabold text-foreground">Tin nhắn</h2>
           </div>
         </div>
       </div>

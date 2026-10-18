@@ -1,18 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Calendar,
-  Clock,
-  User,
-  UserCheck,
-  ExternalLink,
-  Banknote,
-  MessageCircle,
-  CheckCircle2,
-  X,
-  Video,
-} from "lucide-react";
+import { CalendarDaysIcon as Calendar, ClockIcon as Clock, UserIcon as User, UserCircleIcon as UserCheck, ArrowRightCircleIcon as ExternalLink, BanknotesIcon as Banknote, ChatBubbleLeftRightIcon as MessageCircle, CheckCircleIcon as CheckCircle2, XMarkIcon as X, VideoCameraIcon as Video } from "@heroicons/react/24/outline";
 import {
   Sheet,
   SheetContent,
@@ -91,7 +80,7 @@ export function SessionDetailSheet({
       <SheetContent
         side="right"
         showCloseButton={false}
-        className="w-full sm:max-w-md p-0 flex flex-col bg-white border-l border-border/60 shadow-2xl"
+        className="w-full sm:max-w-md p-0 flex flex-col bg-card border-l border-border/60 shadow-2xl"
       >
         {/* ── Header ── */}
         <SheetHeader className="p-0">
@@ -100,15 +89,15 @@ export function SessionDetailSheet({
             className={cn(
               "px-6 pt-5 pb-4 border-b border-border/40",
               session.status === "UPCOMING" &&
-                "bg-[#fff3cb]/30 backdrop-blur-sm",
-              session.status === "COMPLETED" && "bg-emerald-50/40",
-              session.status === "CANCELED" && "bg-red-50/30",
+                "bg-accent/30",
+              session.status === "COMPLETED" && "bg-secondary/10",
+              session.status === "CANCELED" && "bg-destructive/5",
             )}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 {/* Subject title */}
-                <SheetTitle className="text-xl font-extrabold font-nunito text-foreground leading-tight">
+                <SheetTitle className="text-xl font-extrabold font-lms text-foreground leading-tight">
                   {session.subject} {session.subjectLevel}
                 </SheetTitle>
                 {/* Student name */}
@@ -139,7 +128,7 @@ export function SessionDetailSheet({
                 onClick={onClose}
                 className="size-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors shrink-0"
               >
-                <X className="size-4" strokeWidth={1.75} />
+                <X className="size-4" />
               </button>
             </div>
           </div>
@@ -172,7 +161,7 @@ export function SessionDetailSheet({
 
             {/* Fee */}
             <InfoRow icon={Banknote} label="Học phí / buổi">
-              <span className="text-base font-extrabold font-nunito text-primary">
+              <span className="text-base font-extrabold font-lms text-primary">
                 {formatFee(session.feeVnd)}
               </span>
             </InfoRow>
@@ -184,7 +173,6 @@ export function SessionDetailSheet({
               <div className="flex items-center gap-2 mb-3">
                 <Video
                   className="size-4 text-muted-foreground"
-                  strokeWidth={1.75}
                 />
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Phòng học trực tuyến
@@ -204,12 +192,12 @@ export function SessionDetailSheet({
                     className={cn(
                       "flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl font-semibold text-sm transition-all duration-150",
                       joinable
-                        ? "bg-[#ffc500] text-[#0c0c0b] hover:bg-[#f0b800] active:scale-[0.98] shadow-sm shadow-[#ffc500]/40 cursor-pointer"
+                        ? "bg-accent text-foreground hover:bg-accent active:scale-[0.98] shadow-sm shadow-accent/40 cursor-pointer"
                         : "bg-muted/50 text-muted-foreground cursor-not-allowed border border-border/50",
                     )}
                     onClick={!joinable ? (e) => e.preventDefault() : undefined}
                   >
-                    <ExternalLink className="size-4" strokeWidth={2} />
+                    <ExternalLink className="size-4" />
                     {joinable ? "Vào lớp học" : "Chưa đến giờ học"}
                   </a>
                   {!joinable && (
@@ -236,22 +224,22 @@ export function SessionDetailSheet({
         </div>
 
         {/* ── Footer Actions ── */}
-        <div className="border-t border-border/40 px-6 py-4 space-y-2 bg-white">
+        <div className="border-t border-border/40 px-6 py-4 space-y-2 bg-card">
           {/* Confirm button — only for UPCOMING */}
           {session.status === "UPCOMING" && !confirmed && (
             <button
               type="button"
               onClick={() => setConfirmed(true)}
-              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-[#1e0b72] active:scale-[0.98] transition-all duration-150 shadow-sm shadow-primary/20"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 active:scale-[0.98] transition-all duration-150 shadow-sm shadow-primary/20"
             >
-              <CheckCircle2 className="size-4" strokeWidth={2} />
+              <CheckCircle2 className="size-4" />
               Xác nhận thay đổi lịch
             </button>
           )}
 
           {confirmed && (
-            <div className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-emerald-50 border border-[#447353]/30 text-[#447353] font-semibold text-sm">
-              <CheckCircle2 className="size-4" strokeWidth={2} />
+            <div className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-secondary/10 border border-secondary/30 text-foreground font-semibold text-sm">
+              <CheckCircle2 className="size-4" />
               Đã xác nhận thành công
             </div>
           )}
@@ -266,15 +254,15 @@ export function SessionDetailSheet({
               onBlur={() => setShowTooltip(false)}
               className="flex items-center justify-center gap-1.5 w-full py-2 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
             >
-              <MessageCircle className="size-4" strokeWidth={1.75} />
+              <MessageCircle className="size-4" />
               Yêu cầu đổi lịch / Liên hệ tư vấn viên
             </button>
 
             {showTooltip && (
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 rounded-xl bg-[#0c0c0b] text-white text-xs px-3 py-2.5 text-center shadow-lg pointer-events-none">
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 rounded-xl bg-foreground text-white text-xs px-3 py-2.5 text-center shadow-lg pointer-events-none">
                 Gửi tin nhắn trực tiếp đến tư vấn viên{" "}
                 <strong>{session.consultantName}</strong> qua mục Tin Nhắn.
-                <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-[#0c0c0b]" />
+                <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-foreground" />
               </div>
             )}
           </div>

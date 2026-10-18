@@ -122,6 +122,50 @@ export const reportSchema = z.object({
   policy: policyInfoSchema.nullish(),
   final_decision: z.string().default("PENDING"),
 });
+export const integrityEventTypeSchema = z.enum([
+  "FULLSCREEN_ENTERED",
+  "FULLSCREEN_EXITED",
+  "PAGE_HIDDEN",
+  "PAGE_VISIBLE",
+  "WINDOW_BLURRED",
+  "WINDOW_FOCUSED",
+]);
+export type IntegrityEventType = z.infer<typeof integrityEventTypeSchema>;
+
+export const integrityEventSchema = z.object({
+  event_id: z.string(),
+  client_session_id: z.string(),
+  sequence: z.number().int().nonnegative(),
+  type: integrityEventTypeSchema,
+  occurred_at: z.string(),
+  q_code: z.string().nullish(),
+  kind: z.string().nullish(),
+  received_at: z.string().nullish(),
+});
+export type IntegrityEvent = z.infer<typeof integrityEventSchema>;
+
+export const integrityEventBatchSchema = z.object({
+  events: z.array(integrityEventSchema).min(1).max(100),
+});
+export type IntegrityEventBatch = z.infer<typeof integrityEventBatchSchema>;
+
+export const integritySummarySchema = z.object({
+  fullscreen_exit_count: z.number().int().nonnegative(),
+  page_hidden_count: z.number().int().nonnegative(),
+  requires_review: z.boolean(),
+  review_reasons: z.array(z.string()).default([]),
+  telemetry_complete: z.boolean(),
+});
+export type IntegritySummary = z.infer<typeof integritySummarySchema>;
+
+export const integrityEventPageSchema = z.object({
+  items: z.array(integrityEventSchema),
+  total: z.number().int().nonnegative(),
+  page: z.number().int().positive(),
+  pageSize: z.number().int().positive(),
+});
+export type IntegrityEventPage = z.infer<typeof integrityEventPageSchema>;
+
 export const packageSchema = z.object({
   interview: z.object({
     interview_id: z.string(),
@@ -149,6 +193,7 @@ export const packageSchema = z.object({
       synced_at: nullableText,
     }),
   ),
+  integrity_summary: integritySummarySchema.nullish(),
   tutor: jsonObject.nullable(),
   tutor_error: nullableText,
 });

@@ -17,7 +17,7 @@ export function ClassQueryErrorState({ error, onRetry, detail = false }: {
           : "Kiểm tra kết nối mạng và thử tải lại.";
   return (
     <section role="alert" className={`${classPanel} space-y-4`}>
-      <h2 className="font-nunito text-lg font-extrabold text-primary">{title}</h2>
+      <h2 className="font-lms text-lg font-extrabold text-foreground">{title}</h2>
       <p className="text-sm leading-relaxed text-muted-foreground">{message}</p>
       <div className="flex flex-wrap gap-3">
         {![401, 403, 404].includes(statusCode) && <Button type="button" variant="outline" className={classOutlineButton} onClick={onRetry}>Thử lại</Button>}

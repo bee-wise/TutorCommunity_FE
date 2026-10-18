@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
@@ -12,7 +13,6 @@ import {
 import { useTutorInterview } from "../hooks/useTutorInterview";
 import { InterviewSetup } from "./InterviewSetup";
 import { InterviewSession } from "./InterviewSession";
-import { InterviewProgress } from "./InterviewProgress";
 import { InterviewResult } from "./InterviewResult";
 import {
   InterviewNotice,
@@ -23,9 +23,37 @@ import {
 export function TutorInterviewScreen() {
   const interview = useTutorInterview();
   const { eligibility, policy, state, stateQuery } = interview;
+  const canContinue = Boolean(
+    eligibility.data?.resumable_interview_id ||
+    (eligibility.data?.state === "IN_PROGRESS" &&
+      eligibility.data.interview_id),
+  );
+  const terminal = Boolean(state && !isOpenInterview(state.status));
+  const needsPolicy =
+    interview.phase === "policy" &&
+    !canContinue &&
+    !terminal &&
+    eligibility.data?.state !== "USED";
+  const showHeaderAndSteps = interview.phase === "policy";
+  const focused =
+    !["policy", "precheck"].includes(interview.phase) &&
+    (!state || isOpenInterview(state.status));
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (focused) {
+      document.body.dataset.interviewFocused = "true";
+    } else {
+      delete document.body.dataset.interviewFocused;
+    }
+    return () => {
+      delete document.body.dataset.interviewFocused;
+    };
+  }, [focused]);
+
   if (
     eligibility.isPending ||
-    policy.isPending ||
+    (policy.isPending && needsPolicy) ||
     (stateQuery.isFetching && !state)
   )
     return (
@@ -38,21 +66,23 @@ export function TutorInterviewScreen() {
         </div>
       </div>
     );
-  const loadError = eligibility.error || policy.error || stateQuery.error;
-  const terminal = Boolean(state && !isOpenInterview(state.status));
-  const setup = ["policy", "precheck", "ready"].includes(interview.phase);
+  const loadError = eligibility.error || (needsPolicy && policy.error) || stateQuery.error;
+  const setup = ["policy", "precheck"].includes(interview.phase);
+
   const title = (
     <header className="flex flex-wrap items-center justify-between gap-3">
-      <h1 className="font-nunito text-2xl font-extrabold leading-snug sm:text-3xl">
-        Phỏng vấn AI
+      <h1 className="font-nunito text-primary text-2xl font-extrabold leading-snug sm:text-3xl">
+        Phỏng vấn cùng Bee
       </h1>
-      {eligibility.data && <p className="text-xs text-muted-foreground">
-        Lượt phỏng vấn{" "}
-        <strong className="ml-1.5 rounded-full border border-border bg-card px-3 py-1.5 font-semibold tabular-nums text-foreground">
-          {eligibility.data?.attempts_used} /{" "}
-          {eligibility.data?.attempts_allowed}
-        </strong>
-      </p>}
+      {eligibility.data && (
+        <p className="text-xs text-muted-foreground">
+          Lượt phỏng vấn{" "}
+          <strong className="ml-1.5 rounded-full border border-border bg-card px-3 py-1.5 font-semibold tabular-nums text-foreground">
+            {eligibility.data?.attempts_used} /{" "}
+            {eligibility.data?.attempts_allowed}
+          </strong>
+        </p>
+      )}
     </header>
   );
   if (loadError)
@@ -147,9 +177,8 @@ export function TutorInterviewScreen() {
       </div>
     );
   return (
-    <div className="space-y-5">
-      {title}
-      <InterviewProgress phase={interview.phase} />
+    <div className="space-y-3.5">
+      {showHeaderAndSteps && title}
       {interview.error && (
         <InterviewNotice tone="error">{interview.error}</InterviewNotice>
       )}
@@ -158,7 +187,22 @@ export function TutorInterviewScreen() {
           {interview.media.deviceError}
         </InterviewNotice>
       )}
-      {setup ? (
+      {interview.phase === "policy" && canContinue ? (
+        <section className={`${interviewPanelClass} p-5 sm:p-7`}>
+          <h2 className="font-nunito text-xl font-extrabold sm:text-2xl">
+            Tiếp tục thực hiện phỏng vấn
+          </h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+            Kiểm tra lại camera và micro trước khi quay lại câu hỏi đang làm.
+          </p>
+          <Button
+            className={`mt-5 ${interviewButtonClass}`}
+            onClick={interview.continueExisting}
+          >
+            Tiếp tục buổi phỏng vấn
+          </Button>
+        </section>
+      ) : setup ? (
         <InterviewSetup interview={interview} />
       ) : (
         <InterviewSession interview={interview} />

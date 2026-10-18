@@ -76,7 +76,9 @@ async function createSession(role, mobile = false) {
     const respond = (body, status = 200) => route.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) });
     if (pathname === "/api/auth/me") return respond({ success: true, data: { id: tutorId, firstName: "Gia sư", lastName: "kiểm thử", fullName: "Gia sư kiểm thử", email: "qa@example.invalid", role: role.toUpperCase(), status: "ACTIVE", permissions: [], tutorProfileId: tutorId, tutorProfileStatus: "APPROVED", tutorOnboardingStatus: "APPROVED", isInterviewed: false, canAccessTutorLms: false } });
     const endpoint = pathname.replace("/api/ai/interview", "");
-    if (endpoint === "/policy") return respond({ version: "v1", content: "Quy định kiểm thử\nDạy đúng lịch và bảo vệ dữ liệu học viên.", confirmation_text: "Tôi đã đọc và hiểu quy định kiểm thử." });
+    if (endpoint === "/policy") return session.policyUnavailable
+      ? respond({ detail: { code: "no_active_policy", message: "Chưa có quy định đang áp dụng." } }, 503)
+      : respond({ version: "v1", content: "Quy định kiểm thử\nDạy đúng lịch và bảo vệ dữ liệu học viên.", confirmation_text: "Tôi đã đọc và hiểu quy định kiểm thử." });
     if (endpoint === "/me/eligibility") return respond({ state: session.phase, attempts_used: session.phase === "NOT_STARTED" ? 0 : 1, attempts_allowed: 1, interview_id: session.phase === "NOT_STARTED" ? null : id, policy_version: "v1" });
     if (endpoint === "/mic-check") return respond({ ok: true });
     if (endpoint === "/consents") {
@@ -84,7 +86,10 @@ async function createSession(role, mobile = false) {
       assert.deepEqual(body, { policy_version: "v1", checks: { camera: true, mic: true, network: true, time_confirmed: true } });
       return respond({ consent_id: id }, 201);
     }
-    if (endpoint === "/interviews" && request.method() === "POST") { session.phase = "IN_PROGRESS"; return respond(state(), 201); }
+    if (endpoint === "/interviews" && request.method() === "POST") {
+      if (session.failStartOnce) { session.failStartOnce = false; return respond({ detail: { code: "system_error", message: "Không thể bắt đầu phỏng vấn." } }, 503); }
+      session.phase = "IN_PROGRESS"; return respond(state(), 201);
+    }
     if (endpoint === `/interviews/${id}`) {
       if (session.processing) { session.processingReads = (session.processingReads ?? 0) + 1; if (session.processingReads >= 2) session.processing = false; }
       return respond(state());
@@ -141,9 +146,10 @@ async function createSession(role, mobile = false) {
   return session;
 }
 async function screenshot(session, name) {
+  const fullscreen = await session.page.evaluate(() => Boolean(document.fullscreenElement));
   await session.page.evaluate(() => window.scrollTo(0, 0));
   await session.page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  await session.page.screenshot({ path: path.join(outputDirectory, `${name}.png`), fullPage: true, animations: "disabled", caret: "hide" });
+  await session.page.screenshot({ path: path.join(outputDirectory, `${name}.png`), fullPage: !fullscreen, animations: "disabled", caret: "hide" });
 }
 
 try {
@@ -151,15 +157,19 @@ try {
   if (!staffOnly) {
   const tutor = await createSession("tutor", tutorMobile); const page = tutor.page;
   const tutorViewport = tutorMobile ? "mobile" : "desktop";
-  tutor.testProcessing = true; tutor.failVideoOnce = true;
+  tutor.testProcessing = true; tutor.failVideoOnce = true; tutor.failStartOnce = !visualQA;
   await page.goto(`${saleUrl}/tutor/onboarding`);
-  await page.getByRole("heading", { name: "Quy định nền tảng", exact: true }).waitFor();
+  await page.getByLabel("Nội dung quy định").waitFor();
+  assert.equal(await page.getByRole("img", { name: "BeeWise", exact: true }).count(), 1);
+  assert.equal(await page.getByRole("img", { name: "Trợ lý phỏng vấn Bee", exact: true }).count(), 1);
+  await page.getByRole("img", { name: "BeeWise", exact: true }).evaluate((image) => image.decode());
+  await page.getByRole("img", { name: "Trợ lý phỏng vấn Bee", exact: true }).evaluate((image) => image.decode());
   if (visualQA) await page.getByRole("navigation", { name: "Tiến trình onboarding gia sư", exact: true }).waitFor({ state: "visible" });
   if (visualQA && tutorMobile) await page.waitForFunction(() => {
     const current = document.querySelector('[aria-label="Tiến trình onboarding gia sư"] [aria-current="step"]')?.getBoundingClientRect();
     return current && current.left >= 0 && current.right <= window.innerWidth;
   });
-  assert.equal(await page.getByRole("heading", { name: "Quy định nền tảng", exact: true }).count(), 1, "The recorder UI must mount only once across breakpoints");
+  assert.equal(await page.getByLabel("Nội dung quy định").count(), 1, "The recorder UI must mount only once across breakpoints");
   await screenshot(tutor, `tutor-policy-${tutorViewport}`);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
   if (visualQA) {
@@ -177,19 +187,47 @@ try {
   if (visualQA) await screenshot(tutor, `tutor-devices-empty-${tutorViewport}`);
   await page.getByRole("button", { name: "Kết nối camera và micro" }).click();
   await page.getByRole("button", { name: "Ghi thử micro", exact: true }).click();
-  await page.getByText("Micro đã đạt kiểm tra", { exact: true }).first().waitFor({ timeout: 15000 });
+  await page.getByText("Camera và micro đã sẵn sàng", { exact: true }).waitFor({ timeout: 15000 });
   if (visualQA) await screenshot(tutor, `tutor-devices-connected-${tutorViewport}`);
   assert.equal(tutor.calls.filter((call) => call.path.endsWith("/interviews") && call.method === "POST").length, 0);
   await page.getByText("Tôi đã dành đủ thời gian để hoàn thành buổi phỏng vấn.", { exact: true }).click();
-  await page.getByRole("button", { name: "Xác nhận kiểm tra", exact: true }).click();
-  await page.getByRole("button", { name: "Có, bắt đầu phỏng vấn" }).waitFor();
-  if (visualQA) await screenshot(tutor, `tutor-ready-${tutorViewport}`);
   assert.equal(tutor.calls.filter((call) => call.path.endsWith("/interviews") && call.method === "POST").length, 0);
-  await page.getByRole("button", { name: "Có, bắt đầu phỏng vấn" }).click();
+  await page.getByRole("button", { name: "Bắt đầu phỏng vấn", exact: true }).click();
+  if (!visualQA) {
+    await page.getByRole("alert").filter({ hasText: "Không thể bắt đầu phỏng vấn." }).first().waitFor();
+    await page.getByRole("button", { name: "Bắt đầu phỏng vấn", exact: true }).click();
+  }
+  await page.getByRole("button", { name: "Xem câu hỏi đầu tiên" }).waitFor();
+  assert.equal(await page.getByRole("img", { name: "BeeWise", exact: true }).count(), 1);
+  assert.equal(await page.getByRole("img", { name: "Trợ lý phỏng vấn Bee", exact: true }).count(), 1);
+  assert.equal(tutor.calls.filter((call) => call.path.endsWith("/interviews") && call.method === "POST").length, visualQA ? 1 : 2);
   if (visualQA) { await page.getByRole("button", { name: "Xem câu hỏi đầu tiên" }).waitFor(); await screenshot(tutor, `tutor-intro-${tutorViewport}`); }
-  await page.getByRole("button", { name: "Xem câu hỏi đầu tiên" }).click();
+  if (visualQA) {
+    tutor.policyUnavailable = true;
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.reload();
+    await page.getByRole("button", { name: "Tiếp tục buổi phỏng vấn" }).waitFor();
+    await screenshot(tutor, `tutor-resume-${tutorViewport}`);
+    await page.getByRole("button", { name: "Tiếp tục buổi phỏng vấn" }).click();
+    await page.getByRole("button", { name: "Kết nối camera và micro" }).click();
+    await page.getByRole("button", { name: "Ghi thử micro", exact: true }).click();
+    await page.getByText("Camera và micro đã sẵn sàng", { exact: true }).waitFor({ timeout: 15000 });
+    await page.getByText("Tôi đã dành đủ thời gian để hoàn thành buổi phỏng vấn.", { exact: true }).click();
+    await page.getByRole("button", { name: "Tiếp tục phỏng vấn", exact: true }).click();
+    await page.getByRole("button", { name: "Trả lời ngay", exact: true }).waitFor();
+    await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+    assert.equal(await page.getByText("Bạn vừa rời màn hình phỏng vấn.", { exact: false }).count(), 0);
+    await page.evaluate(() => document.exitFullscreen());
+    await page.getByRole("dialog", { name: "Yêu cầu toàn màn hình" }).waitFor();
+    await page.getByRole("button", { name: "Quay lại toàn màn hình" }).click();
+    await page.getByRole("dialog", { name: "Yêu cầu toàn màn hình" }).waitFor({ state: "hidden" });
+    assert.equal(tutor.calls.filter((call) => call.path.endsWith("/resume") && call.method === "POST").length, 0);
+  } else {
+    await page.getByRole("button", { name: "Xem câu hỏi đầu tiên" }).click();
+  }
   if (visualQA) {
     await page.getByRole("button", { name: "Trả lời ngay", exact: true }).waitFor();
+    assert.ok(await page.evaluate(() => document.querySelector('[aria-label="BeeWise AI Interview"]')?.getBoundingClientRect().top >= 0));
     await screenshot(tutor, `tutor-preparing-${tutorViewport}`);
     await page.getByRole("button", { name: "Trả lời ngay", exact: true }).click();
     await page.getByRole("button", { name: "Kết thúc và gửi câu trả lời", exact: true }).waitFor();
@@ -205,8 +243,11 @@ try {
   await screenshot(tutor, `tutor-complete-${tutorViewport}`);
   await page.getByRole("button", { name: "Nộp bài phỏng vấn", exact: true }).click();
   await page.getByRole("heading", { name: "Đã nộp, chờ chấm" }).waitFor(); assert.equal(tutor.submitted, true);
+  await page.waitForFunction(() => !document.fullscreenElement && document.body.dataset.interviewFocused !== "true");
+  assert.equal(await page.getByRole("img", { name: "BeeWise", exact: true }).count(), 1);
+  assert.equal(await page.getByRole("img", { name: "Trợ lý phỏng vấn Bee", exact: true }).count(), 1);
   if (visualQA) await screenshot(tutor, `tutor-submitted-${tutorViewport}`);
-  assert.deepEqual(tutor.errors, []); results.push("Tutor: policy → real MediaRecorder pre-check → explicit start → timed audio/video → processing recovery without duplicate answers → failed video retry → submit; single mounted instance"); await tutor.context.close();
+  assert.deepEqual(tutor.errors, []); results.push(`Tutor: policy → real MediaRecorder pre-check → ${visualQA ? "explicit start" : "failed start recovery → explicit start"} → timed audio/video → processing recovery without duplicate answers → failed video retry → submit; single mounted instance`); await tutor.context.close();
   }
 
   if (!tutorOnly) {

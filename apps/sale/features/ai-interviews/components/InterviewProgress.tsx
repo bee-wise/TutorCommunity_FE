@@ -4,7 +4,7 @@ import type { InterviewPhase } from "../hooks/useTutorInterview";
 const steps = ["Quy định", "Thiết bị", "Phỏng vấn"];
 
 export function InterviewProgress({ phase, finished = false }: { phase: InterviewPhase; finished?: boolean }) {
-  const active = phase === "policy" ? 0 : ["precheck", "ready"].includes(phase) ? 1 : 2;
+  const active = phase === "policy" ? 0 : phase === "precheck" ? 1 : 2;
   return <ol aria-label="Tiến trình phỏng vấn" className="grid grid-cols-3 gap-2 rounded-2xl border border-border bg-card p-2 sm:gap-4 sm:p-3">
     {steps.map((label, index) => {
       const done = finished || index < active;

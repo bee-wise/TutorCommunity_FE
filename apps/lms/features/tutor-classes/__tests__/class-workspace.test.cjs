@@ -33,6 +33,11 @@ Module._load = function (name, parent, isMain) {
     SidebarMenuButton: ({ children, className, isActive }) => React.cloneElement(React.Children.only(children), { className, "data-active": isActive }),
     useSidebar: () => ({ setOpenMobile: () => {}, toggleSidebar: () => {} }),
   };
+  if (name === "@workspace/ui/components/ui/avatar") return {
+    Avatar: ({ children, ...props }) => React.createElement("span", props, children),
+    AvatarImage: ({ src, alt, ...props }) => (src ? React.createElement("img", { src, alt, ...props }) : null),
+    AvatarFallback: ({ children, ...props }) => React.createElement("span", props, children),
+  };
   if (parent?.filename.endsWith("ClassChatScreen.tsx") && name === "../hooks/useClassChat") return { useClassChat: () => chatFixture };
   return originalLoad.call(this, name, parent, isMain);
 };
@@ -162,6 +167,7 @@ test("archived class UI hides composer while active class offers a labelled comm
   assert.match(active, /Tin nhắn mock chỉ lưu/);
   assert.ok(!active.includes(group.title));
   assert.match(active, /role="log"/);
+  assert.match(active, /aria-hidden="true"/);
 });
 
 test("screen skeletons use labelled loading regions and reduced-motion-safe shapes", () => {

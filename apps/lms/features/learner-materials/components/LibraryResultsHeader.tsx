@@ -6,7 +6,7 @@ export function LibraryResultsHeader({ id, title, count, unit, onReset }: {
 }) {
   return (
     <div className="flex min-h-11 flex-wrap items-center justify-between gap-3">
-      <h2 id={id} className="font-nunito text-base font-extrabold text-foreground">{title}<span aria-live="polite" aria-atomic="true" className="ml-2 text-sm font-medium text-muted-foreground">{count} {unit} phù hợp</span></h2>
+      <h2 id={id} className="font-lms text-base font-extrabold text-foreground">{title}<span aria-live="polite" aria-atomic="true" className="ml-2 text-sm font-medium text-muted-foreground">{count} {unit} phù hợp</span></h2>
       {onReset && count > 0 && <Button type="button" variant="outline" className={libraryOutlineButton} onClick={onReset}>Đặt lại bộ lọc</Button>}
     </div>
   );

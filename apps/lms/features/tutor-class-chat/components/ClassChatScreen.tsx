@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@workspace/ui/components/ui/button";
-import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { formatClassIdentifier } from "../../tutor-classes/utils/classes.utils";
 import { ClassMissingState } from "../../tutor-classes/components/ClassMissingState";
 import { ClassQueryErrorState } from "../../tutor-classes/components/ClassQueryErrorState";
@@ -22,13 +23,43 @@ export function ClassChatScreen({ classId }: { classId: string }) {
   return (
     <div className="mx-auto flex h-[calc(100dvh-4rem)] w-full max-w-[1400px] flex-col p-0 sm:p-3 lg:p-4">
       <section
-        className="flex min-h-0 flex-1 flex-col overflow-hidden border border-border bg-card shadow-soft sm:rounded-2xl"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden border border-border bg-card shadow-soft sm:rounded-3xl"
         aria-label="Phòng chat chung của lớp"
       >
         <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-5">
-          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground"><ChatBubbleLeftRightIcon className="size-5" aria-hidden="true" /></span>
-          <div className="min-w-0 flex-1"><h1 className="truncate font-nunito text-base font-extrabold text-foreground">{chat.classInfo.title || "Tin nhắn lớp"}</h1><p className="truncate text-xs text-muted-foreground">Tin nhắn chung của lớp · {formatClassIdentifier(chat.classInfo.id)}</p></div>
-          <span className={`hidden shrink-0 rounded-full px-3 py-1 text-xs font-bold sm:inline-flex ${chat.room?.readOnly ? "bg-muted text-muted-foreground" : "bg-secondary/15 text-secondary"}`}>{chat.room?.readOnly ? "Chỉ xem" : "Đang trao đổi"}</span>
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="size-9 shrink-0 rounded-xl text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-95"
+          >
+            <Link
+              href={chat.actorRole === "LEARNER" ? "/lms/learner/chat" : `/lms/tutor/classes/${classId}`}
+              aria-label="Quay lại danh sách"
+            >
+              <ArrowLeftIcon className="size-4" aria-hidden="true" />
+            </Link>
+          </Button>
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
+            <ChatBubbleLeftRightIcon className="size-5" aria-hidden="true" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate font-lms text-base font-extrabold text-foreground">
+              Tin nhắn lớp học
+            </h1>
+            <p className="truncate text-xs text-muted-foreground">
+              Phòng chat chung của lớp · {formatClassIdentifier(chat.classInfo.id)}
+            </p>
+          </div>
+          <span
+            className={`hidden shrink-0 rounded-full border px-3 py-1 text-xs font-bold sm:inline-flex ${
+              chat.room?.readOnly
+                ? "border-border bg-muted text-muted-foreground"
+                : "border-secondary/30 bg-secondary/15 text-secondary"
+            }`}
+          >
+            {chat.room?.readOnly ? "Chỉ xem" : "Đang trao đổi"}
+          </span>
         </header>
         {chat.room && (
           <>

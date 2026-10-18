@@ -14,7 +14,7 @@ const STEPS = [
     description: "Xác thực danh tính, bằng cấp và chứng chỉ liên quan.",
   },
   {
-    title: "Phỏng vấn cùng trợ lý BeeWise AI",
+    title: "Phỏng vấn cùng trợ lý Bee",
     description: "Trao đổi ngắn để BeeWise hiểu cách bạn giảng dạy.",
   },
   {

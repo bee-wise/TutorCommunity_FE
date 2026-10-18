@@ -145,6 +145,29 @@ export function SessionSchedulerDialog({
                       </span>
                     </div>
                   </div>
+                  {!session && (
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <label className="grid gap-1 text-xs font-bold">
+                        Tên buổi học (tùy chọn)
+                        <input
+                          placeholder="Ví dụ: Buổi 1 - Nhập môn"
+                          maxLength={200}
+                          className={classInput}
+                          {...form.register(`slots.${index}.name`)}
+                        />
+                      </label>
+                      <label className="grid gap-1 text-xs font-bold">
+                        Mô tả buổi học (tùy chọn)
+                        <textarea
+                          placeholder="Nội dung kiến thức, tài liệu..."
+                          maxLength={2000}
+                          rows={1}
+                          className="min-h-11 w-full min-w-0 resize-y rounded-2xl border border-input bg-card px-3 py-2 text-base text-foreground outline-none transition-all placeholder:text-muted-foreground hover:border-primary/40 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60 sm:text-sm"
+                          {...form.register(`slots.${index}.description`)}
+                        />
+                      </label>
+                    </div>
+                  )}
                   <label className="grid gap-1 text-xs font-bold">
                     Địa điểm hoặc phòng học
                     <input

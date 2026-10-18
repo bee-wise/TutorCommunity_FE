@@ -84,7 +84,9 @@ function FilterFields({
   return (
     <div className="space-y-6">
       <fieldset>
-        <legend className="text-sm font-bold text-foreground">Hình thức học</legend>
+        <legend className="text-sm font-bold text-foreground">
+          Hình thức học
+        </legend>
         <div className="mt-2 grid grid-cols-3 gap-1 rounded-xl bg-muted/70 p-1">
           {(["all", "Online", "Trực tiếp"] as const).map((option) => (
             <button
@@ -100,13 +102,18 @@ function FilterFields({
         </div>
       </fieldset>
       <div>
-        <label htmlFor={`${idPrefix}-time`} className="text-sm font-bold text-foreground">
+        <label
+          htmlFor={`${idPrefix}-time`}
+          className="text-sm font-bold text-foreground"
+        >
           Thời gian học
         </label>
         <select
           id={`${idPrefix}-time`}
           value={time}
-          onChange={(event) => onTimeChange(event.target.value as AllOr<ClassTime>)}
+          onChange={(event) =>
+            onTimeChange(event.target.value as AllOr<ClassTime>)
+          }
           className={selectClass}
         >
           <option value="all">Bất kỳ thời gian</option>
@@ -116,7 +123,10 @@ function FilterFields({
         </select>
       </div>
       <div>
-        <label htmlFor={`${idPrefix}-price`} className="text-sm font-bold text-foreground">
+        <label
+          htmlFor={`${idPrefix}-price`}
+          className="text-sm font-bold text-foreground"
+        >
           Học phí mỗi buổi
         </label>
         <select
@@ -171,7 +181,9 @@ function ClassCard({ classItem, saved, onSave, onView }: ClassCardProps) {
         <span className="relative text-[10px] font-black uppercase tracking-[0.16em]">
           {classItem.subject}
         </span>
-        <strong className={`relative font-nunito font-black leading-none tracking-tight ${levelMark === "IELTS" ? "text-[31px] sm:text-[26px]" : "text-[52px] sm:text-[64px]"}`}>
+        <strong
+          className={`relative font-nunito font-black leading-none tracking-tight ${levelMark === "IELTS" ? "text-[31px] sm:text-[26px]" : "text-[52px] sm:text-[64px]"}`}
+        >
           {levelMark}
         </strong>
       </div>
@@ -180,7 +192,9 @@ function ClassCard({ classItem, saved, onSave, onView }: ClassCardProps) {
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
             <span>{classItem.level}</span>
-            <span className="text-primary/35" aria-hidden="true">/</span>
+            <span className="text-primary/35" aria-hidden="true">
+              /
+            </span>
             <span>Khai giảng {classItem.startDate}</span>
             {classItem.highlight && (
               <span className="rounded-full bg-accent/35 px-2.5 py-1 text-[11px] text-foreground">
@@ -217,7 +231,9 @@ function ClassCard({ classItem, saved, onSave, onView }: ClassCardProps) {
             />
           </span>
           {classItem.tutor}
-          <span className="hidden text-xs font-medium text-muted-foreground sm:inline">· Gia sư phụ trách</span>
+          <span className="hidden text-xs font-medium text-muted-foreground sm:inline">
+            · Gia sư phụ trách
+          </span>
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-foreground/80">
@@ -244,7 +260,9 @@ function ClassCard({ classItem, saved, onSave, onView }: ClassCardProps) {
         <div>
           <p className="font-nunito text-xl font-black text-primary xl:text-right">
             {priceFormatter.format(classItem.pricePerSession)}đ
-            <span className="ml-1 text-xs font-semibold text-muted-foreground">/ buổi</span>
+            <span className="ml-1 text-xs font-semibold text-muted-foreground">
+              / buổi
+            </span>
           </p>
           <div className="mt-2.5 flex items-center gap-2 xl:justify-end">
             <UsersThreeIcon size={15} className="text-muted-foreground" />
@@ -264,7 +282,9 @@ function ClassCard({ classItem, saved, onSave, onView }: ClassCardProps) {
           >
             <div
               className="h-full rounded-full bg-primary"
-              style={{ width: `${(filledSeats / classItem.totalSeats) * 100}%` }}
+              style={{
+                width: `${(filledSeats / classItem.totalSeats) * 100}%`,
+              }}
             />
           </div>
         </div>
@@ -322,7 +342,10 @@ export function ClassDiscovery() {
       return filtered.sort((a, b) => {
         const [dayA, monthA, yearA] = a.startDate.split("/").map(Number);
         const [dayB, monthB, yearB] = b.startDate.split("/").map(Number);
-        return new Date(yearA, monthA - 1, dayA).getTime() - new Date(yearB, monthB - 1, dayB).getTime();
+        return (
+          new Date(yearA, monthA - 1, dayA).getTime() -
+          new Date(yearB, monthB - 1, dayB).getTime()
+        );
       });
     }
     return filtered;
@@ -385,11 +408,17 @@ export function ClassDiscovery() {
             </div>
 
             <div>
-              <label htmlFor="class-search" className="mb-2 block text-xs font-bold text-white/80">
+              <label
+                htmlFor="class-search"
+                className="mb-2 block text-xs font-bold text-white/80"
+              >
                 Bạn muốn học gì?
               </label>
               <div className="flex h-14 items-center gap-3 rounded-2xl bg-background px-4 text-foreground shadow-[0_12px_32px_-18px_rgba(10,4,55,0.6)] ring-2 ring-transparent transition-shadow focus-within:ring-accent/85">
-                <MagnifyingGlassIcon size={22} className="shrink-0 text-primary" />
+                <MagnifyingGlassIcon
+                  size={22}
+                  className="shrink-0 text-primary"
+                />
                 <input
                   id="class-search"
                   value={query}
@@ -411,11 +440,17 @@ export function ClassDiscovery() {
             </div>
           </div>
 
-          <nav className="mt-5 flex gap-2 overflow-x-auto border-t border-white/15 py-3 sm:mt-7" aria-label="Lọc theo môn học">
+          <nav
+            className="mt-5 flex gap-2 overflow-x-auto border-t border-white/15 py-3 sm:mt-7"
+            aria-label="Lọc theo môn học"
+          >
             {SUBJECTS.map((item) => {
-              const count = item === "all"
-                ? MOCK_CLASSES.length
-                : MOCK_CLASSES.filter((classItem) => classItem.subject === item).length;
+              const count =
+                item === "all"
+                  ? MOCK_CLASSES.length
+                  : MOCK_CLASSES.filter(
+                      (classItem) => classItem.subject === item,
+                    ).length;
 
               return (
                 <button
@@ -426,7 +461,9 @@ export function ClassDiscovery() {
                   className={`flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${subject === item ? "bg-accent text-accent-foreground" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
                 >
                   {item === "all" ? "Tất cả" : item}
-                  <span className={`text-[11px] ${subject === item ? "text-accent-foreground/65" : "text-white/55"}`}>
+                  <span
+                    className={`text-[11px] ${subject === item ? "text-accent-foreground/65" : "text-white/55"}`}
+                  >
                     {count}
                   </span>
                 </button>
@@ -448,13 +485,18 @@ export function ClassDiscovery() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <label htmlFor="class-sort" className="text-sm font-semibold text-muted-foreground">
+              <label
+                htmlFor="class-sort"
+                className="text-sm font-semibold text-muted-foreground"
+              >
                 Sắp xếp
               </label>
               <select
                 id="class-sort"
                 value={sortOrder}
-                onChange={(event) => setSortOrder(event.target.value as SortOrder)}
+                onChange={(event) =>
+                  setSortOrder(event.target.value as SortOrder)
+                }
                 className="rounded-xl border border-border bg-background px-3 py-2.5 text-sm font-semibold text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               >
                 <option value="recommended">Mặc định</option>
@@ -477,22 +519,38 @@ export function ClassDiscovery() {
                     {activeFilterCount}
                   </span>
                 )}
-                <CaretDownIcon size={16} className="text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
+                <CaretDownIcon
+                  size={16}
+                  className="text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+                />
               </div>
             </summary>
             <div className="mt-5 border-t border-border pt-5">
               <FilterFields {...filterProps} idPrefix="mobile-class" />
-              <button type="button" onClick={resetFilters} className="mt-5 text-sm font-bold text-primary underline underline-offset-4">
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-5 text-sm font-bold text-primary underline underline-offset-4"
+              >
                 Xóa bộ lọc
               </button>
             </div>
           </details>
 
           <div className="mt-5 grid items-start gap-6 lg:grid-cols-[252px_minmax(0,1fr)] lg:gap-7">
-            <aside className="hidden rounded-2xl border border-border bg-background p-5 lg:sticky lg:top-24 lg:block" aria-label="Bộ lọc lớp học">
+            <aside
+              className="hidden rounded-2xl border border-border bg-background p-5 lg:sticky lg:top-24 lg:block"
+              aria-label="Bộ lọc lớp học"
+            >
               <div className="mb-6 flex items-center justify-between">
-                <h3 className="font-nunito text-lg font-extrabold text-foreground">Bộ lọc</h3>
-                <button type="button" onClick={resetFilters} className="text-xs font-bold text-primary underline-offset-4 hover:underline">
+                <h3 className="font-nunito text-lg font-extrabold text-foreground">
+                  Bộ lọc
+                </h3>
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="text-xs font-bold text-primary underline-offset-4 hover:underline"
+                >
                   Xóa tất cả
                 </button>
               </div>
@@ -507,14 +565,21 @@ export function ClassDiscovery() {
                       key={classItem.id}
                       classItem={classItem}
                       saved={savedIds.includes(classItem.id)}
-                      onSave={() => setSavedIds((current) => toggleId(current, classItem.id))}
+                      onSave={() =>
+                        setSavedIds((current) =>
+                          toggleId(current, classItem.id),
+                        )
+                      }
                       onView={() => setSelectedClass(classItem)}
                     />
                   ))}
                 </div>
               ) : (
                 <div className="rounded-2xl border border-border bg-background px-6 py-16 text-center">
-                  <MagnifyingGlassIcon size={36} className="mx-auto text-primary" />
+                  <MagnifyingGlassIcon
+                    size={36}
+                    className="mx-auto text-primary"
+                  />
                   <h3 className="mt-4 font-nunito text-xl font-extrabold text-foreground">
                     Chưa có lớp phù hợp
                   </h3>
@@ -535,7 +600,10 @@ export function ClassDiscovery() {
         </div>
       </section>
 
-      <Dialog.Root open={selectedClass !== null} onOpenChange={(open) => !open && setSelectedClass(null)}>
+      <Dialog.Root
+        open={selectedClass !== null}
+        onOpenChange={(open) => !open && setSelectedClass(null)}
+      >
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-90 bg-foreground/55" />
           {selectedClass && (
@@ -545,7 +613,11 @@ export function ClassDiscovery() {
                   {selectedClass.subject} · {selectedClass.level}
                 </span>
                 <Dialog.Close asChild>
-                  <button type="button" aria-label="Đóng chi tiết lớp" className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                  <button
+                    type="button"
+                    aria-label="Đóng chi tiết lớp"
+                    className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
                     <XIcon size={18} />
                   </button>
                 </Dialog.Close>
@@ -557,29 +629,79 @@ export function ClassDiscovery() {
                 {selectedClass.description}
               </Dialog.Description>
               <div className="mt-6 flex items-center gap-3 rounded-xl bg-muted/55 p-3">
-                <Image src={selectedClass.tutorImage} alt="" width={48} height={48} className="size-12 rounded-full object-cover object-top" />
+                <Image
+                  src={selectedClass.tutorImage}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="size-12 rounded-full object-cover object-top"
+                />
                 <div>
-                  <p className="text-xs text-muted-foreground">Gia sư tổ chức lớp</p>
-                  <p className="font-bold text-foreground">{selectedClass.tutor}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Gia sư tổ chức lớp
+                  </p>
+                  <p className="font-bold text-foreground">
+                    {selectedClass.tutor}
+                  </p>
                 </div>
               </div>
               <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
-                <div><dt className="text-muted-foreground">Khai giảng</dt><dd className="mt-1 font-bold text-foreground">{selectedClass.startDate}</dd></div>
-                <div><dt className="text-muted-foreground">Lịch học</dt><dd className="mt-1 font-bold text-foreground">{selectedClass.schedule}</dd></div>
-                <div><dt className="text-muted-foreground">Hình thức</dt><dd className="mt-1 font-bold text-foreground">{selectedClass.format}</dd></div>
-                <div><dt className="text-muted-foreground">Địa điểm</dt><dd className="mt-1 font-bold text-foreground">{selectedClass.location}</dd></div>
-                <div><dt className="text-muted-foreground">Thời lượng</dt><dd className="mt-1 font-bold text-foreground">{selectedClass.duration}</dd></div>
-                <div><dt className="text-muted-foreground">Sĩ số</dt><dd className="mt-1 font-bold text-foreground">{selectedClass.availableSeats > 0 ? `Còn ${selectedClass.availableSeats}/${selectedClass.totalSeats} chỗ` : "Đã đủ học viên"}</dd></div>
+                <div>
+                  <dt className="text-muted-foreground">Khai giảng</dt>
+                  <dd className="mt-1 font-bold text-foreground">
+                    {selectedClass.startDate}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">Lịch học</dt>
+                  <dd className="mt-1 font-bold text-foreground">
+                    {selectedClass.schedule}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">Hình thức</dt>
+                  <dd className="mt-1 font-bold text-foreground">
+                    {selectedClass.format}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">Địa điểm</dt>
+                  <dd className="mt-1 font-bold text-foreground">
+                    {selectedClass.location}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">Thời lượng</dt>
+                  <dd className="mt-1 font-bold text-foreground">
+                    {selectedClass.duration}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">Sĩ số</dt>
+                  <dd className="mt-1 font-bold text-foreground">
+                    {selectedClass.availableSeats > 0
+                      ? `Còn ${selectedClass.availableSeats}/${selectedClass.totalSeats} chỗ`
+                      : "Đã đủ học viên"}
+                  </dd>
+                </div>
               </dl>
               <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
                 <div>
-                  <p className="text-xs text-muted-foreground">Học phí mỗi buổi</p>
-                  <p className="font-nunito text-2xl font-black text-primary">{priceFormatter.format(selectedClass.pricePerSession)}đ</p>
+                  <p className="text-xs text-muted-foreground">
+                    Học phí mỗi buổi
+                  </p>
+                  <p className="font-nunito text-2xl font-black text-primary">
+                    {priceFormatter.format(selectedClass.pricePerSession)}đ
+                  </p>
                 </div>
                 <button
                   type="button"
                   disabled={selectedClass.availableSeats === 0}
-                  onClick={() => setInterestedIds((current) => toggleId(current, selectedClass.id))}
+                  onClick={() =>
+                    setInterestedIds((current) =>
+                      toggleId(current, selectedClass.id),
+                    )
+                  }
                   className="rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   {selectedClass.availableSeats === 0
@@ -589,7 +711,9 @@ export function ClassDiscovery() {
                       : "Quan tâm lớp"}
                 </button>
               </div>
-              <p className="mt-4 text-xs text-muted-foreground">Giao diện mẫu: thao tác quan tâm chỉ được lưu trong phiên này.</p>
+              <p className="mt-4 text-xs text-muted-foreground">
+                Giao diện mẫu: thao tác quan tâm chỉ được lưu trong phiên này.
+              </p>
             </Dialog.Content>
           )}
         </Dialog.Portal>

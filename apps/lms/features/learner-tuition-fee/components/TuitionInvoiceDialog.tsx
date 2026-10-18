@@ -1,6 +1,6 @@
 "use client";
 
-import { DownloadSimple, Receipt } from "@phosphor-icons/react";
+import { ArrowDownTrayIcon as DownloadSimple, ReceiptPercentIcon as Receipt } from "@heroicons/react/24/outline";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
 import {
   Dialog,
@@ -28,8 +28,8 @@ export function TuitionInvoiceDialog({ invoice, onClose }: { invoice?: LearnerTu
     <Dialog open={Boolean(invoice)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto rounded-2xl p-0">
         {invoice ? <>
-          <DialogHeader className="border-b border-border bg-[#F8FAFC] px-5 py-5 pr-12 text-left sm:px-6">
-            <span className="grid size-10 place-items-center rounded-xl bg-[#EEF2FF] text-[#280F91]"><Receipt size={20} weight="duotone" /></span>
+          <DialogHeader className="border-b border-border bg-muted px-5 py-5 pr-12 text-left sm:px-6">
+            <span className="grid size-10 place-items-center rounded-xl bg-muted text-primary"><Receipt width={20} height={20} /></span>
             <DialogTitle className="pt-2 text-xl font-extrabold">Hóa đơn học phí</DialogTitle>
             <DialogDescription>{invoice.invoiceNumber}</DialogDescription>
           </DialogHeader>
@@ -41,10 +41,10 @@ export function TuitionInvoiceDialog({ invoice, onClose }: { invoice?: LearnerTu
             <InvoiceRow label="Ngày phát hành" value={formatTuitionDate(invoice.invoiceIssuedAt)} />
             <InvoiceRow label="Tổng đã thanh toán" value={formatTuitionCurrency(invoice.totalPaid)} emphasis />
           </dl>
-          <div className="mx-5 rounded-xl bg-[#DDF1E5] px-4 py-3 text-sm font-bold text-[#365D43] sm:mx-6">Đã thanh toán qua BeeWise SALE</div>
+          <div className="mx-5 rounded-xl bg-secondary/15 px-4 py-3 text-sm font-bold text-foreground sm:mx-6">Đã thanh toán qua BeeWise SALE</div>
           <DialogFooter className="gap-2 border-t border-border px-5 py-4 sm:px-6">
-            <button type="button" onClick={onClose} className="h-10 rounded-xl border border-input px-4 text-sm font-bold hover:bg-slate-50">Đóng</button>
-            <button type="button" onClick={handleExport} className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[#280F91] px-4 text-sm font-bold text-white hover:bg-[#1F0B70] active:scale-[0.98]"><DownloadSimple size={18} weight="bold" />Tải hóa đơn</button>
+            <button type="button" onClick={onClose} className="h-10 rounded-xl border border-input px-4 text-sm font-bold hover:bg-muted">Đóng</button>
+            <button type="button" onClick={handleExport} className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-primary px-4 text-sm font-bold text-white hover:bg-primary/90 active:scale-[0.98]"><DownloadSimple width={18} height={18} />Tải hóa đơn</button>
           </DialogFooter>
         </> : null}
       </DialogContent>
@@ -53,5 +53,5 @@ export function TuitionInvoiceDialog({ invoice, onClose }: { invoice?: LearnerTu
 }
 
 function InvoiceRow({ label, value, emphasis = false }: { label: string; value: string; emphasis?: boolean }) {
-  return <div className="grid gap-1 py-3.5 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center"><dt className="text-sm text-slate-500">{label}</dt><dd className={`text-sm sm:text-right ${emphasis ? "text-lg font-extrabold text-[#280F91]" : "font-bold text-slate-900"}`}>{value}</dd></div>;
+  return <div className="grid gap-1 py-3.5 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center"><dt className="text-sm text-muted-foreground">{label}</dt><dd className={`text-sm sm:text-right ${emphasis ? "text-lg font-extrabold text-primary" : "font-bold text-foreground"}`}>{value}</dd></div>;
 }

@@ -2,14 +2,7 @@
 
 import Link from "next/link";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
-import {
-  CheckCircle,
-  ArrowRight,
-  ClipboardText,
-  IdentificationCard,
-  VideoCamera,
-  ShieldCheck,
-} from "@phosphor-icons/react";
+import { CheckCircleIcon as CheckCircle, ArrowRightIcon as ArrowRight, ClipboardDocumentListIcon as ClipboardText, IdentificationIcon as IdentificationCard, VideoCameraIcon as VideoCamera, ShieldCheckIcon as ShieldCheck } from "@heroicons/react/24/outline";
 
 type StepStatus = "done" | "current" | "pending";
 
@@ -67,21 +60,21 @@ export function TutorVerificationDashboard() {
         <div className="flex flex-col gap-1 mb-10 text-center md:text-left">
           <p
             className="text-sm text-muted-foreground"
-            style={{ fontFamily: "var(--font-nunito-family)" }}
+            style={{ fontFamily: "var(--font-lms-family)" }}
           >
             Xin chào,
           </p>
           <h1
             className="text-2xl md:text-3xl text-foreground"
-            style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
+            style={{ fontFamily: "var(--font-lms-family)", fontWeight: 800 }}
           >
             {user?.fullName ?? "Gia sư"}
           </h1>
           <div className="inline-flex items-center gap-1.5 mt-1 justify-center md:justify-start w-full md:w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             <span
-              className="text-xs font-semibold text-amber-600"
-              style={{ fontFamily: "var(--font-nunito-family)" }}
+              className="text-xs font-semibold text-warning"
+              style={{ fontFamily: "var(--font-lms-family)" }}
             >
               Tài khoản của bạn chưa được xác minh
             </span>
@@ -105,12 +98,12 @@ export function TutorVerificationDashboard() {
                   <>
                     <div
                       className={`hidden md:block absolute top-5 left-[calc(50%+20px)] w-[calc(100%-24px)] h-px -mt-px z-0
-                        ${isDone ? "bg-[#447353]/50" : "bg-border"}
+                        ${isDone ? "bg-secondary/50" : "bg-border"}
                       `}
                     />
                     <div
                       className={`block md:hidden absolute top-10 left-5 -ml-px w-px -bottom-6 z-0
-                        ${isDone ? "bg-[#447353]/50" : "bg-border"}
+                        ${isDone ? "bg-secondary/50" : "bg-border"}
                       `}
                     />
                   </>
@@ -119,13 +112,13 @@ export function TutorVerificationDashboard() {
                 <div className="flex flex-col items-center md:mx-auto relative z-10 shrink-0">
                   <div
                     className={`w-10 h-10 flex items-center justify-center rounded-full border-2 bg-background
-                      ${isDone ? "border-[#447353] text-[#447353]" : ""}
+                      ${isDone ? "border-secondary text-foreground" : ""}
                       ${isCurrent ? "border-primary text-primary shadow-sm shadow-primary/20" : ""}
                       ${isPending ? "border-border text-muted-foreground/40" : ""}
                     `}
                   >
                     {isDone ? (
-                      <CheckCircle size={20} weight="fill" />
+                      <CheckCircle width={20} height={20} />
                     ) : (
                       <Icon
                         size={20}
@@ -138,9 +131,9 @@ export function TutorVerificationDashboard() {
                 <div className="flex flex-col gap-1 mt-0.5 md:mt-2 md:text-center pb-2 md:pb-0">
                   <span
                     className={`text-[10px] font-bold uppercase tracking-wider
-                      ${isDone ? "text-[#447353]" : isCurrent ? "text-primary" : "text-muted-foreground/50"}
+                      ${isDone ? "text-foreground" : isCurrent ? "text-primary" : "text-muted-foreground/50"}
                     `}
-                    style={{ fontFamily: "var(--font-nunito-family)" }}
+                    style={{ fontFamily: "var(--font-lms-family)" }}
                   >
                     Bước {step.id}
                   </span>
@@ -148,7 +141,7 @@ export function TutorVerificationDashboard() {
                     className={`text-sm font-bold
                       ${isPending ? "text-muted-foreground/70" : "text-foreground"}
                     `}
-                    style={{ fontFamily: "var(--font-nunito-family)" }}
+                    style={{ fontFamily: "var(--font-lms-family)" }}
                   >
                     {step.title}
                   </h3>
@@ -167,10 +160,10 @@ export function TutorVerificationDashboard() {
                         className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-primary
                           text-primary text-xs font-bold bg-primary/5
                           hover:bg-primary/10 active:scale-[0.98] transition-all"
-                        style={{ fontFamily: "var(--font-nunito-family)" }}
+                        style={{ fontFamily: "var(--font-lms-family)" }}
                       >
                         {step.ctaLabel}
-                        <ArrowRight size={12} weight="bold" />
+                        <ArrowRight width={12} height={12} />
                       </Link>
                     </div>
                   )}

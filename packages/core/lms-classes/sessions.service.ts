@@ -74,10 +74,15 @@ export const classSessionsService = {
       sessionSchema,
       versionCommand.parse({ expectedVersion: version }),
     ),
-  reschedule: (id: string, input: z.infer<typeof slotSchema>) =>
-    postLmsCommand(`${sessionPath(id)}/reschedule`, scheduleResultSchema, {
-      session: slotSchema.parse(input),
-    }),
+  reschedule: (id: string, input: z.infer<typeof slotSchema>) => {
+    const parsed = slotSchema.parse(input);
+    const session = Object.fromEntries(
+      Object.entries(parsed).filter(([, v]) => v !== undefined),
+    );
+    return postLmsCommand(`${sessionPath(id)}/reschedule`, scheduleResultSchema, {
+      session,
+    });
+  },
   roster: (id: string, signal?: AbortSignal) =>
     getLmsResource(
       `${sessionPath(id)}/roster`,

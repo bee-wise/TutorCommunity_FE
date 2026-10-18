@@ -14,7 +14,7 @@ function Avatar({ url, name }: { url: string; name: string }) {
     // Remote account media is not restricted to a fixed Next image host. Reserve dimensions and fall back on error.
     // eslint-disable-next-line @next/next/no-img-element
     ? <img src={url} alt={`Ảnh đại diện của ${name}`} width={88} height={88} referrerPolicy="no-referrer" onError={() => setFailed(true)} className="size-[88px] rounded-full border border-border object-cover" />
-    : <span aria-label={`Ảnh đại diện chưa có của ${name}`} className="grid size-[88px] place-items-center rounded-full bg-primary font-nunito text-2xl font-extrabold text-primary-foreground">{initials}</span>;
+    : <span aria-label={`Ảnh đại diện chưa có của ${name}`} className="grid size-[88px] place-items-center rounded-full bg-primary font-lms text-2xl font-extrabold text-primary-foreground">{initials}</span>;
 }
 
 export function ProfileIdentity({ profile, user }: { profile: TutorProfile; user: MeType }) {
@@ -22,7 +22,7 @@ export function ProfileIdentity({ profile, user }: { profile: TutorProfile; user
   return (
     <aside className={`${panelClass} space-y-5 lg:sticky lg:top-5`}>
       <Avatar key={profile.avatarUrl} url={profile.avatarUrl || user.avatarUrl || ""} name={name} />
-      <div><h2 className="break-words font-nunito text-xl font-extrabold leading-relaxed text-primary">{name}</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{profile.headline || "Chưa có tiêu đề giới thiệu."}</p></div>
+      <div><h2 className="break-words font-lms text-xl font-extrabold leading-relaxed text-foreground">{name}</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{profile.headline || "Chưa có tiêu đề giới thiệu."}</p></div>
       <div className="flex flex-wrap gap-2">
         {user.isInterviewed === true && <span className="rounded-full bg-secondary px-3 py-1 text-xs font-bold leading-5 text-secondary-foreground">Đã phỏng vấn</span>}
         <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-bold leading-5 text-primary">{user.isProfilePublic === true ? "Hồ sơ đang công khai" : user.isProfilePublic === false ? "Hồ sơ đang ẩn" : "Chưa rõ trạng thái hiển thị"}</span>
@@ -32,7 +32,7 @@ export function ProfileIdentity({ profile, user }: { profile: TutorProfile; user
         <div><dt className="text-muted-foreground">Kinh nghiệm</dt><dd className="mt-1 font-bold">{profile.experienceYears || "Chưa cập nhật"}</dd></div>
         <div><dt className="text-muted-foreground">Nhận kết nối mới</dt><dd className="mt-1 font-bold">{user.canReceiveNewConnections === true ? "Đang nhận kết nối" : user.canReceiveNewConnections === false ? "Tạm ngừng nhận kết nối" : "Chưa có thông tin"}</dd></div>
       </dl>
-      <a href={`https://beewise.vn${getTutorPublicProfilePath(user)}`} target="_blank" rel="noopener noreferrer" className={`${actionClass} w-full`}>Xem trên BeeWise ↗</a>
+      <a href={`https://beewise.vn${getTutorPublicProfilePath(user)}`} target="_blank" rel="noopener noreferrer" className={`${actionClass} w-full`}>Xem trên BeeWise</a>
     </aside>
   );
 }

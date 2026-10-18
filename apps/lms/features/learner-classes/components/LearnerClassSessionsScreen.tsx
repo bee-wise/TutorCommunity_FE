@@ -1,42 +1,215 @@
 "use client";
 
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import {
+  CalendarDaysIcon,
+  ChatBubbleLeftRightIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
-import { LibrarySearch, LibrarySelect } from "../../learner-materials/components/LibraryFilterControls";
-import { LEARNER_SESSION_STATUS_LABELS, type LearnerClassSessionStatus } from "../../learner-materials/types/learner-materials.types";
-import { formatLibraryDate } from "../../learner-materials/utils/learner-materials.utils";
-import { useLearnerClassSessions } from "../hooks/useLearnerClassDirectory";
-import { getLearnerClassSummary } from "../services/learner-classes.mock.service";
-import { LearnerClassMissingState } from "./LearnerClassMissingState";
+import { LearnerClassQueryError } from "./LearnerClassQueryError";
+import { useLearnerSessionsQuery } from "../hooks/useLearnerSessionsQuery";
+import {
+  vietnamDate,
+  displaySessionTime,
+} from "../utils/learner-api-calendar";
+import { LearnerWorkspaceSkeleton } from "./LearnerWorkspaceSkeleton";
+import { learnerAction, LearnerClassStatus } from "./LearnerApiClassCard";
+import { LearnerSessionFilterBar } from "./LearnerSessionFilterBar";
+import { LearnerActualSessionList } from "./LearnerActualSessionList";
 
-const STATUS_OPTIONS: readonly { value: "all" | LearnerClassSessionStatus; label: string }[] = [
-  { value: "all", label: "Mọi trạng thái" },
-  { value: "COMPLETED", label: "Đã hoàn thành" },
-  { value: "UPCOMING", label: "Sắp diễn ra" },
-  { value: "CANCELED", label: "Đã hủy" },
-];
+const Details = dynamic(() =>
+  import("./LearnerSessionDetailDialog").then(
+    (m) => m.LearnerSessionDetailDialog,
+  ),
+);
 
 export function LearnerClassSessionsScreen({ classId }: { classId: string }) {
-  const summary = getLearnerClassSummary(classId);
-  const listing = useLearnerClassSessions(classId);
-  if (!summary) return <LearnerClassMissingState />;
-  return <div className="mx-auto max-w-[1180px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-    <header><h1 className="font-nunito text-2xl font-extrabold leading-[1.25] text-primary sm:text-3xl">Buổi học</h1></header>
-    <section aria-label="Bộ lọc buổi học" className="rounded-3xl border border-border bg-card p-4 shadow-soft">
-      <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]"><LibrarySearch id="learner-class-session-search" label="Tìm buổi học" value={listing.search} placeholder="Chủ đề hoặc số buổi..." onChange={listing.setSearch} /><LibrarySelect id="learner-class-session-status" label="Trạng thái" value={listing.status} options={STATUS_OPTIONS} onChange={listing.setStatus} /></div>
-    </section>
-    <section aria-label="Danh sách buổi học" className="space-y-3">
-      <p className="text-sm font-semibold text-muted-foreground">{listing.filteredSessions.length} buổi phù hợp</p>
-      {listing.filteredSessions.length ? listing.filteredSessions.map(({ session, materialCount, exerciseCount, pendingExerciseCount }) => <article key={session.id} className="rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 space-y-2"><p className="text-xs font-bold text-muted-foreground">Buổi {session.sequence} · {formatLibraryDate(session.taughtAt)}</p><h2 className="font-nunito text-base font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{session.topic}</h2><p className="text-sm text-muted-foreground">{session.durationMinutes} phút, {LEARNER_SESSION_STATUS_LABELS[session.status]}</p></div>
-          {pendingExerciseCount > 0 && <span className="w-fit shrink-0 rounded-full border border-accent bg-accent px-2.5 py-1 text-xs font-bold text-accent-foreground">{pendingExerciseCount} bài cần làm</span>}
+  const listing = useLearnerSessionsQuery(classId);
+  const [selected, setSelected] = useState("");
+  const { overview, actual, planned, view } = listing;
+
+  if (overview.loading) return <LearnerWorkspaceSkeleton view="sessions" />;
+  if (overview.error || !overview.data)
+    return (
+      <LearnerClassQueryError
+        error={overview.error}
+        onRetry={() => void overview.refetch()}
+        detail
+      />
+    );
+
+  const data = overview.data;
+  const query = view === "planned" ? planned : actual;
+
+  return (
+    <div className="mx-auto max-w-[1300px] space-y-6 px-4 py-6 text-foreground sm:px-6 lg:px-8">
+      {/* Header Area */}
+      <header className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full border border-border bg-card px-3 py-0.5 font-mono text-xs font-bold text-muted-foreground shadow-2xs">
+              {data.code ?? data.id}
+            </span>
+            <LearnerClassStatus status={data.status} />
+            <span className="inline-flex rounded-full border border-border bg-card px-2.5 py-0.5 text-xs font-bold text-foreground shadow-2xs">
+              {data.type === "GROUP"
+                ? "Lớp nhóm"
+                : data.type === "INDIVIDUAL"
+                  ? "Lớp 1:1"
+                  : "Chưa xác định loại lớp"}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              asChild
+              variant="outline"
+              className="min-h-10 rounded-xl border-border bg-card px-3.5 text-xs font-bold text-foreground hover:bg-muted transition-all active:scale-[0.98]"
+            >
+              <Link href={"/lms/learner/classes/" + classId}>
+                <InformationCircleIcon className="size-4" aria-hidden="true" />
+                <span>Thông tin lớp</span>
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="min-h-10 rounded-xl border-border bg-card px-3.5 text-xs font-bold text-foreground hover:bg-muted transition-all active:scale-[0.98]"
+            >
+              <Link href={"/lms/learner/chat/classes/" + classId}>
+                <ChatBubbleLeftRightIcon className="size-4" aria-hidden="true" />
+                <span>Tin nhắn lớp</span>
+              </Link>
+            </Button>
+          </div>
         </div>
-        <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
-          {materialCount > 0 ? <Button asChild variant="outline" className="min-h-11 rounded-xl transition-all active:scale-[0.98]"><Link href={`/lms/learner/materials/classes/${encodeURIComponent(classId)}/sessions/${encodeURIComponent(session.id)}`}>Tài liệu ({materialCount})</Link></Button> : <span className="self-center text-xs text-muted-foreground">Chưa có tài liệu</span>}
-          {exerciseCount > 0 && <Button asChild variant="outline" className="min-h-11 rounded-xl transition-all active:scale-[0.98]"><Link href={`/lms/learner/exercises/classes/${encodeURIComponent(classId)}/sessions/${encodeURIComponent(session.id)}`}>Bài tập ({exerciseCount})</Link></Button>}
+
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border/70 pb-4">
+          <div>
+            <h1 className="font-lms text-2xl font-extrabold sm:text-3xl">
+              Buổi học
+            </h1>
+            <p className="mt-1 text-sm font-semibold text-muted-foreground">
+              {data.title ?? data.code}
+              {data.teachingItemName ? ` · ${data.teachingItemName}` : ""}
+            </p>
+          </div>
+
+          <div role="group" aria-label="Cách xem buổi học" className="flex gap-2">
+            {(["list", "planned"] as const).map((value) => (
+              <Button
+                key={value}
+                className={`${learnerAction} ${view === value ? "shadow-soft font-bold" : ""}`}
+                aria-pressed={view === value}
+                variant={view === value ? "default" : "outline"}
+                onClick={() => listing.changeView(value)}
+              >
+                {value === "list" ? "Buổi học thực tế" : "Lịch dự kiến"}
+              </Button>
+            ))}
+          </div>
         </div>
-      </article>) : <div className="rounded-3xl border border-border bg-card px-5 py-10 text-center shadow-soft"><h2 className="font-nunito text-lg font-extrabold text-primary">Không có buổi học phù hợp</h2><p className="mt-2 text-sm text-muted-foreground">Thử đổi từ khóa hoặc trạng thái.</p></div>}
-    </section>
-  </div>;
+      </header>
+
+      {/* Filter toolbar when viewing actual sessions */}
+      {view === "list" && (
+        <LearnerSessionFilterBar
+          month={listing.month}
+          isCustom={listing.isCustom}
+          status={listing.status}
+          onChangeMonth={listing.changeMonth}
+          onApplyCustomRange={listing.applyCustomRange}
+          onResetMonthPreset={listing.resetMonthPreset}
+          onChangeStatus={listing.changeStatus}
+        />
+      )}
+
+      {query.loading ? (
+        <LearnerWorkspaceSkeleton view="sessions" />
+      ) : query.error ? (
+        <LearnerClassQueryError
+          error={query.error}
+          onRetry={() => void query.refetch()}
+        />
+      ) : view === "planned" ? (
+        <section aria-label="Lịch dự kiến" className="space-y-4">
+          <div className="flex items-center gap-3 rounded-2xl border border-accent/40 bg-accent/10 p-4 text-sm text-foreground">
+            <CalendarDaysIcon className="size-5 shrink-0 text-warning" aria-hidden="true" />
+            <p>
+              Lịch dự kiến chưa phải buổi học thực tế, không dùng để điểm danh hay truy cập bản ghi.
+            </p>
+          </div>
+
+          {(planned.data?.length ?? 0) > 0 && (
+            <div className="divide-y divide-border rounded-3xl border border-border bg-card px-5 shadow-soft">
+              {[...(planned.data ?? [])]
+                .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt))
+                .map((session, index) => (
+                  <article
+                    key={session.id}
+                    className="flex flex-wrap items-center justify-between gap-3 py-5"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted font-mono text-xs font-extrabold text-muted-foreground">
+                        #{index + 1}
+                      </span>
+                      <div>
+                        <h2 className="font-lms text-base font-extrabold text-foreground">
+                          {vietnamDate(session.startAt).split("-").reverse().join("/")}
+                        </h2>
+                        <p className="mt-0.5 text-sm font-medium text-muted-foreground">
+                          {displaySessionTime(session.startAt, session.endAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="inline-flex rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-bold text-muted-foreground">
+                      {session.status ?? "Dự kiến"}
+                    </span>
+                  </article>
+                ))}
+            </div>
+          )}
+          {!planned.data?.length && (
+            <div className="space-y-3 rounded-3xl border border-dashed border-border bg-card p-8 text-center shadow-2xs">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+                <CalendarDaysIcon className="size-6 text-muted-foreground" aria-hidden="true" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-lms text-base font-extrabold text-foreground">
+                  Chưa có lịch dự kiến
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Lớp học chưa được thiết lập lịch học dự kiến.
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
+      ) : (
+        <LearnerActualSessionList
+          items={actual.data?.items ?? []}
+          total={actual.data?.total ?? 0}
+          page={listing.page}
+          pageSize={actual.data?.pageSize ?? 6}
+          isCustom={listing.isCustom}
+          onSelectSession={setSelected}
+          onPageChange={listing.setPage}
+        />
+      )}
+
+      {selected && (
+        <Details
+          key={classId + ":" + selected}
+          classId={classId}
+          sessionId={selected}
+          group={data.type === "GROUP"}
+          attendanceEnabled={data.features.attendance}
+          onClose={() => setSelected("")}
+        />
+      )}
+    </div>
+  );
 }

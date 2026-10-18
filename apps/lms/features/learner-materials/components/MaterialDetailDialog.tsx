@@ -22,7 +22,7 @@ export function MaterialDetailDialog({
         {material ? (
           <>
             <DialogHeader className="border-b border-border px-5 py-5 pr-20 text-left sm:px-6 sm:pr-20">
-              <DialogTitle className="font-nunito text-xl font-extrabold leading-snug tracking-normal text-primary [overflow-wrap:anywhere]">{material.title}</DialogTitle>
+              <DialogTitle className="font-lms text-xl font-extrabold leading-snug tracking-normal text-primary [overflow-wrap:anywhere]">{material.title}</DialogTitle>
               <LearnerMaterialBadges
                 source={material.source}
                 fileType={material.fileType}

@@ -31,7 +31,7 @@ export function toTutorClass(dto: LmsClassDto): TutorClass {
 }
 
 export function toTutorClassCard(dto: LmsClassDto): TutorClassCardModel {
-  return { classInfo: toTutorClass(dto), learners: [], learnerCount: dto.learnerCount, sessionCount: dto.sessionCount };
+  return { classInfo: toTutorClass(dto), learners: [], learnerPreviews: dto.learners ?? [], learnerCount: dto.learnerCount, sessionCount: dto.sessionCount };
 }
 
 export function shouldRetryClassQuery(failures: number, error: unknown) {

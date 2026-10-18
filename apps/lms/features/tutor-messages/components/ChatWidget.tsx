@@ -82,7 +82,7 @@ function WidgetFrame({
     tone === "success"
       ? "border-secondary/20 bg-secondary/15 text-secondary"
       : tone === "warning"
-        ? "border-accent/30 bg-accent/25 text-amber-900"
+        ? "border-accent/30 bg-accent/25 text-warning"
         : "border-primary/25 bg-card text-primary";
 
   return (
@@ -94,7 +94,7 @@ function WidgetFrame({
           <Icon width={19} height={19} aria-hidden="true" />
         </span>
         <div className="min-w-[120px] flex-1">
-          <h3 className="font-nunito text-sm font-extrabold text-foreground">
+          <h3 className="font-lms text-sm font-extrabold text-foreground">
             {title}
           </h3>
           <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
@@ -162,7 +162,7 @@ function MockAction({ label }: { label: string }) {
       <Button
         type="button"
         disabled
-        className="h-12 w-full rounded-full font-nunito text-xs font-bold transition-all active:scale-[0.98]"
+        className="h-12 w-full rounded-full font-lms text-xs font-bold transition-all active:scale-[0.98]"
       >
         {label}
       </Button>
@@ -211,7 +211,7 @@ function TrialSessionWidget({
         footer={needsAction ? <MockAction label="Xác nhận lịch" /> : undefined}
       >
         <div className="rounded-xl bg-muted px-3.5 py-3">
-          <p className="font-nunito text-base font-extrabold text-primary">
+          <p className="font-lms text-base font-extrabold text-primary">
             {dateTime(data.startAt)}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -251,11 +251,11 @@ function TrialSessionWidget({
       {isEnded && (
         <div className="my-3 flex items-center gap-2 w-full select-none" role="status">
           <div className="h-px flex-1 bg-border/80" />
-          <div className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-amber-500/35 bg-card px-3 py-1 text-center text-[11px] font-bold text-amber-900 dark:text-amber-200 shadow-2xs backdrop-blur-xs">
+          <div className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-accent/35 bg-card px-3 py-1 text-center text-[11px] font-bold text-warning dark:text-warning shadow-2xs">
             <ClockIcon
               width={14}
               height={14}
-              className="shrink-0 text-amber-600 dark:text-amber-400"
+              className="shrink-0 text-warning dark:text-warning"
               aria-hidden="true"
             />
             <span className="leading-tight">
@@ -317,7 +317,7 @@ function ClassConfirmationWidget({
         <Detail
           label="Tổng học phí"
           value={
-            <strong className="font-nunito text-base font-black text-primary">
+            <strong className="font-lms text-base font-black text-primary">
               {money(data.totalAmount)}
             </strong>
           }
@@ -372,13 +372,13 @@ function PaymentRequestWidget({
       footer={
         data.status === "PENDING" && currentRole === "LEARNER" ? (
           roomClosed ? (
-            <Button type="button" disabled className="h-12 w-full rounded-full font-nunito text-xs font-bold transition-all">
+            <Button type="button" disabled className="h-12 w-full rounded-full font-lms text-xs font-bold transition-all">
               Thanh toán qua PayOS
             </Button>
           ) : canPay ? (
             <Button
               asChild
-              className="h-12 w-full rounded-full font-nunito text-xs font-bold transition-all active:scale-[0.98]"
+              className="h-12 w-full rounded-full font-lms text-xs font-bold transition-all active:scale-[0.98]"
             >
               <a
                 href={data.checkoutUrl!}
@@ -402,7 +402,7 @@ function PaymentRequestWidget({
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           Số tiền cần thanh toán
         </p>
-        <p className="font-nunito mt-1 text-xl font-black text-primary">
+        <p className="font-lms mt-1 text-xl font-black text-primary">
           {money(data.amount)}
         </p>
       </div>
@@ -470,13 +470,13 @@ function ScheduleClassesWidget({
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-xl bg-muted px-3 py-2.5">
           <p className="text-[11px] text-muted-foreground">Đã xếp</p>
-          <p className="font-nunito text-lg font-black text-primary">
+          <p className="font-lms text-lg font-black text-primary">
             {scheduled.length} buổi
           </p>
         </div>
         <div className="rounded-xl bg-muted px-3 py-2.5">
           <p className="text-[11px] text-muted-foreground">Còn lại</p>
-          <p className="font-nunito text-lg font-black text-primary">
+          <p className="font-lms text-lg font-black text-primary">
             {remaining} buổi
           </p>
         </div>

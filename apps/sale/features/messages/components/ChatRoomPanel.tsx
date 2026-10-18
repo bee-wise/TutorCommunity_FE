@@ -123,8 +123,8 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           <Link
             href={
               currentUserRole === "LEARNER"
-                ? "/learner/messages"
-                : "/tutor/messages"
+                ? "/learner/messages?list=true"
+                : "/tutor/messages?list=true"
             }
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-primary lg:hidden"
             aria-label="Quay lại"

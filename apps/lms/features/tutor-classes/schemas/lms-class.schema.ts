@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export const lmsClassLearnerPreviewSchema = z.object({
+  id: z.guid(),
+  avatarUrl: z.string().nullish(),
+});
+export type LmsClassLearnerPreview = z.infer<typeof lmsClassLearnerPreviewSchema>;
+
 // Source: api-test.beewise.vn/swagger/v1/swagger.json, LmsClassView/Page (13/10/2026).
 // Swagger leaves type/status as nullable strings. Unknown values stay read-only
 // in the UI instead of being silently classified as an active/individual class.
@@ -13,6 +19,9 @@ export const lmsClassSchema = z.object({
   teachingItemName: z.string().nullish(),
   contextName: z.string().nullish(),
   tutorId: z.guid(),
+  tutorName: z.string().nullish(),
+  tutorAvatarUrl: z.string().nullish(),
+  learners: z.array(lmsClassLearnerPreviewSchema).nullish(),
   teachingMode: z.string().nullish(),
   status: z.string().nullish(),
   capacity: z.number().int().nonnegative(),

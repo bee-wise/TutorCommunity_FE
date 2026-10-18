@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -18,9 +19,10 @@ import {
   User,
   VideoCamera,
 } from "@phosphor-icons/react/dist/ssr";
-import { Header } from "@workspace/ui/components/layout/Header";
+import { TutorOnboardingHeader } from "./TutorOnboardingHeader";
+import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import { useLogout } from "@workspace/core/hooks/useLogout";
 import { Button } from "@workspace/ui/components/ui/button";
-import { InterviewOnboardingSteps } from "@/features/ai-interviews/components/InterviewOnboardingSteps";
 import { onboardingSteps } from "../constants/tutor-onboarding.fixtures";
 import { useTutorOnboardingViewModel } from "./TutorOnboardingProvider";
 import { OnboardingVideoGuide } from "./OnboardingVideoGuide";
@@ -85,7 +87,6 @@ export function TutorOnboardingShell({
   children,
   capture,
   toolbar,
-  useAuthenticatedHeader = false,
 }: {
   children: React.ReactNode;
   capture: boolean;
@@ -94,6 +95,24 @@ export function TutorOnboardingShell({
 }) {
   const { session, view, isPreview } = useTutorOnboardingViewModel();
   const liveInterview = !isPreview && view.currentScreen === "INTERVIEW";
+  const [interviewFocused, setInterviewFocused] = useState(false);
+
+  useEffect(() => {
+    const checkFocused = () => {
+      setInterviewFocused(document.body.dataset.interviewFocused === "true");
+    };
+    checkFocused();
+    const observer = new MutationObserver(checkFocused);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["data-interview-focused"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const storeUser = useAuthStore((state) => state.user);
+  const { mutate: logout } = useLogout();
+
   const previewUser = {
     ...session.user,
     status: view.canAccessTutorLms ? "COMPLETED" : "DRAFT",
@@ -102,95 +121,107 @@ export function TutorOnboardingShell({
     canAccessLearnerLms: false,
   };
 
+  const currentUser = isPreview ? previewUser : (storeUser ?? previewUser);
+  const handleLogout = isPreview ? () => undefined : () => logout();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {useAuthenticatedHeader ? (
-        <Header />
-      ) : (
-        <Header
-          previewUser={previewUser}
-          previewIsAuthenticated
-          previewIsAuthLoading={false}
-          previewLogout={() => undefined}
-        />
+      {!interviewFocused && (
+        <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-sm pt-3 pb-1">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <TutorOnboardingHeader
+              user={currentUser}
+              onLogout={handleLogout}
+            />
+          </div>
+        </header>
       )}
       {!capture && toolbar}
-      <main className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-12 pt-24 sm:px-6 lg:px-8">
-        {!liveInterview && <>
-        {/* Banner */}
-        <section>
-          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-            <Image
-              src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790437541/onboarding-banner.png"
-              alt="BeeWise Tutor Onboarding Banner"
-              width={1280}
-              height={96}
-              priority
-              className="h-[119px] w-full object-cover object-center md:h-[135px]"
-            />
-            <div className="p-5">
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wide text-primary">
-                    Tutor Onboarding
-                  </p>
-                  <h1 className="font-nunito mt-1 text-2xl leading-tight text-foreground md:text-3xl">
-                    {view.title}
-                  </h1>
-                  <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                    {view.description}
-                  </p>
-                </div>
-                <div className="min-w-40 rounded-xl bg-accent/20 p-3 ring-1 ring-accent/40">
-                  <p className="text-xs font-semibold text-amber-800">
-                    Tiến độ
-                  </p>
-                  <div className="mt-2 h-2 rounded-full bg-card">
-                    <div
-                      className="h-2 rounded-full bg-primary transition-all duration-500"
-                      style={{ width: `${view.progressValue}%` }}
-                    />
+      <main
+        className={`mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-12 ${
+          interviewFocused ? "pt-6 sm:pt-8" : "pt-3 sm:pt-4"
+        } sm:px-6 lg:px-8`}
+      >
+        {!liveInterview && (
+          <section>
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+              <Image
+                src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1790437541/onboarding-banner.png"
+                alt="BeeWise Tutor Onboarding Banner"
+                width={1280}
+                height={96}
+                priority
+                className="h-[119px] w-full object-cover object-center md:h-[135px]"
+              />
+              <div className="p-5">
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wide text-primary">
+                      Tutor Onboarding
+                    </p>
+                    <h1 className="font-nunito mt-1 text-2xl leading-tight text-foreground md:text-3xl">
+                      {view.title}
+                    </h1>
+                    <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+                      {view.description}
+                    </p>
                   </div>
-                  <p className="mt-2 text-lg font-bold text-primary">
-                    {view.progressValue}%
-                  </p>
+                  <div className="min-w-40 rounded-xl bg-accent/20 p-3 ring-1 ring-accent/40">
+                    <p className="text-xs font-semibold text-amber-800">
+                      Tiến độ
+                    </p>
+                    <div className="mt-2 h-2 rounded-full bg-card">
+                      <div
+                        className="h-2 rounded-full bg-primary transition-all duration-500"
+                        style={{ width: `${view.progressValue}%` }}
+                      />
+                    </div>
+                    <p className="mt-2 text-lg font-bold text-primary">
+                      {view.progressValue}%
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
+          </section>
+        )}
+
+        {/* Desktop stepper: displayed when not interviewFocused */}
+        {!interviewFocused && (
+          <div className="hidden md:block">
+            <OnboardingStepper />
           </div>
-        </section>
-        </>}
+        )}
 
-        {/* Desktop stepper (hidden on mobile) */}
-        {liveInterview ? <InterviewOnboardingSteps step={view.activeStep}><OnboardingStepper compact /></InterviewOnboardingSteps> : <div className="hidden md:block"><OnboardingStepper /></div>}
+        {liveInterview ? (
+          <div>{children}</div>
+        ) : (
+          <>
+            {/* Mobile: 2-column layout (left: vertical step rail, right: step content) */}
+            <div className="flex gap-3 md:hidden">
+              <MobileStepNav />
+              <div className="flex-1 min-w-0">{children}</div>
+            </div>
 
-        {liveInterview ? <div>{children}</div> : <>
-        {/* Mobile: 2-column layout (left: vertical step rail, right: step content) */}
-        <div className="flex gap-3 md:hidden">
-          <MobileStepNav />
-          <div className="flex-1 min-w-0">{children}</div>
-        </div>
-
-        {/* Desktop: content */}
-        <div className="hidden md:block">{children}</div>
-        </>}
+            {/* Desktop: content */}
+            <div className="hidden md:block">{children}</div>
+          </>
+        )}
       </main>
     </div>
   );
 }
 
-/** Horizontal stepper – desktop only */
+/** Horizontal stepper – desktop only with smart compact sizing */
 export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
   const { view, state, dispatchAction } = useTutorOnboardingViewModel();
 
   return (
     <nav
       aria-label="Tiến trình onboarding gia sư"
-      className={`rounded-2xl border border-border bg-card shadow-sm ${
-        compact ? "p-4" : "px-5 py-6 md:px-6 md:py-7"
-      }`}
+      className="rounded-2xl border border-border bg-card px-3 py-2 sm:px-5 sm:py-2.5 shadow-xs"
     >
-      <ol className="flex overflow-x-auto py-3 px-1">
+      <ol className="flex items-center justify-between py-1 px-1">
         {onboardingSteps.map((step) => {
           const status = view.stepStatuses[step.id];
           const Icon = stepIcons[step.id];
@@ -204,17 +235,17 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
           return (
             <li
               key={step.id}
-              className="relative flex min-w-[130px] flex-1 flex-col items-center px-2 text-center"
+              className="relative flex min-w-[90px] sm:min-w-[110px] flex-1 flex-col items-center px-1 text-center"
             >
               <div
                 aria-hidden="true"
-                className={`absolute left-0 right-1/2 top-[30px] h-1 ${
+                className={`absolute left-0 right-1/2 top-[18px] sm:top-[20px] -translate-y-1/2 h-[2px] ${
                   step.order === 1 ? "bg-transparent" : stepTrackClass[status]
                 }`}
               />
               <div
                 aria-hidden="true"
-                className={`absolute left-1/2 right-0 top-[30px] h-1 ${
+                className={`absolute left-1/2 right-0 top-[18px] sm:top-[20px] -translate-y-1/2 h-[2px] ${
                   step.order === onboardingSteps.length
                     ? "bg-transparent"
                     : isComplete
@@ -231,37 +262,37 @@ export function OnboardingStepper({ compact = false }: { compact?: boolean }) {
                   })
                 }
                 aria-current={isCurrent ? "step" : undefined}
-                className={`relative z-10 flex w-full flex-col items-center gap-2 rounded-xl px-1 py-1.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-default ${
+                className={`relative z-10 flex w-full flex-col items-center gap-1 rounded-xl px-1 py-0.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-default ${
                   isSelected
-                    ? "scale-[1.03]"
-                    : "enabled:hover:scale-[1.02] enabled:hover:opacity-95"
+                    ? "scale-[1.02]"
+                    : "enabled:hover:scale-[1.01] enabled:hover:opacity-95"
                 }`}
               >
                 <div className="flex items-center justify-center">
                   <span
-                    className={`flex h-12 w-12 items-center justify-center rounded-full border-2 shadow-sm transition-transform ${stepNodeClass[status]} ${
-                      isSelected ? "ring-2 ring-accent ring-offset-2" : ""
+                    className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border-2 shadow-xs transition-transform ${stepNodeClass[status]} ${
+                      isSelected ? "ring-2 ring-accent ring-offset-1" : ""
                     }`}
                   >
                     {status === "COMPLETED" ? (
                       <CheckCircle
-                        className="h-5 w-5"
+                        className="h-4 w-4 sm:h-4.5 sm:w-4.5"
                         weight="fill"
                         aria-hidden="true"
                       />
                     ) : status === "BLOCKED" ? (
-                      <Lock className="h-5 w-5" aria-hidden="true" />
+                      <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
                     ) : (
-                      <Icon className="h-5 w-5" aria-hidden="true" />
+                      <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
                     )}
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-extrabold leading-tight text-foreground">
+                  <p className="text-xs sm:text-[13px] font-extrabold leading-tight text-foreground">
                     {step.shortTitle}
                   </p>
                   <p
-                    className={`mt-1 text-[11px] font-bold ${statusTextClass[status]}`}
+                    className={`mt-0.5 text-[10px] sm:text-[11px] font-bold ${statusTextClass[status]} leading-tight`}
                   >
                     {statusCopy[status]}
                   </p>

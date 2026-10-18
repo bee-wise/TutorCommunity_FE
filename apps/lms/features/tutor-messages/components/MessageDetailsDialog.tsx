@@ -133,11 +133,11 @@ export function MessageDetailsDialog({
                 <button
                   type="button"
                   onClick={handleCopyText}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-primary transition hover:underline"
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-bold text-primary transition-all hover:bg-muted active:scale-[0.98]"
                 >
                   {copiedText ? (
                     <>
-                      <Check width={12} height={12} className="text-emerald-500" /> Đã sao chép
+                      <Check width={12} height={12} className="text-foreground" /> Đã sao chép
                     </>
                   ) : (
                     <>

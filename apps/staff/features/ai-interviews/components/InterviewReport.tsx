@@ -8,6 +8,7 @@ import { reviewReason } from "../utils/interview-presentation";
 import { panelClass } from "./InterviewUi";
 import { InterviewConflicts } from "./InterviewConflicts";
 import { InterviewScoreBreakdown } from "./InterviewScoreBreakdown";
+import { InterviewIntegrityCard } from "./InterviewIntegrityCard";
 
 export function InterviewReport({ data }: { data: InterviewPackage }) {
   const { summary, report } = data;
@@ -15,6 +16,7 @@ export function InterviewReport({ data }: { data: InterviewPackage }) {
     data.interview.manual_review_required || summary?.requires_human_review;
   return (
     <div className="space-y-5">
+      <InterviewIntegrityCard summary={data.integrity_summary} />
       <section
         className={`${panelClass} ${needsReview || (summary && !summary.score_complete) ? "border-accent/70" : ""}`}
       >

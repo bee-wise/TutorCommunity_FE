@@ -7,6 +7,7 @@ import { chatRoomsService } from "../services/chat-rooms.service";
 import { toChatMessage, type ParticipantRole } from "../services/chat-rooms.mapper";
 import { useChatRooms } from "./useChatRooms";
 import { useChatRoomRealtime } from "./useChatRoomRealtime";
+import { useChatConnectionStatus } from "./useChatConnectionStatus";
 import { queryKeys } from "../sys-libs/queryKeys";
 import { isDraftWidgetMessage } from "../services/chat-business-message";
 
@@ -19,6 +20,7 @@ export function useChatRoom(roomId: string) {
   const { rooms, isPending: roomsPending, error: roomsError } = useChatRooms();
   const room = rooms.find((item) => item.id === roomId) ?? null;
   useChatRoomRealtime(room?.id ?? null);
+  const realtimeConnected = useChatConnectionStatus(user?.id);
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +34,7 @@ export function useChatRoom(roomId: string) {
       const totalPages = lastPage.pagination?.totalPages ?? 1;
       return page < totalPages ? page + 1 : undefined;
     },
-    refetchInterval: 10_000,
+    refetchInterval: realtimeConnected ? false : 10_000,
   });
 
   const send = useMutation({

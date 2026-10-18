@@ -36,26 +36,23 @@ export function TutorSchedulePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-full bg-muted">
       <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto space-y-6">
         {/* ── Page Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <h1 className="text-2xl font-extrabold font-nunito text-foreground leading-tight">
+              <h1 className="text-2xl font-extrabold font-lms text-foreground leading-tight">
                 Lịch Dạy
               </h1>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Quản lý và theo dõi toàn bộ lịch giảng dạy của bạn.
-            </p>
+
           </div>
 
           {/* Date indicator */}
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-border/60 shadow-xs self-start sm:self-auto">
-            <div className="size-2 rounded-full bg-[#447353] animate-pulse" />
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-card border border-border/60 shadow-xs self-start sm:self-auto">
             <span className="text-sm font-semibold text-foreground">
-              Thứ Ba, 08/07/2026
+              Dữ liệu minh họa · 08/07/2026
             </span>
           </div>
         </div>

@@ -26,7 +26,7 @@ export function DashboardSessionDialog({ session, returnFocusRef }: {
       className="max-h-[85dvh] w-[calc(100%-2rem)] overflow-y-auto rounded-3xl border-border bg-card p-6 shadow-soft sm:rounded-[32px] motion-reduce:animate-none motion-reduce:duration-0 [&>button]:flex [&>button]:size-11 [&>button]:items-center [&>button]:justify-center [&>button]:rounded-full"
     >
       <DialogHeader className="pr-10 text-left">
-        <DialogTitle className="font-nunito text-2xl font-extrabold leading-[1.25] text-primary">{session.subject} {session.subjectLevel}</DialogTitle>
+        <DialogTitle className="font-lms text-2xl font-extrabold leading-[1.25] text-primary">{session.subject} {session.subjectLevel}</DialogTitle>
         <DialogDescription className="leading-relaxed">Thông tin buổi học từ lịch minh họa của bạn.</DialogDescription>
       </DialogHeader>
       <span className="w-fit rounded-full border border-primary bg-card px-3 py-1 text-xs font-bold text-primary">Sắp diễn ra</span>
