@@ -2,7 +2,7 @@
 import { createContext, useContext, useState } from "react";
 import { Button } from "@workspace/ui/components/ui/button";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "@phosphor-icons/react";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import {
   Dialog,
   DialogContent,
@@ -33,21 +33,18 @@ export function AuthLayout({ children, compact = false }: AuthLayoutProps) {
   const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
 
   return (
-    <div className={`${compact ? "h-[100dvh]" : "min-h-[100dvh]"} w-full flex flex-col items-center justify-center relative overflow-hidden bg-[#f8f9fc]`}>
+    <div className={`${compact ? "h-[100dvh]" : "min-h-[100dvh]"} w-full flex flex-col items-center justify-center relative overflow-hidden bg-muted`}>
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#ffc500]/10 blur-[120px]" />
-        <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-primary/5 blur-[100px]" />
         <div className="absolute inset-0 bg-[url('/brand/grid-pattern.svg')] bg-repeat opacity-[0.02] invert" />
       </div>
 
       <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10">
         <Button
-          className="flex items-center gap-2 text-[#0c0c0b]/50 hover:text-primary hover:bg-primary/5 rounded-full px-4 h-10 transition-colors backdrop-blur-md bg-white border border-[#0c0c0b]/5 shadow-sm"
+          className="flex min-h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-muted-foreground shadow-soft transition-colors hover:bg-muted hover:text-primary"
           variant="ghost"
           onClick={() => router.replace("/")}
         >
-          <ArrowLeft weight="bold" className="w-4 h-4" />
+          <ArrowLeftIcon className="size-4" aria-hidden />
           <span
             className="font-semibold text-sm"
             style={{ fontFamily: "var(--font-nunito-family)" }}
@@ -59,7 +56,7 @@ export function AuthLayout({ children, compact = false }: AuthLayoutProps) {
 
       <div className={`w-full max-w-[500px] px-4 z-10 ${compact ? "pt-16" : ""}`}>
         <div
-          className={`w-full rounded-3xl bg-white shadow-xl shadow-primary/5 relative ${compact ? "max-h-[calc(100dvh-9rem)] overflow-y-auto p-4 sm:p-6" : "overflow-hidden p-6 sm:p-10"}`}
+          className={`w-full rounded-3xl border border-border bg-card shadow-soft relative ${compact ? "max-h-[calc(100dvh-9rem)] overflow-y-auto p-4 sm:p-6" : "overflow-hidden p-6 sm:p-10"}`}
         >
           <LmsAccessActivationContext.Provider
             value={() => setIsAccessDialogOpen(true)}
@@ -99,7 +96,7 @@ export function AuthLayout({ children, compact = false }: AuthLayoutProps) {
         </Dialog>
 
         <div className="mt-2 text-center">
-          <p className="text-xs text-[#0c0c0b]/40">
+          <p className="text-xs text-muted-foreground">
             Hệ thống quản trị nội bộ BeeWise. <br />© {new Date().getFullYear()}{" "}
             BeeWise Education.
           </p>

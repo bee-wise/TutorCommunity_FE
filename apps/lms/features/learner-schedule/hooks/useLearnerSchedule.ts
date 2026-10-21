@@ -1,42 +1,137 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { LEARNER_SESSIONS, LEARNER_TODAY } from "../data/learner-schedule.mock";
+import { useQuery } from "@tanstack/react-query";
+import {
+  lmsCalendarService,
+  lmsCalendarKeys,
+  getMonthRangeIso,
+  parseVietnamDateTime,
+} from "@workspace/core/lms-calendar";
 import type {
-  LearnerCancellationRequest,
   LearnerScheduleFilters,
+  LearnerSession,
   LearnerSessionStatus,
 } from "../types/learner-schedule.types";
+import { mapLmsScheduleViewToLearnerSession } from "../types/learner-schedule.types";
 
 export function useLearnerSchedule() {
-  const [sessions, setSessions] = useState(LEARNER_SESSIONS);
+  const todayParsed = useMemo(
+    () => parseVietnamDateTime(new Date().toISOString()),
+    [],
+  );
+
+  const [viewYear, setViewYear] = useState<number>(todayParsed.year);
+  const [viewMonth, setViewMonth] = useState<number>(todayParsed.monthIndex);
+
   const [filters, setFilters] = useState<LearnerScheduleFilters>({
     subject: "all",
     status: "all",
   });
 
-  const subjects = useMemo(
-    () => [...new Set(sessions.map((session) => session.subject))],
-    [sessions],
+  const monthRange = useMemo(
+    () => getMonthRangeIso(viewYear, viewMonth),
+    [viewYear, viewMonth],
   );
-  const filteredSessions = useMemo(
-    () =>
-      sessions.filter((session) => {
-        const matchesSubject = filters.subject === "all" || session.subject === filters.subject;
-        const matchesStatus = filters.status === "all" || session.status === filters.status;
-        return matchesSubject && matchesStatus;
-      }),
-    [filters, sessions],
-  );
-  const upcomingSessions = useMemo(
-    () =>
-      filteredSessions.filter(
-        (session) => session.status === "UPCOMING" && session.date >= LEARNER_TODAY,
-      )
-        .sort((a, b) => `${a.date}${a.startTime}`.localeCompare(`${b.date}${b.startTime}`))
-        .slice(0, 3),
-    [filteredSessions],
-  );
+
+  const calendarQuery = useQuery({
+    queryKey: lmsCalendarKeys.calendar("learner", {
+      from: monthRange.from,
+      to: monthRange.to,
+      status: filters.status,
+    }),
+    queryFn: ({ signal }) =>
+      lmsCalendarService.getAllCalendar(
+        {
+          from: monthRange.from,
+          to: monthRange.to,
+          status: filters.status === "all" ? undefined : filters.status,
+        },
+        signal,
+      ),
+  });
+
+  const upcomingQuery = useQuery({
+    queryKey: lmsCalendarKeys.upcoming("learner"),
+    queryFn: ({ signal }) => lmsCalendarService.getUpcoming(signal),
+  });
+
+  const sessionsListQuery = useQuery({
+    queryKey: lmsCalendarKeys.sessions("learner", {
+      status: filters.status,
+    }),
+    queryFn: ({ signal }) =>
+      lmsCalendarService.getSessions(
+        {
+          status: filters.status === "all" ? undefined : filters.status,
+          pageSize: 50,
+        },
+        signal,
+      ),
+  });
+
+  const sessions: LearnerSession[] = useMemo(() => {
+    if (!calendarQuery.data) return [];
+    return calendarQuery.data.map(mapLmsScheduleViewToLearnerSession);
+  }, [calendarQuery.data]);
+
+  const listSessions: LearnerSession[] = useMemo(() => {
+    if (!sessionsListQuery.data?.items) return sessions;
+    return sessionsListQuery.data.items.map(mapLmsScheduleViewToLearnerSession);
+  }, [sessionsListQuery.data, sessions]);
+
+  const upcomingSessions: LearnerSession[] = useMemo(() => {
+    if (!upcomingQuery.data) return [];
+    return upcomingQuery.data.map(mapLmsScheduleViewToLearnerSession);
+  }, [upcomingQuery.data]);
+
+  const subjects = useMemo(() => {
+    const set = new Set<string>();
+    for (const s of sessions) {
+      if (s.subject) set.add(s.subject);
+    }
+    return Array.from(set);
+  }, [sessions]);
+
+  const filteredSessions = useMemo(() => {
+    return sessions.filter((session) => {
+      const matchesSubject =
+        filters.subject === "all" || session.subject === filters.subject;
+      return matchesSubject;
+    });
+  }, [filters.subject, sessions]);
+
+  const filteredListSessions = useMemo(() => {
+    return listSessions.filter((session) => {
+      const matchesSubject =
+        filters.subject === "all" || session.subject === filters.subject;
+      return matchesSubject;
+    });
+  }, [filters.subject, listSessions]);
+
+  function changeMonth(offset: number) {
+    if (offset < 0) {
+      if (viewMonth === 0) {
+        setViewYear((y) => y - 1);
+        setViewMonth(11);
+      } else {
+        setViewMonth((m) => m - 1);
+      }
+    } else {
+      if (viewMonth === 11) {
+        setViewYear((y) => y + 1);
+        setViewMonth(0);
+      } else {
+        setViewMonth((m) => m + 1);
+      }
+    }
+  }
+
+  function goToToday() {
+    const current = parseVietnamDateTime(new Date().toISOString());
+    setViewYear(current.year);
+    setViewMonth(current.monthIndex);
+  }
 
   function setSubject(subject: string) {
     setFilters((current) => ({ ...current, subject }));
@@ -46,28 +141,26 @@ export function useLearnerSchedule() {
     setFilters((current) => ({ ...current, status }));
   }
 
-  function cancelSession(sessionId: string, request: LearnerCancellationRequest) {
-    setSessions((current) => current.map((session) => session.id === sessionId && session.status === "UPCOMING"
-      ? {
-          ...session,
-          status: "CANCELED",
-          cancellation: {
-            ...request,
-            canceledAt: new Date().toISOString(),
-            canceledBy: "LEARNER",
-          },
-        }
-      : session));
-  }
-
   return {
+    viewYear,
+    viewMonth,
+    changeMonth,
+    goToToday,
     sessions,
     filters,
     subjects,
     filteredSessions,
+    filteredListSessions,
     upcomingSessions,
+    isLoading: calendarQuery.isLoading || upcomingQuery.isLoading,
+    isError: calendarQuery.isError,
+    error: calendarQuery.error,
+    refetch: () => {
+      calendarQuery.refetch();
+      upcomingQuery.refetch();
+      sessionsListQuery.refetch();
+    },
     setSubject,
     setStatus,
-    cancelSession,
   };
 }

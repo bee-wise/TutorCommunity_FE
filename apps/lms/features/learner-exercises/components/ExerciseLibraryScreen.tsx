@@ -25,7 +25,7 @@ export function ExerciseLibraryScreen({ classId, sessionId }: { classId: string;
         <Button asChild variant="outline" className="min-h-11 rounded-xl transition-all active:scale-[0.98]"><Link href={`/lms/learner/exercises/classes/${encodeURIComponent(classId)}`}>Danh sách buổi học</Link></Button>
         <header>
           <p className="text-sm font-bold text-primary">Buổi {library.session.sequence}</p>
-          <h1 className="mt-1 font-lms text-2xl font-extrabold text-foreground sm:text-3xl">{library.session.topic}</h1>
+          <h1 className="mt-1 font-lms text-2xl font-extrabold text-primary sm:text-3xl">{library.session.topic}</h1>
           <p className="mt-1.5 text-sm text-muted-foreground">{formatExerciseDate(library.session.taughtAt)} · {library.session.durationMinutes} phút</p>
         </header>
 

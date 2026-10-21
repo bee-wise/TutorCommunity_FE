@@ -13,7 +13,7 @@ export function ConversationSidebar({ selectedId }: { selectedId?: string }) {
   return (
     <aside className="flex h-full min-h-0 w-full flex-col overflow-hidden border-r border-border bg-card lg:w-[340px] lg:rounded-3xl lg:border">
       <header className="shrink-0 border-b border-border px-4 py-4 sm:px-5">
-        <h1 className="text-xl font-extrabold text-foreground">Tin nhắn với gia sư</h1>
+        <h1 className="text-xl font-extrabold text-primary">Tin nhắn với gia sư</h1>
       </header>
 
       <div className="shrink-0 space-y-2 border-b border-border p-3">

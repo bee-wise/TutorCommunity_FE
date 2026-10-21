@@ -107,7 +107,7 @@ export function LearnerClassOverviewScreen({ classId }: { classId: string }) {
         </div>
 
         <div className="border-b border-border/70 pb-4">
-          <h1 className="font-lms text-2xl font-extrabold text-foreground [overflow-wrap:anywhere] sm:text-3xl">
+          <h1 className="font-lms text-2xl font-extrabold text-primary [overflow-wrap:anywhere] sm:text-3xl">
             {data.title ?? "Thông tin lớp"}
           </h1>
           <p className="mt-1 text-sm font-semibold text-muted-foreground">

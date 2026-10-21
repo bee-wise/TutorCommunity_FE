@@ -110,8 +110,8 @@ export function GroupClassManagement({ classId }: { classId: string }) {
           <span
             className={`rounded-full border px-3 py-0.5 text-xs font-bold ${
               data.isPublished
-                ? "border-primary/30 bg-primary/10 text-primary"
-                : "border-border bg-card text-muted-foreground"
+                ? "border-primary bg-card text-primary"
+                : "border-border bg-muted text-muted-foreground"
             }`}
           >
             {data.isPublished ? "Đã công khai tuyển sinh" : "Không công khai"}

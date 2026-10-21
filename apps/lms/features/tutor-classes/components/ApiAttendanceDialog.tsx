@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useWatch } from "react-hook-form";
+import { CheckIcon } from "@heroicons/react/20/solid";
 import { Button } from "@workspace/ui/components/ui/button";
 import {
   Dialog,
@@ -165,7 +166,7 @@ export function ApiAttendanceDialog({
                         {(["isLate", "leftEarly"] as const).map((field) => (
                           <label
                             key={field}
-                            className="flex items-center gap-2 text-xs"
+                            className="flex min-h-11 cursor-pointer items-center gap-2 text-xs font-semibold"
                           >
                             <input
                               type="checkbox"
@@ -173,7 +174,7 @@ export function ApiAttendanceDialog({
                               disabled={!attendance.editable || pending}
                               className="peer sr-only"
                             />
-                            <span className="size-5 rounded-md border-2 border-input peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring" />
+                            <span aria-hidden className="grid size-5 place-items-center rounded-md border-2 border-border bg-card text-transparent transition-colors peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50"><CheckIcon className="size-3.5" /></span>
                             {field === "isLate" ? "Đi muộn" : "Rời sớm"}
                           </label>
                         ))}

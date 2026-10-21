@@ -34,7 +34,7 @@ export function ClassMaterialsWorkspace({
   if (!classInfo)
     return (
       <div className="p-8 text-center">
-        <h1 className="text-2xl text-foreground">Không tìm thấy lớp học</h1>
+        <h1 className="text-2xl text-primary">Không tìm thấy lớp học</h1>
         <Link
           href="/lms/tutor/classes"
           className={`${outlineActionClass} mt-5`}
@@ -68,7 +68,7 @@ export function ClassMaterialsWorkspace({
     <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 text-foreground sm:px-6 lg:px-8">
       <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
-          <h1 className="text-2xl leading-[1.25] text-foreground sm:text-3xl">
+          <h1 className="text-2xl leading-[1.25] text-primary sm:text-3xl">
             Quản lý tài liệu
           </h1>
         </div>

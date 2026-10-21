@@ -143,7 +143,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           </div>
 
           <div className="min-w-0 flex-1">
-            <h1 className="font-nunito truncate text-base font-extrabold text-foreground">
+            <h1 className="font-nunito truncate text-base font-extrabold text-primary">
               {room.recipientName || peer.name}
             </h1>
             <p className="truncate text-xs text-muted-foreground">

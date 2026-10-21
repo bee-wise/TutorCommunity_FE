@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import beeWiseAiIcon from "../../../../sale/public/icons/BeeWiseAI-icon.svg";
+import beeWiseAiIcon from "../assets/BeeWiseAI-icon.svg";
 
 const TIPS = [
   "Mẹo: Bạn có thể chỉnh sửa nội dung bài tóm tắt nếu AI tóm tắt thiếu ý.",

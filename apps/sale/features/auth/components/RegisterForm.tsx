@@ -77,7 +77,7 @@ export function RegisterForm({ authPaused = false }: { authPaused?: boolean }) {
   return (
     <div className="mx-auto w-full max-w-[480px]">
       <div className="mb-2">
-        <h1 className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground">
+        <h1 className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-primary">
           {authPaused ? "Đăng ký sẽ sớm mở" : "Tạo tài khoản BEEWISE"}
         </h1>
         <p className="text-xs text-foreground/60 leading-relaxed">

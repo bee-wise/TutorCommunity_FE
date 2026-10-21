@@ -31,7 +31,7 @@ export function ClassChatScreen({ classId }: { classId: string }) {
             asChild
             variant="ghost"
             size="icon"
-            className="size-9 shrink-0 rounded-xl text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-95"
+            className="size-11 shrink-0 rounded-xl text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-95"
           >
             <Link
               href={chat.actorRole === "LEARNER" ? "/lms/learner/chat" : `/lms/tutor/classes/${classId}`}
@@ -44,7 +44,7 @@ export function ClassChatScreen({ classId }: { classId: string }) {
             <ChatBubbleLeftRightIcon className="size-5" aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
-            <h1 className="truncate font-lms text-base font-extrabold text-foreground">
+            <h1 className="truncate font-lms text-base font-extrabold text-primary">
               Tin nhắn lớp học
             </h1>
             <p className="truncate text-xs text-muted-foreground">
@@ -55,7 +55,7 @@ export function ClassChatScreen({ classId }: { classId: string }) {
             className={`hidden shrink-0 rounded-full border px-3 py-1 text-xs font-bold sm:inline-flex ${
               chat.room?.readOnly
                 ? "border-border bg-muted text-muted-foreground"
-                : "border-secondary/30 bg-secondary/15 text-secondary"
+                : "border-secondary/30 bg-secondary/15 text-foreground"
             }`}
           >
             {chat.room?.readOnly ? "Chỉ xem" : "Đang trao đổi"}

@@ -49,7 +49,7 @@ export function RecoveryEmailForm({
       >
         <EnvelopeIcon className="size-6" />
       </span>
-      <h1 className="font-nunito text-2xl font-extrabold tracking-tight text-foreground">
+      <h1 className="font-nunito text-2xl font-extrabold tracking-tight text-primary">
         Quên mật khẩu?
       </h1>
       <p className="mt-2 text-sm font-google-sans leading-6 text-muted-foreground">

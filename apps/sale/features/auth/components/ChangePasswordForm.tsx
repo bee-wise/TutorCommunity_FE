@@ -38,7 +38,7 @@ export function ChangePasswordForm() {
       <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/20 text-primary" aria-hidden="true">
         <ShieldCheck size={26} weight="duotone" />
       </span>
-      <h1 id="change-password-heading" className="font-nunito text-2xl font-extrabold tracking-tight text-foreground">Đổi mật khẩu</h1>
+      <h1 id="change-password-heading" className="font-nunito text-2xl font-extrabold tracking-tight text-primary">Đổi mật khẩu</h1>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
         Nhập mật khẩu hiện tại và tạo mật khẩu mới. Sau khi đổi, bạn sẽ cần đăng nhập lại.
       </p>

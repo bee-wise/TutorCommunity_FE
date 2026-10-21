@@ -1,7 +1,9 @@
 "use client";
 
+import { statusTone } from "../../../components/lms-status";
+
 import {
-  ArrowTopRightOnSquareIcon,
+  ArrowRightIcon,
   CalendarDaysIcon,
   CheckCircleIcon,
   MapPinIcon,
@@ -59,7 +61,7 @@ export function LearnerActualSessionList({
               <article
                 key={session.id}
                 className={`flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between transition-colors ${
-                  isOngoing ? "bg-primary/5" : "hover:bg-muted/30"
+                  isOngoing ? "bg-muted" : "hover:bg-muted/30"
                 }`}
               >
                 <div className="flex min-w-0 flex-1 items-start gap-4">
@@ -144,7 +146,7 @@ export function LearnerActualSessionList({
                               aria-hidden="true"
                             />
                             <span>Phòng học trực tuyến</span>
-                            <ArrowTopRightOnSquareIcon
+                            <ArrowRightIcon
                               className="size-3.5 shrink-0"
                               aria-hidden="true"
                             />
@@ -193,14 +195,14 @@ function SessionStatus({ status }: { status: string | null | undefined }) {
   const isCompleted = status === "COMPLETED";
 
   const tone = isOngoing
-    ? "border border-primary/30 bg-primary/10 text-primary"
+    ? `border ${statusTone.active}`
     : isCompleted
-      ? "border border-secondary/30 bg-secondary/15 text-foreground"
+      ? `border ${statusTone.done}`
       : status === "CANCELLED"
-        ? "border border-destructive/30 bg-destructive/10 text-destructive"
+        ? `border ${statusTone.cancelled}`
         : status === "SCHEDULED"
-          ? "border border-accent/40 bg-accent/20 text-warning"
-          : "border border-border bg-muted text-muted-foreground";
+          ? `border ${statusTone.pending}`
+          : `border ${statusTone.planned}`;
 
   return (
     <span

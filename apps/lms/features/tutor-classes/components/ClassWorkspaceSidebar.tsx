@@ -32,13 +32,13 @@ export function ClassWorkspaceSidebar({ workspace }: { workspace: ClassWorkspace
           </div>
         </div>
         <SidebarTrigger className="size-11 shrink-0 rounded-full transition-all active:scale-[0.98] group-data-[collapsible=icon]:hidden motion-reduce:transform-none" aria-label="Thu gọn menu lớp" />
-        <button type="button" onClick={toggleSidebar} aria-label="Mở menu lớp" className="hidden size-11 items-center justify-center rounded-xl transition-all hover:bg-primary/5 active:scale-[0.98] group-data-[collapsible=icon]:flex motion-reduce:transform-none">
+        <button type="button" onClick={toggleSidebar} aria-label="Mở menu lớp" className="hidden size-11 items-center justify-center rounded-xl transition-all hover:bg-muted hover:text-primary active:scale-[0.98] group-data-[collapsible=icon]:flex motion-reduce:transform-none">
           <span className="relative size-8"><Image src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1791528374/BeeWiseLMS-Logo-500x500.svg" alt="BeeWise LMS" fill sizes="32px" className="object-contain" priority /></span>
         </button>
       </SidebarHeader>
       <SidebarContent className="gap-2 bg-card py-4">
         <div className="space-y-3 px-4 pb-4 group-data-[collapsible=icon]:hidden">
-          <p className="text-xs font-bold text-muted-foreground">{formatClassIdentifier(classInfo?.code ?? workspace.classId)}</p>
+          {classInfo?.code && <p className="text-xs font-bold text-muted-foreground">{formatClassIdentifier(classInfo.code)}</p>}
           <p className="font-lms text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{classInfo?.title ?? (loading ? "Đang tải lớp học…" : error ? "Không thể xem lớp học" : "Không tìm thấy lớp")}</p>
           {classInfo && <div className="flex flex-wrap gap-1.5"><ClassStatusBadge status={classInfo.status} /><ClassKindBadge kind={classInfo.kind} /></div>}
         </div>

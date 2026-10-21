@@ -1,7 +1,7 @@
 import { REPORT_LABELS, SETTLEMENT_LABELS, type ReportStatus, type SettlementStatus } from "../types/earnings.types";
 
 const base = "inline-flex shrink-0 items-center rounded-full border px-3 py-1 text-xs font-bold leading-5";
-const success = "border-secondary bg-secondary text-secondary-foreground";
+const success = "border-secondary/30 bg-secondary/15 text-foreground";
 const pending = "border-accent bg-accent text-accent-foreground";
 const review = "border-primary bg-card text-primary";
 

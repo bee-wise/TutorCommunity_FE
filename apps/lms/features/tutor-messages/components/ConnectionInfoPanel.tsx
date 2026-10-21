@@ -110,7 +110,7 @@ export function ConnectionInfoPanel({ room }: ConnectionInfoPanelProps) {
                   <p
                     className={`text-xs font-semibold ${
                       isDone
-                        ? "text-secondary"
+                        ? "text-foreground"
                         : isActive
                           ? "text-primary"
                           : "text-muted-foreground"

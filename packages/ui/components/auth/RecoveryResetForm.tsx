@@ -46,7 +46,7 @@ export function RecoveryResetForm({
       <span className="mb-3 inline-flex size-11 items-center justify-center rounded-2xl bg-accent/20 text-primary" aria-hidden="true">
         <KeyIcon className="size-6" />
       </span>
-      <h1 className="font-nunito text-2xl font-extrabold tracking-tight text-foreground">Đặt lại mật khẩu</h1>
+      <h1 className="font-nunito text-2xl font-extrabold tracking-tight text-primary">Đặt lại mật khẩu</h1>
       <p className="mt-1.5 text-xs leading-5 text-muted-foreground">Nhập mã 6 chữ số đã gửi tới email của bạn để tiếp tục.</p>
 
       <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-border bg-muted/40 px-3.5 py-2.5">

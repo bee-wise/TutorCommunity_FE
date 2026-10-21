@@ -75,7 +75,7 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
                 </CollapsibleTrigger>
 <CollapsibleContent>
                 <div className="border-t border-border/60 bg-card/60 p-4 pt-3.5 text-sm">
-                  <div className="inline-flex items-center gap-2 rounded-lg bg-secondary/15 px-3 py-1.5 font-bold text-secondary">
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-secondary/15 px-3 py-1.5 font-bold text-foreground">
                     <span>Đáp án đúng:</span>
                     <span className="rounded bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
                       {question.correct_answer}
@@ -124,7 +124,7 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
                       </li>
                     ))}
                   </ol>
-                  <div className="inline-flex items-center gap-2 rounded-lg bg-secondary/15 px-3 py-1.5 font-bold text-secondary">
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-secondary/15 px-3 py-1.5 font-bold text-foreground">
                     <span>Kết quả:</span>
                     <Latex>{exercise.final_answer}</Latex>
                   </div>

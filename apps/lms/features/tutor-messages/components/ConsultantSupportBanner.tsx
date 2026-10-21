@@ -48,10 +48,10 @@ export function ConsultantSupportBanner({
           {room.teachingMode && (
             <span className="rounded-lg border border-border bg-muted/50 px-2.5 py-1 font-medium">
               {room.teachingMode === "ONLINE"
-                ? "💻 Online"
+                ? "Online"
                 : room.teachingMode === "OFFLINE"
-                  ? "🏠 Tại nhà"
-                  : "🌐 Online & Tại nhà"}
+                  ? "Tại nhà"
+                  : "Online & Tại nhà"}
             </span>
           )}
         </div>

@@ -14,7 +14,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { toast } from "@workspace/ui/components/ui/bee-toast";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import { ClassListPager } from "./ClassListPager";
-import { formatClassIdentifier } from "../utils/classes.utils";
 import {
   classButton,
   classInput,
@@ -102,7 +101,7 @@ export function GroupAdmissionsPanel({
           <div className="grid gap-3 sm:grid-cols-2">
             {query.data?.map((a) => (
               <article className={`${classPanel} space-y-2`} key={a.id}>
-                <p className="text-sm font-bold">Học viên {formatClassIdentifier(a.learnerId)}</p>
+                <p className="text-sm font-bold">Yêu cầu tham gia lớp</p>
                 <p className="text-sm font-bold">{admissionLabels[a.status ?? ""] ?? "Đang xử lý"}</p>
                 <Button
                   variant="outline"

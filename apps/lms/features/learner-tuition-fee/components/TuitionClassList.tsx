@@ -29,7 +29,7 @@ export function TuitionClassList({ summaries, onInvoice }: { summaries: TuitionC
             <dl className="grid grid-cols-2 gap-3 text-sm xl:block"><div><dt className="text-xs text-muted-foreground">Tổng đã trả</dt><dd className="mt-1 font-extrabold text-primary">{formatTuitionCurrency(summary.classInfo.totalPaid)}</dd></div><div className="xl:mt-2"><dt className="text-xs text-muted-foreground">Chưa phân bổ</dt><dd className="mt-1 font-bold text-foreground">{summary.remainingSessionCount} buổi</dd></div></dl>
             <div className="flex flex-col gap-2 sm:flex-row xl:flex-col">
               <button type="button" onClick={() => onInvoice(summary.classInfo)} className="inline-flex h-10 items-center justify-center rounded-xl border border-primary/20 px-3 text-sm font-bold text-primary hover:bg-muted">Xuất hóa đơn</button>
-              <Link href={`/lms/learner/tuition-fee/${summary.classInfo.id}`} className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-sm font-bold text-white hover:bg-primary/90">Xem buổi học<ArrowRight width={16} height={16} /></Link>
+              <Link href={`/lms/learner/tuition-fee/${summary.classInfo.id}`} className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-sm font-bold text-primary-foreground hover:bg-primary/90">Xem buổi học<ArrowRight width={16} height={16} /></Link>
             </div>
           </article>
         ))}

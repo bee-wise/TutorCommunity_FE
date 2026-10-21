@@ -25,7 +25,7 @@ export function getLmsRoleRedirectPath(
   pathname: string,
   role: LmsRole | null,
 ): string | null {
-  if (!role) return "/login";
+  if (!role) return pathname === "/login" ? null : "/login";
   if (pathname === "/lms") {
     return role === "TUTOR" ? "/lms/tutor/dashboard" : "/lms/learner";
   }

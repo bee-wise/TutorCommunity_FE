@@ -25,7 +25,7 @@ export function ExerciseList({ exercises }: { exercises: LearnerExercise[] }) {
               <div><dt className="flex items-center gap-1 text-xs text-muted-foreground"><Clock width={14} height={14} /> Thời gian</dt><dd className="mt-1 font-bold text-foreground">{exercise.estimatedMinutes} phút</dd></div>
               {exercise.score !== undefined ? <div className="col-span-2"><dt className="text-xs text-muted-foreground">Kết quả gần nhất</dt><dd className="mt-1 font-extrabold text-foreground">{exercise.score}/10 điểm</dd></div> : null}
             </dl>
-            <Link href={`/lms/learner/exercises/${exercise.id}`} className="mt-auto inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-primary px-4 text-sm font-bold text-white hover:bg-primary/90 active:scale-[0.98]">{actionLabel}<ArrowRight width={16} height={16} /></Link>
+            <Link href={`/lms/learner/exercises/${exercise.id}`} className="mt-auto inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90 active:scale-[0.98]">{actionLabel}<ArrowRight width={16} height={16} /></Link>
           </article>;
         })}
       </div>

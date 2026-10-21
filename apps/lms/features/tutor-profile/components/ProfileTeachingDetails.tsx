@@ -117,7 +117,7 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
                   )}
                   {item.status && (
                     <span
-                      className={`inline-block rounded-full border px-3 py-1 text-xs font-bold leading-5 ${item.status === "APPROVED" ? "border-secondary bg-secondary text-secondary-foreground" : "border-border bg-card text-muted-foreground"}`}
+                      className={`inline-block rounded-full border px-3 py-1 text-xs font-bold leading-5 ${item.status === "APPROVED" ? "border-secondary/30 bg-secondary/15 text-foreground" : "border-border bg-card text-muted-foreground"}`}
                     >
                       {offeringStatus[item.status] ||
                         "Chưa rõ trạng thái duyệt"}

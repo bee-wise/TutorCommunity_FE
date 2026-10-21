@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import aiIcon from "../../../../sale/public/icons/AI-icon.svg";
+import aiIcon from "../assets/AI-icon.svg";
 import { useState } from "react";
 import { BookmarkIcon as BookmarkSimple, EllipsisVerticalIcon as DotsThreeVertical, ArrowDownTrayIcon as DownloadSimple, EyeIcon as Eye, EyeSlashIcon as EyeSlash, PencilSquareIcon as PencilSimple, DocumentPlusIcon as UploadSimple } from "@heroicons/react/24/outline";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
@@ -38,7 +38,7 @@ export function ClassMaterialRow({ material, readOnly }: { material: ClassMateri
             <span
               className={`rounded-full border px-3 py-1 ${
                 material.status === "published"
-                  ? "border-secondary bg-secondary text-secondary-foreground"
+                  ? "border-secondary/30 bg-secondary/15 text-foreground"
                   : "border-border text-muted-foreground"
               }`}
             >

@@ -24,7 +24,7 @@ export default function NotFound() {
 
           <HeroMotion delay={0.1}>
             <h1
-              className="text-7xl sm:text-9xl tracking-tighter text-[#280F91] mb-6 leading-none"
+              className="text-7xl sm:text-9xl tracking-tighter text-primary mb-6 leading-none"
               style={{ fontFamily: "var(--font-nunito-family)", fontWeight: 800 }}
             >
               404

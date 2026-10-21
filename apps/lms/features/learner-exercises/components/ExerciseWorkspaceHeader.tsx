@@ -12,7 +12,7 @@ export function ExerciseWorkspaceHeader({ exercise, helperText }: { exercise: Le
   return (
     <header className="relative flex h-16 shrink-0 items-center gap-3 rounded-2xl border border-border bg-card px-3 shadow-sm sm:px-4">
       <Button asChild variant="ghost" size="icon" className="size-11 shrink-0 text-primary hover:bg-muted"><Link href={getExerciseSessionHref(exercise)} aria-label="Quay lại bài tập của buổi học"><ArrowLeftIcon className="size-[18px]" aria-hidden="true" /></Link></Button>
-      <div className="min-w-0 flex-1"><h1 className="truncate text-sm font-extrabold text-foreground sm:text-base">{exercise.title}</h1><p className="mt-0.5 truncate text-xs font-medium text-muted-foreground">{exercise.className} · {exercise.lessonTopic}</p></div>
+      <div className="min-w-0 flex-1"><h1 className="truncate text-sm font-extrabold text-primary sm:text-base">{exercise.title}</h1><p className="mt-0.5 truncate text-xs font-medium text-muted-foreground">{exercise.className} · {exercise.lessonTopic}</p></div>
       <div className="hidden shrink-0 lg:block"><ExerciseBadges source={exercise.source} status={exercise.status} difficulty={exercise.difficulty} /></div>
       <Popover.Root>
         <Popover.Trigger asChild><Button variant="outline" size="icon" className="size-11 shrink-0" aria-label="Xem thông tin bài tập"><InformationCircleIcon className="size-[18px]" aria-hidden="true" /></Button></Popover.Trigger>

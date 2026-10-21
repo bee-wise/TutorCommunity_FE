@@ -48,7 +48,7 @@ export function LoginForm({ authPaused = false }: { authPaused?: boolean }) {
   return (
     <div className="w-full max-w-[420px] mx-auto">
       <div className="mb-6">
-        <h1 className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-foreground">
+        <h1 className="font-nunito mb-1 text-2xl font-extrabold tracking-tight text-primary">
           {authPaused ? "Đăng nhập sẽ sớm mở" : "Chào mừng trở lại"}
         </h1>
         <p className="text-xs text-foreground/60 leading-relaxed">

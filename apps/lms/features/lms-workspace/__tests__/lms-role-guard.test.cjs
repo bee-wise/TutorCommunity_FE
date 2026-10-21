@@ -41,6 +41,7 @@ test("role route mapping keeps valid workspace and redirects mismatched workspac
   assert.equal(getLmsRoleRedirectPath("/lms/learner/classes/123", "TUTOR"), "/lms/tutor/dashboard");
   assert.equal(getLmsRoleRedirectPath("/lms", "LEARNER"), "/lms/learner");
   assert.equal(getLmsRoleRedirectPath("/lms", null), "/login");
+  assert.equal(getLmsRoleRedirectPath("/login", null), null);
 });
 
 test("proxy redirects learner cookie away from tutor content after account switch", () => {

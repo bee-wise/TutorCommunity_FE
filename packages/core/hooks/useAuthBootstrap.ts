@@ -49,13 +49,14 @@ export function useAuthBootstrap({ enabled = true }: { enabled?: boolean } = {})
           return;
         }
 
+        queryClient.setQueryData([queryKeys.authKey.getMe], null);
         logout();
       } catch (error) {
         const apiError = handleApiError(error);
 
         if (apiError.statusCode !== 401) {
           if (!cancelled) {
-            queryClient.clear();
+            queryClient.setQueryData([queryKeys.authKey.getMe], null);
             logout();
           }
           return;
@@ -75,13 +76,17 @@ export function useAuthBootstrap({ enabled = true }: { enabled?: boolean } = {})
             return;
           }
 
-          queryClient.clear();
+          queryClient.setQueryData([queryKeys.authKey.getMe], null);
           logout();
         } catch {
           if (!cancelled) {
-            queryClient.clear();
+            queryClient.setQueryData([queryKeys.authKey.getMe], null);
             logout();
           }
+        }
+      } finally {
+        if (!cancelled) {
+          setAuthLoading(false);
         }
       }
     };

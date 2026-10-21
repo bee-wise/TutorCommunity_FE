@@ -70,7 +70,7 @@ export function LmsHeader() {
       ref={headerRef}
       className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4"
     >
-      <div className="mx-auto max-w-7xl rounded-2xl border border-border bg-background/95 shadow-[0_8px_32px_-18px_color-mix(in_srgb,var(--primary)_30%,transparent)] backdrop-blur-md">
+      <div className="mx-auto max-w-7xl rounded-2xl border border-border bg-background shadow-soft">
         <div className="flex h-16 items-center justify-between gap-2 px-3 sm:h-[72px] sm:px-5">
           <Link
             href="/"
@@ -103,7 +103,7 @@ export function LmsHeader() {
           <div className="flex items-center gap-1.5">
             <Button
               asChild
-              className="h-10 rounded-xl px-3 text-sm transition-all active:scale-[0.98] sm:px-5"
+              className="min-h-11 rounded-xl px-3 text-sm transition-all active:scale-[0.98] sm:px-5"
             >
               <Link href="/login">Đăng nhập</Link>
             </Button>

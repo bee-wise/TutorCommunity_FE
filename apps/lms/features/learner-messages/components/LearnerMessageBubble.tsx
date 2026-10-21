@@ -11,7 +11,7 @@ export function LearnerMessageBubble({ message }: { message: LearnerMessage }) {
     <article className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
       <div className="max-w-[82%] sm:max-w-[70%]">
         <p className={`mb-1 px-1 text-xs font-semibold ${isMine ? "text-right text-primary" : "text-muted-foreground"}`}>{isMine ? "Bạn" : message.senderName}</p>
-        <div className={`rounded-2xl px-4 py-2.5 text-sm leading-6 ${isMine ? "rounded-br-sm bg-primary text-white" : "rounded-bl-sm border border-border bg-card text-foreground"}`}>{message.text}</div>
+        <div className={`rounded-2xl px-4 py-2.5 text-sm leading-6 ${isMine ? "rounded-br-sm bg-primary text-primary-foreground" : "rounded-bl-sm border border-border bg-card text-foreground"}`}>{message.text}</div>
         <time className={`mt-1 block px-1 text-[10px] text-muted-foreground ${isMine ? "text-right" : "text-left"}`}>{formatMessageTime(message.sentAt)}</time>
       </div>
     </article>

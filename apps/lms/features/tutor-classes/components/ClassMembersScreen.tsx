@@ -40,7 +40,7 @@ function MemberCard({ learner }: { learner: Member }) {
             className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 text-[11px] font-bold ${
               hasLeft
                 ? "border-border bg-muted text-muted-foreground"
-                : "border-secondary/30 bg-secondary/15 text-secondary"
+                : "border-secondary/30 bg-secondary/15 text-foreground"
             }`}
           >
             {hasLeft ? "Đã rời lớp" : "Đang tham gia"}
@@ -127,7 +127,7 @@ export function ClassMembersScreen({ classId }: { classId: string }) {
       <header className="space-y-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border/70 pb-4">
           <div>
-            <h1 className="font-lms text-2xl font-extrabold text-foreground sm:text-3xl">
+            <h1 className="font-lms text-2xl font-extrabold text-primary sm:text-3xl">
               Thành viên lớp
             </h1>
           </div>
@@ -185,7 +185,7 @@ export function ClassMembersScreen({ classId }: { classId: string }) {
               <span
                 className={`rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
                   !isHistory
-                    ? "bg-primary/10 text-primary"
+                    ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground"
                 }`}
               >
@@ -204,7 +204,7 @@ export function ClassMembersScreen({ classId }: { classId: string }) {
             >
               <span>Lịch sử tham gia</span>
               {isHistory && (
-                <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-extrabold text-primary">
+                <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-extrabold text-primary-foreground">
                   {list.total}
                 </span>
               )}
