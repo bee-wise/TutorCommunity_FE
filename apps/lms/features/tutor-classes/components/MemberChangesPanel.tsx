@@ -17,7 +17,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ClassFilterSelect } from "./ClassFilterSelect";
 import { ClassListPager } from "./ClassListPager";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
-import { formatClassDate, formatClassIdentifier } from "../utils/classes.utils";
+import { formatClassDate } from "../utils/classes.utils";
 import {
   classButton,
   classInput,
@@ -147,7 +147,7 @@ export function MemberChangesPanel({
                   },
                   ...(members.data ?? []).map((m) => ({
                     value: m.learnerId,
-                    label: m.displayName ?? formatClassIdentifier(m.learnerId),
+                    label: m.displayName ?? "Học viên chưa có tên",
                   })),
                 ]}
               />
@@ -255,13 +255,7 @@ export function MemberChangesPanel({
                   </span>
                 </div>
                 <div className="mt-4 rounded-2xl border border-border/70 bg-muted/20 px-4 py-3.5">
-                  <p className="text-xs text-muted-foreground">
-                    Học viên:{" "}
-                    <span className="font-mono font-bold tabular-nums text-primary">
-                      {formatClassIdentifier(request.learnerId)}
-                    </span>
-                  </p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-foreground">
+                  <p className="text-sm leading-relaxed text-foreground">
                     {request.reason}
                   </p>
                 </div>

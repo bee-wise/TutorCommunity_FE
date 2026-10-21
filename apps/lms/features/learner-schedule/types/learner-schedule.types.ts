@@ -99,7 +99,7 @@ export function mapLmsScheduleViewToLearnerSession(
   return {
     id: item.id,
     classId: item.classId,
-    classCode: item.classCode ?? item.classId.slice(0, 8),
+    classCode: item.classCode ?? "",
     subject: formatLmsSubject(item),
     level: item.programName || item.contextName || "Khóa học",
     topic: item.name || item.description || "Nội dung buổi học",

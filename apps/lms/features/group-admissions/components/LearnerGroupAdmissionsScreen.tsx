@@ -42,9 +42,6 @@ function RecruitingCard({ data }: { data: GroupDto }) {
   const { join, busy } = useJoinLearnerGroup(data.id);
   return (
     <article className="flex h-full flex-col gap-3 rounded-3xl border border-border bg-card p-5 shadow-soft">
-      <p className="text-xs font-bold text-muted-foreground">
-        {data.code ?? data.id.slice(0, 8)}
-      </p>
       <h2 className="font-lms text-lg font-extrabold leading-snug text-foreground">
         {data.title ?? "Chưa có tên lớp"}
       </h2>

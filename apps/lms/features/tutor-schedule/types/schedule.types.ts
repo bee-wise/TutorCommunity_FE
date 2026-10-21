@@ -93,7 +93,7 @@ export function mapLmsScheduleViewToTutorSession(
   return {
     id: item.id,
     classId: item.classId,
-    classCode: item.classCode ?? item.classId.slice(0, 8),
+    classCode: item.classCode ?? undefined,
     classType: item.classType ?? "INDIVIDUAL",
     source: item.source ?? "SESSION",
     version: item.version,

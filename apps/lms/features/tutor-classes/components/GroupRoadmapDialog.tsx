@@ -202,7 +202,7 @@ export function GroupRoadmapDialog({
           </Button>
           {Object.keys(form.formState.errors).length > 0 && (
             <p role="alert" className="text-sm text-destructive">
-              Nhập tên giai đoạn/bài học và kiểm tra thứ tự, ID không trùng.
+              Nhập tên giai đoạn/bài học và kiểm tra thứ tự các mục.
             </p>
           )}
           <div className="flex justify-end gap-2">

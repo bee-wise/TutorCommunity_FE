@@ -78,7 +78,7 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
           <tbody className="divide-y divide-border">
             {sessions.map((session) => (
               <tr key={session.id} className="transition-colors hover:bg-muted">
-                <td className="whitespace-nowrap px-4 py-3.5"><span className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">{session.classCode ?? session.classId.slice(0, 8)}</span></td>
+                <td className="whitespace-nowrap px-4 py-3.5"><span className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">{session.classCode ?? "—"}</span></td>
                 <td className="whitespace-nowrap px-4 py-3.5"><span className="font-bold">{session.subject}</span><span className="ml-1 text-xs text-muted-foreground">{session.subjectLevel}</span></td>
                 <td className="whitespace-nowrap px-4 py-3.5 font-medium">{session.studentFullName}</td>
                 <td className="whitespace-nowrap px-4 py-3.5"><p className="font-medium tabular-nums">{formatDate(session.date)}</p><p className="mt-0.5 text-xs tabular-nums text-muted-foreground">{session.startTime} – {session.endTime}</p></td>

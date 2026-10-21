@@ -46,7 +46,7 @@ export function ChatRow({ room }: { room: ChatRoom }) {
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          {room.subject || `Kết nối #${room.connectRequestId.slice(0, 8)}`}
+          {room.subject || "Yêu cầu kết nối"}
         </p>
         <p className="mt-1 truncate text-sm text-foreground">
           {room.lastMessage ?? "Mở cuộc trò chuyện"}

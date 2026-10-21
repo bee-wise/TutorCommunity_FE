@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
 import { LmsStatusBadge } from "../../../components/LmsStatusBadge";
-import { formatClassIdentifier } from "../../tutor-classes/utils/classes.utils";
 
 export interface LearnerChatRoom {
   id: string;
@@ -25,7 +24,6 @@ export function LearnerChatRoomCard({ room }: { room: LearnerChatRoom }) {
         <div className="flex items-start justify-between gap-2 border-b border-border pb-3.5">
           <div className="flex items-center gap-2.5">
             <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-primary"><ChatBubbleLeftRightIcon className="size-5" aria-hidden="true" /></span>
-            <span className="font-mono text-xs font-bold text-muted-foreground">{formatClassIdentifier(room.code ?? room.id)}</span>
           </div>
           <LmsStatusBadge status={archived ? "cancelled" : "done"} label={archived ? "Đã kết thúc" : "Đang học"} />
         </div>

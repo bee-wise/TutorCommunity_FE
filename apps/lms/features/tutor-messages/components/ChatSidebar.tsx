@@ -70,7 +70,7 @@ function RoomRow({
 
         {/* Subject + Stage */}
         <p className="mb-0.5 text-[11px] text-muted-foreground">
-          {room.category === "CONNECTION" ? (room.subject || `Kết nối #${room.connectRequestId.slice(0, 8)}`) : room.subject}
+          {room.category === "CONNECTION" ? (room.subject || "Yêu cầu kết nối") : room.subject}
         </p>
 
         <div className="flex items-center justify-between gap-2">
