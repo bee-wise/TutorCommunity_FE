@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/ui/button";
+import { EmptyState } from "@workspace/ui/components/ui/empty-state";
+import { LmsPageHeader } from "../../../components/LmsPageHeader";
 import { ClassPagination } from "../../tutor-classes/components/ClassPagination";
 import { LearnerClassQueryError } from "./LearnerClassQueryError";
 import { useLearnerClassesQuery } from "../hooks/useLearnerClassesQuery";
@@ -15,14 +17,14 @@ export function LearnerClassesScreen({
     { query, filters } = directory;
   return (
     <main className="mx-auto w-full max-w-[1400px] space-y-5 px-4 py-6 text-foreground sm:px-6 lg:px-8">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-lms text-2xl font-extrabold leading-tight text-primary sm:text-3xl">
-          Lớp học
-        </h1>
-        <Button asChild variant="outline" className={learnerAction}>
-          <Link href="/lms/learner/group-classes">Đăng ký lớp nhóm</Link>
-        </Button>
-      </header>
+      <LmsPageHeader
+        title="Lớp học"
+        actions={
+          <Button asChild variant="outline" className={learnerAction}>
+            <Link href="/lms/learner/group-classes">Đăng ký lớp nhóm</Link>
+          </Button>
+        }
+      />
       <LearnerApiClassFilters
         filters={filters}
         counts={directory.counts}
@@ -48,15 +50,16 @@ export function LearnerClassesScreen({
               ))}
             </div>
           ) : (
-            <div className="rounded-3xl border border-border bg-card p-8 shadow-soft">
-              <h2 className="font-lms text-lg font-extrabold text-foreground">
-                Chưa có lớp phù hợp
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Chỉ hiển thị lớp đã được cấp quyền và đã khai giảng. Đăng ký
-                hoặc thanh toán chưa có quyền LMS được theo dõi riêng.
-              </p>
-            </div>
+            <EmptyState
+              imageAlt=""
+              title="Chưa có lớp phù hợp"
+              description="Chỉ hiển thị lớp đã được cấp quyền và đã khai giảng."
+              action={
+                <Button asChild variant="outline" className={learnerAction}>
+                  <Link href="/lms/learner/group-classes">Đăng ký lớp nhóm</Link>
+                </Button>
+              }
+            />
           )}
           <ClassPagination
             page={filters.page - 1}

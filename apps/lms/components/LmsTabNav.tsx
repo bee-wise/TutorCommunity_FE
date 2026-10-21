@@ -50,6 +50,8 @@ export interface LmsTabNavItem {
   label: string;
   /** Match nested routes too (default: exact match). */
   matchPrefix?: boolean;
+  /** Overrides route matching when the tab covers several routes. */
+  active?: boolean;
 }
 
 /** Route-driven tab bar (e.g. class hub). Each tab is a real link, so deep links keep working. */
@@ -58,7 +60,7 @@ export function LmsTabNav({ label, items, className }: { label: string; items: L
   return (
     <nav aria-label={label} className={cn(listClass, className)}>
       {items.map((item) => {
-        const active = item.matchPrefix ? pathname === item.href || pathname.startsWith(`${item.href}/`) : pathname === item.href;
+        const active = item.active ?? (item.matchPrefix ? pathname === item.href || pathname.startsWith(`${item.href}/`) : pathname === item.href);
         return (
           <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} className={tabClass}>
             {item.label}

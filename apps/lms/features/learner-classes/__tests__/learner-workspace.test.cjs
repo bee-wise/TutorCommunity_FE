@@ -472,7 +472,7 @@ test("pre-opening auto-enrollment vs late optional trial, with no Tutor controls
   assert.doesNotMatch(html, /Tôi muốn học thử|Tạo yêu cầu thanh toán/);
   cache.clear();
 });
-test("navigation keeps report/schedule and class chat outside workspace", () => {
+test("navigation keeps report/schedule, class library entries and class chat outside workspace", () => {
   const { navigationConfig } = require(
     path.join(core, "configs/navigation.ts"),
   );
@@ -483,7 +483,12 @@ test("navigation keeps report/schedule and class chat outside workspace", () => 
   );
   assert.deepEqual(
     groups.find((g) => g.groupName === "Học Tập").items.map((i) => i.url),
-    ["/lms/learner/classes", "/lms/learner/chat"],
+    [
+      "/lms/learner/classes",
+      "/lms/learner/materials",
+      "/lms/learner/exercises",
+      "/lms/learner/chat",
+    ],
   );
   const html = render(LearnerClassQueryError, {
     error: new ApiError("Denied", 403),
