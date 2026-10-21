@@ -17,6 +17,7 @@ require.extensions[".ts"] = compile;
 require.extensions[".tsx"] = compile;
 Module._load = function (name, parent, isMain) {
   if (name.endsWith(".module.css")) return { card: "learner-library-card" };
+  if (name === "next/image") return { __esModule: true, default: ({ src, alt }) => React.createElement("img", { src, alt }) };
   if (name === "next/link") return { __esModule: true, default: ({ children, ...props }) => React.createElement("a", props, children) };
   // Dialog markup only: keyboard/focus behavior is owned by the real Radix primitive and requires browser QA.
   if (name === "@workspace/ui/components/ui/dialog") return {
