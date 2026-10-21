@@ -65,9 +65,6 @@ export function LearnerAdmissionDetails({
           {states[data.status ?? ""] ?? data.status ?? "Chưa xác định"}
         </span>
       </div>
-      <p className="break-all text-xs text-muted-foreground">
-        Mã đăng ký {data.id}
-      </p>
       <p className="rounded-2xl border border-border p-4 text-sm">
         {late
           ? "Bạn được gia sư giới thiệu vào lớp đã khai giảng. Sau thanh toán xác thực, Tutor gửi yêu cầu ADD và Consultant duyệt trước khi bạn được vào lớp."

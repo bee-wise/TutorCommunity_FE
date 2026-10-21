@@ -21,7 +21,7 @@ export function LearnerAdmissionScreen({
   return (
     <main className="mx-auto max-w-4xl space-y-5 p-4 sm:p-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-lms text-2xl font-extrabold text-foreground">
+        <h1 className="font-lms text-2xl font-extrabold text-primary">
           Đăng ký lớp nhóm
         </h1>
         <Button asChild variant="outline" className={learnerAction}>
@@ -76,7 +76,7 @@ export function LearnerGroupAdmissionsScreen() {
     { query, page, setPage, form } = controller;
   return (
     <main className="mx-auto max-w-[1400px] space-y-5 p-4 sm:p-6">
-      <h1 className="font-lms text-2xl font-extrabold text-foreground">
+      <h1 className="font-lms text-2xl font-extrabold text-primary">
         Lớp nhóm tuyển sinh
       </h1>
       <form

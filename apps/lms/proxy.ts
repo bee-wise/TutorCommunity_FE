@@ -20,7 +20,11 @@ export function proxy(request: NextRequest) {
   if (!isPublicPath && !token && !refreshToken) {
     const loginUrl = new URL("/login", request.url);
     // loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+    const redirectResponse = NextResponse.redirect(loginUrl);
+    if (request.cookies.has("beewise_has_session")) {
+      redirectResponse.cookies.delete("beewise_has_session");
+    }
+    return redirectResponse;
   }
 
   // Phân luồng sớm theo role trong cookie; /auth/me sẽ xác minh lại ở client.

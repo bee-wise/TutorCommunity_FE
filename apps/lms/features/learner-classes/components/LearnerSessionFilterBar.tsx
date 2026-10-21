@@ -83,7 +83,7 @@ export function LearnerSessionFilterBar({
             <Button
               type="button"
               variant="outline"
-              className={`${learnerAction} size-10 p-0`}
+              className={`${learnerAction} size-11 p-0`}
               aria-label="Tháng trước"
               onClick={() => handleMonthShift(-1)}
             >
@@ -95,7 +95,7 @@ export function LearnerSessionFilterBar({
             <Button
               type="button"
               variant="outline"
-              className={`${learnerAction} size-10 p-0`}
+              className={`${learnerAction} size-11 p-0`}
               aria-label="Tháng sau"
               onClick={() => handleMonthShift(1)}
             >

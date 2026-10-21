@@ -399,7 +399,7 @@ export function ClassDiscovery() {
               <p className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent">
                 Lớp nhóm BeeWise
               </p>
-              <h1 className="font-nunito text-3xl font-black tracking-tight sm:text-[38px]">
+              <h1 className="font-nunito text-3xl font-black tracking-tight text-primary-foreground sm:text-[38px]">
                 Tìm lớp học
               </h1>
               <p className="mt-1.5 text-sm text-white/75">

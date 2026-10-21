@@ -93,7 +93,7 @@ export function ClassSessionsScreen({ classId }: { classId: string }) {
 
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border/70 pb-4">
           <div>
-            <h1 className="font-lms text-2xl font-extrabold text-foreground sm:text-3xl">
+            <h1 className="font-lms text-2xl font-extrabold text-primary sm:text-3xl">
               {details?.features.attendance ? "Buổi học & điểm danh" : "Buổi học"}
             </h1>
             <p className="mt-1 text-sm font-semibold text-muted-foreground">

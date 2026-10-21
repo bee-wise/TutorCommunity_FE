@@ -24,7 +24,7 @@ export default function NotFound() {
 
           <HeroMotion delay={0.1}>
             <h1
-              className="font-nunito mb-6 text-7xl font-extrabold leading-none tracking-tighter text-[#280F91] sm:text-9xl"
+              className="font-nunito mb-6 text-7xl font-extrabold leading-none tracking-tighter text-primary sm:text-9xl"
             >
               404
             </h1>

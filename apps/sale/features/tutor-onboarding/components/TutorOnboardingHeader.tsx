@@ -79,7 +79,7 @@ export function TutorOnboardingHeader({
         >
           <div className="relative h-8 w-28 shrink-0 overflow-hidden sm:h-10 sm:w-38">
             <Image
-              src="/images/interview/Logo_2.png"
+              src="https://res.cloudinary.com/xcrm6ykz/image/upload/f_auto,q_auto,w_400/v1790065308/Logo_2.png"
               alt="BeeWise"
               width={196}
               height={123}

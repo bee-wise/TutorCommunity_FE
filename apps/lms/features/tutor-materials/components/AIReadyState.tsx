@@ -13,7 +13,7 @@ export function AIReadyState({ material, readOnly, onPublish }: {
 
   return (
     <section className="mx-auto max-w-xl space-y-6 py-6 text-center" aria-labelledby="ai-ready-title">
-      <span className={`inline-flex rounded-full border px-4 py-2 text-sm font-bold ${published ? "border-secondary bg-secondary text-secondary-foreground" : "border-primary bg-card text-primary"}`}>
+      <span className={`inline-flex rounded-full border px-4 py-2 text-sm font-bold ${published ? "border-secondary/30 bg-secondary/15 text-foreground" : "border-primary bg-card text-primary"}`}>
         {published ? "Đã xuất bản cho cả lớp" : "Đã lưu bản nháp"}
       </span>
       <div className="space-y-3">

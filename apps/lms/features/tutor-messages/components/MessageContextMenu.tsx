@@ -5,7 +5,6 @@ import {
   InformationCircleIcon as Info,
   DocumentDuplicateIcon as Copy,
   ArrowDownTrayIcon as Download,
-  HashtagIcon as Hash,
 } from "@heroicons/react/24/outline";
 import type { ChatMessage } from "../types/messages.types";
 
@@ -73,20 +72,11 @@ export function MessageContextMenu({
     onClose();
   };
 
-  const handleCopyId = async () => {
-    try {
-      await navigator.clipboard.writeText(message.id);
-    } catch {
-      // fallback
-    }
-    onClose();
-  };
-
   return (
     <div
       ref={menuRef}
       style={{ top: `${adjustedY}px`, left: `${adjustedX}px` }}
-      className="fixed z-50 min-w-[185px] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl animate-in fade-in-0 zoom-in-95"
+      className="fixed z-50 min-w-[185px] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-pop animate-in fade-in-0 zoom-in-95"
       role="menu"
       aria-orientation="vertical"
     >
@@ -129,18 +119,6 @@ export function MessageContextMenu({
           <span>Tải tệp đính kèm</span>
         </a>
       )}
-
-      <div className="my-1 h-px bg-border/60" />
-
-      <button
-        type="button"
-        onClick={handleCopyId}
-        className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground"
-        role="menuitem"
-      >
-        <Hash width={13} height={13} />
-        <span>Sao chép Message ID</span>
-      </button>
     </div>
   );
 }

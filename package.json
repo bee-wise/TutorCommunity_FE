@@ -13,7 +13,9 @@
     "lint": "turbo run lint",
     "sale": "turbo run dev --filter=sale",
     "lms": "turbo run dev --filter=lms",
-    "staff": "turbo run dev --filter=staff"
+    "staff": "turbo run dev --filter=staff",
+    "assets:sync": "node scripts/sync-cloudinary-assets.mjs",
+    "assets:upload": "node scripts/upload-cloudinary-asset.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

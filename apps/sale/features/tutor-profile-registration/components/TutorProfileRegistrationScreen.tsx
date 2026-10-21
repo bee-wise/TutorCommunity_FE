@@ -162,7 +162,7 @@ export function TutorProfileRegistrationScreen() {
           </div>
         </header>
         <main className="mx-auto max-w-xl px-4 pt-16 text-center">
-          <h1 className="text-2xl font-extrabold text-foreground">
+          <h1 className="text-2xl font-extrabold text-primary">
             Không tải được hồ sơ
           </h1>
           <p className="mt-2 text-muted-foreground">

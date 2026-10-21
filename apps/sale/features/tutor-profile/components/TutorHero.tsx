@@ -146,7 +146,7 @@ export function TutorHero({ tutor }: TutorHeroProps) {
 
             {/* Name + Verified badge side-by-side */}
             <div className="mt-2.5 flex flex-wrap items-center gap-2 sm:mt-3">
-              <h1 className="font-nunito text-xl font-black leading-tight text-[#0c0c0b] sm:text-3xl lg:text-4xl">
+              <h1 className="font-nunito text-xl font-black leading-tight text-primary sm:text-3xl lg:text-4xl">
                 {tutor.displayName}
               </h1>
               <InfoPill tone="success" size="sm">

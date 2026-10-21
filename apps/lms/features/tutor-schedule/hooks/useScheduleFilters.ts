@@ -1,43 +1,101 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  lmsCalendarService,
+  lmsCalendarKeys,
+  getMonthRangeIso,
+  parseVietnamDateTime,
+} from "@workspace/core/lms-calendar";
 import type { Session, FilterState } from "../types/schedule.types";
-import { MOCK_SESSIONS } from "../data/mock-sessions";
-
-const TODAY = "2026-07-08"; // Reference date matching mock data
+import { mapLmsScheduleViewToTutorSession } from "../types/schedule.types";
 
 export function useScheduleFilters() {
+  const todayParsed = useMemo(
+    () => parseVietnamDateTime(new Date().toISOString()),
+    [],
+  );
+
+  const [viewYear, setViewYear] = useState<number>(todayParsed.year);
+  const [viewMonth, setViewMonth] = useState<number>(todayParsed.monthIndex);
+
   const [filters, setFilters] = useState<FilterState>({
     subject: "all",
     status: "all",
   });
 
-  const sessions = MOCK_SESSIONS;
+  const monthRange = useMemo(
+    () => getMonthRangeIso(viewYear, viewMonth),
+    [viewYear, viewMonth],
+  );
+
+  const calendarQuery = useQuery({
+    queryKey: lmsCalendarKeys.calendar("tutor", {
+      from: monthRange.from,
+      to: monthRange.to,
+      status: filters.status,
+    }),
+    queryFn: ({ signal }) =>
+      lmsCalendarService.getAllCalendar(
+        {
+          from: monthRange.from,
+          to: monthRange.to,
+          status: filters.status === "all" ? undefined : filters.status,
+        },
+        signal,
+      ),
+  });
+
+  const kpisQuery = useQuery({
+    queryKey: lmsCalendarKeys.kpis("tutor"),
+    queryFn: ({ signal }) => lmsCalendarService.getKpis(signal),
+  });
+
+  const sessions: Session[] = useMemo(() => {
+    if (!calendarQuery.data) return [];
+    return calendarQuery.data.map(mapLmsScheduleViewToTutorSession);
+  }, [calendarQuery.data]);
+
+  const subjects = useMemo(() => {
+    const set = new Set<string>();
+    for (const s of sessions) {
+      if (s.subject) set.add(s.subject);
+    }
+    return Array.from(set);
+  }, [sessions]);
 
   const filteredSessions = useMemo(() => {
     return sessions.filter((s) => {
       const subjectMatch =
         filters.subject === "all" || s.subject === filters.subject;
-      const statusMatch =
-        filters.status === "all" || s.status === filters.status;
-      return subjectMatch && statusMatch;
+      return subjectMatch;
     });
-  }, [sessions, filters]);
+  }, [sessions, filters.subject]);
 
-  const todaySessions = useMemo(
-    () => sessions.filter((s) => s.date === TODAY && s.status === "UPCOMING"),
-    [sessions],
-  );
+  const handlePrevMonth = () => {
+    if (viewMonth === 0) {
+      setViewYear((y) => y - 1);
+      setViewMonth(11);
+    } else {
+      setViewMonth((m) => m - 1);
+    }
+  };
 
-  const totalActiveSessions = useMemo(
-    () => sessions.filter((s) => s.status !== "CANCELED").length,
-    [sessions],
-  );
+  const handleNextMonth = () => {
+    if (viewMonth === 11) {
+      setViewYear((y) => y + 1);
+      setViewMonth(0);
+    } else {
+      setViewMonth((m) => m + 1);
+    }
+  };
 
-  const pendingRequests = useMemo(
-    () => sessions.filter((s) => s.status === "UPCOMING").length,
-    [sessions],
-  );
+  const handleGoToday = () => {
+    const current = parseVietnamDateTime(new Date().toISOString());
+    setViewYear(current.year);
+    setViewMonth(current.monthIndex);
+  };
 
   const setSubjectFilter = (value: string) =>
     setFilters((prev) => ({ ...prev, subject: value }));
@@ -47,10 +105,23 @@ export function useScheduleFilters() {
 
   return {
     filters,
+    viewYear,
+    viewMonth,
+    handlePrevMonth,
+    handleNextMonth,
+    handleGoToday,
+    sessions,
     filteredSessions,
-    todaySessions,
-    totalActiveSessions,
-    pendingRequests,
+    subjects,
+    kpis: kpisQuery.data,
+    isLoading: calendarQuery.isLoading,
+    isKpiLoading: kpisQuery.isLoading,
+    isError: calendarQuery.isError,
+    error: calendarQuery.error,
+    refetch: () => {
+      calendarQuery.refetch();
+      kpisQuery.refetch();
+    },
     setSubjectFilter,
     setStatusFilter,
   };

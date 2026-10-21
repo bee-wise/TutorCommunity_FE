@@ -75,7 +75,7 @@ export function AdminDashboardScreen() {
         <header className="space-y-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              <h1 className="mt-2 text-3xl font-bold tracking-tight text-primary sm:text-4xl">
                 Tổng quan vận hành
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">

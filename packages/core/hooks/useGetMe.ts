@@ -24,11 +24,9 @@ export const useGetMe = (
           return response.data;
         }
 
-        queryClient.clear();
         logout();
         return null;
       } catch {
-        queryClient.clear();
         logout();
         return null;
       } finally {

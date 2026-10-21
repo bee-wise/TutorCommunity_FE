@@ -56,7 +56,7 @@ export function FavoriteTutorsPage() {
           </div>
 
           <h1
-            className="text-2xl font-extrabold text-[#17131f] sm:text-3xl"
+            className="text-2xl font-extrabold text-primary sm:text-3xl"
             style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             Đăng nhập để xem Gia sư yêu thích
@@ -144,7 +144,7 @@ export function FavoriteTutorsPage() {
       <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1
-            className="text-3xl font-extrabold text-foreground sm:text-4xl"
+            className="text-3xl font-extrabold text-primary sm:text-4xl"
             style={{ fontFamily: "var(--font-nunito-family)" }}
           >
             Gia sư yêu thích

@@ -56,7 +56,7 @@ export function useTutorProfileInlineEditor() {
 
   const initialMedia: ProfileMediaState = fetchedTutor?.videoUrl
     ? { videoUrl: fetchedTutor.videoUrl }
-    : { videoUrl: "/video/videoplayback.mp4#t=0.1" };
+    : { videoUrl: "https://res.cloudinary.com/xcrm6ykz/video/upload/v1792508519/Beewise/Assets/Videos/tutor-intro-sample.mp4#t=0.1" };
 
   const [userMediaOverrides, setUserMediaOverrides] =
     useState<ProfileMediaState | null>(null);

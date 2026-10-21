@@ -19,7 +19,7 @@ export function OnboardingVideoGuide({
   title,
   duration,
   description,
-  videoSrc = "/video/videoplayback.mp4#t=0.1",
+  videoSrc = "https://res.cloudinary.com/xcrm6ykz/video/upload/v1792508519/Beewise/Assets/Videos/tutor-intro-sample.mp4#t=0.1",
 }: OnboardingVideoGuideProps) {
   const [isOpen, setIsOpen] = useState(false);
 

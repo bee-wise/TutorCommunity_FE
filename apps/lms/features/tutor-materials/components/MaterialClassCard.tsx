@@ -5,11 +5,12 @@ import { CLASS_STATUS_LABELS } from "../types/class-materials.types";
 import type { MaterialLibraryCard } from "../types/material-library.types";
 import { libraryButton } from "./material-library-ui";
 import styles from "./MaterialClassCard.module.css";
+import { statusTone } from "../../../components/lms-status";
 
 const STATUS_STYLES = {
-  active: "border-primary bg-primary text-primary-foreground",
-  upcoming: "border-accent bg-accent text-accent-foreground",
-  completed: "border-border bg-card text-muted-foreground",
+  active: statusTone.active,
+  upcoming: statusTone.pending,
+  completed: statusTone.done,
 } as const;
 
 export function MaterialClassCard({ classInfo, learners, sessionCount, materialCount, missingPublishedCount }: MaterialLibraryCard) {

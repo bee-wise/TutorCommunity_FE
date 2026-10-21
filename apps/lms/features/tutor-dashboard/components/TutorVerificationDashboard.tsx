@@ -65,7 +65,7 @@ export function TutorVerificationDashboard() {
             Xin chào,
           </p>
           <h1
-            className="text-2xl md:text-3xl text-foreground"
+            className="text-2xl md:text-3xl text-primary"
             style={{ fontFamily: "var(--font-lms-family)", fontWeight: 800 }}
           >
             {user?.fullName ?? "Gia sư"}
@@ -157,13 +157,13 @@ export function TutorVerificationDashboard() {
                     <div className="mt-3 md:flex md:justify-center">
                       <Link
                         href={step.ctaHref}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-primary
-                          text-primary text-xs font-bold bg-primary/5
-                          hover:bg-primary/10 active:scale-[0.98] transition-all"
+                        className="inline-flex min-h-11 items-center gap-1.5 px-4 rounded-lg border border-primary
+                          text-primary text-xs font-bold bg-card
+                          hover:bg-muted active:scale-[0.98] transition-all"
                         style={{ fontFamily: "var(--font-lms-family)" }}
                       >
                         {step.ctaLabel}
-                        <ArrowRight width={12} height={12} />
+                        <ArrowRight width={14} height={14} aria-hidden />
                       </Link>
                     </div>
                   )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import type { FieldError } from "react-hook-form";
 
 interface FormFieldProps {
@@ -7,24 +8,26 @@ interface FormFieldProps {
   error?: FieldError;
   children: React.ReactNode;
   hint?: string;
+  htmlFor?: string;
 }
 
-export function FormField({ label, error, children, hint }: FormFieldProps) {
+export function FormField({ label, error, children, hint, htmlFor }: FormFieldProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       <label
-        className="text-xs font-semibold text-foreground/80"
+        htmlFor={htmlFor}
+        className="text-sm font-bold text-foreground"
         style={{ fontFamily: "var(--font-nunito-family)" }}
       >
         {label}
       </label>
       {children}
       {hint && !error && (
-        <p className="text-[10px] text-foreground/50">{hint}</p>
+        <p className="text-xs text-muted-foreground">{hint}</p>
       )}
       {error && (
-        <p className="text-[10px] text-red-500  flex items-center gap-1">
-          <span aria-hidden="true">✕</span>
+        <p className="flex items-center gap-1 text-xs font-semibold text-destructive" role="alert">
+          <ExclamationCircleIcon className="size-3.5 shrink-0" aria-hidden />
           {error.message}
         </p>
       )}
@@ -39,13 +42,14 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export function Input({ hasError, className, ...props }: InputProps) {
   return (
     <input
-      className={`w-full h-11 px-4 rounded-xl border text-sm bg-[#f8f9fc] text-[#0c0c0b] placeholder:text-[#0c0c0b]/40
-        transition-all duration-200 outline-none
-        focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10
+      aria-invalid={hasError || undefined}
+      className={`w-full min-h-11 px-4 rounded-xl border bg-card text-sm text-foreground placeholder:text-muted-foreground
+        transition-colors duration-200 outline-none
+        focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20
         ${
           hasError
-            ? "border-red-400 focus:border-red-500 focus:ring-red-400/20 bg-red-50/50"
-            : "border-[#0c0c0b]/10 hover:border-primary/40"
+            ? "border-destructive focus-visible:border-destructive"
+            : "border-input hover:border-primary"
         }
         ${className ?? ""}
       `}

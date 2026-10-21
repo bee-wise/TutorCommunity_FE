@@ -25,7 +25,7 @@ export function ProfileEditorToolbar({
             </Link>
           </Button>
           <div className="min-w-0">
-            <h1 className="truncate text-sm font-extrabold text-[#17142f] sm:text-base">
+            <h1 className="truncate text-sm font-extrabold text-primary sm:text-base">
               Chỉnh sửa hồ sơ
             </h1>
             <p className="hidden text-xs text-[#716c83] sm:block">

@@ -5,7 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { ArrowPathIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import { FormField, Input } from "./FormField";
 import { useLmsAccessActivation } from "./AuthLayout";
@@ -60,18 +61,18 @@ export function LoginForm() {
 
         <div className="mb-2 text-center">
           <h1
-            className="text-2xl tracking-tight text-[#0c0c0b] mb-1"
+            className="text-2xl tracking-tight text-primary mb-1"
             style={{ fontFamily: "var(--font-google-sans)", fontWeight: 800 }}
           >
             Đăng nhập vào BeeWise LMS
           </h1>
-          <p className="text-xs text-[#0c0c0b]/60 leading-relaxed max-w-[280px] mx-auto">
+          <p className="text-xs text-muted-foreground leading-relaxed max-w-[280px] mx-auto">
             Vui lòng đăng nhập bằng Email bạn đã đăng ký tại Cộng Đồng Gia Sư
             BeeWise
           </p>
         </div>
 
-        <FormField label="Email" error={errors.email}>
+        <FormField label="Email" htmlFor="login-email" error={errors.email}>
           <Input
             id="login-email"
             type="email"
@@ -83,7 +84,7 @@ export function LoginForm() {
           />
         </FormField>
 
-        <FormField label="Mật khẩu" error={errors.password}>
+        <FormField label="Mật khẩu" htmlFor="login-password" error={errors.password}>
           <div className="relative">
             <Input
               id="login-password"
@@ -97,10 +98,10 @@ export function LoginForm() {
             <button
               type="button"
               onClick={() => setShowPassword((p) => !p)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0c0c0b]/40 hover:text-[#0c0c0b]/70 transition-colors"
+              className="absolute right-0 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-xl text-muted-foreground transition-colors hover:text-primary"
               aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
             >
-              {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+              {showPassword ? <EyeSlashIcon className="size-5" aria-hidden /> : <EyeIcon className="size-5" aria-hidden />}
             </button>
           </div>
         </FormField>
@@ -108,37 +109,32 @@ export function LoginForm() {
         <div className="flex justify-end">
           <Link
             href="/forgot-password"
-            className="text-xs text-primary hover:text-primary/80 font-semibold transition-colors"
+            className="inline-flex min-h-11 items-center px-1 text-xs font-bold text-primary transition-colors hover:text-primary/80"
           >
             Quên mật khẩu?
           </Link>
         </div>
 
         {/* CTA */}
-        <button
+        <Button
           id="login-submit"
           type="submit"
           disabled={isPending}
-          className="relative mx-auto w-full max-w-[400px] h-10 mt-2 rounded-xl bg-primary text-white font-bold text-sm
-            flex items-center justify-center gap-2
-            hover:bg-primary/90 active:scale-[0.98] transition-all duration-200
-            disabled:opacity-60 disabled:cursor-not-allowed"
+          aria-busy={isPending}
+          className="mx-auto mt-2 min-h-11 w-full max-w-[400px] rounded-xl font-bold active:scale-[0.98]"
           style={{ fontFamily: "var(--font-nunito-family)" }}
         >
-          {isPending ? (
-            <span className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-          ) : (
-            <>Đăng nhập</>
-          )}
-        </button>
+          {isPending && <ArrowPathIcon className="size-4 animate-spin" aria-hidden />}
+          {isPending ? "Đang đăng nhập..." : "Đăng nhập"}
+        </Button>
 
         {/* Divider */}
         <div className="relative flex items-center py-2">
-          <div className="flex-grow border-t border-[#0c0c0b]/10"></div>
-          <span className="flex-shrink-0 mx-4 text-[#0c0c0b]/40 text-xs font-medium">
+          <div className="flex-grow border-t border-border"></div>
+          <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs font-medium">
             Hoặc đăng nhập bằng
           </span>
-          <div className="flex-grow border-t border-[#0c0c0b]/10"></div>
+          <div className="flex-grow border-t border-border"></div>
         </div>
 
         <GoogleAuthEntry onLmsAccessNotActivated={openAccessActivationDialog} />

@@ -1,0 +1,2738 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BeeWise LMS Components</title>
+  <!--
+    BeeWise LMS component preview — for people.
+    Agents: do not read this file. Rules and TSX snippets live in components/*.md (index in ../SKILL.md).
+    The CSS below only renders previews; never copy it into the app.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js" defer></script>
+  <style>
+    :root {
+      /* Frozen copy of packages/ui/globals.css (light only, there is no dark theme). */
+      --background: #ffffff;
+      --foreground: #0c0c0b;
+      --card: #ffffff;
+      --popover: #ffffff;
+      --muted: #f0f4ff;
+      --muted-foreground: #5a6a9a;
+      --border: #dce8fb;
+      --input: #dce8fb;
+      --ring: #280f91;
+      --primary: #162cd4;
+      --primary-foreground: #ffffff;
+      --accent: #ffc500;
+      --accent-foreground: #0c0c0b;
+      --secondary: #32cd32;
+      --secondary-foreground: #ffffff;
+      --highlight: #fadc76;
+      --warning: #905b0f;
+      --error: #e1aba7;
+      --destructive: #dc2626;
+      --destructive-foreground: #ffffff;
+      --radius: 12px;
+      --radius-card: 24px;
+      --radius-panel: 32px;
+      --shadow-soft: 0 1px 2px rgb(12 12 11 / .05), 0 12px 32px -12px color-mix(in srgb, var(--primary) 12%, transparent);
+      --shadow-soft-hover: 0 2px 4px rgb(12 12 11 / .05), 0 20px 40px -14px color-mix(in srgb, var(--primary) 18%, transparent);
+      --shadow-pop: 0 2px 6px rgb(12 12 11 / .06), 0 24px 48px -16px rgb(12 12 11 / .22);
+      --ease-soft: cubic-bezier(.16, 1, .3, 1);
+
+      font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+      color: var(--foreground);
+      background: var(--muted);
+      font-synthesis: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--muted)
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+      color: inherit
+    }
+
+    button {
+      cursor: pointer
+    }
+
+    a {
+      color: inherit
+    }
+
+    iconify-icon {
+      display: inline-flex;
+      flex: none;
+      font-size: 18px
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--ring);
+      outline-offset: 2px
+    }
+
+    .tnum {
+      font-variant-numeric: tabular-nums
+    }
+
+    /* ---------- Catalog chrome (not part of the standard) ---------- */
+    .doc {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      max-width: 1320px;
+      margin: 0 auto;
+      min-height: 100dvh
+    }
+
+    .toc {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      overflow-y: auto;
+      padding: 28px 18px;
+      border-right: 1px solid var(--border);
+      background: var(--card)
+    }
+
+    .toc-brand {
+      display: block;
+      width: 170px;
+      height: auto;
+      margin: 0 6px 6px
+    }
+
+    .toc-sub {
+      margin: 0 8px 22px;
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    .toc-group {
+      margin: 18px 8px 6px;
+      color: var(--muted-foreground);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 10px;
+      color: var(--muted-foreground);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background .3s, color .3s
+    }
+
+    .toc a:hover {
+      background: var(--muted);
+      color: var(--primary)
+    }
+
+    .content {
+      padding: 40px 48px 96px;
+      min-width: 0
+    }
+
+    .hero {
+      margin-bottom: 40px
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      color: var(--primary);
+      font-size: 34px;
+      line-height: 1.15;
+      letter-spacing: -.035em;
+      font-weight: 800
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted-foreground);
+      font-size: 15px;
+      line-height: 1.6
+    }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px
+    }
+
+    .rule {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      font-size: 13px;
+      line-height: 1.55
+    }
+
+    .rule strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+      font-weight: 800
+    }
+
+    .rule span {
+      color: var(--muted-foreground)
+    }
+
+    .section {
+      scroll-margin-top: 24px;
+      margin-top: 56px
+    }
+
+    .section>h2 {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: -.025em;
+      font-weight: 800
+    }
+
+    .section>h2 small {
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em
+    }
+
+    .source {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 0 4px;
+      color: var(--muted-foreground);
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    .source iconify-icon {
+      font-size: 16px;
+      color: var(--primary)
+    }
+
+    .source a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none
+    }
+
+    .source a:hover {
+      text-decoration: underline
+    }
+
+    .rule code {
+      padding: 1px 5px;
+      border-radius: 6px;
+      background: var(--muted);
+      font-size: 12px
+    }
+
+    .spec {
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--card);
+      overflow: hidden
+    }
+
+    .spec-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .spec-head h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.02em
+    }
+
+    .spec-head code {
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: var(--muted);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700
+    }
+
+    .stage {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      padding: 28px 20px;
+      background: var(--muted)
+    }
+
+    .stage.col {
+      flex-direction: column;
+      align-items: stretch
+    }
+
+    .stage.grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch
+    }
+
+    .stage.grid2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start
+    }
+
+    .stage-label {
+      width: 100%;
+      margin: 0 0 -4px;
+      color: var(--muted-foreground);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase
+    }
+
+    /* ---------- Foundations previews ---------- */
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      width: 100%
+    }
+
+    .swatch {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      overflow: hidden
+    }
+
+    .swatch i {
+      display: block;
+      height: 64px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .swatch div {
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.45
+    }
+
+    .swatch b {
+      display: block;
+      font-size: 13px;
+      font-weight: 800
+    }
+
+    .swatch span {
+      color: var(--muted-foreground)
+    }
+
+    .type-row {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      align-items: baseline;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      width: 100%
+    }
+
+    .type-row:last-child {
+      border-bottom: 0
+    }
+
+    .type-row code {
+      color: var(--muted-foreground);
+      font-size: 12px
+    }
+
+    .radius-demo {
+      display: grid;
+      place-items: center;
+      width: 112px;
+      height: 84px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: var(--shadow-soft);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.4
+    }
+
+    .radius-demo small {
+      display: block;
+      color: var(--muted-foreground);
+      font-weight: 600
+    }
+
+    .elev {
+      display: grid;
+      place-items: center;
+      width: 160px;
+      height: 96px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--card);
+      font-size: 12px;
+      font-weight: 800
+    }
+
+    /* ---------- Components (preview CSS mirroring the Tailwind snippets) ---------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: background .3s var(--ease-soft), color .3s, border-color .3s, box-shadow .3s, transform .3s
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(.98)
+    }
+
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    .btn iconify-icon {
+      font-size: 18px
+    }
+
+    .btn-default {
+      background: var(--primary);
+      color: var(--primary-foreground)
+    }
+
+    .btn-default:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--primary) 90%, black)
+    }
+
+    .btn-outline {
+      border-color: var(--border);
+      background: var(--background);
+      color: var(--foreground)
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background: var(--muted);
+      color: var(--primary)
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--foreground)
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--muted);
+      color: var(--primary)
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: var(--accent-foreground)
+    }
+
+    .btn-accent:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--accent) 88%, black)
+    }
+
+    .btn-destructive {
+      background: var(--destructive);
+      color: var(--destructive-foreground)
+    }
+
+    .btn-destructive:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--destructive) 90%, black)
+    }
+
+    .btn-sm {
+      min-height: 36px;
+      padding: 0 12px;
+      font-size: 13px
+    }
+
+    .btn-icon {
+      width: 44px;
+      padding: 0
+    }
+
+    .btn-icon.round {
+      border-radius: 999px
+    }
+
+    .chip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--background);
+      font-size: 12px;
+      font-weight: 700;
+      transition: background .3s, transform .3s
+    }
+
+    .chip-btn:hover {
+      background: var(--muted)
+    }
+
+    .chip-btn:active {
+      transform: scale(.95)
+    }
+
+    .spin {
+      animation: spin 1s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      width: 100%;
+      max-width: 360px
+    }
+
+    .field label,
+    .field .label {
+      font-size: 13px;
+      font-weight: 700
+    }
+
+    .field .hint {
+      color: var(--muted-foreground);
+      font-size: 12px
+    }
+
+    .field .err {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--destructive);
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    .input {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 14px;
+      border: 1px solid var(--input);
+      border-radius: var(--radius);
+      background: var(--card);
+      font-size: 14px;
+      outline: 0;
+      transition: border-color .3s, box-shadow .3s
+    }
+
+    .input::placeholder {
+      color: var(--muted-foreground)
+    }
+
+    .input:focus-visible {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 20%, transparent);
+      outline: 0
+    }
+
+    .input[aria-invalid=true] {
+      border-color: var(--destructive)
+    }
+
+    .input:disabled {
+      background: var(--muted);
+      color: var(--muted-foreground);
+      cursor: not-allowed
+    }
+
+    textarea.input {
+      min-height: 104px;
+      resize: vertical;
+      line-height: 1.55
+    }
+
+    .select-wrap {
+      position: relative
+    }
+
+    .select-wrap select {
+      appearance: none;
+      padding-right: 40px
+    }
+
+    .select-wrap iconify-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted-foreground);
+      pointer-events: none
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      min-height: 44px;
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--card);
+      color: var(--muted-foreground);
+      transition: border-color .3s
+    }
+
+    .search:focus-within {
+      border-color: var(--ring)
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--foreground);
+      font-size: 14px
+    }
+
+    .search input::placeholder {
+      color: var(--muted-foreground)
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    .check-box {
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+      color: transparent;
+      transition: background .2s, border-color .2s
+    }
+
+    .check-box iconify-icon {
+      font-size: 14px
+    }
+
+    .check input:checked+.check-box {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: var(--primary-foreground)
+    }
+
+    .check input:focus-visible+.check-box {
+      outline: 3px solid var(--ring);
+      outline-offset: 2px
+    }
+
+    .check input:checked~.check-text.strike {
+      color: var(--muted-foreground);
+      text-decoration: line-through
+    }
+
+    .radio-box {
+      border-radius: 999px
+    }
+
+    .radio-box::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: transparent
+    }
+
+    .check input:checked+.radio-box {
+      background: var(--card);
+      border-color: var(--primary)
+    }
+
+    .check input:checked+.radio-box::after {
+      background: var(--primary)
+    }
+
+    .switch {
+      position: relative;
+      width: 44px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--border);
+      transition: background .3s
+    }
+
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--card);
+      box-shadow: 0 1px 3px rgb(12 12 11 / .2);
+      transition: transform .3s var(--ease-soft)
+    }
+
+    .check input:checked+.switch {
+      background: var(--primary)
+    }
+
+    .check input:checked+.switch::after {
+      transform: translateX(18px)
+    }
+
+    .check input:focus-visible+.switch {
+      outline: 3px solid var(--ring);
+      outline-offset: 2px
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap
+    }
+
+    .badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: currentColor
+    }
+
+    .badge-success {
+      background: color-mix(in srgb, var(--secondary) 14%, white);
+      color: var(--foreground)
+    }
+
+    .badge-success .dot {
+      background: var(--secondary)
+    }
+
+    .badge-pending {
+      background: color-mix(in srgb, var(--accent) 20%, white);
+      color: var(--warning)
+    }
+
+    .badge-info {
+      border-color: var(--primary);
+      background: var(--card);
+      color: var(--primary)
+    }
+
+    .badge-neutral {
+      background: var(--muted);
+      color: var(--muted-foreground)
+    }
+
+    .badge-error {
+      border-color: var(--error);
+      background: color-mix(in srgb, var(--error) 22%, white);
+      color: var(--destructive)
+    }
+
+    .badge-planned {
+      border: 1px dashed var(--border);
+      background: var(--card);
+      color: var(--muted-foreground)
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: var(--muted);
+      color: var(--muted-foreground);
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .count {
+      display: inline-grid;
+      place-items: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      font-size: 11px;
+      font-weight: 800
+    }
+
+    .count.accent {
+      background: var(--accent);
+      color: var(--accent-foreground)
+    }
+
+    .nav {
+      display: grid;
+      gap: 4px;
+      width: 248px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--card)
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      padding: 12px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted-foreground);
+      text-align: left;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .3s, color .3s
+    }
+
+    .nav-item:hover {
+      background: var(--muted);
+      color: var(--primary)
+    }
+
+    .nav-item[data-active=true] {
+      background: var(--muted);
+      color: var(--primary);
+      font-weight: 800
+    }
+
+    .nav-item[data-active=true]::before {
+      content: "";
+      position: absolute;
+      inset: 11px auto 11px 0;
+      width: 3px;
+      border-radius: 999px;
+      background: var(--accent)
+    }
+
+    .nav-item .count {
+      margin-left: auto
+    }
+
+    .nav-label {
+      margin: 10px 12px 4px;
+      color: var(--muted-foreground);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card)
+    }
+
+    .tabs button {
+      min-height: 36px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted-foreground);
+      font-size: 13px;
+      font-weight: 700;
+      transition: background .3s, color .3s
+    }
+
+    .tabs button:hover {
+      color: var(--primary)
+    }
+
+    .tabs button[aria-selected=true] {
+      background: var(--primary);
+      color: var(--primary-foreground)
+    }
+
+    .crumbs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 13px;
+      color: var(--muted-foreground)
+    }
+
+    .crumbs a {
+      text-decoration: none;
+      font-weight: 600
+    }
+
+    .crumbs a:hover {
+      color: var(--primary)
+    }
+
+    .crumbs [aria-current] {
+      color: var(--foreground);
+      font-weight: 700
+    }
+
+    .crumbs iconify-icon {
+      font-size: 14px
+    }
+
+    .pager {
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .pager button {
+      display: grid;
+      place-items: center;
+      min-width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      font-size: 13px;
+      font-weight: 700;
+      transition: background .3s, color .3s
+    }
+
+    .pager button:hover:not(:disabled) {
+      background: var(--muted);
+      color: var(--primary)
+    }
+
+    .pager button[aria-current=page] {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: var(--primary-foreground)
+    }
+
+    .pager button:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    .card {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--card);
+      box-shadow: var(--shadow-soft)
+    }
+
+    .card.interactive {
+      transition: transform .3s var(--ease-soft), box-shadow .3s
+    }
+
+    .card.interactive:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-soft-hover)
+    }
+
+    .card-pad {
+      padding: 20px
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.3;
+      font-weight: 800;
+      letter-spacing: -.02em
+    }
+
+    .card p {
+      margin: 0
+    }
+
+    .muted {
+      color: var(--muted-foreground)
+    }
+
+    .icon-tile {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px
+    }
+
+    .icon-tile.primary {
+      background: color-mix(in srgb, var(--primary) 9%, white);
+      color: var(--primary)
+    }
+
+    .icon-tile.accent {
+      background: color-mix(in srgb, var(--accent) 18%, white);
+      color: var(--warning)
+    }
+
+    .icon-tile.secondary {
+      background: color-mix(in srgb, var(--secondary) 14%, white);
+      color: #1f7a1f
+    }
+
+    .icon-tile.neutral {
+      background: var(--muted);
+      color: var(--muted-foreground)
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.1;
+      font-weight: 800
+    }
+
+    .stat small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted-foreground);
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    .course {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 210px;
+      padding: 20px
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 14px;
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    .meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .meta iconify-icon {
+      font-size: 14px;
+      color: var(--primary)
+    }
+
+    .progress {
+      height: 6px;
+      border-radius: 999px;
+      background: var(--border);
+      overflow: hidden
+    }
+
+    .progress i {
+      display: block;
+      height: 100%;
+      width: var(--value);
+      border-radius: inherit;
+      background: var(--primary)
+    }
+
+    .progress.success i {
+      background: var(--secondary)
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700
+    }
+
+    .join {
+      overflow: hidden;
+      border-color: color-mix(in srgb, var(--accent) 25%, white);
+      background: color-mix(in srgb, var(--accent) 10%, white);
+      box-shadow: none
+    }
+
+    .join .blob {
+      position: absolute;
+      right: -32px;
+      top: 0;
+      width: 128px;
+      fill: color-mix(in srgb, var(--accent) 20%, transparent);
+      pointer-events: none
+    }
+
+    .join>*:not(.blob) {
+      position: relative
+    }
+
+    .join-form {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: auto;
+      padding: 4px;
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, white);
+      border-radius: 14px;
+      background: var(--card)
+    }
+
+    .join-form input {
+      min-width: 0;
+      flex: 1;
+      padding: 8px 10px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 13px
+    }
+
+    .join-form button {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--accent);
+      color: var(--accent-foreground)
+    }
+
+    .session {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card)
+    }
+
+    .session strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800
+    }
+
+    .session small {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+      color: var(--muted-foreground);
+      font-size: 12px
+    }
+
+    .session .time {
+      margin-left: auto;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 800
+    }
+
+    .session .time small {
+      justify-content: flex-end
+    }
+
+    .row-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .row-card:last-child {
+      border-bottom: 0
+    }
+
+    .row-card strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800
+    }
+
+    .row-card small {
+      color: var(--muted-foreground);
+      font-size: 12px
+    }
+
+    .row-card .end {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--card);
+      box-shadow: var(--shadow-soft)
+    }
+
+    table.tbl {
+      width: 100%;
+      min-width: 560px;
+      border-collapse: collapse;
+      text-align: left
+    }
+
+    .tbl th {
+      padding: 12px 16px;
+      background: var(--muted);
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 800
+    }
+
+    .tbl td {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 600
+    }
+
+    .tbl td:first-child {
+      font-weight: 800
+    }
+
+    .tbl tbody tr {
+      transition: background .2s
+    }
+
+    .tbl tbody tr:hover {
+      background: color-mix(in srgb, var(--muted) 60%, white)
+    }
+
+    .avatar {
+      display: inline-grid;
+      place-items: center;
+      flex: none;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--card);
+      border-radius: 999px;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 0 0 1px var(--border)
+    }
+
+    .avatar.sm {
+      width: 32px;
+      height: 32px;
+      font-size: 12px
+    }
+
+    .avatar.lg {
+      width: 64px;
+      height: 64px;
+      font-size: 20px
+    }
+
+    .avatar.accent {
+      background: var(--accent);
+      color: var(--accent-foreground)
+    }
+
+    .avatar-stack {
+      display: flex
+    }
+
+    .avatar-stack .avatar+.avatar {
+      margin-left: -10px
+    }
+
+    .chart {
+      display: flex;
+      align-items: end;
+      justify-content: space-around;
+      gap: 12px;
+      height: 160px;
+      padding: 6px 2px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .bar-group {
+      display: grid;
+      align-items: end;
+      justify-items: center;
+      align-self: stretch;
+      flex: 1;
+      max-width: 56px
+    }
+
+    .bar {
+      position: relative;
+      width: 38px;
+      height: var(--h);
+      border: 0;
+      border-radius: 12px 12px 8px 8px;
+      background: var(--c);
+      transition: transform .3s, box-shadow .3s
+    }
+
+    .bar:hover,
+    .bar:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgb(12 12 11 / .13)
+    }
+
+    .bar .tip {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: var(--foreground);
+      color: var(--background);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 4px);
+      transition: opacity .2s, transform .2s
+    }
+
+    .bar:hover .tip,
+    .bar:focus-visible .tip {
+      opacity: 1;
+      transform: translate(-50%, 0)
+    }
+
+    .chart-labels {
+      display: flex;
+      justify-content: space-around;
+      gap: 12px;
+      padding-top: 8px
+    }
+
+    .chart-labels span {
+      flex: 1;
+      max-width: 56px;
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center
+    }
+
+    .chart-labels .current {
+      color: var(--foreground);
+      font-weight: 800
+    }
+
+    .legend {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    .legend i {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--c)
+    }
+
+    .days {
+      display: flex;
+      gap: 6px
+    }
+
+    .days button {
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      min-width: 44px;
+      padding: 10px 4px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted-foreground);
+      transition: background .3s, color .3s, transform .3s, box-shadow .3s
+    }
+
+    .days button:hover {
+      background: var(--muted);
+      color: var(--primary)
+    }
+
+    .days button span {
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .days button strong {
+      font-size: 14px;
+      font-weight: 800
+    }
+
+    .days button[aria-pressed=true] {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      transform: translateY(-4px);
+      box-shadow: 0 7px 14px color-mix(in srgb, var(--primary) 22%, transparent)
+    }
+
+    .days button .has {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--accent)
+    }
+
+    .empty {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      padding: 32px 16px;
+      text-align: center
+    }
+
+    .empty img {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      margin-bottom: 8px
+    }
+
+    .empty h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800
+    }
+
+    .empty p {
+      max-width: 340px;
+      margin: 0 0 8px;
+      color: var(--muted-foreground);
+      font-size: 14px;
+      line-height: 1.55
+    }
+
+    .skel {
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--muted) 0%, color-mix(in srgb, var(--border) 70%, white) 50%, var(--muted) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease-in-out infinite
+    }
+
+    @keyframes shimmer {
+      to {
+        background-position: -200% 0
+      }
+    }
+
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      font-size: 14px;
+      line-height: 1.5
+    }
+
+    .alert strong {
+      display: block;
+      font-weight: 800
+    }
+
+    .alert p {
+      margin: 2px 0 0;
+      color: var(--muted-foreground)
+    }
+
+    .alert>iconify-icon {
+      margin-top: 2px;
+      font-size: 20px
+    }
+
+    .alert.info>iconify-icon {
+      color: var(--primary)
+    }
+
+    .alert.warning {
+      border-color: color-mix(in srgb, var(--accent) 40%, white);
+      background: color-mix(in srgb, var(--accent) 10%, white)
+    }
+
+    .alert.warning>iconify-icon {
+      color: var(--warning)
+    }
+
+    .alert.error {
+      border-color: var(--error)
+    }
+
+    .alert.error>iconify-icon {
+      color: var(--destructive)
+    }
+
+    .alert .btn {
+      margin-left: auto;
+      flex: none
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 380px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--popover);
+      box-shadow: var(--shadow-pop);
+      font-size: 14px;
+      font-weight: 700
+    }
+
+    .toast .icon-tile {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px
+    }
+
+    .toast button {
+      margin-left: auto
+    }
+
+    .dialog {
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--popover);
+      box-shadow: var(--shadow-pop)
+    }
+
+    .dialog h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      font-weight: 800
+    }
+
+    .dialog p {
+      margin: 0 0 20px;
+      color: var(--muted-foreground);
+      font-size: 14px;
+      line-height: 1.55
+    }
+
+    .dialog footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px
+    }
+
+    .menu {
+      display: grid;
+      gap: 2px;
+      width: 224px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--popover);
+      box-shadow: var(--shadow-pop)
+    }
+
+    .menu button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: left;
+      transition: background .2s, color .2s
+    }
+
+    .menu button:hover {
+      background: var(--muted);
+      color: var(--primary)
+    }
+
+    .menu button.danger {
+      color: var(--destructive)
+    }
+
+    .menu button.danger:hover {
+      background: color-mix(in srgb, var(--error) 22%, white);
+      color: var(--destructive)
+    }
+
+    .menu hr {
+      width: 100%;
+      margin: 4px 0;
+      border: 0;
+      border-top: 1px solid var(--border)
+    }
+
+    .acc {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      overflow: hidden
+    }
+
+    .acc-item+.acc-item {
+      border-top: 1px solid var(--border)
+    }
+
+    .acc-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      min-height: 52px;
+      padding: 0 16px;
+      border: 0;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 800;
+      text-align: left
+    }
+
+    .acc-trigger iconify-icon {
+      color: var(--muted-foreground);
+      transition: transform .3s var(--ease-soft)
+    }
+
+    .acc-trigger[aria-expanded=true] iconify-icon {
+      transform: rotate(180deg)
+    }
+
+    .acc-panel {
+      padding: 0 16px 16px;
+      color: var(--muted-foreground);
+      font-size: 14px;
+      line-height: 1.6
+    }
+
+    .tooltip-demo {
+      position: relative;
+      display: inline-flex
+    }
+
+    .tooltip-demo .tip-box {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: var(--foreground);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 4px);
+      transition: opacity .2s, transform .2s
+    }
+
+    .tooltip-demo:hover .tip-box,
+    .tooltip-demo:focus-within .tip-box {
+      opacity: 1;
+      transform: translate(-50%, 0)
+    }
+
+    .page-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%
+    }
+
+    .page-head h1 {
+      margin: 4px 0 0;
+      color: var(--primary);
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: -.035em;
+      font-weight: 800
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--muted-foreground);
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -.025em
+    }
+
+    .shell-map {
+      display: grid;
+      grid-template-columns: 1.6fr 5fr 2fr;
+      gap: 0;
+      width: 100%;
+      height: 260px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-panel);
+      overflow: hidden;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted-foreground)
+    }
+
+    .shell-map>div {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+      padding: 16px
+    }
+
+    .shell-map .l,
+    .shell-map .r {
+      background: var(--card)
+    }
+
+    .shell-map .l {
+      border-right: 1px solid var(--border)
+    }
+
+    .shell-map .r {
+      border-left: 1px solid var(--border)
+    }
+
+    .shell-map .m {
+      background: var(--muted)
+    }
+
+    .shell-map b {
+      color: var(--foreground);
+      font-size: 13px;
+      font-weight: 800
+    }
+
+    .blk {
+      height: 26px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--border) 60%, white)
+    }
+
+    .blk.card-blk {
+      height: 60px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card)
+    }
+
+    @media (max-width: 1080px) {
+      .doc {
+        grid-template-columns: 1fr
+      }
+
+      .toc {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--border)
+      }
+
+      .toc nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px
+      }
+
+      .toc-group {
+        display: none
+      }
+
+      .content {
+        padding: 28px 24px 72px
+      }
+    }
+
+    @media (max-width: 760px) {
+      .content {
+        padding: 24px 16px 64px
+      }
+
+      .hero h1 {
+        font-size: 27px
+      }
+
+      .rules,
+      .stage.grid3,
+      .stage.grid2 {
+        grid-template-columns: 1fr
+      }
+
+      .type-row {
+        grid-template-columns: 1fr;
+        gap: 4px
+      }
+
+      .shell-map {
+        grid-template-columns: 1fr;
+        height: auto
+      }
+
+      .shell-map .l,
+      .shell-map .r {
+        border: 0;
+        border-bottom: 1px solid var(--border)
+      }
+
+      .nav {
+        width: 100%
+      }
+
+      .session,
+      .row-card {
+        flex-wrap: wrap
+      }
+
+      .row-card .end {
+        width: 100%;
+        margin-left: 54px
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="doc">
+    <aside class="toc" aria-label="Mục lục component">
+      <img class="toc-brand"
+        src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1791535277/BeeWiseLMS-Logo-500x150.svg" alt="BeeWise LMS"
+        width="170" height="51">
+      <p class="toc-sub">Bộ chuẩn component · v1</p>
+      <nav>
+        <div class="toc-group">Nền tảng</div>
+        <a href="#usage">Cách dùng</a>
+        <a href="#color">Màu sắc</a>
+        <a href="#type">Typography</a>
+        <a href="#shape">Bo góc, đổ bóng, chuyển động</a>
+        <a href="#icons">Icon</a>
+        <div class="toc-group">Hành động & nhập liệu</div>
+        <a href="#button">Button</a>
+        <a href="#input">Input, Select, Textarea</a>
+        <a href="#search">Search</a>
+        <a href="#choice">Checkbox, Radio, Switch</a>
+        <div class="toc-group">Hiển thị</div>
+        <a href="#badge">Badge & Tag</a>
+        <a href="#card">Card</a>
+        <a href="#stat">Stat card</a>
+        <a href="#course">Course card</a>
+        <a href="#session">Session item</a>
+        <a href="#table">Table</a>
+        <a href="#progress">Progress & Avatar</a>
+        <a href="#chart">Bar chart</a>
+        <a href="#calendar">Date selector</a>
+        <div class="toc-group">Điều hướng</div>
+        <a href="#nav">Sidebar nav</a>
+        <a href="#tabs">Tabs, Breadcrumb, Pagination</a>
+        <div class="toc-group">Phản hồi & lớp phủ</div>
+        <a href="#states">Empty, Loading, Error</a>
+        <a href="#alert">Alert & Toast</a>
+        <a href="#overlay">Dialog, Menu, Tooltip</a>
+        <a href="#accordion">Accordion</a>
+        <div class="toc-group">Bố cục</div>
+        <a href="#headers">Page & section header</a>
+        <a href="#shell">App shell</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="hero" id="usage">
+        <h1>Bộ chuẩn component BeeWise LMS</h1>
+        <p>Trang preview trực quan cho người xem. Quy tắc nên/không nên và snippet TSX/Tailwind của từng component nằm
+          trong <code>components/*.md</code> (link ở đầu mỗi mục). Không copy CSS của trang này.</p>
+        <div class="rules">
+          <div class="rule"><strong>1. Thứ tự ưu tiên</strong><span><code>packages/ui/globals.css</code> &gt;
+              <code>.agents/design-system.md</code> &gt; file này. Nếu lệch nhau, token thắng.</span></div>
+          <div class="rule"><strong>2. Dùng lại trước khi tạo</strong><span>Có sẵn: Button, Input, Select, Dialog,
+              Sheet, DropdownMenu, Tooltip, Accordion, Collapsible, Avatar, Skeleton, EmptyState, Pagination,
+              Breadcrumb, bee-toast.</span></div>
+          <div class="rule"><strong>3. Chỉ token ngữ nghĩa</strong><span>Không hardcode hex, không thêm màu mới, không
+              glass/blur/gradient text. Mọi data view có đủ loading, empty, error, success.</span></div>
+        </div>
+      </header>
+
+      <!-- ===================== FOUNDATIONS ===================== -->
+      <section class="section" id="color">
+        <h2>Màu sắc <small>TOKENS</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/foundations.md#màu-sắc">components/foundations.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <div class="swatches">
+              <div class="swatch"><i style="background:var(--primary)"></i>
+                <div><b>primary</b><span>#162cd4 · CTA, active, link</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--accent)"></i>
+                <div><b>accent</b><span>#ffc500 · rating, promo, nav marker</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--secondary)"></i>
+                <div><b>secondary</b><span>#32cd32 · verified, success</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--highlight)"></i>
+                <div><b>highlight</b><span>#fadc76 · marker sau chữ tối</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--warning)"></i>
+                <div><b>warning</b><span>#905b0f · chữ/icon cảnh báo</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--error)"></i>
+                <div><b>error</b><span>#e1aba7 · viền/nền lỗi nhẹ</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--destructive)"></i>
+                <div><b>destructive</b><span>#dc2626 · chữ lỗi, hành động xóa</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--foreground)"></i>
+                <div><b>foreground</b><span>#0c0c0b · chữ chính</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--muted-foreground)"></i>
+                <div><b>muted-foreground</b><span>#5a6a9a · chữ phụ</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--muted)"></i>
+                <div><b>muted</b><span>#f0f4ff · canvas LMS, fill nhẹ</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--border)"></i>
+                <div><b>border / input</b><span>#dce8fb · viền, divider</span></div>
+              </div>
+              <div class="swatch"><i style="background:var(--ring)"></i>
+                <div><b>ring</b><span>#280f91 · focus ring</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="type">
+        <h2>Typography <small>PLUS JAKARTA SANS</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/foundations.md#typography">components/foundations.md</a></p>
+        <div class="spec">
+          <div class="stage col" style="background:var(--card)">
+            <div class="type-row"><code>text-3xl font-extrabold leading-[1.15] tracking-[-0.035em] text-primary</code><span
+                style="color:var(--primary);font-size:30px;font-weight:800;line-height:1.15;letter-spacing:-.035em">Lịch dạy tuần này</span>
+            </div>
+            <div class="type-row"><code>text-lg font-extrabold</code> (h2 section)<span
+                style="font-size:18px;font-weight:800;letter-spacing:-.025em">Lớp học sắp tới</span></div>
+            <div class="type-row"><code>text-base font-extrabold</code> (card title)<span
+                style="font-size:16px;font-weight:800">Toán 9 · Ôn thi vào 10</span></div>
+            <div class="type-row"><code>text-sm font-medium</code> (body)<span
+                style="font-size:14px;font-weight:500;line-height:1.6">Buổi học sẽ bắt đầu sau 15 phút. Vào lớp trước để
+                kiểm tra micro.</span></div>
+            <div class="type-row"><code>text-xs text-muted-foreground</code> (meta)<span
+                style="font-size:12px;color:var(--muted-foreground);font-weight:600">19:30 – 21:00 · Online</span></div>
+            <div class="type-row"><code>text-[10px] font-extrabold uppercase tracking-[0.12em]</code><span
+                style="font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-foreground)">Menu</span>
+            </div>
+            <div class="type-row"><code>text-2xl font-extrabold tabular-nums</code><span class="tnum"
+                style="font-size:24px;font-weight:800">1.250.000đ</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="shape">
+        <h2>Bo góc, đổ bóng, chuyển động <small>SHAPE</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/foundations.md#bo-góc-đổ-bóng-chuyển-động">components/foundations.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <p class="stage-label">Radius</p>
+            <div class="radius-demo" style="border-radius:8px">8px<small>tag, tooltip</small></div>
+            <div class="radius-demo" style="border-radius:12px">rounded-lg · 12px<small>button, input, nav</small></div>
+            <div class="radius-demo" style="border-radius:16px">rounded-2xl · 16px<small>list item, alert, menu</small>
+            </div>
+            <div class="radius-demo" style="border-radius:24px">radius-card · 24px<small>card, dialog</small></div>
+            <div class="radius-demo" style="border-radius:32px">radius-panel · 32px<small>hero, panel lớn</small></div>
+            <div class="radius-demo" style="border-radius:999px">rounded-full<small>badge, search</small></div>
+          </div>
+          <div class="stage" style="border-top:1px solid var(--border)">
+            <p class="stage-label">Elevation</p>
+            <div class="elev" style="box-shadow:none">Không bóng<br>(trong card)</div>
+            <div class="elev" style="box-shadow:var(--shadow-soft)">shadow-soft<br>(card)</div>
+            <div class="elev" style="box-shadow:var(--shadow-soft-hover);transform:translateY(-4px)">
+              shadow-soft-hover<br>(card hover)</div>
+            <div class="elev" style="box-shadow:var(--shadow-pop)">shadow-pop<br>(menu, dialog, toast)</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="icons">
+        <h2>Icon <small>HEROICONS</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/foundations.md#icon">components/foundations.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <span class="icon-tile primary"><iconify-icon icon="heroicons:book-open"></iconify-icon></span>
+            <span class="icon-tile accent"><iconify-icon icon="heroicons:star"></iconify-icon></span>
+            <span class="icon-tile secondary"><iconify-icon icon="heroicons:check-badge"></iconify-icon></span>
+            <span class="icon-tile neutral"><iconify-icon icon="heroicons:archive-box"></iconify-icon></span>
+            <span class="muted" style="font-size:13px;font-weight:600">Icon tile 36px · bo 12px · tint theo vai trò
+              màu</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ACTIONS & INPUT ===================== -->
+      <section class="section" id="button">
+        <h2>Button <small>@workspace/ui/components/ui/button</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/actions-inputs.md#button">components/actions-inputs.md</a></p>
+        <div class="spec">
+          <div class="spec-head">
+            <h3>Variant</h3><code>variant="default | outline | ghost | destructive"</code>
+          </div>
+          <div class="stage">
+            <button class="btn btn-default" type="button"><iconify-icon icon="heroicons:video-camera"></iconify-icon>Vào
+              lớp</button>
+            <button class="btn btn-outline" type="button">Xem chi tiết</button>
+            <button class="btn btn-ghost" type="button"><iconify-icon icon="heroicons:arrow-left"></iconify-icon>Quay
+              lại</button>
+            <button class="btn btn-accent" type="button">Nâng cấp Pro</button>
+            <button class="btn btn-destructive" type="button"><iconify-icon icon="heroicons:trash"></iconify-icon>Xóa
+              buổi học</button>
+          </div>
+          <div class="stage" style="border-top:1px solid var(--border)">
+            <p class="stage-label">Kích thước & trạng thái</p>
+            <button class="btn btn-default btn-sm" type="button">Nhỏ · 36px</button>
+            <button class="btn btn-outline btn-icon" type="button" aria-label="Thêm tùy chọn"><iconify-icon
+                icon="heroicons:ellipsis-horizontal"></iconify-icon></button>
+            <button class="btn btn-accent btn-icon round" type="button" aria-label="Thông báo"><iconify-icon
+                icon="heroicons:bell"></iconify-icon></button>
+            <button class="btn btn-default" type="button" disabled aria-busy="true"><iconify-icon class="spin"
+                icon="heroicons:arrow-path"></iconify-icon>Đang lưu...</button>
+            <button class="btn btn-default" type="button" disabled>Không khả dụng</button>
+            <button class="chip-btn" type="button"><iconify-icon icon="heroicons:arrow-left"
+                style="font-size:14px"></iconify-icon>Quay lại</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="input">
+        <h2>Input, Select, Textarea <small>@workspace/ui · input, select</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/actions-inputs.md#input-select-textarea">components/actions-inputs.md</a></p>
+        <div class="spec">
+          <div class="stage grid2">
+            <div class="field"><label for="f-name">Tên lớp học</label><input id="f-name" class="input"
+                placeholder="VD: Toán 9 · Nhóm A"><span class="hint">Tối đa 60 ký tự.</span></div>
+            <div class="field"><label for="f-email">Email phụ huynh</label><input id="f-email" class="input"
+                value="phuhuynh@" aria-invalid="true" aria-describedby="f-email-err"><span class="err"
+                id="f-email-err"><iconify-icon icon="heroicons:exclamation-circle"
+                  style="font-size:14px"></iconify-icon>Email chưa đúng định dạng.</span></div>
+            <div class="field"><label for="f-subject">Môn học</label>
+              <div class="select-wrap"><select id="f-subject" class="input">
+                  <option>Toán</option>
+                  <option>Tiếng Anh</option>
+                  <option>Vật lý</option>
+                </select><iconify-icon icon="heroicons:chevron-down"></iconify-icon></div>
+            </div>
+            <div class="field"><label for="f-dis">Mã lớp</label><input id="f-dis" class="input" value="BW-2024-118"
+                disabled></div>
+            <div class="field" style="max-width:none;grid-column:1/-1"><label for="f-note">Ghi chú buổi
+                học</label><textarea id="f-note" class="input"
+                placeholder="Nội dung đã dạy, bài tập về nhà..."></textarea></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="search">
+        <h2>Search <small>PILL</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/actions-inputs.md#search-pill">components/actions-inputs.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <label class="search"><iconify-icon icon="heroicons:magnifying-glass"></iconify-icon><span
+                class="sr-only">Tìm kiếm lớp học</span><input type="search" placeholder="Tìm lớp, học viên..."></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="choice">
+        <h2>Checkbox, Radio, Switch <small>CUSTOM CONTROL</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/actions-inputs.md#checkbox-radio-switch">components/actions-inputs.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <label class="check"><input class="sr-only" type="checkbox" checked><span class="check-box"><iconify-icon
+                  icon="heroicons:check-20-solid"></iconify-icon></span><span class="check-text strike">Chấm bài tuần
+                3</span></label>
+            <label class="check"><input class="sr-only" type="checkbox"><span class="check-box"><iconify-icon
+                  icon="heroicons:check-20-solid"></iconify-icon></span><span class="check-text strike">Gửi nhận xét cho
+                phụ huynh</span></label>
+            <label class="check"><input class="sr-only" type="radio" name="mode" checked><span
+                class="check-box radio-box"></span>Online</label>
+            <label class="check"><input class="sr-only" type="radio" name="mode"><span
+                class="check-box radio-box"></span>Offline</label>
+            <label class="check"><input class="sr-only" type="checkbox" role="switch" checked><span
+                class="switch"></span>Nhắc lịch trước 15 phút</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== DISPLAY ===================== -->
+      <section class="section" id="badge">
+        <h2>Badge & Tag <small>STATUS</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#badge--tag">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <span class="badge badge-success"><i class="dot"></i>Hoàn thành</span>
+            <span class="badge badge-pending"><i class="dot"></i>Chờ xác nhận</span>
+            <span class="badge badge-info">Đang diễn ra</span>
+            <span class="badge badge-neutral">Đã hủy</span>
+            <span class="badge badge-error"><iconify-icon icon="heroicons:exclamation-triangle"
+                style="font-size:14px"></iconify-icon>Quá hạn</span>
+            <span class="badge badge-planned">Dự kiến</span>
+            <span class="tag">Toán 9</span>
+            <span class="tag">Online</span>
+            <span class="count">3</span>
+            <span class="count accent">12</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="card">
+        <h2>Card <small>BASE</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#card-base">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage grid2">
+            <article class="card card-pad">
+              <h3>Thông tin lớp</h3>
+              <p class="muted" style="margin-top:6px;font-size:14px;line-height:1.55">Card tĩnh: không hover, không bóng
+                nổi khi rê chuột.</p>
+            </article>
+            <a class="card card-pad interactive" href="#card" style="text-decoration:none;display:block">
+              <h3>Card có thể bấm</h3>
+              <p class="muted" style="margin-top:6px;font-size:14px;line-height:1.55">Cả card là một link/button. Hover
+                nhấc 4px + shadow-soft-hover.</p>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="stat">
+        <h2>Stat card <small>KPI</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#stat-card">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage grid3">
+            <div class="card stat"><span class="icon-tile primary"><iconify-icon
+                  icon="heroicons:academic-cap"></iconify-icon></span><span><strong class="tnum">12</strong><small>Lớp
+                  đang dạy</small></span></div>
+            <div class="card stat"><span class="icon-tile accent"><iconify-icon
+                  icon="heroicons:clipboard-document-check"></iconify-icon></span><span><strong
+                  class="tnum">8</strong><small>Bài chờ chấm</small></span></div>
+            <div class="card stat"><span class="icon-tile secondary"><iconify-icon
+                  icon="heroicons:check-badge"></iconify-icon></span><span><strong class="tnum">96%</strong><small>Tỉ lệ
+                  chuyên cần</small></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="course">
+        <h2>Course card & Join card <small>LMS</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#course-card--join-card">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage grid3">
+            <div class="card course join">
+              <svg class="blob" viewBox="0 0 120 100" aria-hidden="true">
+                <path d="M13 34C27 9 70 2 98 19c24 15 24 47 3 62-21 15-52-4-72-7C4 71-1 57 13 34Z" />
+              </svg>
+              <span class="icon-tile accent" style="background:var(--card)"><iconify-icon
+                  icon="heroicons:user-group"></iconify-icon></span>
+              <h3>Tham gia lớp mới</h3>
+              <p class="muted" style="font-size:13px">Nhập mã do gia sư cung cấp.</p>
+              <form class="join-form" onsubmit="event.preventDefault()"><input aria-label="Mã lớp học"
+                  placeholder="Nhập mã lớp..."><button type="submit" aria-label="Tham gia lớp"><iconify-icon
+                    icon="heroicons:arrow-right"></iconify-icon></button></form>
+            </div>
+            <a class="card course interactive" href="#course" style="text-decoration:none">
+              <span class="icon-tile primary"><iconify-icon icon="heroicons:calculator"></iconify-icon></span>
+              <h3>Toán 9 · Ôn thi vào 10</h3>
+              <div class="meta"><span><iconify-icon icon="heroicons:book-open"></iconify-icon>24
+                  buổi</span><span><iconify-icon icon="heroicons:clock"></iconify-icon>T3, T5 · 19:30</span></div>
+              <div style="margin-top:auto">
+                <div class="progress-row"><span class="muted">Tiến độ</span><span class="tnum">18/24</span></div>
+                <div class="progress" style="margin-top:6px" role="progressbar" aria-valuenow="75" aria-valuemin="0"
+                  aria-valuemax="100" aria-label="Tiến độ khóa học"><i style="--value:75%"></i></div>
+              </div>
+            </a>
+            <a class="card course interactive" href="#course" style="text-decoration:none">
+              <span class="icon-tile secondary"><iconify-icon icon="heroicons:language"></iconify-icon></span>
+              <h3>IELTS Speaking 6.5+</h3>
+              <div class="meta"><span><iconify-icon icon="heroicons:book-open"></iconify-icon>16
+                  buổi</span><span><iconify-icon icon="heroicons:clock"></iconify-icon>T7 · 09:00</span></div>
+              <div style="margin-top:auto">
+                <div class="progress-row"><span class="muted">Tiến độ</span><span class="tnum">16/16</span></div>
+                <div class="progress success" style="margin-top:6px" role="progressbar" aria-valuenow="100"
+                  aria-valuemin="0" aria-valuemax="100" aria-label="Tiến độ khóa học"><i style="--value:100%"></i></div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="session">
+        <h2>Session item & List row <small>LIST</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#session-item--list-row">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage col">
+            <div class="session"><span class="icon-tile primary"><iconify-icon
+                  icon="heroicons:video-camera"></iconify-icon></span><span><strong>Toán 9 · Nhóm A</strong><small><span
+                    class="badge badge-info" style="padding:2px 8px;font-size:11px">Online</span>4 học
+                  viên</small></span><span class="time tnum">19:30<small>– 21:00</small></span></div>
+            <div class="session"><span class="icon-tile accent"><iconify-icon
+                  icon="heroicons:map-pin"></iconify-icon></span><span><strong>IELTS Speaking 1-1</strong><small><span
+                    class="tag" style="padding:2px 8px">Offline</span>Phòng A607</small></span><span
+                class="time tnum">Mai, 09:00<small>– 10:30</small></span></div>
+            <div class="card" style="box-shadow:none;border-radius:20px">
+              <div class="row-card"><span class="avatar sm">NL</span><span><strong>Nguyễn Linh</strong><small>Nộp lúc
+                    20:14 · Bài tuần 3</small></span><span class="end"><span class="badge badge-pending">Chờ
+                    chấm</span><button class="btn btn-outline btn-sm" type="button">Chấm bài</button></span></div>
+              <div class="row-card"><span class="avatar sm accent">TP</span><span><strong>Trần Phúc</strong><small>Nộp
+                    lúc 18:02 · Bài tuần 3</small></span><span class="end"><span class="badge badge-success"><i
+                      class="dot"></i>Đã chấm</span></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="table">
+        <h2>Table <small>DATA</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#table">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <div class="table-wrap">
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th scope="col">Bài tập</th>
+                    <th scope="col">Lớp</th>
+                    <th scope="col">Hạn nộp</th>
+                    <th scope="col" style="text-align:right">Đã nộp</th>
+                    <th scope="col">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Phương trình bậc hai</td>
+                    <td>Toán 9 · Nhóm A</td>
+                    <td class="tnum">18/05/2024</td>
+                    <td class="tnum" style="text-align:right">3/4</td>
+                    <td><span class="badge badge-pending"><i class="dot"></i>Đang mở</span></td>
+                  </tr>
+                  <tr>
+                    <td>Describing a place</td>
+                    <td>IELTS Speaking</td>
+                    <td class="tnum">20/05/2024</td>
+                    <td class="tnum" style="text-align:right">1/1</td>
+                    <td><span class="badge badge-success"><i class="dot"></i>Đã đóng</span></td>
+                  </tr>
+                  <tr>
+                    <td>Hệ thức lượng</td>
+                    <td>Toán 9 · Nhóm B</td>
+                    <td class="tnum">12/05/2024</td>
+                    <td class="tnum" style="text-align:right">2/5</td>
+                    <td><span class="badge badge-error">Quá hạn</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="progress">
+        <h2>Progress & Avatar <small>@workspace/ui · avatar</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#progress--avatar">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <div style="width:260px">
+              <div class="progress-row"><span>Hoàn thành chương trình</span><span class="tnum">62%</span></div>
+              <div class="progress" style="margin-top:8px" role="progressbar" aria-valuenow="62" aria-valuemin="0"
+                aria-valuemax="100" aria-label="Hoàn thành chương trình"><i style="--value:62%"></i></div>
+            </div>
+            <span class="avatar lg">MA</span>
+            <span class="avatar">HT</span>
+            <span class="avatar sm accent">QN</span>
+            <span class="avatar-stack" aria-label="4 học viên"><span class="avatar sm">NL</span><span
+                class="avatar sm accent">TP</span><span class="avatar sm">HV</span><span class="avatar sm"
+                style="background:var(--muted);color:var(--muted-foreground)">+1</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="chart">
+        <h2>Bar chart <small>CSS BARS</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#bar-chart-css-bars">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage col" style="background:var(--card)">
+            <div class="section-head">
+              <h2 style="font-size:16px">Giờ dạy trong tuần</h2><span class="legend"
+                style="--c:var(--primary)"><i></i>Hôm nay</span>
+            </div>
+            <div>
+              <div class="chart" role="group" aria-label="Giờ dạy trong tuần">
+                <div class="bar-group"><button class="bar" type="button" style="--h:70%;--c:var(--accent)"
+                    aria-label="Thứ 2: 5 giờ 20 phút"><span class="tip">5h 20m</span></button></div>
+                <div class="bar-group"><button class="bar" type="button" style="--h:42%;--c:var(--border)"
+                    aria-label="Thứ 3: 3 giờ 10 phút"><span class="tip">3h 10m</span></button></div>
+                <div class="bar-group"><button class="bar" type="button" style="--h:60%;--c:var(--primary)"
+                    aria-label="Thứ 4: 4 giờ 30 phút, hôm nay"><span class="tip">4h 30m</span></button></div>
+                <div class="bar-group"><button class="bar" type="button" style="--h:30%;--c:var(--border)"
+                    aria-label="Thứ 5: 2 giờ 10 phút"><span class="tip">2h 10m</span></button></div>
+                <div class="bar-group"><button class="bar" type="button" style="--h:52%;--c:var(--secondary)"
+                    aria-label="Thứ 6: 4 giờ"><span class="tip">4h 00m</span></button></div>
+              </div>
+              <div class="chart-labels" aria-hidden="true"><span>T2</span><span>T3</span><span
+                  class="current">T4</span><span>T5</span><span>T6</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="calendar">
+        <h2>Date selector <small>MINI CALENDAR</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/display.md#date-selector-mini-calendar">components/display.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <div class="days" role="group" aria-label="Chọn ngày">
+              <button type="button" aria-pressed="false"><span>T2</span><strong>08</strong><i class="has"
+                  aria-hidden="true"></i></button>
+              <button type="button" aria-pressed="false"><span>T3</span><strong>09</strong></button>
+              <button type="button" aria-pressed="true"><span>T4</span><strong>10</strong><i class="has"
+                  aria-hidden="true"></i></button>
+              <button type="button" aria-pressed="false"><span>T5</span><strong>11</strong></button>
+              <button type="button" aria-pressed="false"><span>T6</span><strong>12</strong><i class="has"
+                  aria-hidden="true"></i></button>
+              <button type="button" aria-pressed="false"><span>T7</span><strong>13</strong></button>
+              <button type="button" aria-pressed="false"><span>CN</span><strong>14</strong></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== NAVIGATION ===================== -->
+      <section class="section" id="nav">
+        <h2>Sidebar nav <small>.lms-navigation-item</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/navigation.md#sidebar-nav">components/navigation.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <nav class="nav" aria-label="Điều hướng chính">
+              <div class="nav-label">Menu</div>
+              <button class="nav-item" type="button" data-active="true" aria-current="page"><iconify-icon
+                  icon="heroicons:squares-2x2"></iconify-icon>Tổng quan</button>
+              <button class="nav-item" type="button" data-active="false"><iconify-icon
+                  icon="heroicons:calendar-days"></iconify-icon>Lịch dạy</button>
+              <button class="nav-item" type="button" data-active="false"><iconify-icon
+                  icon="heroicons:user-group"></iconify-icon>Lớp học</button>
+              <button class="nav-item" type="button" data-active="false"><iconify-icon
+                  icon="heroicons:document-text"></iconify-icon>Tài liệu</button>
+              <button class="nav-item" type="button" data-active="false"><iconify-icon
+                  icon="heroicons:chat-bubble-left-right"></iconify-icon>Tin nhắn<span class="count">3</span></button>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="tabs">
+        <h2>Tabs, Breadcrumb, Pagination <small>@workspace/ui · breadcrumb, pagination</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/navigation.md#tabs-segmented">components/navigation.md</a></p>
+        <div class="spec">
+          <div class="stage col">
+            <div class="tabs" role="tablist" aria-label="Chế độ xem lịch">
+              <button type="button" role="tab" aria-selected="true">Tuần</button>
+              <button type="button" role="tab" aria-selected="false">Tháng</button>
+              <button type="button" role="tab" aria-selected="false">Danh sách</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <ol class="crumbs">
+                <li><a href="#tabs">Lớp học</a></li>
+                <li aria-hidden="true"><iconify-icon icon="heroicons:chevron-right"></iconify-icon></li>
+                <li><a href="#tabs">Toán 9 · Nhóm A</a></li>
+                <li aria-hidden="true"><iconify-icon icon="heroicons:chevron-right"></iconify-icon></li>
+                <li><span aria-current="page">Buổi 18</span></li>
+              </ol>
+            </nav>
+            <nav class="pager" aria-label="Phân trang">
+              <button type="button" aria-label="Trang trước" disabled><iconify-icon
+                  icon="heroicons:chevron-left"></iconify-icon></button>
+              <button type="button" aria-current="page">1</button><button type="button">2</button><button
+                type="button">3</button>
+              <button type="button" aria-label="Trang sau"><iconify-icon
+                  icon="heroicons:chevron-right"></iconify-icon></button>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== FEEDBACK & OVERLAYS ===================== -->
+      <section class="section" id="states">
+        <h2>Empty, Loading, Error <small>DATA STATES</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/feedback-overlays.md#empty-loading-error">components/feedback-overlays.md</a></p>
+        <div class="spec">
+          <div class="stage grid3">
+            <div class="card">
+              <div class="empty">
+                <img src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789966153/8.png" alt="" width="160"
+                  height="160">
+                <h3>Chưa có buổi học</h3>
+                <p>Tạo lịch dạy để học viên thấy buổi học sắp tới.</p>
+                <button class="btn btn-default" type="button"><iconify-icon icon="heroicons:plus"></iconify-icon>Tạo
+                  lịch dạy</button>
+              </div>
+            </div>
+            <div class="card card-pad" aria-busy="true" aria-label="Đang tải danh sách lớp">
+              <div style="display:flex;gap:12px;align-items:center"><span class="skel"
+                  style="width:36px;height:36px;border-radius:12px"></span><span
+                  style="flex:1;display:grid;gap:8px"><span class="skel" style="height:12px;width:70%"></span><span
+                    class="skel" style="height:10px;width:45%"></span></span></div>
+              <div style="display:flex;gap:12px;align-items:center;margin-top:18px"><span class="skel"
+                  style="width:36px;height:36px;border-radius:12px"></span><span
+                  style="flex:1;display:grid;gap:8px"><span class="skel" style="height:12px;width:60%"></span><span
+                    class="skel" style="height:10px;width:35%"></span></span></div>
+              <div style="display:flex;gap:12px;align-items:center;margin-top:18px"><span class="skel"
+                  style="width:36px;height:36px;border-radius:12px"></span><span
+                  style="flex:1;display:grid;gap:8px"><span class="skel" style="height:12px;width:75%"></span><span
+                    class="skel" style="height:10px;width:40%"></span></span></div>
+            </div>
+            <div class="card">
+              <div class="empty">
+                <img src="https://res.cloudinary.com/xcrm6ykz/image/upload/v1789966155/10.png" alt="" width="160"
+                  height="160">
+                <h3>Không tải được lịch dạy</h3>
+                <p>Kiểm tra kết nối mạng rồi thử lại.</p>
+                <button class="btn btn-outline" type="button"><iconify-icon
+                    icon="heroicons:arrow-path"></iconify-icon>Thử lại</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="alert">
+        <h2>Alert & Toast <small>bee-toast</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/feedback-overlays.md#alert--toast">components/feedback-overlays.md</a></p>
+        <div class="spec">
+          <div class="stage col">
+            <div class="alert info"><iconify-icon icon="heroicons:information-circle"></iconify-icon>
+              <div><strong>Lịch tuần sau đã được mở</strong>
+                <p>Học viên có thể đặt buổi từ thứ Hai.</p>
+              </div>
+            </div>
+            <div class="alert warning"><iconify-icon icon="heroicons:exclamation-triangle"></iconify-icon>
+              <div><strong>Còn 2 bài chưa chấm quá 48 giờ</strong>
+                <p>Chấm sớm để giữ điểm uy tín gia sư.</p>
+              </div><button class="btn btn-outline btn-sm" type="button">Chấm ngay</button>
+            </div>
+            <div class="alert error" role="alert"><iconify-icon icon="heroicons:x-circle"></iconify-icon>
+              <div><strong>Không thể lưu buổi học</strong>
+                <p>Thời gian bị trùng với buổi Toán 9 · Nhóm B.</p>
+              </div>
+            </div>
+            <div class="toast" role="status"><span class="icon-tile secondary"><iconify-icon
+                  icon="heroicons:check"></iconify-icon></span>Đã lưu nhận xét buổi học<button
+                class="btn btn-ghost btn-icon" type="button" aria-label="Đóng thông báo"
+                style="min-height:36px;width:36px"><iconify-icon icon="heroicons:x-mark"></iconify-icon></button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="overlay">
+        <h2>Dialog, Menu, Tooltip <small>@workspace/ui · dialog, sheet, dropdown-menu, tooltip</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/feedback-overlays.md#dialog-sheet-menu-tooltip">components/feedback-overlays.md</a></p>
+        <div class="spec">
+          <div class="stage" style="align-items:flex-start">
+            <div class="dialog" role="dialog" aria-labelledby="dlg-t" aria-describedby="dlg-d">
+              <h3 id="dlg-t">Hủy buổi học này?</h3>
+              <p id="dlg-d">Học viên sẽ nhận thông báo hủy. Không thể hoàn tác.</p>
+              <footer><button class="btn btn-outline" type="button">Giữ buổi học</button><button
+                  class="btn btn-destructive" type="button">Hủy buổi học</button></footer>
+            </div>
+            <div class="menu" role="menu" aria-label="Tùy chọn buổi học">
+              <button type="button" role="menuitem"><iconify-icon icon="heroicons:pencil-square"></iconify-icon>Chỉnh
+                sửa</button>
+              <button type="button" role="menuitem"><iconify-icon
+                  icon="heroicons:arrow-path-rounded-square"></iconify-icon>Dời lịch</button>
+              <button type="button" role="menuitem"><iconify-icon
+                  icon="heroicons:document-duplicate"></iconify-icon>Nhân bản</button>
+              <hr>
+              <button type="button" role="menuitem" class="danger"><iconify-icon
+                  icon="heroicons:trash"></iconify-icon>Hủy buổi học</button>
+            </div>
+            <span class="tooltip-demo"><button class="btn btn-outline btn-icon" type="button"
+                aria-label="Xuất lịch"><iconify-icon icon="heroicons:arrow-down-tray"></iconify-icon></button><span
+                class="tip-box" role="tooltip">Xuất lịch (.ics)</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="accordion">
+        <h2>Accordion <small>@workspace/ui · accordion, collapsible</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/feedback-overlays.md#accordion--collapsible">components/feedback-overlays.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <div class="acc">
+              <div class="acc-item"><button class="acc-trigger" type="button" aria-expanded="true"
+                  aria-controls="acc-1">Buổi 1 · Hàm số bậc nhất<iconify-icon
+                    icon="heroicons:chevron-down"></iconify-icon></button>
+                <div class="acc-panel" id="acc-1">Ôn định nghĩa, đồ thị và bài tập vận dụng. Tài liệu: 2 file PDF.</div>
+              </div>
+              <div class="acc-item"><button class="acc-trigger" type="button" aria-expanded="false"
+                  aria-controls="acc-2">Buổi 2 · Hệ phương trình<iconify-icon
+                    icon="heroicons:chevron-down"></iconify-icon></button>
+                <div class="acc-panel" id="acc-2" hidden>Phương pháp thế và cộng đại số.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== LAYOUT ===================== -->
+      <section class="section" id="headers">
+        <h2>Page & section header <small>LAYOUT</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/layout.md#page-header--section-header">components/layout.md</a></p>
+        <div class="spec">
+          <div class="stage col">
+            <div class="page-head">
+              <div>
+                <p class="eyebrow">Thứ Tư, 10/05</p>
+                <h1>Lịch dạy</h1>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><label class="search"
+                  style="max-width:260px"><iconify-icon icon="heroicons:magnifying-glass"></iconify-icon><span
+                    class="sr-only">Tìm buổi học</span><input type="search"
+                    placeholder="Tìm buổi học..."></label><button class="btn btn-default" type="button"><iconify-icon
+                    icon="heroicons:plus"></iconify-icon>Tạo buổi học</button></div>
+            </div>
+            <div class="section-head" style="margin-top:12px">
+              <h2>Lớp học sắp tới</h2><button class="chip-btn" type="button">Xem tất cả<iconify-icon
+                  icon="heroicons:arrow-right" style="font-size:14px"></iconify-icon></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="shell">
+        <h2>App shell <small>.lms-workspace · .lms-shell</small></h2>
+        <p class="source"><iconify-icon icon="heroicons:document-text"></iconify-icon>Quy tắc và snippet: <a
+            href="components/layout.md#app-shell-dashboard-1440px">components/layout.md</a></p>
+        <div class="spec">
+          <div class="stage">
+            <div class="shell-map" aria-hidden="true">
+              <div class="l"><b>Left rail · 256px</b>
+                <div class="blk" style="width:70%"></div>
+                <div class="blk"></div>
+                <div class="blk" style="background:var(--muted)"></div>
+                <div class="blk"></div>
+                <div class="blk"></div>
+              </div>
+              <div class="m"><b>Main · bg-muted · p-8</b>
+                <div class="blk" style="width:40%;height:34px"></div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                  <div class="blk card-blk"></div>
+                  <div class="blk card-blk"></div>
+                  <div class="blk card-blk"></div>
+                </div>
+                <div class="blk card-blk" style="height:70px"></div>
+              </div>
+              <div class="r"><b>Right rail · 320px</b>
+                <div class="blk" style="height:48px;width:48px;border-radius:999px"></div>
+                <div class="blk"></div>
+                <div class="blk"></div>
+                <div class="blk"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Preview-only interactions.
+    document.querySelectorAll('.days').forEach(group => group.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      group.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+    })));
+    document.querySelectorAll('.nav').forEach(nav => nav.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => {
+      nav.querySelectorAll('.nav-item').forEach(x => { x.dataset.active = 'false'; x.removeAttribute('aria-current'); });
+      b.dataset.active = 'true'; b.setAttribute('aria-current', 'page');
+    })));
+    document.querySelectorAll('[role=tablist]').forEach(list => list.querySelectorAll('[role=tab]').forEach(t => t.addEventListener('click', () => {
+      list.querySelectorAll('[role=tab]').forEach(x => x.setAttribute('aria-selected', 'false'));
+      t.setAttribute('aria-selected', 'true');
+    })));
+    document.querySelectorAll('.acc-trigger').forEach(t => t.addEventListener('click', () => {
+      const open = t.getAttribute('aria-expanded') === 'true';
+      t.setAttribute('aria-expanded', String(!open));
+      document.getElementById(t.getAttribute('aria-controls')).hidden = open;
+    }));
+    document.querySelectorAll('.pager').forEach(p => p.querySelectorAll('button:not([aria-label])').forEach(b => b.addEventListener('click', () => {
+      p.querySelectorAll('button[aria-current]').forEach(x => x.removeAttribute('aria-current'));
+      b.setAttribute('aria-current', 'page');
+    })));
+  </script>
+</body>
+
+</html>

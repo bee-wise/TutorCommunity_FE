@@ -1,3 +1,5 @@
+import { statusTone } from "../../../components/lms-status";
+
 export function formatMessageTime(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
@@ -105,11 +107,11 @@ export const STAGE_LABELS: Record<string, string> = {
 };
 
 export const STAGE_COLORS: Record<string, string> = {
-  WAITING_FOR_TUTOR: "bg-amber-100 text-amber-800 border-amber-200",
-  DISCUSSING: "bg-blue-100 text-blue-800 border-blue-200",
-  TRIAL_SCHEDULED: "bg-[#447353]/15 text-[#447353] border-[#447353]/30",
-  AWAITING_DECISION: "bg-purple-100 text-purple-800 border-purple-200",
-  CONVERTED_TO_CLASS: "bg-secondary text-secondary-foreground border-secondary",
+  WAITING_FOR_TUTOR: statusTone.pending,
+  DISCUSSING: statusTone.active,
+  TRIAL_SCHEDULED: statusTone.planned,
+  AWAITING_DECISION: statusTone.pending,
+  CONVERTED_TO_CLASS: statusTone.done,
 };
 
 export const CLOSE_REASON_LABELS: Record<string, string> = {

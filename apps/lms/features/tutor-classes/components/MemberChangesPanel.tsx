@@ -28,7 +28,7 @@ import {
 const schema = createMemberChangeSchema.omit({ requestId: true });
 const statusPresentation: Record<string, { label: string; className: string }> = {
   PENDING: { label: "Chờ duyệt", className: "border border-accent/40 bg-accent/20 text-warning" },
-  APPROVED: { label: "Đã duyệt", className: "border border-secondary/30 bg-secondary/15 text-secondary" },
+  APPROVED: { label: "Đã duyệt", className: "border border-secondary/30 bg-secondary/15 text-foreground" },
   REJECTED: { label: "Không được duyệt", className: "border border-destructive/25 bg-destructive/10 text-destructive" },
   CANCELLED: { label: "Đã hủy", className: "border border-border bg-muted text-muted-foreground" },
 };
@@ -266,7 +266,7 @@ export function MemberChangesPanel({
                   </p>
                 </div>
                 {request.reviewNote && (
-                  <div className="mt-3 rounded-xl border border-primary/20 bg-primary/5 px-3.5 py-2.5 text-xs text-foreground">
+                  <div className="mt-3 rounded-xl border border-border bg-muted px-3.5 py-2.5 text-xs text-foreground">
                     <span className="font-bold text-primary">Phản hồi:</span>{" "}
                     {request.reviewNote}
                   </div>

@@ -216,7 +216,7 @@ export function TutorOwnProfileScreen() {
       <div className="flex flex-col gap-4 rounded-3xl border border-[#cfe1fa] bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div>
           <p className="text-sm font-bold text-primary">Hồ sơ gia sư</p>
-          <h1 className="font-nunito mt-1 text-2xl font-black text-[#17142f] sm:text-3xl">
+          <h1 className="font-nunito mt-1 text-2xl font-black text-primary sm:text-3xl">
             Hồ sơ của tôi
           </h1>
           <p className="mt-1 text-sm leading-6 text-[#56516a]">

@@ -1,125 +1,80 @@
 ---
-description: BeeWise frontend architecture, API integration, and completion rules for coding agents.
+description: BeeWise frontend architecture, API integration and completion rules. Read only the sections AGENTS.md points to.
 ---
 
-# BeeWise Development Workflow
+# BeeWise development workflow
 
-Read only the sections relevant to the task, as directed by [AGENTS.md](../../AGENTS.md). Its scope rules govern task tracking and unrelated cleanup.
+## 1. Stack
 
-# 1. Project Overview & Tech Stack
+Turborepo · Next.js 16 App Router · React 19 · strict TypeScript · Tailwind CSS v4 · TanStack Query · Zustand (limited) · React Hook Form + Zod · Heroicons · `motion/react` · Centrifugo. UI rules: [design-system.md](../design-system.md).
 
-Turborepo; Next.js 16 App Router; React 19; strict TypeScript; Tailwind CSS v4; TanStack Query; Zustand for permitted global UI state; React Hook Form + Zod; Heroicons; `motion/react`; Centrifugo. Favor maintainability, type safety, clear layers, performance, and consistent caching.
+## 2. Monorepo layout
 
-# 2. Monorepo & Feature Architecture
+- `apps/*` are isolated; never import across apps. Shared code moves to `packages/core` (API client, services, query keys/hooks, auth, types, schemas, utils; no JSX) or `packages/ui` (presentation components; no domain logic or fetching).
+- `app/` = routing and page composition only (no business logic, complex state or API calls).
+- Domains live in `features/[name]/`: `components/`, `hooks/`, `api/` or `services/`, `schemas/`, `types/`, `utils/`, optional `store/` for UI state.
 
-## 2.1. `apps/[app-name]`
+## 3. Next.js & React
 
-- Keep apps isolated; never import directly from another app. Move code reused across apps to `packages/core` or `packages/ui`.
-- `app/` handles routing and page composition only: no business logic, complex state, or direct API calls.
-- Put domains in `features/[name]/`: UI in `components/`, state/business behavior in `hooks/`, data access in `api/` or `services/`, Zod in `schemas/`, types in `types/`, helpers in `utils/`. Use a feature `store/` only for appropriate UI state.
+Server Components by default; `'use client'` only on the innermost interactive leaf. Server Actions for simple submissions, TanStack mutations for rich interaction. Memoize only after profiling. Centrifugo: one shared client, subscriptions via hooks, cleanup in effects.
 
-## 2.2. `packages/core`
+## 4. Data flow
 
-Shared API client/services, query keys/hooks, authentication/session logic, types, schemas, and utilities belong here. No JSX or presentation components.
+`component → hook → service → apiClient → backend`.
 
-## 2.3. `packages/ui`
+- Components render and wire actions; split at 150-200 lines, max 300.
+- Hooks own state, effects, form wiring, queries/mutations, transformations.
+- Services own typed HTTP calls. Never `fetch`/`axios` in components or hooks.
 
-Shared presentation components (controls, cards, dialogs, tables, feedback states) belong here. No domain logic or API fetching.
+## 5. State
 
-# 3. UI Standards & Anti-Slop Rules
-
-For UI implementation, follow [AGENTS.md](../../AGENTS.md) and the [frontend design skill](../skills/design-taste-frontend/SKILL.md); consult its [benchmark](../skills/design-taste-frontend/references/beewise-ui-standards.html) when making layout or visual-design decisions. These cover Heroicons, `@workspace/ui` buttons, chips, active states, heading copy, and disclosure controls. In `apps/lms`, also follow the [LMS skill](../skills/design-taste-lms/SKILL.md) and active `packages/ui/globals.css` tokens. Planning-only work should list applicable UI guidance for the implementation agent rather than reading it solely to write a plan. Use `motion/react` only in Client Components and only for purposeful motion.
-
-# 4. Separation of Concerns & Data Flow
-
-`UI component → custom hook → API/service → apiClient → backend`.
-
-- Components render UI and connect actions. Decompose at 150–200 lines; 300 is the maximum.
-- Hooks own complex state, side effects, form wiring, validation flow, queries/mutations, and transformations.
-- Services/API modules own typed HTTP calls. Never call `fetch` or `axios` directly inside components or hooks.
-
-# 5. State Management Matrix
-
-| State | Tool | Boundary |
+| State | Tool | Rule |
 | --- | --- | --- |
-| Local UI | `useState` / `useReducer` | Keep dialogs, dropdowns, and transient filters local. |
-| Forms | React Hook Form + Zod | Avoid manual state per field in complex forms. |
-| Server data and mutations | TanStack Query | Centralize keys and invalidate affected caches; no server data in Zustand. |
-| Global UI | Zustand | Auth session, notifications, theme/settings only. |
+| Local UI | `useState` / `useReducer` | Dialogs, dropdowns, transient filters |
+| Forms | React Hook Form + Zod | No per-field manual state |
+| Server data | TanStack Query | Central keys, invalidate affected caches; never in Zustand |
+| Global UI | Zustand | Auth session, notifications, theme/settings only |
 
-# 6. Strict TypeScript & Validation Standards
+## 6. TypeScript & validation
 
-Type function boundaries, hooks, and API payloads. No `any` or `@ts-ignore`; prefer `unknown`, generics, or discriminated unions. Infer self-evident local types. Validate forms and external payloads with Zod in `schemas/`; derive types with `z.infer` where appropriate and use `z.guid()` for UUID fields.
+Type function boundaries, hooks and payloads. No `any` / `@ts-ignore` (use `unknown`, generics, unions). Zod in `schemas/` for forms and external input; `z.infer` types; `z.guid()` for UUID/GUID fields.
 
-# 7. Complete API Integration Standard & Workflow
+## 7. API integration checklist
 
-Apply all ten steps to API integration:
+1. Read the contract (method, path, params, body, response DTO, errors, pagination) from docs/OpenAPI.
+2. Types in feature `types/` or `packages/core/types/`.
+3. Zod schemas for forms, mutations, external input.
+4. Service wraps `apiClient` from `@workspace/core/apiClient` (`withCredentials: true` is global). No direct Axios, duplicated base URLs, hardcoded tokens, or manual `Content-Type` for `FormData`.
+5. Structured query keys, defined centrally.
+6. `useQuery` for reads, `useMutation` for writes, invalidate on success.
+7. Normalize responses in service/hook, not in JSX.
+8. UI handles loading, empty, error/retry, success/pagination; toast on mutation result.
+9. Domain names: `getTutorList`, `useTutorListQuery`, `useCreateBookingMutation`; not `fetchData`, `callApi`, `submit`.
+10. Parse backend errors at the service/hook boundary; show actionable feedback, never fail silently.
 
-1. **Contract:** Inspect method/path, path/query/body fields, response DTO, errors, and pagination/search/sort parameters in docs or OpenAPI.
-2. **Types:** Define request, response, and pagination types in feature `types/` or shared `packages/core/types/`.
-3. **Validation:** Add Zod schemas for forms, mutations, and external input where applicable.
-4. **Service:** Use a feature API/service module wrapping `apiClient` from `@workspace/core/apiClient` with globally configured `withCredentials: true`. Never call Axios directly, duplicate base URLs, hardcode tokens, or set `Content-Type` manually for `FormData`.
-5. **Query keys:** Define structured keys centrally for precise list/detail invalidation.
-6. **Hooks:** Use `useQuery` for reads and `useMutation` for writes; invalidate affected keys after success.
-7. **Transformation:** Normalize responses in services or hooks, not with deep payload traversal in JSX.
-8. **UI states:** Handle loading, empty, error/retry, and success/pagination; show mutation success/failure feedback.
-9. **Names:** Use domain names such as `getTutorList`, `createBooking`, `useTutorListQuery`, `useCreateTutorMutation`; avoid `fetchData`, `callApi`, `request`, and `submit`.
-10. **Verify:** Confirm contract/DTOs, schemas, client, keys, hooks, invalidation, UI states, feedback, and strict TypeScript.
+## 8. Auth & security
 
-# 8. Next.js App Router & React Rules
+HttpOnly/Secure cookies with `withCredentials: true`. Guards and redirects in each app's `proxy.ts` and `rewrites()` in `next.config.mjs`. Never store tokens or passwords in `localStorage`/`sessionStorage`.
 
-Use Server Components by default. Add `'use client'` only to the innermost interactive leaf using hooks, events, animation, or browser APIs. Use Server Actions for simple submissions; use TanStack Query mutations for rich client interaction, optimistic updates, polling, or complex invalidation. Memoize only after profiling shows a benefit.
+## 9. Code style
 
-# 9. Real-Time & WebSockets (Centrifugo)
+- Descriptive file names (`TutorCard.tsx`, `useTutorListQuery.ts`, `tutor.api.ts`, `login.schema.ts`); no `helpers.ts`, `utils.ts`, `common.ts`, `temp.ts`.
+- Import order: React/framework → third-party → `@workspace/*` → local → types → styles.
+- No `console.*`, `debugger` or temporary code. Dynamic-import heavy modals/charts; `next/image` for images.
+- Git: branches `feature/`, `fix/`, `refactor/`, `hotfix/`; commits `type(scope): description`.
 
-Use one shared Centrifugo client, expose subscriptions through hooks, and unsubscribe/remove listeners in effect cleanup.
+## 10. Process
 
-# 10. Error Handling & Resilience
+1. Identify affected apps/packages, reusable code, API contracts, state needs.
+2. Place code per §2 and implement within §4 boundaries.
+3. Review for dead code, unused imports, component size.
+4. Run relevant `tsc`, ESLint, tests (PowerShell).
 
-Parse backend errors at the service/hook boundary. Show actionable toasts and retry paths; do not fail silently or rely on `console.error`. Use error boundaries where an isolated widget could otherwise break a major feature.
+## 11. Definition of done
 
-# 11. Authentication & Security
-
-Use HttpOnly/Secure cookie authentication with `withCredentials: true`. Configure each app's `proxy.ts` and `rewrites()` in `next.config.mjs` for role parsing, guards, and redirects. Never store access/refresh tokens or passwords in `localStorage` or `sessionStorage`.
-
-# 12. Code Style, Imports & Naming Conventions
-
-- Use descriptive files such as `TutorCard.tsx`, `useTutorListQuery.ts`, `auth.store.ts`, `tutor.api.ts`, `login.schema.ts`, and `formatCurrency.ts`. Avoid `helpers.ts`, `utils.ts`, `common.ts`, `temp.ts`, and `new.ts`.
-- Order imports: React/framework; third-party; monorepo packages; feature/local; type-only; styles.
-
-# 13. Logging, Performance & Accessibility
-
-Leave no `console.log`, `console.error`, `debugger`, or temporary code. Dynamically import heavy interactive modals/charts and optimize images with `next/image`. Use semantic buttons, links, and headings, keyboard support, and appropriate ARIA labels.
-
-# 14. Git Rules
-
-Use `feature/[name]`, `fix/[description]`, `refactor/[module]`, or `hotfix/[description]` branch names where applicable. Format commits as `type(scope): description`.
-
-# 15. Agent Development Workflow
-
-1. Identify affected apps/packages, existing reusable code, API contracts, and state needs.
-2. Place shared UI in `packages/ui`, shared logic in `packages/core`, domain work in `features/`, and route composition in `app/`.
-3. Implement within component → hook → service boundaries.
-4. Review changed code for dead code, unused imports, debug artifacts, and component size.
-5. Run relevant TypeScript, ESLint, tests, and usage checks. Update `.agents/implement-task.md` only when the user requests tracking.
-
-# 16. Terminal Requirement
-
-Use PowerShell syntax and cmdlets for project commands. Do not use Git Bash or Bash syntax.
-
-# 17. Definition of Done
-
-For the requested scope, confirm:
-
-- [ ] Functional requirements work, including relevant error paths.
-- [ ] UI changes follow BeeWise design rules, accessibility, and mobile/tablet/desktop layouts.
-- [ ] Component, hook, and service boundaries remain clear.
-- [ ] Strict TypeScript passes without `any` or `@ts-ignore`; ESLint has no new errors or warnings.
-- [ ] Query keys and mutation invalidation are correct where API data is involved.
-- [ ] Data-driven UI covers loading, empty, error, and success.
-- [ ] No temporary debugging artifacts remain.
-- [ ] Task tracking is updated only if requested.
-
-# 18. Core Development Philosophy
-
-Choose the simplest maintainable solution consistent with existing architecture and the user's requested scope.
+- [ ] Requirement works, including error paths.
+- [ ] UI follows design-system.md, is accessible and works on mobile/tablet/desktop.
+- [ ] Component/hook/service boundaries are clear.
+- [ ] TypeScript strict passes; no new ESLint errors/warnings.
+- [ ] Query keys and invalidation correct; data UI covers loading/empty/error/success.
+- [ ] No debug artifacts. Simplest maintainable solution within the requested scope.

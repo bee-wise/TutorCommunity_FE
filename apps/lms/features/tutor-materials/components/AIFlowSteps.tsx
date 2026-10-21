@@ -24,7 +24,7 @@ export function AIFlowSteps({ step }: { step: number }) {
             />
           )}
           <span
-            className={`relative mx-auto grid size-10 place-items-center rounded-full border text-sm font-bold ${step > index + 1 ? "border-secondary bg-secondary text-secondary-foreground" : step === index + 1 ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground"}`}
+            className={`relative mx-auto grid size-10 place-items-center rounded-full border text-sm font-bold ${step > index + 1 ? "border-secondary bg-secondary text-foreground" : step === index + 1 ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground"}`}
           >
             {step > index + 1 ? (
               <Check aria-hidden="true" />

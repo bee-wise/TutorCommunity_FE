@@ -56,7 +56,7 @@ function ExerciseClassCard({ summary }: { summary: LearnerExerciseClassSummary }
         <Metric label="Cần làm" value={summary.pendingExerciseCount} accent={summary.pendingExerciseCount > 0} />
       </dl>
 
-      <Link href={`/lms/learner/exercises/classes/${classInfo.id}`} className="mt-auto inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-primary px-4 text-sm font-bold text-white hover:bg-primary/90">
+      <Link href={`/lms/learner/exercises/classes/${classInfo.id}`} className="mt-auto inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90">
         Xem buổi học <ArrowRight width={15} height={15} />
       </Link>
     </article>

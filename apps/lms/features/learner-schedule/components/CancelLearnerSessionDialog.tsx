@@ -150,7 +150,7 @@ export function CancelLearnerSessionDialog({
           <button
             type="button"
             onClick={closeDialog}
-            className="h-10 rounded-xl border border-input px-4 text-sm font-bold text-foreground hover:bg-muted"
+            className="min-h-11 rounded-xl border border-input px-4 text-sm font-bold text-foreground hover:bg-muted"
           >
             Giữ lịch học
           </button>
@@ -158,7 +158,7 @@ export function CancelLearnerSessionDialog({
             type="button"
             disabled={!valid}
             onClick={submitCancellation}
-            className="h-10 rounded-xl bg-destructive px-4 text-sm font-bold text-white hover:bg-destructive disabled:cursor-not-allowed disabled:opacity-40"
+            className="min-h-11 rounded-xl bg-destructive px-4 text-sm font-bold text-destructive-foreground hover:bg-destructive disabled:cursor-not-allowed disabled:opacity-40"
           >
             Xác nhận hủy
           </button>

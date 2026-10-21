@@ -48,7 +48,7 @@ export function LearnerDashboard({ data }: { data: LearnerDashboardData }) {
       week: "Tuần 2 · Tháng 10/2026",
       date: data.feedback.date,
       content: data.feedback.content,
-      tone: "border-primary/25 bg-primary/10 text-primary",
+      tone: "border-primary bg-card text-primary",
     },
     {
       id: "fb-2",

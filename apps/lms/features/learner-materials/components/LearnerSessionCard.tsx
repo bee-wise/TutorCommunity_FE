@@ -4,11 +4,12 @@ import { Button, buttonVariants } from "@workspace/ui/components/ui/button";
 import { LEARNER_SESSION_STATUS_LABELS, type LearnerSessionSummary } from "../types/learner-materials.types";
 import { formatLibraryDate } from "../utils/learner-materials.utils";
 import { libraryBadge, libraryButton, libraryPanel } from "./learner-materials-ui";
+import { statusTone } from "../../../components/lms-status";
 
 const STATUS_STYLES = {
-  COMPLETED: "border-primary bg-primary text-primary-foreground",
-  UPCOMING: "border-accent bg-accent text-accent-foreground",
-  CANCELED: "border-destructive bg-card text-destructive",
+  COMPLETED: statusTone.done,
+  UPCOMING: statusTone.pending,
+  CANCELED: statusTone.cancelled,
 } as const;
 
 export function LearnerSessionCard({ classId, session, materialCount }: LearnerSessionSummary & { classId: string }) {

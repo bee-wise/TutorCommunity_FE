@@ -61,7 +61,7 @@ export function LegalDocument({
         <div className="relative mx-auto max-w-7xl px-5 pb-14 pt-8 sm:px-8 sm:pb-20 sm:pt-10 lg:px-12">
           <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
             <div className="max-w-3xl">
-              <h1 className="font-nunito text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.6rem]">
+              <h1 className="font-nunito text-4xl font-black leading-[1.1] tracking-tight text-primary-foreground sm:text-5xl lg:text-[3.6rem]">
                 {title}
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-[#dce4ff] sm:text-lg sm:leading-8">

@@ -66,7 +66,7 @@ function WidgetFrame({
 }: {
   icon: ElementType;
   title: string;
-  reference: string;
+  reference?: string;
   status: string;
   tone?: "primary" | "success" | "warning";
   children: ReactNode;
@@ -74,13 +74,13 @@ function WidgetFrame({
 }) {
   const iconStyle =
     tone === "success"
-      ? "bg-secondary text-secondary-foreground"
+      ? "bg-secondary text-foreground"
       : tone === "warning"
         ? "bg-accent text-accent-foreground"
         : "bg-primary text-primary-foreground";
   const statusStyle =
     tone === "success"
-      ? "border-secondary/20 bg-secondary/15 text-secondary"
+      ? "border-secondary/30 bg-secondary/15 text-foreground"
       : tone === "warning"
         ? "border-accent/30 bg-accent/25 text-warning"
         : "border-primary/25 bg-card text-primary";
@@ -97,9 +97,11 @@ function WidgetFrame({
           <h3 className="font-lms text-sm font-extrabold text-foreground">
             {title}
           </h3>
-          <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
-            {reference}
-          </p>
+          {reference && (
+            <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+              {reference}
+            </p>
+          )}
         </div>
         <span
           className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold ${statusStyle}`}
@@ -139,7 +141,7 @@ function Confirmation({
     <span
       className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold ${
         confirmed
-          ? "border-secondary bg-secondary text-secondary-foreground"
+          ? "border-secondary/30 bg-secondary/15 text-foreground"
           : "border-border bg-card text-muted-foreground"
       }`}
     >
@@ -201,7 +203,6 @@ function TrialSessionWidget({
       <WidgetFrame
         icon={CalendarCheckIcon}
         title="Lịch học thử"
-        reference={`Mã đề xuất ${data.id}`}
         status={statusLabels[data.status]}
         tone={
           data.status === "COMPLETED" || data.status === "CONFIRMED"
@@ -292,7 +293,6 @@ function ClassConfirmationWidget({
     <WidgetFrame
       icon={ListChecksIcon}
       title="Xác nhận lớp học"
-      reference={`Gói gia sư ${data.tutorOfferingId}`}
       status={labels[data.status]}
       tone={data.status === "CONFIRMED" ? "success" : "primary"}
       footer={
@@ -360,7 +360,7 @@ function PaymentRequestWidget({
     <WidgetFrame
       icon={CreditCardIcon}
       title="Thanh toán lớp học"
-      reference={`Lớp ${data.classId} · Mã ${data.orderCode}`}
+      reference={`Mã đơn ${data.orderCode}`}
       status={labels[data.status]}
       tone={
         data.status === "PAID"
@@ -407,7 +407,7 @@ function PaymentRequestWidget({
         </p>
       </div>
       {data.status === "PAID" ? (
-        <p className="flex items-center gap-2 text-xs font-semibold text-secondary">
+        <p className="flex items-center gap-2 text-xs font-semibold text-foreground">
           <CheckCircleIcon width={17} height={17} aria-hidden="true" /> Thanh
           toán thành công lúc {data.paidAt ? dateTime(data.paidAt) : "—"}
         </p>
@@ -458,7 +458,6 @@ function ScheduleClassesWidget({
     <WidgetFrame
       icon={CalendarCheckIcon}
       title="Lịch các buổi học"
-      reference={`Lớp ${data.classId}`}
       status={statusLabels[data.status]}
       tone={data.status === "SCHEDULED" ? "success" : "primary"}
       footer={

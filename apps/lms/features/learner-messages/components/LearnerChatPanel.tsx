@@ -32,11 +32,11 @@ export function LearnerChatPanel({ conversationId }: { conversationId: string })
   return (
     <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-card lg:rounded-3xl lg:border lg:border-border" aria-label={`Cuộc trò chuyện với ${conversation.tutor.name}`}>
       <header className="flex shrink-0 items-center gap-3 border-b border-border px-3 py-3 sm:px-4">
-        <Link href="/lms/learner/chat" aria-label="Quay lại danh sách tin nhắn" className="grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground hover:bg-muted lg:hidden"><ArrowLeft width={19} height={19} /></Link>
+        <Link href="/lms/learner/chat" aria-label="Quay lại danh sách tin nhắn" className="grid size-11 shrink-0 place-items-center rounded-xl text-muted-foreground hover:bg-muted lg:hidden"><ArrowLeft width={19} height={19} /></Link>
         <span className={`grid size-10 shrink-0 place-items-center rounded-full text-xs font-extrabold ${isClosed ? "bg-border text-muted-foreground" : "bg-muted text-primary"}`}>{conversation.tutor.initials}</span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="truncate text-sm font-extrabold text-foreground sm:text-base">{conversation.tutor.name}</h1>
+            <h1 className="truncate text-sm font-extrabold text-primary sm:text-base">{conversation.tutor.name}</h1>
             {!isClosed && conversation.tutor.isOnline ? <span className="shrink-0 text-xs font-semibold text-foreground">Đang online</span> : null}
           </div>
           <p className="truncate text-xs text-muted-foreground">{conversation.className}</p>
@@ -65,7 +65,7 @@ export function LearnerChatPanel({ conversationId }: { conversationId: string })
             <span className="sr-only">Nội dung tin nhắn</span>
             <textarea value={text} onChange={(event) => setText(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} rows={1} placeholder="Nhập tin nhắn cho gia sư..." className="max-h-28 min-h-11 w-full resize-none rounded-xl border border-input bg-muted px-4 py-2.5 text-sm leading-6 outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20" />
           </label>
-          <button type="submit" disabled={!text.trim() || sending} aria-label="Gửi tin nhắn" className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-white transition-transform hover:bg-primary/90 active:scale-[0.96] disabled:cursor-not-allowed disabled:opacity-40"><PaperPlaneTilt width={18} height={18} /></button>
+          <button type="submit" disabled={!text.trim() || sending} aria-label="Gửi tin nhắn" className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground transition-transform hover:bg-primary/90 active:scale-[0.96] disabled:cursor-not-allowed disabled:opacity-40"><PaperPlaneTilt width={18} height={18} /></button>
         </form>
       )}
     </section>
@@ -73,5 +73,5 @@ export function LearnerChatPanel({ conversationId }: { conversationId: string })
 }
 
 function MissingConversation() {
-  return <div className="grid h-full flex-1 place-items-center bg-card p-6 text-center lg:rounded-2xl lg:border lg:border-border"><div><WarningCircle className="mx-auto text-warning" width={34} height={34} /><h1 className="mt-3 text-lg font-extrabold text-foreground">Không tìm thấy cuộc trò chuyện</h1><Link href="/lms/learner/chat" className="mt-4 inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-bold text-white">Quay lại danh sách</Link></div></div>;
+  return <div className="grid h-full flex-1 place-items-center bg-card p-6 text-center lg:rounded-2xl lg:border lg:border-border"><div><WarningCircle className="mx-auto text-warning" width={34} height={34} /><h1 className="mt-3 text-lg font-extrabold text-primary">Không tìm thấy cuộc trò chuyện</h1><Link href="/lms/learner/chat" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground">Quay lại danh sách</Link></div></div>;
 }
