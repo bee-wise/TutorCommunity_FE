@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeftIcon as ArrowLeft,
   LockClosedIcon as LockKeyhole,
@@ -11,6 +12,9 @@ import {
 import { formatWorkspaceTime, initials } from "../utils/format";
 import { participantName, type WorkspaceRoom } from "../types/workspace";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
+
+const BEEWISE_LOGO_FULL =
+  "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_256/v1790065308/Logo_2.png";
 
 export type StatusFilter = "ACTIVE" | "CLOSED" | "ALL";
 export type ChatKind = "group" | "private";
@@ -112,6 +116,21 @@ export function ConversationList({
             )}
           </button>
         </div>
+
+        <Link
+          href="/consultant/tutors"
+          aria-label="BeeWise - Danh sách gia sư"
+          className="relative mb-3 block h-8 w-32"
+        >
+          <Image
+            src={BEEWISE_LOGO_FULL}
+            alt="BeeWise"
+            fill
+            sizes="128px"
+            className="object-contain object-left"
+            priority
+          />
+        </Link>
 
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">

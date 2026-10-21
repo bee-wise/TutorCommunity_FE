@@ -43,7 +43,7 @@ export function ConfirmationWidgetPanel({
   const completedTrials =
     model.trials.data?.filter(
       (item) =>
-        item.status === "CONFIRMED" &&
+        (item.status === "SCHEDULED" || item.status === "CONFIRMED") &&
         !!item.scheduledEndAt &&
         new Date(item.scheduledEndAt).getTime() <= model.trials.dataUpdatedAt,
     ) ?? [];
