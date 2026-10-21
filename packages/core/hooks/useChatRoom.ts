@@ -70,6 +70,36 @@ export function useChatRoom(roomId: string) {
     : [];
 
   const latestMessageId = messages.at(-1)?.id;
+  const lastReadMessageId = room?.lastReadMessageId;
+  const lastReadRequestedRef = useRef<string | null>(null);
+  const { mutate: markRead } = useMutation({
+    mutationFn: (messageId: string) => chatRoomsService.markRead(roomId, messageId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.list });
+      void queryClient.invalidateQueries({ queryKey: [queryKeys.authKey.getMe] });
+    },
+    onError: () => {
+      lastReadRequestedRef.current = null;
+    },
+  });
+
+  // Only mark read while the room is actually visible; BE keeps the marker monotonic.
+  useEffect(() => {
+    if (!latestMessageId || history.isPending || !room) return;
+    const markVisibleRoomRead = () => {
+      if (
+        document.visibilityState !== "visible" ||
+        lastReadMessageId === latestMessageId ||
+        lastReadRequestedRef.current === latestMessageId
+      ) return;
+      lastReadRequestedRef.current = latestMessageId;
+      markRead(latestMessageId);
+    };
+    markVisibleRoomRead();
+    document.addEventListener("visibilitychange", markVisibleRoomRead);
+    return () => document.removeEventListener("visibilitychange", markVisibleRoomRead);
+  }, [latestMessageId, lastReadMessageId, history.isPending, room, markRead]);
+
   useEffect(() => {
     if (!latestMessageId) return;
     const isInitialForRoom = initialScrollDoneRef.current !== roomId;

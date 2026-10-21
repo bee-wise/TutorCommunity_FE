@@ -82,7 +82,7 @@ export function MessageDetailsDialog({
           {/* Sender info */}
           <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 p-3">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-primary">
                 <User width={15} height={15} />
               </div>
               <div>

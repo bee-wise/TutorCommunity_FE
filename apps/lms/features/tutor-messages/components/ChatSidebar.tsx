@@ -7,7 +7,7 @@ import {
   ChatBubbleLeftRightIcon as MessageCircleIcon,
   ArrowLeftIcon as ArrowLeft,
 } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMessages } from "../hooks/useMessages";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
@@ -107,23 +107,11 @@ function RoomRow({
 }
 
 export function ChatSidebar() {
-  const { rooms, loading, error, refetch, markRead } = useMessages({ live: true });
+  const { rooms, loading, error, refetch } = useMessages({ live: true });
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const currentUserRole: ChatParticipantRole = "TUTOR";
   const activeRoom = rooms.find((room) => pathname?.endsWith(`/${room.id}`));
-  const activeRoomId = activeRoom?.id;
-  const activeLastMessageAt = activeRoom?.lastMessageAt;
-
-  useEffect(() => {
-    if (!activeRoomId || !activeLastMessageAt) return;
-    const markVisibleRoomRead = () => {
-      if (document.visibilityState === "visible") markRead(activeRoomId, activeLastMessageAt);
-    };
-    markVisibleRoomRead();
-    document.addEventListener("visibilitychange", markVisibleRoomRead);
-    return () => document.removeEventListener("visibilitychange", markVisibleRoomRead);
-  }, [activeRoomId, activeLastMessageAt, markRead]);
   const [selectedCategory, setSelectedCategory] = useState<ChatRoomCategory | null>(null);
   const category = selectedCategory ?? activeRoom?.category ?? "CONNECTION";
 

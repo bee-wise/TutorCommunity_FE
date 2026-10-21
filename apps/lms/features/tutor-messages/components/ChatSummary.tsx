@@ -30,7 +30,7 @@ export function ChatRow({ room }: { room: ChatRoom }) {
       href={`/lms/tutor/messages/${room.id}`}
       className="flex flex-col gap-2 rounded-xl border border-border p-4 transition-all hover:border-primary/30 hover:bg-muted/40 active:scale-[0.98] sm:flex-row sm:items-center"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-black text-primary">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-black text-primary">
         {room.learner.initials}
       </div>
       <div className="min-w-0 flex-1">

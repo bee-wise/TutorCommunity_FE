@@ -24,9 +24,6 @@ export function DashboardWelcome() {
           <h1 className="mt-3 font-lms text-2xl font-extrabold leading-[1.2] text-primary-foreground sm:text-3xl">
             {getGreeting()}, {name}
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-primary-foreground/85">
-            Xem nhanh lịch dạy, việc cần làm và thông báo mới trong ngày.
-          </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <DashboardLink href="/lms/tutor/schedule" variant="accent">Mở lịch dạy</DashboardLink>
             <DashboardLink href="/lms/tutor/classes" variant="outline">Lớp học của tôi</DashboardLink>

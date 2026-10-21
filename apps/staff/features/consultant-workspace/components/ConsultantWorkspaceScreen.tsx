@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChatBubbleOvalLeftEllipsisIcon as MessageCircleMore,
 } from "@heroicons/react/24/outline";
@@ -13,7 +13,6 @@ import {
   useConsultantConversation,
   useConsultantRooms,
 } from "../hooks/useConsultantWorkspace";
-import { useConsultantUnread } from "../hooks/useConsultantUnread";
 import type { WorkspaceMessage, WorkspaceRoom } from "../types/workspace";
 import {
   ConversationList,
@@ -38,12 +37,7 @@ export function ConsultantWorkspaceScreen() {
   >({});
   const consultantId = useAuthStore((state) => state.user?.id) ?? "";
   const roomsQuery = useConsultantRooms();
-  const { unreadCounts, markRead } = useConsultantUnread(
-    consultantId,
-    roomsQuery.rooms,
-    privatePreviewRooms,
-    previewMessages,
-  );
+  const lastReadRequestedRef = useRef<string | null>(null);
 
   const previewRooms = privatePreviewRooms.map((room): WorkspaceRoom => {
     const list = previewMessages[room.id] ?? [];
@@ -55,14 +49,10 @@ export function ConsultantWorkspaceScreen() {
       status: closedPreviewIds.includes(room.id) ? "CLOSED" : room.status,
       closeReason: previewClosure[room.id]?.reason,
       closeNote: previewClosure[room.id]?.note,
-      unreadCount: unreadCounts[room.id] ?? 0,
     };
   });
 
-  const groupRooms = roomsQuery.rooms.map((room): WorkspaceRoom => ({
-    ...room,
-    unreadCount: unreadCounts[room.id] ?? 0,
-  }));
+  const groupRooms = roomsQuery.rooms;
 
   const allRooms = kind === "group" ? groupRooms : previewRooms;
   const normalizedQuery = query.trim().toLocaleLowerCase("vi");
@@ -92,17 +82,28 @@ export function ConsultantWorkspaceScreen() {
   const messages = selectedRoom?.isMock
     ? (previewMessages[selectedRoom.id] ?? [])
     : conversation.messages;
-  const latestMessageAt = messages.at(-1)?.createdAt;
+  const latestMessageId = messages.at(-1)?.id;
   const selectedRoomId = selectedRoom?.id;
   const selectedRoomIsMock = selectedRoom?.isMock ?? false;
+  const selectedLastReadId = selectedRoom?.lastReadMessageId;
+  const { markRead } = conversation;
 
   useEffect(() => {
-    if (!selectedRoomId || !latestMessageAt || (!selectedRoomIsMock && conversation.history.isLoading)) return;
+    if (!selectedRoomId || selectedRoomIsMock || !latestMessageId || conversation.history.isLoading) return;
     const desktop = window.matchMedia("(min-width: 1024px)");
     const markVisibleRoomRead = () => {
-      if (document.visibilityState === "visible" && (showConversationOnMobile || desktop.matches)) {
-        markRead(selectedRoomId, latestMessageAt);
-      }
+      if (
+        document.visibilityState !== "visible" ||
+        !(showConversationOnMobile || desktop.matches) ||
+        selectedLastReadId === latestMessageId ||
+        lastReadRequestedRef.current === latestMessageId
+      ) return;
+      lastReadRequestedRef.current = latestMessageId;
+      markRead(latestMessageId, {
+        onError: () => {
+          lastReadRequestedRef.current = null;
+        },
+      });
     };
     markVisibleRoomRead();
     desktop.addEventListener("change", markVisibleRoomRead);
@@ -111,7 +112,7 @@ export function ConsultantWorkspaceScreen() {
       desktop.removeEventListener("change", markVisibleRoomRead);
       document.removeEventListener("visibilitychange", markVisibleRoomRead);
     };
-  }, [selectedRoomId, selectedRoomIsMock, latestMessageAt, conversation.history.isLoading, showConversationOnMobile, markRead]);
+  }, [selectedRoomId, selectedRoomIsMock, latestMessageId, selectedLastReadId, conversation.history.isLoading, showConversationOnMobile, markRead]);
 
   const activeCount = allRooms.filter(
     (room) => room.status === "ACTIVE",
@@ -140,11 +141,9 @@ export function ConsultantWorkspaceScreen() {
         ...current,
         [selectedRoom.id]: [...(current[selectedRoom.id] ?? []), next],
       }));
-      markRead(selectedRoom.id, next.createdAt);
       return;
     }
-    const sent = await conversation.sendMessage(content);
-    markRead(selectedRoom.id, sent.createdAt);
+    await conversation.sendMessage(content);
   }
 
   async function closeRoom(reason: string, note?: string) {
@@ -185,11 +184,6 @@ export function ConsultantWorkspaceScreen() {
             onQueryChange={setQuery}
             onSelect={(id) => {
               setSelectedId(id);
-              const room = allRooms.find((item) => item.id === id);
-              const throughAt = room?.isMock
-                ? previewMessages[id]?.at(-1)?.createdAt
-                : room?.lastMessageAt;
-              if (throughAt) markRead(id, throughAt);
               setShowConversationOnMobile(true);
             }}
             kind={kind}

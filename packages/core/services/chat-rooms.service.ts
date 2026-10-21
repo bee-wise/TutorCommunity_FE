@@ -51,9 +51,17 @@ const roomSchema = z.object({
   closedBy: z.string().nullable().optional(),
   recipientUserId: z.string().nullable().optional(),
   recipientName: z.string().nullable().optional(),
+  unreadCount: z.number().int().nonnegative().nullish(),
+  lastReadMessageId: z.string().nullish(),
   createdAt: z.string().default(() => new Date().toISOString()),
   updatedAt: z.string().default(() => new Date().toISOString()),
   participants: z.array(participantSchema).nullable().optional(),
+}).passthrough();
+
+const readReceiptSchema = z.object({
+  roomId: z.string(),
+  lastReadMessageId: z.string().nullable(),
+  unreadCount: z.number().int().nonnegative(),
 }).passthrough();
 
 const roomListSchema = z.object({
@@ -239,6 +247,14 @@ export const chatRoomsService = {
       { content },
     );
     return dataOf(messageSchema, response);
+  },
+
+  async markRead(id: string, throughMessageId: string) {
+    const response: unknown = await apiClient.post(
+      `/chat-rooms/${encodeURIComponent(id)}/read`,
+      { throughMessageId },
+    );
+    return dataOf(readReceiptSchema, response);
   },
 
   async closeRoom(id: string, closeReason: string, closeNote?: string) {

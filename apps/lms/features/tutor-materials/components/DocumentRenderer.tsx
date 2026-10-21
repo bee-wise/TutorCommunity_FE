@@ -104,7 +104,7 @@ export function DocumentRenderer({ data }: { data: AIAnalyzeResponse }) {
               <Collapsible className="group mt-4 overflow-hidden rounded-2xl border border-border/80 bg-muted/20 transition-all hover:border-primary/40">
 <CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between px-4 py-3 font-lms text-sm font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
                   <span className="flex items-center gap-2.5">
-                    <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-primary">
                       <CheckCircle width={16} height={16} />
                     </span>
                     <span>Xem lời giải chi tiết</span>

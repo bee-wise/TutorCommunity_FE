@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 const tones = {
-  primary: "bg-primary/10 text-primary",
+  primary: "bg-muted text-primary",
   accent: "bg-accent/20 text-warning",
   secondary: "bg-secondary/15 text-foreground",
 };

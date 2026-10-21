@@ -335,7 +335,7 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary">
                   <CalendarDaysIcon className="size-4.5" aria-hidden="true" />
                 </span>
                 <h2
@@ -420,7 +420,7 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
                 className="flex items-center justify-between rounded-2xl border border-border/70 bg-card p-3 text-xs font-bold text-foreground transition-all hover:border-primary/30 hover:bg-muted/50 active:scale-[0.98]"
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-primary">
                     <FolderIcon className="size-4" aria-hidden="true" />
                   </span>
                   <span>Kho tài liệu & Đề thi AI</span>

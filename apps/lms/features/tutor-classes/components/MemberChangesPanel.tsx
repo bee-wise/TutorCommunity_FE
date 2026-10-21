@@ -104,7 +104,7 @@ export function MemberChangesPanel({
     <section aria-labelledby="member-changes-title" className={`${classPanel} space-y-5`}>
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-4">
         <div className="flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary"><ClipboardDocumentListIcon className="size-5" aria-hidden="true" /></span>
+          <span className="grid size-10 place-items-center rounded-xl bg-muted text-primary"><ClipboardDocumentListIcon className="size-5" aria-hidden="true" /></span>
           <h2 id="member-changes-title" className="font-lms text-lg font-extrabold text-foreground">Yêu cầu thay đổi thành viên</h2>
         </div>
         {!readOnly && (
@@ -218,7 +218,7 @@ export function MemberChangesPanel({
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="grid size-9 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <span className="grid size-9 place-items-center rounded-xl bg-muted text-primary">
                       {request.operation === "REMOVE" ? (
                         <ArrowDownCircleIcon
                           className="size-5"
