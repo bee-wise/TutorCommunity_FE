@@ -334,7 +334,8 @@ test("directory uses total and tab counts, not visible page length", () => {
   const html = render(LearnerClassesScreen, {}, cache);
   assert.match(html, /19 lớp phù hợp/);
   assert.match(html, /Lớp nhóm \(8\)|Lớp 1:1 \(11\)/);
-  assert.match(html, /TEST-L1/);
+  assert.match(html, /Lớp kiểm thử tích hợp/);
+  assert.doesNotMatch(html, /TEST-L1/);
   assert.doesNotMatch(html, /Dữ liệu minh họa/);
   cache.clear();
 });
@@ -347,8 +348,9 @@ test("overview/sidebar share authorized identity and deferred modules stay gated
       { workspace: { classId: id, section: "overview" } },
       cache,
     );
-  assert.match(overview, /Nội dung &amp; lịch học|4.*buổi/);
-  assert.match(overview, /<h1[^>]*>Lớp kiểm thử/);
+  assert.match(overview, /Thông tin lớp|4.*buổi/);
+  assert.match(overview, /<h1[^>]*>Toán/);
+  assert.match(overview, /Lớp kiểm thử tích hợp/);
   assert.match(sidebar, /Lớp kiểm thử tích hợp/);
   assert.match(sidebar, /BeeWiseLMS-Logo-500x150.svg/);
   assert.match(sidebar, /chưa tích hợp/);

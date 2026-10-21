@@ -14,16 +14,18 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
+import { LmsClassHeader } from "../../../components/LmsClassHeader";
+import { getClassNaming } from "../../../components/lms-class-naming";
 import { useClassMembers } from "../hooks/useClassMembers";
 import { getClassWorkspaceLinks } from "../utils/class-workspace.utils";
-import { formatClassDate, formatClassIdentifier } from "../utils/classes.utils";
+import { formatClassDate } from "../utils/classes.utils";
 import { ClassLearnerIdentity } from "./ClassLearnerIdentity";
 import { ClassMissingState } from "./ClassMissingState";
 import { ClassPagination } from "./ClassPagination";
 import { ClassWorkspaceSkeleton } from "./ClassWorkspaceSkeleton";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import { MemberChangesPanel } from "./MemberChangesPanel";
-import { ClassKindBadge, ClassStatusBadge } from "./ClassBadges";
+import { ClassStatusBadge } from "./ClassBadges";
 import { classInput, classPage } from "./classes-ui";
 
 type Member = ReturnType<typeof useClassMembers>["members"][number];
@@ -57,12 +59,6 @@ function MemberCard({ learner }: { learner: Member }) {
               </span>
             </div>
           )}
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="text-muted-foreground">Mã học viên:</span>
-            <span className="font-mono font-bold tabular-nums text-primary">
-              {formatClassIdentifier(learner.id)}
-            </span>
-          </div>
           <div className="flex items-baseline justify-between gap-2">
             <span className="inline-flex items-center gap-1.5 text-muted-foreground">
               <CalendarDaysIcon className="size-3.5" aria-hidden="true" />
@@ -111,6 +107,7 @@ export function ClassMembersScreen({ classId }: { classId: string }) {
   const details = list.classInfo.serverDetails;
   const isHistory = list.mode === "history";
   const capacity = details?.capacity;
+  const naming = getClassNaming({ ...details, title: list.classInfo.title });
   const learnerCount = details?.learnerCount ?? list.total;
   const fillRate =
     capacity && capacity > 0
@@ -123,43 +120,29 @@ export function ClassMembersScreen({ classId }: { classId: string }) {
 
   return (
     <div className={classPage}>
-      {/* Header & Navigation strip matching ClassDetailScreen and ClassSessionsScreen */}
-      <header className="space-y-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border/70 pb-4">
-          <div>
-            <h1 className="font-lms text-2xl font-extrabold text-primary sm:text-3xl">
-              Thành viên lớp
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-2.5 rounded-2xl border border-border/80 bg-card px-4 py-2 shadow-2xs">
-            <UsersIcon className="size-5 text-primary" aria-hidden="true" />
-            <div className="text-right sm:text-left">
-              <p className="text-xs font-bold text-muted-foreground">
-                Tổng sĩ số lớp
-              </p>
-              <p className="font-lms text-sm font-extrabold text-foreground">
-                {learnerCount}
-                {capacity !== undefined && (
-                  <span className="font-normal text-muted-foreground">
-                    {" "}
-                    / {capacity} học viên
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {list.classInfo.status === "completed" && (
-          <p
-            className="rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary shadow-2xs"
-            role="status"
-          >
-            Lớp đã kết thúc. Tin nhắn, tài liệu và điểm danh ở chế độ chỉ xem.
-          </p>
-        )}
-      </header>
+      <LmsClassHeader
+        field={naming.field}
+        subject={naming.subject}
+        name={naming.name}
+        level={naming.level}
+        badges={
+          <>
+            <ClassStatusBadge status={list.classInfo.status} />
+            <span className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-bold tabular-nums">
+              {learnerCount}
+              {capacity !== undefined ? ` / ${capacity}` : ""} học viên
+            </span>
+          </>
+        }
+        notice={
+          list.classInfo.status === "completed" ? (
+            <p role="status" className="rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary">
+              Lớp đã kết thúc. Tin nhắn, tài liệu và điểm danh ở chế độ chỉ xem.
+            </p>
+          ) : undefined
+        }
+      />
+      <h2 className="font-lms text-xl font-extrabold">Thành viên lớp</h2>
 
       {/* Roster Section with Toolbar & Grid */}
       <section aria-labelledby="class-member-list-title" className="space-y-4">

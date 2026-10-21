@@ -9,6 +9,8 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
+import { LmsClassHeader } from "../../../components/LmsClassHeader";
+import { getClassKindLabel, getClassNaming } from "../../../components/lms-class-naming";
 import { LearnerClassQueryError } from "./LearnerClassQueryError";
 import { useLearnerSessionsQuery } from "../hooks/useLearnerSessionsQuery";
 import {
@@ -42,77 +44,50 @@ export function LearnerClassSessionsScreen({ classId }: { classId: string }) {
     );
 
   const data = overview.data;
+  const naming = getClassNaming(data);
   const query = view === "planned" ? planned : actual;
 
   return (
     <div className="mx-auto max-w-[1300px] space-y-6 px-4 py-6 text-foreground sm:px-6 lg:px-8">
-      {/* Header Area */}
-      <header className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-border bg-card px-3 py-0.5 font-mono text-xs font-bold text-muted-foreground shadow-2xs">
-              {data.code ?? data.id}
-            </span>
+      <LmsClassHeader
+        field={naming.field}
+        subject={naming.subject}
+        name={naming.name}
+        level={naming.level}
+        badges={
+          <>
             <LearnerClassStatus status={data.status} />
-            <span className="inline-flex rounded-full border border-border bg-card px-2.5 py-0.5 text-xs font-bold text-foreground shadow-2xs">
-              {data.type === "GROUP"
-                ? "Lớp nhóm"
-                : data.type === "INDIVIDUAL"
-                  ? "Lớp 1:1"
-                  : "Chưa xác định loại lớp"}
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              asChild
-              variant="outline"
-              className="min-h-10 rounded-xl border-border bg-card px-3.5 text-xs font-bold text-foreground hover:bg-muted transition-all active:scale-[0.98]"
-            >
-              <Link href={"/lms/learner/classes/" + classId}>
-                <InformationCircleIcon className="size-4" aria-hidden="true" />
-                <span>Thông tin lớp</span>
-              </Link>
+            <span className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-bold">{getClassKindLabel(data.type)}</span>
+          </>
+        }
+        actions={
+          <>
+            <Button asChild variant="outline" className="min-h-11">
+              <Link href={"/lms/learner/classes/" + classId}><InformationCircleIcon className="size-4" aria-hidden="true" />Thông tin lớp</Link>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="min-h-10 rounded-xl border-border bg-card px-3.5 text-xs font-bold text-foreground hover:bg-muted transition-all active:scale-[0.98]"
-            >
-              <Link href={"/lms/learner/chat/classes/" + classId}>
-                <ChatBubbleLeftRightIcon className="size-4" aria-hidden="true" />
-                <span>Tin nhắn lớp</span>
-              </Link>
+            <Button asChild variant="outline" className="min-h-11">
+              <Link href={"/lms/learner/chat/classes/" + classId}><ChatBubbleLeftRightIcon className="size-4" aria-hidden="true" />Tin nhắn lớp</Link>
             </Button>
-          </div>
-        </div>
+          </>
+        }
+      />
 
-        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border/70 pb-4">
-          <div>
-            <h1 className="font-lms text-2xl font-extrabold sm:text-3xl">
-              Buổi học
-            </h1>
-            <p className="mt-1 text-sm font-semibold text-muted-foreground">
-              {data.title ?? data.code}
-              {data.teachingItemName ? ` · ${data.teachingItemName}` : ""}
-            </p>
-          </div>
-
-          <div role="group" aria-label="Cách xem buổi học" className="flex gap-2">
-            {(["list", "planned"] as const).map((value) => (
-              <Button
-                key={value}
-                className={`${learnerAction} ${view === value ? "shadow-soft font-bold" : ""}`}
-                aria-pressed={view === value}
-                variant={view === value ? "default" : "outline"}
-                onClick={() => listing.changeView(value)}
-              >
-                {value === "list" ? "Buổi học thực tế" : "Lịch dự kiến"}
-              </Button>
-            ))}
-          </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-lms text-xl font-extrabold">Buổi học</h2>
+        <div role="group" aria-label="Cách xem buổi học" className="flex gap-2">
+          {(["list", "planned"] as const).map((value) => (
+            <Button
+              key={value}
+              className={`${learnerAction} ${view === value ? "shadow-soft font-bold" : ""}`}
+              aria-pressed={view === value}
+              variant={view === value ? "default" : "outline"}
+              onClick={() => listing.changeView(value)}
+            >
+              {value === "list" ? "Buổi học thực tế" : "Lịch dự kiến"}
+            </Button>
+          ))}
         </div>
-      </header>
+      </div>
 
       {/* Filter toolbar when viewing actual sessions */}
       {view === "list" && (
