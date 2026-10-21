@@ -47,50 +47,6 @@ export interface FilterState {
   status: string;
 }
 
-export const STATUS_LABELS: Record<SessionStatus, string> = {
-  UPCOMING: "Sắp diễn ra",
-  IN_PROGRESS: "Đang diễn ra",
-  COMPLETED: "Đã hoàn thành",
-  CANCELED: "Đã hủy",
-  RESCHEDULED: "Đã đổi lịch",
-};
-
-export const STATUS_COLORS: Record<
-  SessionStatus,
-  { bg: string; text: string; border: string; dot: string }
-> = {
-  UPCOMING: {
-    bg: "bg-accent/20",
-    text: "text-warning",
-    border: "border-accent/40",
-    dot: "bg-warning",
-  },
-  IN_PROGRESS: {
-    bg: "bg-card",
-    text: "text-primary",
-    border: "border-primary",
-    dot: "bg-primary",
-  },
-  COMPLETED: {
-    bg: "bg-secondary/15",
-    text: "text-foreground",
-    border: "border-secondary/30",
-    dot: "bg-secondary",
-  },
-  CANCELED: {
-    bg: "bg-muted",
-    text: "text-muted-foreground",
-    border: "border-border",
-    dot: "bg-muted-foreground",
-  },
-  RESCHEDULED: {
-    bg: "bg-card",
-    text: "text-muted-foreground",
-    border: "border-dashed border-border",
-    dot: "bg-muted-foreground",
-  },
-};
-
 export const SUBJECT_OPTIONS = [
   { value: "all", label: "Tất cả môn" },
   { value: "Toán", label: "Toán" },

@@ -1,31 +1,18 @@
 "use client";
 
-import { ArrowRightCircleIcon as ExternalLink, EyeIcon as Eye } from "@heroicons/react/24/outline";
-import { cn } from "@workspace/core/helpers/utils";
+import { EyeIcon, VideoCameraIcon } from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
+import { EmptyState } from "@workspace/ui/components/ui/empty-state";
+import { LmsStatusBadge } from "@/components/LmsStatusBadge";
+import { LMS_SESSION_STATUS } from "@/components/lms-session-status";
 import type { Session } from "../types/schedule.types";
-import { STATUS_COLORS, STATUS_LABELS } from "../types/schedule.types";
 
 interface ListViewProps {
   sessions: Session[];
   onSessionClick: (session: Session) => void;
 }
 
-function StatusBadge({ status }: { status: Session["status"] }) {
-  const colors = STATUS_COLORS[status];
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border",
-        colors.bg,
-        colors.text,
-        colors.border,
-      )}
-    >
-      <span className={cn("size-1.5 rounded-full shrink-0", colors.dot)} />
-      {STATUS_LABELS[status]}
-    </span>
-  );
-}
+const HEADERS = ["Mã lớp", "Môn học", "Học viên", "Thời gian", "Học phí", "Phòng học", "Trạng thái", "Thao tác"];
 
 function formatDate(dateStr: string): string {
   const [y, m, d] = dateStr.split("-");
@@ -34,167 +21,75 @@ function formatDate(dateStr: string): string {
 
 function formatFee(fee?: number): string {
   if (fee == null) return "—";
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(fee);
+  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(fee);
+}
+
+function SessionStatus({ session }: { session: Session }) {
+  const status = LMS_SESSION_STATUS[session.status];
+  return <LmsStatusBadge status={status.tone} label={status.label} />;
+}
+
+function RoomCell({ session, onSessionClick }: { session: Session; onSessionClick: (session: Session) => void }) {
+  if (session.source === "PLANNED") return <span className="text-xs font-medium italic text-muted-foreground">Lịch dự kiến</span>;
+  if (session.status === "IN_PROGRESS") {
+    return (
+      <Button type="button" size="sm" className="min-h-11 text-xs" onClick={() => onSessionClick(session)}>
+        <VideoCameraIcon className="size-3.5" aria-hidden="true" />
+        Vào phòng
+      </Button>
+    );
+  }
+  if (session.status === "UPCOMING") return <span className="text-xs font-medium text-muted-foreground">Chưa đến giờ</span>;
+  return <span className="text-xs text-muted-foreground">—</span>;
 }
 
 export function ListView({ sessions, onSessionClick }: ListViewProps) {
   if (sessions.length === 0) {
-    return (
-      <div className="rounded-2xl border border-border/60 bg-card shadow-sm">
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <div className="size-14 rounded-2xl bg-muted/60 flex items-center justify-center">
-            <Eye
-              className="size-7 text-muted-foreground/40"
-            />
-          </div>
-          <p className="text-sm font-semibold text-muted-foreground">
-            Không có buổi học nào phù hợp
-          </p>
-          <p className="text-xs text-muted-foreground/70">
-            Thử thay đổi bộ lọc để xem thêm kết quả.
-          </p>
-        </div>
-      </div>
-    );
+    return <EmptyState imageAlt="" title="Không có buổi học nào phù hợp" description="Thử thay đổi bộ lọc để xem thêm kết quả." />;
   }
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
+    <section className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft" aria-label="Danh sách buổi dạy">
+      {/* Phones: one card per session; the whole card opens the detail sheet. */}
+      <ul className="divide-y divide-border md:hidden">
+        {sessions.map((session) => (
+          <li key={session.id}>
+            <button type="button" onClick={() => onSessionClick(session)} className="block min-h-11 w-full space-y-2 px-4 py-4 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
+              <span className="flex items-center justify-between gap-2">
+                <span className="text-sm font-extrabold tabular-nums">{formatDate(session.date)} · {session.startTime} – {session.endTime}</span>
+                <SessionStatus session={session} />
+              </span>
+              <span className="block text-sm font-bold">{session.subject}{session.subjectLevel ? ` ${session.subjectLevel}` : ""}</span>
+              <span className="block text-xs text-muted-foreground">{session.studentFullName}{session.source === "PLANNED" ? " · Lịch dự kiến" : ""}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-sm">
-          {/* Sticky header */}
           <thead>
-            <tr className="border-b border-border/60 bg-muted/30">
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                Mã lớp
-              </th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                Môn học
-              </th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                Học viên
-              </th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                Thời gian
-              </th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                Học phí
-              </th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                Phòng học
-              </th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                Trạng thái
-              </th>
-              <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                Thao tác
-              </th>
+            <tr className="border-b border-border bg-muted">
+              {HEADERS.map((header, index) => (
+                <th key={header} scope="col" className={`whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-wide text-muted-foreground ${index === HEADERS.length - 1 ? "text-right" : "text-left"}`}>{header}</th>
+              ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/30">
+          <tbody className="divide-y divide-border">
             {sessions.map((session) => (
-              <tr
-                key={session.id}
-                className="group transition-colors duration-100 hover:bg-muted/30 cursor-pointer"
-                onClick={() => onSessionClick(session)}
-              >
-                {/* Class ID */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <span className="font-mono text-xs text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-md">
-                    {session.classId}
-                  </span>
-                </td>
-
-                {/* Subject */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <span className="font-semibold text-foreground">
-                    {session.subject}
-                  </span>
-                  <span className="text-muted-foreground ml-1 text-xs">
-                    {session.subjectLevel}
-                  </span>
-                </td>
-
-                {/* Student */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <div className="size-7 rounded-full bg-muted flex items-center justify-center shrink-0">
-                      <span className="text-[10px] font-bold text-primary">
-                        {session.studentFullName.charAt(0)}
-                      </span>
-                    </div>
-                    <span className="font-medium text-foreground text-sm">
-                      {session.studentFullName}
-                    </span>
-                  </div>
-                </td>
-
-                {/* Date & Time */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <p className="font-medium text-foreground">
-                    {formatDate(session.date)}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {session.startTime} – {session.endTime}
-                  </p>
-                </td>
-
-                {/* Fee */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <span className="font-semibold text-foreground text-sm">
-                    {formatFee(session.feeVnd)}
-                  </span>
-                </td>
-
-                {/* Classroom Link */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  {session.source === "PLANNED" ? (
-                    <span className="text-muted-foreground/60 text-xs italic font-medium">
-                      Lịch dự kiến
-                    </span>
-                  ) : session.status === "IN_PROGRESS" ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSessionClick(session);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-xs"
-                    >
-                      <ExternalLink className="size-3" />
-                      Vào phòng
-                    </button>
-                  ) : session.status === "UPCOMING" ? (
-                    <span className="text-muted-foreground text-xs font-medium">
-                      Chưa đến giờ
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground/40 text-xs">—</span>
-                  )}
-                </td>
-
-                {/* Status */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <StatusBadge status={session.status} />
-                </td>
-
-                {/* Actions */}
-                <td className="px-4 py-3.5 whitespace-nowrap text-right">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSessionClick(session);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground border border-border/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-150"
-                  >
-                    <Eye className="size-3.5" />
+              <tr key={session.id} className="transition-colors hover:bg-muted">
+                <td className="whitespace-nowrap px-4 py-3.5"><span className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">{session.classCode ?? session.classId.slice(0, 8)}</span></td>
+                <td className="whitespace-nowrap px-4 py-3.5"><span className="font-bold">{session.subject}</span><span className="ml-1 text-xs text-muted-foreground">{session.subjectLevel}</span></td>
+                <td className="whitespace-nowrap px-4 py-3.5 font-medium">{session.studentFullName}</td>
+                <td className="whitespace-nowrap px-4 py-3.5"><p className="font-medium tabular-nums">{formatDate(session.date)}</p><p className="mt-0.5 text-xs tabular-nums text-muted-foreground">{session.startTime} – {session.endTime}</p></td>
+                <td className="whitespace-nowrap px-4 py-3.5 font-bold tabular-nums">{formatFee(session.feeVnd)}</td>
+                <td className="whitespace-nowrap px-4 py-3.5"><RoomCell session={session} onSessionClick={onSessionClick} /></td>
+                <td className="whitespace-nowrap px-4 py-3.5"><SessionStatus session={session} /></td>
+                <td className="whitespace-nowrap px-4 py-3.5 text-right">
+                  <Button type="button" variant="outline" size="sm" className="min-h-11 text-xs" onClick={() => onSessionClick(session)}>
+                    <EyeIcon className="size-3.5" aria-hidden="true" />
                     Chi tiết
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -202,16 +97,9 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
         </table>
       </div>
 
-      {/* Footer */}
-      <div className="px-4 py-3 border-t border-border/40 bg-muted/20 flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">
-          Hiển thị{" "}
-          <span className="font-semibold text-foreground">
-            {sessions.length}
-          </span>{" "}
-          buổi học
-        </p>
-      </div>
-    </div>
+      <p className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
+        Hiển thị <span className="font-bold text-foreground">{sessions.length}</span> buổi học
+      </p>
+    </section>
   );
 }
