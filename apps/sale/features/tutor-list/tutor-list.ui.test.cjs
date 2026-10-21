@@ -23,6 +23,13 @@ test("Tutor Card uses a large image and an inline best-match badge", () => {
   assert.doesNotMatch(card, /ribbon/i);
 });
 
+test("Tutor Card formats contextName and teachingItemName and provides extra offerings tooltip", () => {
+  assert.match(card, /formatOfferingCombination/);
+  assert.match(card, /TooltipProvider/);
+  assert.match(card, /TooltipContent/);
+  assert.match(card, /Tất cả môn giảng dạy/);
+});
+
 test("Tutor Search UI keeps search local and exposes loading and empty states", () => {
   assert.doesNotMatch(controller, /axios|apiClient|fetch\(/);
   assert.match(results, /TutorCardSkeleton/);

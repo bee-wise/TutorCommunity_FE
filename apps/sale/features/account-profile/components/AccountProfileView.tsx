@@ -50,7 +50,7 @@ export function AccountProfileView({ user }: { user: MeType }) {
             <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
               Không gian của bạn
             </p>
-            <h1 className="font-nunito text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+            <h1 className="font-nunito text-3xl font-black tracking-tight text-primary sm:text-4xl">
               Tài khoản cá nhân
             </h1>
           </div>

@@ -20,10 +20,42 @@ import {
   XIcon,
   InfoIcon,
 } from "@phosphor-icons/react";
-import type { ApiTutorProfile } from "../data/types";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@workspace/ui/components/ui/tooltip";
+import type { ApiTutorProfile, TutorTeachingOfferingItem } from "../data/types";
 import { getTeachingCapabilities } from "../utils/tutor-filter.utils";
 import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
 import { useTutorViewsQuery } from "../../tutor-profile/hooks/useTutorViewsQuery";
+
+export function formatOfferingCombination(
+  offering: TutorTeachingOfferingItem,
+): string {
+  const context = (
+    offering.contextName || offering.proposal?.contextName
+  )?.trim();
+  const item = (
+    offering.teachingItemName || offering.proposal?.teachingItemName
+  )?.trim();
+  const program = offering.programName?.trim();
+
+  if (context && item) {
+    if (context.toLowerCase() === item.toLowerCase()) {
+      return item;
+    }
+    if (item.toLowerCase().startsWith(context.toLowerCase())) {
+      return item;
+    }
+    return `${context} · ${item}`;
+  }
+
+  if (item) return item;
+  if (context) return context;
+  return program || "Môn học";
+}
 
 interface TutorCardProps {
   tutor: ApiTutorProfile;
@@ -147,15 +179,13 @@ export function TutorCard({
   const ModeIcon = modeInfo.icon;
 
   const offeringTags = (tutor.teachingOfferings || [])
-    .map(
-      (o) =>
-        o.teachingItemName || o.proposal?.teachingItemName || o.programName,
-    )
+    .map(formatOfferingCombination)
     .filter(Boolean) as string[];
 
   const tags = Array.from(new Set(offeringTags));
-  const visibleTags = tags.slice(0, 3);
-  const extraCount = Math.max(0, tags.length - visibleTags.length);
+  const visibleTags = tags.slice(0, 2);
+  const extraTags = tags.slice(2);
+  const extraCount = extraTags.length;
 
   const offeringMinPrice =
     tutor.teachingOfferings && tutor.teachingOfferings.length > 0
@@ -274,19 +304,51 @@ export function TutorCard({
           </p>
 
           {tags.length > 0 ? (
-            <div className="mt-2.5 flex min-h-7 flex-wrap content-start gap-1.5">
+            <div className="mt-2.5 flex min-h-7 flex-wrap content-start items-center gap-1.5">
               {visibleTags.map((tag, index) => (
                 <span
                   key={`${tag}-${index}`}
-                  className={`rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-primary" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
+                  title={tag}
+                  className={`line-clamp-1 max-w-[210px] truncate rounded-lg px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#eeeaff] text-primary" : "border border-[#e2e7ef] bg-[#f8fafc] text-[#475467]"}`}
                 >
                   {tag}
                 </span>
               ))}
               {extraCount > 0 && (
-                <span className="rounded-lg bg-[#f2f4f7] px-2.5 py-1 text-[11px] font-bold text-[#667085]">
-                  +{extraCount}
-                </span>
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                        className="inline-flex cursor-pointer items-center rounded-lg bg-[#f2f4f7] px-2 py-1 text-[11px] font-bold text-[#667085] transition-colors hover:bg-[#e4e7ec] hover:text-[#17131f]"
+                        aria-label={`Xem thêm ${extraCount} tổ hợp môn khác`}
+                      >
+                        +{extraCount}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      align="start"
+                      className="max-w-[280px] rounded-xl border border-[#dce3f0] bg-white p-3 text-[#17131f] shadow-xl"
+                    >
+                      <p className="text-xs font-bold text-[#17131f]">
+                        Tất cả môn giảng dạy ({tags.length}):
+                      </p>
+                      <ul className="mt-1.5 max-h-48 space-y-1 overflow-y-auto pr-1 text-xs text-[#475467]">
+                        {tags.map((tag, i) => (
+                          <li key={i} className="flex items-center gap-1.5">
+                            <span className="size-1.5 shrink-0 rounded-full bg-primary" />
+                            <span className="break-words font-medium">{tag}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
           ) : null}

@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowPathIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { Button } from "@workspace/ui/components/ui/button";
+import { parseVietnamDateTime } from "@workspace/core/lms-calendar";
 import { useScheduleFilters } from "./hooks/useScheduleFilters";
 import { OverviewCards } from "./components/OverviewCards";
 import { ControlBar } from "./components/ControlBar";
@@ -9,6 +12,16 @@ import { ListView } from "./components/ListView";
 import { SessionDetailSheet } from "./components/SessionDetailSheet";
 import type { Session, ViewMode } from "./types/schedule.types";
 
+const WEEKDAY_NAMES = [
+  "Chủ nhật",
+  "Thứ hai",
+  "Thứ ba",
+  "Thứ tư",
+  "Thứ năm",
+  "Thứ sáu",
+  "Thứ bảy",
+];
+
 export function TutorSchedulePage() {
   const [viewMode, setViewMode] = useState<ViewMode>("calendar");
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
@@ -16,13 +29,25 @@ export function TutorSchedulePage() {
 
   const {
     filters,
+    viewYear,
+    viewMonth,
+    handlePrevMonth,
+    handleNextMonth,
+    handleGoToday,
     filteredSessions,
-    todaySessions,
-    totalActiveSessions,
-    pendingRequests,
+    kpis,
+    isLoading,
+    isError,
+    error,
+    refetch,
     setSubjectFilter,
     setStatusFilter,
   } = useScheduleFilters();
+
+  const now = new Date();
+  const parsedNow = parseVietnamDateTime(now.toISOString());
+  const dayOfWeek = WEEKDAY_NAMES[now.getDay()];
+  const todayLabel = `${dayOfWeek}, ${String(parsedNow.day).padStart(2, "0")}/${String(parsedNow.month).padStart(2, "0")}/${parsedNow.year}`;
 
   function handleSessionClick(session: Session) {
     setSelectedSession(session);
@@ -31,40 +56,60 @@ export function TutorSchedulePage() {
 
   function handleSheetClose() {
     setSheetOpen(false);
-    // Keep selectedSession mounted briefly for exit animation
     setTimeout(() => setSelectedSession(null), 350);
   }
 
   return (
     <div className="min-h-full bg-muted">
       <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto space-y-6">
-        {/* ── Page Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <h1 className="text-2xl font-extrabold font-lms text-foreground leading-tight">
+              <h1 className="text-2xl font-extrabold font-lms text-primary leading-tight">
                 Lịch Dạy
               </h1>
             </div>
-
+            <p className="text-xs text-muted-foreground">
+              Quản lý lịch giảng dạy, các buổi học chính thức và lộ trình kế hoạch.
+            </p>
           </div>
 
-          {/* Date indicator */}
           <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-card border border-border/60 shadow-xs self-start sm:self-auto">
             <span className="text-sm font-semibold text-foreground">
-              Dữ liệu minh họa · 08/07/2026
+              {todayLabel}
             </span>
           </div>
         </div>
 
-        {/* ── Layer 1: KPI Cards ── */}
+        {isError && (
+          <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <ExclamationCircleIcon className="size-5 shrink-0" />
+              <p className="text-sm font-medium">
+                {error instanceof Error
+                  ? error.message
+                  : "Không thể tải dữ liệu lịch. Vui lòng thử lại."}
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={refetch}
+              className="gap-1.5"
+            >
+              <ArrowPathIcon className="size-3.5" />
+              Tải lại
+            </Button>
+          </div>
+        )}
+
         <OverviewCards
-          todayCount={todaySessions.length}
-          totalActiveCount={totalActiveSessions}
-          pendingCount={pendingRequests}
+          todayCount={kpis?.sessionsToday ?? 0}
+          totalActiveCount={kpis?.activeClasses ?? 0}
+          pendingCount={kpis?.upcomingSessions ?? 0}
         />
 
-        {/* ── Layer 2: Control Bar ── */}
         <ControlBar
           viewMode={viewMode}
           onViewModeChange={setViewMode}
@@ -73,12 +118,17 @@ export function TutorSchedulePage() {
           onStatusChange={setStatusFilter}
         />
 
-        {/* ── Layer 3: Schedule View ── */}
         <div>
           {viewMode === "calendar" ? (
             <CalendarView
               sessions={filteredSessions}
               onSessionClick={handleSessionClick}
+              viewYear={viewYear}
+              viewMonth={viewMonth}
+              onPrev={handlePrevMonth}
+              onNext={handleNextMonth}
+              onToday={handleGoToday}
+              isLoading={isLoading}
             />
           ) : (
             <ListView
@@ -89,7 +139,6 @@ export function TutorSchedulePage() {
         </div>
       </div>
 
-      {/* ── Session Detail Sheet ── */}
       <SessionDetailSheet
         key={selectedSession?.id ?? "none"}
         session={selectedSession}

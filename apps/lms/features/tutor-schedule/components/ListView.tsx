@@ -32,7 +32,8 @@ function formatDate(dateStr: string): string {
   return `${d}/${m}/${y}`;
 }
 
-function formatFee(fee: number): string {
+function formatFee(fee?: number): string {
+  if (fee == null) return "—";
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -151,17 +152,26 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
 
                 {/* Classroom Link */}
                 <td className="px-4 py-3.5 whitespace-nowrap">
-                  {session.status !== "CANCELED" ? (
-                    <a
-                      href={session.classroomLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted/60 text-primary text-xs font-semibold hover:bg-primary hover:text-white transition-colors border border-primary/20"
+                  {session.source === "PLANNED" ? (
+                    <span className="text-muted-foreground/60 text-xs italic font-medium">
+                      Lịch dự kiến
+                    </span>
+                  ) : session.status === "IN_PROGRESS" ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSessionClick(session);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-xs"
                     >
                       <ExternalLink className="size-3" />
-                      Meet
-                    </a>
+                      Vào phòng
+                    </button>
+                  ) : session.status === "UPCOMING" ? (
+                    <span className="text-muted-foreground text-xs font-medium">
+                      Chưa đến giờ
+                    </span>
                   ) : (
                     <span className="text-muted-foreground/40 text-xs">—</span>
                   )}
@@ -180,7 +190,7 @@ export function ListView({ sessions, onSessionClick }: ListViewProps) {
                       e.stopPropagation();
                       onSessionClick(session);
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground border border-border/50 hover:bg-primary hover:text-white hover:border-primary transition-all duration-150"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground border border-border/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-150"
                   >
                     <Eye className="size-3.5" />
                     Chi tiết

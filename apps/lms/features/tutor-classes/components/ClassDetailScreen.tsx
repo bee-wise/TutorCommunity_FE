@@ -103,7 +103,7 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
 
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border/70 pb-4">
           <div>
-            <h1 className="font-lms text-2xl font-extrabold text-foreground sm:text-3xl">
+            <h1 className="font-lms text-2xl font-extrabold text-primary sm:text-3xl">
               Thông tin lớp
             </h1>
             <p className="mt-1 text-sm font-semibold text-muted-foreground">
@@ -347,7 +347,7 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
                     : "Buổi học"}
                 </h2>
               </div>
-              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-extrabold text-primary">
+              <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-extrabold text-primary-foreground tabular-nums">
                 {details.sessionCount} buổi
               </span>
             </div>

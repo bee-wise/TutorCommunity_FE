@@ -185,8 +185,10 @@ test("badges follow compact benchmark status treatments and keep metadata distin
   assert.match(active, /text-foreground/);
   assert.match(active, /aria-hidden="true"/);
   assert.doesNotMatch(active, /bg-secondary text-foreground/);
-  assert.match(render(ClassStatusBadge, { status: "upcoming" }), /bg-accent\/25/);
-  assert.match(render(SessionStatusBadge, { status: "ongoing" }), /bg-primary\/10/);
+  assert.match(render(ClassStatusBadge, { status: "upcoming" }), /bg-accent\/20 text-warning/);
+  const ongoing = render(SessionStatusBadge, { status: "ongoing" });
+  assert.match(ongoing, /border-primary bg-card text-primary/);
+  assert.doesNotMatch(ongoing, /bg-primary\/(5|10)\b/);
   assert.match(render(AttendanceStateBadge, { record: { state: "confirmed" } }), /bg-secondary\/15/);
   const kind = render(ClassKindBadge, { kind: "group" });
   assert.match(kind, /border-border bg-card text-primary/);

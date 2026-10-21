@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@workspace/ui/components/ui/dialog";
 
-const DEFAULT_INTRO_VIDEO_SRC = "/video/videoplayback.mp4#t=0.1";
+const DEFAULT_INTRO_VIDEO_SRC = "https://res.cloudinary.com/xcrm6ykz/video/upload/v1792508519/Beewise/Assets/Videos/tutor-intro-sample.mp4#t=0.1";
 
 interface TutorIntroVideoProps {
   videoUrl?: string;

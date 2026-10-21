@@ -43,7 +43,7 @@ export function EarningsDashboard() {
     <div className="min-h-full bg-background">
       <div className="mx-auto max-w-[1400px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
         <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <div><p className="mb-2 text-xs font-bold text-muted-foreground">ĐỐI SOÁT GIA SƯ · DỮ LIỆU MINH HỌA</p><h1 className="font-lms text-2xl font-extrabold leading-relaxed text-foreground sm:text-3xl">Thu nhập & Thanh toán</h1></div>
+          <div><p className="mb-2 text-xs font-bold text-muted-foreground">ĐỐI SOÁT GIA SƯ · DỮ LIỆU MINH HỌA</p><h1 className="font-lms text-2xl font-extrabold leading-relaxed text-primary sm:text-3xl">Thu nhập & Thanh toán</h1></div>
           {view === "sessions" && <div className="flex flex-col items-start gap-2 md:items-end"><button type="button" onClick={handleExport} disabled={!earnings.filteredSessions.length} className={primaryActionClass}><DownloadSimple width={18} height={18} aria-hidden="true" />Xuất Excel</button><p className="text-xs text-muted-foreground">Xuất toàn bộ kết quả theo bộ lọc</p></div>}
         </header>
         <div role="group" aria-label="Chọn mục đối soát" className="flex flex-wrap gap-2">

@@ -30,7 +30,7 @@ export function AttendanceLearnerCard({ learner, index, form, editable }: Attend
           <legend className={`${classLabel} mb-2`}>Điểm danh<span className="sr-only"> {learner.fullName}</span></legend>
           <div className="flex flex-wrap gap-2">
             {STATUS_OPTIONS.map((status) => (
-              <label key={status} className="group flex min-h-11 flex-1 cursor-pointer select-none items-center gap-2 whitespace-nowrap rounded-xl border border-border px-3 py-2 transition-all active:scale-[0.98] has-[:checked]:border-primary/40 has-[:checked]:bg-primary/5 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60 motion-reduce:transition-none">
+              <label key={status} className="group flex min-h-11 flex-1 cursor-pointer select-none items-center gap-2 whitespace-nowrap rounded-xl border border-border px-3 py-2 transition-all active:scale-[0.98] has-[:checked]:border-primary has-[:checked]:bg-card has-[:checked]:text-primary has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60 motion-reduce:transition-none">
                 <input type="radio" value={status} defaultChecked={entry?.status === status}
                   {...form.register(`entries.${index}.status`, { onChange: () => form.clearErrors(`entries.${index}.status`) })}
                   className="peer sr-only" disabled={pending} aria-describedby={statusError ? `${id}-status-error` : undefined} />

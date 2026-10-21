@@ -14,7 +14,12 @@ export function DashboardSessionDialog({ session, returnFocusRef }: {
     ["Ngày học", `${day}/${month}/${year}`],
     ["Thời gian", `${session.startTime} - ${session.endTime}`],
     ["Tư vấn viên", session.consultantName],
-    ["Học phí / buổi", `${new Intl.NumberFormat("vi-VN").format(session.feeVnd)}đ`],
+    [
+      "Học phí / buổi",
+      session.feeVnd != null
+        ? `${new Intl.NumberFormat("vi-VN").format(session.feeVnd)}đ`
+        : "Theo lớp học",
+    ],
   ] as const;
 
   return (

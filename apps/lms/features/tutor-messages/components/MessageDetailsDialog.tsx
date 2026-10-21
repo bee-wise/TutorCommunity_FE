@@ -16,7 +16,6 @@ import {
   DocumentDuplicateIcon as Copy,
   InformationCircleIcon as Info,
   CheckBadgeIcon as CheckCheck,
-  HashtagIcon as Hash,
   DocumentTextIcon as FileText,
 } from "@heroicons/react/24/outline";
 import type { ChatMessage, ChatParticipantRole } from "../types/messages.types";
@@ -50,7 +49,6 @@ export function MessageDetailsDialog({
   currentUserId,
 }: MessageDetailsDialogProps) {
   const [copiedText, setCopiedText] = useState(false);
-  const [copiedId, setCopiedId] = useState(false);
 
   if (!message) return null;
 
@@ -62,16 +60,6 @@ export function MessageDetailsDialog({
       await navigator.clipboard.writeText(message.text);
       setCopiedText(true);
       setTimeout(() => setCopiedText(false), 2000);
-    } catch {
-      // fallback
-    }
-  };
-
-  const handleCopyId = async () => {
-    try {
-      await navigator.clipboard.writeText(message.id);
-      setCopiedId(true);
-      setTimeout(() => setCopiedId(false), 2000);
     } catch {
       // fallback
     }
@@ -174,21 +162,12 @@ export function MessageDetailsDialog({
             </div>
           )}
 
-          {/* Status & Message ID */}
+          {/* Status */}
           <div className="flex items-center justify-between border-t border-border pt-2.5 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <CheckCheck width={14} height={14} className={message.isRead ? "text-primary" : "text-muted-foreground"} />
               <span>{message.isRead ? "Đã xem" : "Đã gửi"}</span>
             </div>
-            <button
-              type="button"
-              onClick={handleCopyId}
-              title={`Mã tin nhắn: ${message.id}`}
-              className="flex items-center gap-1 text-[11px] hover:text-foreground"
-            >
-              <Hash width={12} height={12} />
-              {copiedId ? "Đã copy ID" : "Copy ID"}
-            </button>
           </div>
         </div>
 

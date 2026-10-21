@@ -91,7 +91,7 @@ export function LearnerClassSidebar({
           type="button"
           onClick={toggleSidebar}
           aria-label="Mở menu lớp"
-          className="hidden size-11 items-center justify-center rounded-xl transition-all hover:bg-primary/5 active:scale-[0.98] group-data-[collapsible=icon]:flex motion-reduce:transform-none"
+          className="hidden size-11 items-center justify-center rounded-xl transition-all hover:bg-muted hover:text-primary active:scale-[0.98] group-data-[collapsible=icon]:flex motion-reduce:transform-none"
         >
           <span className="relative size-8">
             <Image

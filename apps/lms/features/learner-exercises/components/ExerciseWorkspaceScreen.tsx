@@ -17,5 +17,5 @@ export function ExerciseWorkspaceScreen({ exerciseId }: { exerciseId: string }) 
 }
 
 function MissingExercise() {
-  return <div className="grid min-h-[60dvh] place-items-center bg-muted p-6 text-center"><div><WarningCircle className="mx-auto text-warning" width={36} height={36} /><h1 className="mt-3 text-xl font-extrabold">Không tìm thấy bài tập</h1><Link href="/lms/learner/exercises" className="mt-4 inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-bold text-white">Quay lại danh sách</Link></div></div>;
+  return <div className="grid min-h-[60dvh] place-items-center bg-muted p-6 text-center"><div><WarningCircle className="mx-auto text-warning" width={36} height={36} /><h1 className="mt-3 text-xl font-extrabold">Không tìm thấy bài tập</h1><Link href="/lms/learner/exercises" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground">Quay lại danh sách</Link></div></div>;
 }

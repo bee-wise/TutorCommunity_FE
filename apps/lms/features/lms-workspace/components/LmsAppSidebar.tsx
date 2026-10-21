@@ -65,7 +65,7 @@ export function LmsAppSidebar({
             <Link
               href={home}
               aria-label="Trang chính BeeWise LMS"
-              className="relative h-10 w-32 rounded-lg transition-all active:scale-[0.98]"
+              className="relative min-h-11 w-32 rounded-lg transition-all active:scale-[0.98]"
               onClick={() => setOpenMobile(false)}
             >
               <Image

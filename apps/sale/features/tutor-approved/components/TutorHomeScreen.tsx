@@ -97,7 +97,7 @@ export function TutorHomeScreen() {
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-accent">
                 Tutor Workspace
               </p>
-              <h1 className="font-nunito text-xl font-black leading-[1.2] sm:text-2xl lg:text-3xl">
+              <h1 className="font-nunito text-xl font-black leading-[1.2] text-primary-foreground sm:text-2xl lg:text-3xl">
                 Chào mừng trở lại, {displayName}
               </h1>
               {/* Status badges */}

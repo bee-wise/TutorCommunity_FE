@@ -47,7 +47,7 @@ export function EarningsReportsPanel({ reports }: { reports: EarningsReport[] })
                   <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground">{report.description}</p>
                   {report.adminResponse ? (
                     <div className="mt-3 rounded-xl border border-secondary/30 bg-secondary/5 p-3 text-sm leading-relaxed">
-                      <p className="font-bold text-secondary">Phản hồi admin</p>
+                      <p className="font-bold text-foreground">Phản hồi admin</p>
                       <p className="mt-1 whitespace-pre-wrap break-words">{report.adminResponse}</p>
                     </div>
                   ) : (

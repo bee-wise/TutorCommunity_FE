@@ -5,7 +5,7 @@ export function InterviewBrandHeader() {
     <div aria-label="BeeWise AI Interview" className="sticky top-0 z-40 flex min-h-16 items-center justify-between gap-4 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm sm:px-6">
       <div className="relative h-9 w-36 shrink-0 overflow-hidden sm:h-11 sm:w-44">
         <Image
-          src="/images/interview/Logo_2.png"
+          src="https://res.cloudinary.com/xcrm6ykz/image/upload/f_auto,q_auto,w_400/v1790065308/Logo_2.png"
           alt="BeeWise"
           width={196}
           height={123}

@@ -35,7 +35,7 @@ export function HeroBeeVisual() {
   return (
     <div ref={rootRef} className={`relative mx-auto aspect-square w-full max-w-[560px] lg:max-w-none ${styles.heroVisual}`}>
       <div ref={imageRef} className="relative h-full w-full">
-        <Image src="/images/bee-phone.png" alt="Ong BeeWise cùng điện thoại" width={1440} height={1440} preload sizes="(max-width: 1023px) min(100vw, 560px), 48vw" className="h-full w-full scale-[1.2] object-contain" />
+        <Image src="https://res.cloudinary.com/xcrm6ykz/image/upload/f_auto,q_auto,w_1440/v1790326857/bee-phone.png" alt="Ong BeeWise cùng điện thoại" width={1440} height={1440} preload sizes="(max-width: 1023px) min(100vw, 560px), 48vw" className="h-full w-full scale-[1.2] object-contain" />
       </div>
     </div>
   );

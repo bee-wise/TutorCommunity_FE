@@ -26,7 +26,7 @@ export function TuitionClassDetailScreen({ classId }: { classId: string }) {
     <div className="min-h-full bg-background">
       <div className="mx-auto max-w-[1200px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <header className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-lms text-2xl font-extrabold text-foreground sm:text-3xl">Học phí lớp học</h1>
+          <h1 className="font-lms text-2xl font-extrabold text-primary sm:text-3xl">Học phí lớp học</h1>
           <Button type="button" onClick={() => setInvoiceOpen(true)} className="min-h-11 rounded-xl transition-all active:scale-[0.98]"><DownloadSimple width={16} height={16} />Xuất hóa đơn</Button>
         </header>
 

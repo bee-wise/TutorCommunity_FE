@@ -121,7 +121,7 @@ export function LearningProgramsScreen() {
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
               Danh mục giảng dạy
             </p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-primary sm:text-4xl">
               Chương trình & tổ hợp dạy
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">

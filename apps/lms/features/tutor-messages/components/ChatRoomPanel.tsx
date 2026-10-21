@@ -89,7 +89,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-5">
           <Link
             href="/lms/tutor/messages"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-primary lg:hidden"
+            className="flex min-h-11 w-8 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-primary lg:hidden"
             aria-label="Quay lại"
           >
             <ArrowLeft width={18} height={18} />
@@ -101,7 +101,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           </div>
 
           <div className="min-w-0 flex-1">
-            <h1 className="font-lms truncate text-base font-extrabold text-foreground">
+            <h1 className="font-lms truncate text-base font-extrabold text-primary">
               {peer.name}
             </h1>
             <p className="truncate text-xs text-muted-foreground">
@@ -115,7 +115,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           <span
             className={`hidden shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-bold sm:block ${
               isSupport
-                ? "border-secondary/20 bg-secondary/10 text-secondary"
+                ? "border-secondary/30 bg-secondary/15 text-foreground"
                 : STAGE_COLORS[room.connectionStage] ?? "bg-muted text-foreground border-border"
             }`}
           >
@@ -247,7 +247,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                       Enter để gửi · Shift + Enter xuống dòng
                     </span>
                   </div>
-                  <button type="submit" disabled={!text.trim() || sending} aria-label="Gửi tin nhắn" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]">
+                  <button type="submit" disabled={!text.trim() || sending} aria-label="Gửi tin nhắn" className="flex min-h-11 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]">
                     <Send width={16} height={16} aria-hidden="true" />
                   </button>
                 </div>

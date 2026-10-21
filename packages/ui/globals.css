@@ -5,112 +5,68 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * BeeWise design tokens: single source of truth for color, shape and elevation.
+ * Roles and usage rules: .agents/design-system.md. Light theme only.
+ */
 :root {
+  /* Surfaces & text */
   --background: #ffffff;
   --foreground: #0c0c0b;
+  --card: #ffffff;
+  --card-foreground: #0c0c0b;
+  --popover: #ffffff;
+  --popover-foreground: #0c0c0b;
+  --muted: #f0f4ff;
+  --muted-foreground: #5a6a9a;
+  --border: #dce8fb;
+  --input: #dce8fb;
+  --ring: #280f91;
 
+  /* Brand: primary = action, accent = reward/highlight, secondary = verified/success */
   --primary: #162cd4;
   --primary-foreground: #ffffff;
-
+  --accent: #ffc500;
+  --accent-foreground: #0c0c0b;
   --secondary: #32cd32;
   --secondary-foreground: #ffffff;
 
-  --accent: #ffc500;
-  --accent-foreground: #0c0c0b;
-
+  /* Feedback */
   --highlight: #fadc76;
   --warning: #905b0f;
   --error: #e1aba7;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
 
+  /* Legacy: do not use in new UI */
   --glass: color-mix(in srgb, #fff3cb 20%, transparent);
 
+  /* Shape */
   --radius: 0.75rem;
   --radius-card: 1.5rem;
   --radius-panel: 2rem;
+
+  /* Elevation & motion */
   --bw-shadow-soft:
-    0 1px 2px rgb(12 12 11 / 0.05), 0 12px 32px -12px rgb(12 30 170 / 0.12);
+    0 1px 2px rgb(12 12 11 / 0.05),
+    0 12px 32px -12px color-mix(in srgb, var(--primary) 12%, transparent);
   --bw-shadow-soft-hover:
-    0 2px 4px rgb(12 12 11 / 0.05), 0 20px 40px -14px rgb(12 30 170 / 0.18);
+    0 2px 4px rgb(12 12 11 / 0.05),
+    0 20px 40px -14px color-mix(in srgb, var(--primary) 18%, transparent);
+  --bw-shadow-pop:
+    0 2px 6px rgb(12 12 11 / 0.06), 0 24px 48px -16px rgb(12 12 11 / 0.22);
   --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --card: #ffffff;
-  --card-foreground: #0c0c0b;
-  --popover: #ffffff;
-  --popover-foreground: #0c0c0b;
-
-  --muted: #f0f4ff;
-  --muted-foreground: #5a6a9a;
-
-  --border: #dce8fb;
-  --input: #dce8fb;
-
-  --ring: #280f91;
-
+  /* Sidebar (shadcn defaults, used only by @workspace/ui sidebar) */
   --sidebar: #ffffff;
-
   --sidebar-foreground: hsl(240 5.3% 26.1%);
-
   --sidebar-primary: hsl(240 5.9% 10%);
-
   --sidebar-primary-foreground: hsl(0 0% 98%);
-
   --sidebar-accent: hsl(240 4.8% 95.9%);
-
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
-
   --sidebar-border: hsl(220 13% 91%);
-
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
-
-/* .dark {
-  --background: #0c0c0b;
-  --foreground: #f8fafc;
-
-  --primary: #cfe1fa;
-  --primary-foreground: #0c0c0b;
-
-  --secondary: #447353;
-  --secondary-foreground: #ffffff;
-
-  --accent: #ffc500;
-  --accent-foreground: #0c0c0b;
-
-  --highlight: #fadc76;
-  --warning: #f59e0b;
-  --error: #f87171;
-
-  --glass: color-mix(in srgb, #fff3cb 10%, transparent);
-
-  --card: #1e293b;
-  --card-foreground: #f8fafc;
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
-  --muted: #334155;
-  --muted-foreground: #94a3b8;
-  --border: #334155;
-  --input: #334155;
-
-  --ring: #ffc500;
-
-  --sidebar: hsl(240 5.9% 10%);
-
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-
-  --sidebar-border: hsl(240 3.7% 15.9%);
-
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
-} */
 
 @theme inline {
   --color-background: var(--background);
@@ -147,6 +103,7 @@
   --radius-sm: calc(var(--radius) - 4px);
   --shadow-soft: var(--bw-shadow-soft);
   --shadow-soft-hover: var(--bw-shadow-soft-hover);
+  --shadow-pop: var(--bw-shadow-pop);
 
   --font-google-sans:
     var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
@@ -154,21 +111,13 @@
     var(--font-nunito-family), ui-sans-serif, system-ui, sans-serif;
 
   --font-sans: var(--font-google-sans);
-
   --color-sidebar-ring: var(--sidebar-ring);
-
   --color-sidebar-border: var(--sidebar-border);
-
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-
   --color-sidebar-accent: var(--sidebar-accent);
-
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-
   --color-sidebar-primary: var(--sidebar-primary);
-
   --color-sidebar-foreground: var(--sidebar-foreground);
-
   --color-sidebar: var(--sidebar);
 }
 
@@ -197,6 +146,10 @@
   h6 {
     font-family: var(--font-nunito-family);
     font-weight: 800;
+  }
+
+  h1 {
+    color: var(--primary);
   }
 
   /* Global Scrollbar Styling (BeeWise Style) */

@@ -1,7 +1,7 @@
 import { HISTORY_STATUS_LABELS, type HistoryStatus } from "../types/history.types";
 
 export function HistoryStatusBadge({ status }: { status: HistoryStatus }) {
-  const color = status === "converted" ? "border-secondary bg-secondary text-secondary-foreground"
+  const color = status === "converted" ? "border-secondary/30 bg-secondary/15 text-foreground"
     : status === "waiting" ? "border-accent bg-accent text-accent-foreground"
       : status === "active" ? "border-primary bg-primary text-primary-foreground"
         : "border-border bg-card text-muted-foreground";

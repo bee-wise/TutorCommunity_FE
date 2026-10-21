@@ -6,6 +6,15 @@
   font-display: swap;
 }
 
+/*
+ * Compact density: Tailwind sizes (text, spacing, icons, sidebar width) are rem-based,
+ * so shrinking the root size scales the whole workspace, dialogs and popovers included,
+ * and fits more content per screen. Pixel-based values are unaffected.
+ */
+html:has(.lms-workspace) {
+  font-size: 87.5%;
+}
+
 /* Keep the workspace type system out of the public portal and authentication pages. */
 .lms-workspace,
 body:has(.lms-workspace)
@@ -76,8 +85,8 @@ body:has(.lms-workspace)
 
 .lms-navigation-item {
   position: relative;
-  min-height: 44px;
-  padding: 12px;
+  min-height: 38px;
+  padding: 9px 12px;
   border-radius: 12px;
   font-weight: 600;
   color: var(--muted-foreground);

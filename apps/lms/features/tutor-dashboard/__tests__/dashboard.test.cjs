@@ -38,17 +38,18 @@ test("upcoming sessions exclude cancelled/completed, sort deterministically and 
   assert.ok(dashboardWeekday("2026-07-08").includes("4"));
 });
 
-test("next-session panel exposes identity, date, time and a mock label without launching a sample meeting", () => {
+test("next-session panel exposes identity, date, time and live label without launching a sample meeting", () => {
   const session = DASHBOARD_SESSIONS[0];
   const html = renderToStaticMarkup(React.createElement(DashboardNextSession, { session, onSelect: () => {} }));
-  for (const value of [session.studentFullName, session.classId, session.startTime, session.endTime, "(mẫu)", "Xem buổi học"]) assert.ok(html.includes(value));
+  for (const value of [session.studentFullName, session.startTime, session.endTime, "Buổi dạy kế tiếp", "Xem buổi học"]) assert.ok(html.includes(value));
+  assert.ok(!html.includes(session.classId));
   assert.ok(!html.includes(session.classroomLink));
 });
 
 test("schedule exposes labelled day filters and all five demo sessions, with a useful empty state", () => {
   const html = renderToStaticMarkup(React.createElement(DashboardSchedule, { sessions: DASHBOARD_SESSIONS }));
   assert.ok(html.includes("không phải lịch thực tế"));
-  for (const session of DASHBOARD_SESSIONS) assert.ok(html.includes(session.classId));
+  for (const session of DASHBOARD_SESSIONS) assert.ok(html.includes(session.studentFullName) && !html.includes(session.classId));
   assert.ok(html.includes('aria-pressed="true"'));
   const empty = renderToStaticMarkup(React.createElement(DashboardSchedule, { sessions: [] }));
   assert.ok(empty.includes("Chưa có buổi học trong danh sách"));

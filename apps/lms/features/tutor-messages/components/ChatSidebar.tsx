@@ -88,7 +88,7 @@ function RoomRow({
         <span
           className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${
             room.category === "SUPPORT" && !isReadOnly
-              ? "border-secondary/20 bg-secondary/10 text-secondary"
+              ? "border-secondary/30 bg-secondary/15 text-foreground"
               : isReadOnly
               ? "border-border bg-muted text-muted-foreground"
               : (STAGE_COLORS[room.connectionStage] ??
@@ -168,7 +168,7 @@ export function ChatSidebar() {
         <div className="flex items-center gap-3">
           <Link
             href="/lms/tutor/dashboard"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition-all hover:brightness-95 active:scale-[0.98]"
+            className="flex min-h-11 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition-all hover:brightness-95 active:scale-[0.98]"
             aria-label="Quay lại Trang chủ"
           >
             <ArrowLeft width={18} height={18} />

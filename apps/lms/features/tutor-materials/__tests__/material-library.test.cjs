@@ -126,8 +126,8 @@ test("class cards distinguish status from metadata, retain learner identity and 
     assert.ok(html.includes("Tài liệu"));
     assert.ok(html.includes("mt-auto"));
     assert.ok(html.includes("rounded-xl"));
-    if (status === "active") assert.match(html, /border-primary bg-primary text-primary-foreground/);
-    if (status === "upcoming") assert.match(html, /border-accent bg-accent text-accent-foreground/);
+    if (status === "active") assert.match(html, /border-primary bg-card text-primary/);
+    if (status === "upcoming") assert.match(html, /border-accent\/40 bg-accent\/20 text-warning/);
     assert.doesNotMatch(html, /<button|underline|border-[tlrb]-[24]|bg-primary\/10/);
   }
 });

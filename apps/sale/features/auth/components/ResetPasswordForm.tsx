@@ -95,7 +95,7 @@ export function ResetPasswordForm({
       >
         <Key size={23} weight="duotone" />
       </span>
-      <h1 className="font-nunito text-2xl font-extrabold tracking-tight text-foreground">
+      <h1 className="font-nunito text-2xl font-extrabold tracking-tight text-primary">
         Đặt lại mật khẩu
       </h1>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">

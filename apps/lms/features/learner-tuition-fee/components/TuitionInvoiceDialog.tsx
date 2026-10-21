@@ -43,8 +43,8 @@ export function TuitionInvoiceDialog({ invoice, onClose }: { invoice?: LearnerTu
           </dl>
           <div className="mx-5 rounded-xl bg-secondary/15 px-4 py-3 text-sm font-bold text-foreground sm:mx-6">Đã thanh toán qua BeeWise SALE</div>
           <DialogFooter className="gap-2 border-t border-border px-5 py-4 sm:px-6">
-            <button type="button" onClick={onClose} className="h-10 rounded-xl border border-input px-4 text-sm font-bold hover:bg-muted">Đóng</button>
-            <button type="button" onClick={handleExport} className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-primary px-4 text-sm font-bold text-white hover:bg-primary/90 active:scale-[0.98]"><DownloadSimple width={18} height={18} />Tải hóa đơn</button>
+            <button type="button" onClick={onClose} className="min-h-11 rounded-xl border border-input px-4 text-sm font-bold hover:bg-muted">Đóng</button>
+            <button type="button" onClick={handleExport} className="inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90 active:scale-[0.98]"><DownloadSimple width={18} height={18} />Tải hóa đơn</button>
           </DialogFooter>
         </> : null}
       </DialogContent>

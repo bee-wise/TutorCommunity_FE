@@ -76,7 +76,7 @@ export function LearnerClassChatDirectory() {
       <header className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-4">
           <div>
-            <h1 className="mt-1 font-lms text-2xl font-extrabold text-foreground sm:text-3xl">
+            <h1 className="mt-1 font-lms text-2xl font-extrabold text-primary sm:text-3xl">
               Tin nhắn lớp học
             </h1>
           </div>
@@ -147,7 +147,7 @@ export function LearnerClassChatDirectory() {
                   <span
                     className={`rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
                       statusFilter === tab.id
-                        ? "bg-primary/10 text-primary"
+                        ? "bg-primary text-primary-foreground"
                         : "bg-muted text-muted-foreground"
                     }`}
                   >
@@ -236,7 +236,7 @@ export function LearnerClassChatDirectory() {
                             className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 text-[11px] font-bold ${
                               isArchived
                                 ? "border-border bg-muted text-muted-foreground"
-                                : "border-secondary/30 bg-secondary/15 text-secondary"
+                                : "border-secondary/30 bg-secondary/15 text-foreground"
                             }`}
                           >
                             {isArchived ? "Đã kết thúc" : "Đang học"}

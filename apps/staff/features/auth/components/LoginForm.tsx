@@ -53,7 +53,7 @@ export function LoginForm() {
 
         <div className="mb-2 text-center">
           <h1
-            className="text-2xl tracking-tight text-[#0c0c0b] mb-1"
+            className="text-2xl tracking-tight text-primary mb-1"
             style={{ fontFamily: "var(--font-google-sans)", fontWeight: 800 }}
           >
             Đăng nhập vào BeeWise Staff

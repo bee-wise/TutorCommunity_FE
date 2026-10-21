@@ -18,7 +18,7 @@ export function ExerciseSessionSelectionScreen({ classId }: { classId: string })
   return (
     <div className="min-h-full bg-background">
       <div className="mx-auto max-w-[1150px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <header className="flex flex-wrap items-center justify-between gap-3"><h1 className="font-lms text-2xl font-extrabold text-foreground sm:text-3xl">Bài tập theo buổi</h1><Button asChild variant="outline" className="min-h-11 rounded-xl transition-all active:scale-[0.98]"><Link href={`/lms/learner/classes/${encodeURIComponent(classId)}`}>Thông tin lớp</Link></Button></header>
+        <header className="flex flex-wrap items-center justify-between gap-3"><h1 className="font-lms text-2xl font-extrabold text-primary sm:text-3xl">Bài tập theo buổi</h1><Button asChild variant="outline" className="min-h-11 rounded-xl transition-all active:scale-[0.98]"><Link href={`/lms/learner/classes/${encodeURIComponent(classId)}`}>Thông tin lớp</Link></Button></header>
 
         <section className="rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-5" aria-label="Bộ lọc buổi học">
           <div className="grid gap-4 md:grid-cols-[minmax(240px,1fr)_220px]">

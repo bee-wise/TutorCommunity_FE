@@ -33,7 +33,7 @@ export function ExerciseSessionList({ classId, sessions }: { classId: string; se
                     <p className={`text-sm font-bold ${hasExercises ? "text-foreground" : "text-muted-foreground"}`}>{hasExercises ? `${exercises.length} bài tập` : "Chưa có bài tập"}</p>
                     {pendingCount > 0 ? <p className="mt-0.5 text-xs font-semibold text-warning">{pendingCount} bài cần hoàn thành</p> : null}
                   </div>
-                  {hasExercises ? <Link href={`/lms/learner/exercises/classes/${classId}/sessions/${session.id}`} className="inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-3 text-xs font-bold text-white hover:bg-primary/90">Xem bài tập <ArrowRight width={14} height={14} /></Link> : <button type="button" disabled className="h-9 cursor-not-allowed rounded-lg border border-input px-3 text-xs font-bold text-muted-foreground opacity-60">Chưa thể xem</button>}
+                  {hasExercises ? <Link href={`/lms/learner/exercises/classes/${classId}/sessions/${session.id}`} className="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground hover:bg-primary/90">Xem bài tập <ArrowRight width={14} height={14} /></Link> : <button type="button" disabled className="min-h-11 cursor-not-allowed rounded-lg border border-input px-3 text-xs font-bold text-muted-foreground opacity-60">Chưa thể xem</button>}
                 </div>
               </div>
             </article>

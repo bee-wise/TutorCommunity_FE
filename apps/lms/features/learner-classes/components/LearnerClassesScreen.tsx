@@ -16,7 +16,7 @@ export function LearnerClassesScreen({
   return (
     <main className="mx-auto w-full max-w-[1400px] space-y-5 px-4 py-6 text-foreground sm:px-6 lg:px-8">
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-lms text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
+        <h1 className="font-lms text-2xl font-extrabold leading-tight text-primary sm:text-3xl">
           Lớp học
         </h1>
         <Button asChild variant="outline" className={learnerAction}>

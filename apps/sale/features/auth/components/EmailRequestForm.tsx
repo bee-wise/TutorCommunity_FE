@@ -80,7 +80,7 @@ export function EmailRequestForm({
       >
         <EnvelopeSimple size={25} weight="duotone" />
       </span>
-      <h1 className="font-nunito text-2xl font-extrabold tracking-tight text-foreground">
+      <h1 className="font-nunito text-2xl font-extrabold tracking-tight text-primary">
         Quên mật khẩu?
       </h1>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">

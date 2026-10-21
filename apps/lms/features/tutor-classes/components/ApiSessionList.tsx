@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { statusTone } from "../../../components/lms-status";
 import dynamic from "next/dynamic";
 import { Button } from "@workspace/ui/components/ui/button";
 import {
@@ -10,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@workspace/ui/components/ui/dropdown-menu";
 import {
-  ArrowTopRightOnSquareIcon,
+  ArrowRightIcon,
   CalendarDaysIcon,
   CheckCircleIcon,
   ClipboardDocumentCheckIcon,
@@ -46,7 +47,7 @@ import { ClassFilterSelect } from "./ClassFilterSelect";
 import { ClassPagination } from "./ClassPagination";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import { ClassWorkspaceSkeleton } from "./ClassWorkspaceSkeleton";
-import { formatClassDate, formatClassIdentifier } from "../utils/classes.utils";
+import { formatClassDate } from "../utils/classes.utils";
 import { classButton, classOutlineButton } from "./classes-ui";
 
 const Attendance = dynamic(() =>
@@ -286,10 +287,6 @@ export function ApiSessionList({ classInfo }: { classInfo: TutorClass }) {
                               <span>·</span>
                             </>
                           )}
-                          <span className="font-mono">
-                            Mã: {formatClassIdentifier(session.id)}
-                          </span>
-                          <span>·</span>
                           <span className="flex items-center gap-1 font-semibold text-foreground">
                             <ClockIcon
                               className="size-3.5 text-muted-foreground"
@@ -305,12 +302,12 @@ export function ApiSessionList({ classInfo }: { classInfo: TutorClass }) {
                       <span
                         className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${
                           isOngoing
-                            ? "border-primary/30 bg-primary/10 text-primary"
+                            ? statusTone.active
                             : isCompleted
-                              ? "border-secondary/30 bg-secondary/15 text-foreground"
+                              ? statusTone.done
                               : isCancelled
-                                ? "border-destructive/30 bg-destructive/10 text-destructive"
-                                : "border-accent/40 bg-accent/20 text-warning"
+                                ? statusTone.cancelled
+                                : statusTone.pending
                         }`}
                       >
                         {isOngoing && (
@@ -352,7 +349,7 @@ export function ApiSessionList({ classInfo }: { classInfo: TutorClass }) {
                                 aria-hidden="true"
                               />
                               <span>Vào phòng học trực tuyến</span>
-                              <ArrowTopRightOnSquareIcon
+                              <ArrowRightIcon
                                 className="size-3.5 shrink-0"
                                 aria-hidden="true"
                               />
@@ -446,8 +443,8 @@ export function ApiSessionList({ classInfo }: { classInfo: TutorClass }) {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="size-10 rounded-xl border-border bg-card shadow-2xs transition-all hover:bg-muted active:scale-[0.98]"
-                            aria-label={`Thao tác khác cho buổi ${formatClassIdentifier(session.id)}`}
+                            className="size-11 rounded-xl border-border bg-card shadow-2xs transition-all hover:bg-muted active:scale-[0.98]"
+                            aria-label="Thao tác khác cho buổi học"
                           >
                             <EllipsisHorizontalIcon
                               className="size-4.5 text-muted-foreground"
