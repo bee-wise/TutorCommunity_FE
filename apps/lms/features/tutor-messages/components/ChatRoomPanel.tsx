@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, type FormEvent, type KeyboardEvent } from "react";
+import { useMemo, useState } from "react";
 import {
-  PaperAirplaneIcon as Send,
   ArrowLeftIcon as ArrowLeft,
   LockClosedIcon as Lock,
   EllipsisVerticalIcon as MoreVertical,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import Image from "next/image";
 import { MessageBubble, SessionTimeDivider } from "./MessageBubble";
 import { MessageDetailsDialog } from "./MessageDetailsDialog";
 import { MessageContextMenu } from "./MessageContextMenu";
+import { ChatComposer } from "./ChatComposer";
 import { ConsultantSupportBanner } from "./ConsultantSupportBanner";
 import { ConnectionInfoPanel } from "./ConnectionInfoPanel";
 import { useChatRoom } from "../hooks/useChatRoom";
@@ -19,6 +20,9 @@ import { STAGE_LABELS, STAGE_COLORS, shouldShowSessionDivider } from "../constan
 import type { ChatMessage } from "../types/messages.types";
 
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
+
+const BEE_MEDITATE =
+  "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_280/v1789966153/8.png";
 
 interface ChatRoomPanelProps {
   chatRoomId: string;
@@ -41,7 +45,6 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
     loadOlderMessages,
   } = useChatRoom(chatRoomId);
 
-  const [text, setText] = useState("");
   const [showInfo, setShowInfo] = useState(false);
   const [selectedMessageForDetails, setSelectedMessageForDetails] = useState<ChatMessage | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -50,6 +53,11 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
     position: { x: number; y: number };
   } | null>(null);
 
+  // Rebuilt only when the messages change, not on every unrelated re-render.
+  const visibleMessages = useMemo(
+    () => selectChatWidgetTimelineMessages(messages, (message) => message.senderRole === "CONSULTANT"),
+    [messages],
+  );
 
   if (!room) return (
     <div className="flex h-full items-center justify-center rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground">
@@ -57,36 +65,14 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
     </div>
   );
   const isSupport = room.category === "SUPPORT";
-  const visibleMessages = selectChatWidgetTimelineMessages(
-    messages,
-    (message) => message.senderRole === "CONSULTANT",
-  );
   const peer = isSupport ? room.consultant : room.learner;
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!text.trim() || sending) return;
-    try {
-      await sendMessage(text);
-      setText("");
-    } catch {
-      // The hook exposes the API error below the message list.
-    }
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-      e.preventDefault();
-      void handleSubmit(e as unknown as FormEvent);
-    }
-  };
-
   return (
-    <div className="flex h-full min-h-0 gap-4 overflow-hidden">
+    <div className="flex h-full min-h-0 gap-2 overflow-hidden">
       {/* ── Main chat area ─────────────────────────────────── */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         {/* Header */}
-        <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-5">
+        <header className="flex shrink-0 items-center gap-2.5 border-b border-border bg-card px-3 py-2 sm:px-4">
           <Link
             href="/lms/tutor/messages"
             className="flex min-h-11 w-8 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-primary lg:hidden"
@@ -96,15 +82,15 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           </Link>
 
           {/* Learner avatar */}
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-xs font-black text-primary-foreground">
             {peer.initials}
           </div>
 
           <div className="min-w-0 flex-1">
-            <h1 className="font-lms truncate text-base font-extrabold text-primary">
+            <h1 className="font-lms truncate text-sm font-extrabold leading-tight text-primary sm:text-base">
               {peer.name}
             </h1>
-            <p className="truncate text-xs text-muted-foreground">
+            <p className="truncate text-[11px] leading-tight text-muted-foreground">
               {isSupport
                 ? `Tư vấn viên BeeWise · ${room.subject}`
                 : `Phòng kết nối · Chat 3 bên với ${room.consultant.name}`}
@@ -149,8 +135,8 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         )}
 
         {/* Messages area */}
-        <div className="min-h-0 flex-1 overflow-y-auto [scroll-behavior:auto] bg-muted px-3 py-5 sm:px-6">
-          <div className="mx-auto max-w-4xl space-y-1">
+        <div className="min-h-0 flex-1 overflow-y-auto [scroll-behavior:auto] bg-muted px-2 py-3 sm:px-4">
+          <div className="mx-auto max-w-5xl space-y-1">
             {hasOlderMessages && (
               <button type="button" disabled={loadingOlderMessages} onClick={() => void loadOlderMessages()} className="mx-auto mb-3 block rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-primary disabled:opacity-50">
                 {loadingOlderMessages ? "Đang tải..." : "Xem tin nhắn cũ"}
@@ -163,7 +149,19 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
               />
             )}
             {loading && <p className="py-8 text-center text-sm text-muted-foreground">Đang tải tin nhắn...</p>}
-            {!loading && messages.length === 0 && !error && <p className="py-8 text-center text-sm text-muted-foreground">Chưa có tin nhắn. Hãy bắt đầu cuộc trò chuyện.</p>}
+            {!loading && messages.length === 0 && !error && (
+              <div className="flex flex-col items-center py-8 text-center">
+                <Image
+                  src={BEE_MEDITATE}
+                  alt="Ong BeeWise đang thư giãn"
+                  width={140}
+                  height={140}
+                  className="h-auto w-32"
+                />
+                <p className="mt-2 text-sm font-semibold text-foreground">Chưa có tin nhắn nào</p>
+                <p className="text-xs text-muted-foreground">Hãy gửi lời chào để bắt đầu cuộc trò chuyện.</p>
+              </div>
+            )}
             {error && <p role="alert" className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive">{getApiErrorMessage(error)}</p>}
             {visibleMessages.map((msg, idx) => {
               const prev = visibleMessages[idx - 1];
@@ -228,34 +226,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
         </div>
 
         {/* Composer */}
-        {!isReadOnly && (
-          <div className="shrink-0 border-t border-border bg-card px-3 py-3 sm:px-5">
-            <div className="relative mx-auto max-w-4xl">
-              <form onSubmit={handleSubmit} className="rounded-2xl border border-input bg-background p-2 shadow-sm transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10">
-                <textarea
-                  id="chat-message-input"
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Nhập tin nhắn..."
-                  rows={1}
-                  className="block max-h-32 min-h-11 w-full resize-none overflow-y-auto border-0 bg-transparent px-2 py-2 text-sm leading-6 text-foreground outline-none placeholder:text-muted-foreground [field-sizing:content]"
-                />
-                <div className="flex items-center justify-between gap-2 border-t border-border/70 pt-2">
-                  <div className="flex min-w-0 items-center gap-1">
-                    <span className="hidden text-[11px] text-muted-foreground sm:inline">
-                      Enter để gửi · Shift + Enter xuống dòng
-                    </span>
-                  </div>
-                  <button type="submit" disabled={!text.trim() || sending} aria-label="Gửi tin nhắn" className="flex min-h-11 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]">
-                    <Send width={16} height={16} aria-hidden="true" />
-                  </button>
-                </div>
-              </form>
-            </div>
-
-          </div>
-        )}
+        {!isReadOnly && <ChatComposer sending={sending} onSend={sendMessage} />}
       </div>
 
       {/* ── Info sidebar ───────────────────────────────────── */}

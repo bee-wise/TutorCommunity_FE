@@ -51,7 +51,7 @@ export function RoleFeatureShowcase({ id, roleLabel, heading, accentHeading, ima
           {features.map((feature, index) => {
             const active = activeIndex === index;
             return (
-              <SpotlightCard key={feature.id} style={active ? { borderColor: "var(--primary)" } : undefined} className={active ? "shadow-[0_12px_30px_-22px_var(--primary)]" : ""}>
+              <SpotlightCard key={feature.id} style={active ? { borderColor: "var(--primary)" } : undefined} className={active ? "shadow-soft-hover" : ""}>
                 <button type="button" role="tab" data-feature-tab id={`${id}-tab-${index}`} aria-selected={active} aria-controls={`${id}-panel`} tabIndex={active ? 0 : -1} onClick={() => setActiveIndex(index)} className="relative flex min-h-[108px] w-full items-start gap-4 rounded-[23px] px-5 py-5 text-left transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring active:scale-[0.98]">
                   <span className={`pt-0.5 font-mono text-xs tabular-nums ${active ? "text-primary" : "text-muted-foreground"}`}>{String(index + 1).padStart(2, "0")}</span>
                   <span className="min-w-0">

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { lmsCalendarService, lmsCalendarKeys } from "@workspace/core/lms-calendar";
+import { lmsCalendarService, lmsCalendarKeys } from "@/features/lms-calendar";
 import { mapLmsScheduleViewToTutorSession } from "@/features/tutor-schedule/types/schedule.types";
 import { DashboardSchedule } from "./DashboardSchedule";
 import type { Session } from "@/features/tutor-schedule/types/schedule.types";

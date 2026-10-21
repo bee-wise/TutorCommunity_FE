@@ -50,8 +50,8 @@ export function ConversationComposer({
   }
 
   return (
-    <div className="relative shrink-0 border-t border-border bg-card px-3 py-3 sm:px-5">
-      <div className="relative mx-auto max-w-4xl">
+    <div className="relative shrink-0 border-t border-border bg-card px-2 py-2 sm:px-4">
+      <div className="relative mx-auto max-w-5xl">
         {showTemplates && (
           <div
             id="consultant-message-templates"
@@ -98,7 +98,7 @@ export function ConversationComposer({
             event.preventDefault();
             submit();
           }}
-          className="flex min-w-0 flex-col gap-1.5 rounded-2xl border border-input bg-background p-2 shadow-soft transition-all focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-ring/20 sm:flex-row sm:items-center sm:gap-2"
+          className="flex min-w-0 items-end gap-1.5 rounded-2xl border border-input bg-background p-1.5 shadow-soft transition-all focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-ring/20"
         >
           <label className="min-w-0 flex-1">
             <span className="sr-only">Nội dung tin nhắn</span>
@@ -116,7 +116,7 @@ export function ConversationComposer({
           <span id="consultant-composer-hint" className="sr-only">
             Nhấn Enter để gửi, Shift+Enter để xuống dòng.
           </span>
-          <div className="flex w-full items-center justify-between gap-1.5 border-t border-border pt-2 sm:w-auto sm:shrink-0 sm:justify-end sm:border-t-0 sm:border-l sm:pt-0 sm:pl-2">
+          <div className="flex shrink-0 items-center gap-1.5 border-l border-border pl-1.5">
             <div className="flex items-center gap-1">
               <Button
                 type="button"
@@ -128,7 +128,7 @@ export function ConversationComposer({
                 className="h-10 rounded-xl px-2.5 text-xs font-bold text-foreground transition-all hover:bg-muted hover:text-primary active:scale-[0.98]"
               >
                 <NotePencil className="size-4" aria-hidden="true" />
-                <span>Mẫu</span>
+                <span className="hidden sm:inline">Mẫu</span>
                 <CaretDown
                   className={`size-3 transition-transform ${showTemplates ? "rotate-180" : ""}`}
                   aria-hidden="true"
@@ -146,7 +146,7 @@ export function ConversationComposer({
                 className="h-10 rounded-xl px-2.5 text-xs font-bold text-foreground transition-all hover:bg-muted hover:text-primary active:scale-[0.98]"
               >
                 <WidgetIcon className="size-4" aria-hidden="true" />
-                <span>Widget</span>
+                <span className="hidden sm:inline">Widget</span>
               </Button>
             </div>
             <Button
@@ -156,7 +156,7 @@ export function ConversationComposer({
               className="h-10 min-w-10 rounded-xl px-2.5 font-nunito text-xs font-extrabold transition-all active:scale-[0.98] sm:px-4"
             >
               <PaperPlaneRight className="size-4" aria-hidden="true" />
-              <span>Gửi</span>
+              <span className="hidden sm:inline">Gửi</span>
             </Button>
           </div>
         </form>

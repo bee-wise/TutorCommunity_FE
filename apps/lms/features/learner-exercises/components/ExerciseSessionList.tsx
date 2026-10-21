@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { ArrowRightIcon as ArrowRight, CalendarDaysIcon as CalendarBlank } from "@heroicons/react/24/outline";
+import { ArrowRightIcon as ArrowRight } from "@heroicons/react/24/outline";
+import { EmptyState } from "@workspace/ui/components/ui/empty-state";
 import { LEARNER_EXERCISES } from "../data/learner-exercises.mock";
 import type { LearnerExerciseSession } from "../types/learner-exercises.types";
 import { formatExerciseDate } from "../utils/learner-exercises.utils";
 
 export function ExerciseSessionList({ classId, sessions }: { classId: string; sessions: LearnerExerciseSession[] }) {
   if (sessions.length === 0) {
-    return <div className="grid min-h-64 place-items-center rounded-2xl border border-dashed border-primary/20 bg-card p-6 text-center"><div><CalendarBlank className="mx-auto text-primary" width={30} height={30} /><h2 className="mt-3 text-lg font-extrabold text-foreground">Không có buổi học phù hợp</h2><p className="mt-1 text-sm text-muted-foreground">Hãy thay đổi bộ lọc để xem các buổi học khác.</p></div></div>;
+    return <EmptyState imageAlt="" title="Không có buổi học phù hợp" description="Hãy thay đổi bộ lọc để xem các buổi học khác." />;
   }
 
   return (
@@ -21,7 +22,7 @@ export function ExerciseSessionList({ classId, sessions }: { classId: string; se
           const pendingCount = exercises.filter((exercise) => exercise.status === "not_started" || exercise.status === "in_progress").length;
           const hasExercises = exercises.length > 0;
           return (
-            <article key={session.id} className="p-4 transition-colors hover:bg-muted/70 sm:p-5">
+            <article key={session.id} className="p-4 transition-colors hover:bg-muted sm:p-5">
               <div className="flex flex-col gap-4 md:flex-row md:items-center">
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold text-primary">Buổi {session.sequence}</p>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@workspace/ui/components/ui/button";
 import type { MeType } from "@workspace/core/types/auth.type";
 import { getTutorPublicProfilePath } from "@workspace/core/constants/tutor-links";
-import { actionClass, panelClass } from "@/components/lms-page-ui";
+import { panelClass } from "@/components/lms-page-ui";
 import type { TutorProfile } from "../types/profile.schemas";
 
 function Avatar({ url, name }: { url: string; name: string }) {
@@ -32,7 +33,7 @@ export function ProfileIdentity({ profile, user }: { profile: TutorProfile; user
         <div><dt className="text-muted-foreground">Kinh nghiệm</dt><dd className="mt-1 font-bold">{profile.experienceYears || "Chưa cập nhật"}</dd></div>
         <div><dt className="text-muted-foreground">Nhận kết nối mới</dt><dd className="mt-1 font-bold">{user.canReceiveNewConnections === true ? "Đang nhận kết nối" : user.canReceiveNewConnections === false ? "Tạm ngừng nhận kết nối" : "Chưa có thông tin"}</dd></div>
       </dl>
-      <a href={`https://beewise.vn${getTutorPublicProfilePath(user)}`} target="_blank" rel="noopener noreferrer" className={`${actionClass} w-full`}>Xem trên BeeWise</a>
+      <Button asChild variant="outline" className="min-h-11 w-full"><a href={`https://beewise.vn${getTutorPublicProfilePath(user)}`} target="_blank" rel="noopener noreferrer">Xem trên BeeWise</a></Button>
     </aside>
   );
 }

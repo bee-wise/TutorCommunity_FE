@@ -133,7 +133,7 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
         <Collapsible defaultOpen className="group">
 <CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between py-2 font-lms text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
             <span className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-primary">
                 <CalendarBlank width={16} height={16} />
               </span>
               Lịch có thể nhận lớp
@@ -169,7 +169,7 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
         <Collapsible className="group mt-4 border-t border-border pt-4">
 <CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between py-2 font-lms text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
             <span className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-primary">
                 <ChalkboardTeacher width={16} height={16} />
               </span>
               Phương pháp giảng dạy
@@ -201,7 +201,7 @@ export function ProfileTeachingDetails({ profile }: { profile: TutorProfile }) {
         <Collapsible className="group mt-4 border-t border-border pt-4">
 <CollapsibleTrigger className="w-full flex cursor-pointer list-none items-center justify-between py-2 font-lms text-lg font-extrabold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring ">
             <span className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-primary">
                 <Certificate width={16} height={16} />
               </span>
               Thành tích & minh chứng

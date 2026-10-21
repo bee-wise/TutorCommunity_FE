@@ -20,8 +20,6 @@ export const queryKeys = {
     list: ["chat-rooms", "list"] as const,
     listForUser: (userId: string) => ["chat-rooms", "list", userId] as const,
     messages: (id: string) => ["chat-rooms", id, "messages"] as const,
-    unread: (userId: string, roomId: string, lastMessageAt: string | undefined, readAt: string) =>
-      ["chat-rooms", "unread", userId, roomId, lastMessageAt, readAt] as const,
   },
   consultantWorkspace: {
     rooms: (userId: string) => ["consultant-workspace", "rooms", userId] as const,

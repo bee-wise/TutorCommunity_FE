@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getVietnamToday, lmsCalendarKeys, lmsCalendarService } from "@workspace/core/lms-calendar";
+import { getVietnamToday, lmsCalendarKeys, lmsCalendarService } from "@/features/lms-calendar";
 import { getTutorReadiness, tutorReadinessQueryKey } from "@workspace/core/services/tutor-readiness.service";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { buildWeekDays, getWeekDates, getWeekRangeIso } from "../utils/dashboard-overview.utils";

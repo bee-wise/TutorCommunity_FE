@@ -98,12 +98,54 @@ export function selectClassConfirmationTimelineMessages<T extends TrialTimelineM
   });
 }
 
+type ScheduleCurrent = Extract<NonNullable<ChatBusinessMessage["current"]>, { kind: "CLASS_SCHEDULE" }>;
+
+function scheduleKey(message: TrialTimelineMessage): string | null {
+  const business = message.business;
+  if (business?.kind !== "CLASS_SESSIONS") return null;
+  const classId =
+    business.referenceId?.trim() ||
+    (business.current?.kind === "CLASS_SCHEDULE" ? business.current.data.classId?.trim() : "");
+  return classId ? `${business.roomId ?? ""}:CLASS_SESSIONS:${classId}` : null;
+}
+
+/**
+ * Shows one schedule card per class, at its newest loaded event, with the newest known
+ * schedule content (so repeated "sessions updated" events never stack duplicate cards).
+ */
+export function selectClassScheduleTimelineMessages<T extends TrialTimelineMessage>(
+  messages: readonly T[],
+): T[] {
+  const anchors = new Map<string, T>();
+  const currentStates = new Map<string, ScheduleCurrent>();
+
+  for (const message of messages) {
+    const key = scheduleKey(message);
+    if (!key) continue;
+    anchors.set(key, message);
+    const current = message.business?.current;
+    if (current?.kind === "CLASS_SCHEDULE") currentStates.set(key, current);
+  }
+
+  return messages.flatMap((message) => {
+    const key = scheduleKey(message);
+    if (!key) return [message];
+    if (anchors.get(key)?.id !== message.id) return [];
+
+    const current = currentStates.get(key);
+    if (!current || !message.business || message.business.current === current) return [message];
+    return [{ ...message, business: { ...message.business, current } } as T];
+  });
+}
+
 export function selectChatWidgetTimelineMessages<T extends TrialTimelineMessage>(
   messages: readonly T[],
   isConsultantMessage: (message: T) => boolean,
 ): T[] {
-  return selectClassConfirmationTimelineMessages(
-    selectTrialWidgetTimelineMessages(messages, isConsultantMessage),
-    isConsultantMessage,
+  return selectClassScheduleTimelineMessages(
+    selectClassConfirmationTimelineMessages(
+      selectTrialWidgetTimelineMessages(messages, isConsultantMessage),
+      isConsultantMessage,
+    ),
   );
 }

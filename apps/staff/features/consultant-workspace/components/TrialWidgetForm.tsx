@@ -28,7 +28,7 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
         </span>
         <div className="min-w-0">
           <h3 className="font-nunito text-base font-extrabold leading-tight text-foreground">
-            Đề xuất buổi học thử
+            Tạo lịch học thử
           </h3>
         </div>
       </div>
@@ -76,8 +76,8 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
                 onChange={model.setStartAt}
                 minDate={new Date()}
                 placeholder="Chọn ngày và giờ bắt đầu"
-                side="right"
-                align="center"
+                side="bottom"
+                align="start"
                 portalContainer={calendarPortalContainer}
                 className={datePickerClass}
               />
@@ -89,8 +89,8 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
                 onChange={model.setEndAt}
                 minDate={model.startAt ? new Date(new Date(model.startAt).getTime() + 60_000) : new Date()}
                 placeholder="Chọn ngày và giờ kết thúc"
-                side="left"
-                align="center"
+                side="bottom"
+                align="start"
                 portalContainer={calendarPortalContainer}
                 className={datePickerClass}
               />
@@ -127,7 +127,7 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
       <div className="mt-4 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <CalendarDaysIcon className="size-4 shrink-0 text-primary" aria-hidden="true" />
-          Lịch học sẽ xuất hiện trong phòng chat.
+          Lịch có hiệu lực ngay, gia sư và học viên không cần xác nhận.
         </p>
         <Button
           type="submit"
@@ -135,7 +135,7 @@ export function TrialWidgetForm({ model, busy, calendarPortalContainer }: TrialW
           className="h-10 w-full rounded-xl px-5 font-nunito text-xs font-extrabold shadow-xs transition-all active:scale-[0.98] sm:w-auto"
         >
           <PaperAirplaneIcon className="size-4" aria-hidden="true" />
-          <span>{busy ? "Đang gửi đề xuất..." : "Gửi đề xuất học thử"}</span>
+          <span>{busy ? "Đang tạo lịch..." : "Tạo lịch học thử"}</span>
         </Button>
       </div>
     </form>

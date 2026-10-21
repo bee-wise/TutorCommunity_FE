@@ -1,4 +1,4 @@
-import { getLmsResource, nullableList } from "../lms-classes/api-response";
+import { getLmsResource, nullableList } from "@workspace/core/lms-classes/api-response";
 import {
   guid,
   lmsScheduleViewSchema,

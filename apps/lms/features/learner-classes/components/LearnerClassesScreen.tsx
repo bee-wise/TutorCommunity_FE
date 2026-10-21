@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/ui/button";
+import { EmptyState } from "@workspace/ui/components/ui/empty-state";
+import { LmsHeroBanner } from "../../../components/LmsHeroBanner";
 import { ClassPagination } from "../../tutor-classes/components/ClassPagination";
 import { LearnerClassQueryError } from "./LearnerClassQueryError";
 import { useLearnerClassesQuery } from "../hooks/useLearnerClassesQuery";
@@ -15,14 +17,11 @@ export function LearnerClassesScreen({
     { query, filters } = directory;
   return (
     <main className="mx-auto w-full max-w-[1400px] space-y-5 px-4 py-6 text-foreground sm:px-6 lg:px-8">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-lms text-2xl font-extrabold leading-tight text-primary sm:text-3xl">
-          Lớp học
-        </h1>
-        <Button asChild variant="outline" className={learnerAction}>
+      <LmsHeroBanner title="Lớp học của tôi" description="Vào lớp để xem buổi học, tài liệu, bài tập và nhắn tin với gia sư." mascot="wand">
+        <Button asChild className="min-h-11 bg-accent px-5 font-bold text-accent-foreground hover:bg-accent/90">
           <Link href="/lms/learner/group-classes">Đăng ký lớp nhóm</Link>
         </Button>
-      </header>
+      </LmsHeroBanner>
       <LearnerApiClassFilters
         filters={filters}
         counts={directory.counts}
@@ -48,15 +47,19 @@ export function LearnerClassesScreen({
               ))}
             </div>
           ) : (
-            <div className="rounded-3xl border border-border bg-card p-8 shadow-soft">
-              <h2 className="font-lms text-lg font-extrabold text-foreground">
-                Chưa có lớp phù hợp
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Chỉ hiển thị lớp đã được cấp quyền và đã khai giảng. Đăng ký
-                hoặc thanh toán chưa có quyền LMS được theo dõi riêng.
-              </p>
-            </div>
+            <EmptyState
+              imageSrc="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_400/v1790760176/bee-flower.png"
+              imageAlt="Ong BeeWise bay tới một bông hoa"
+              imageWidth={200}
+              imageHeight={200}
+              title="Chưa có lớp phù hợp"
+              description="Chỉ hiển thị lớp đã được cấp quyền và đã khai giảng."
+              action={
+                <Button asChild variant="outline" className={learnerAction}>
+                  <Link href="/lms/learner/group-classes">Đăng ký lớp nhóm</Link>
+                </Button>
+              }
+            />
           )}
           <ClassPagination
             page={filters.page - 1}

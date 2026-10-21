@@ -135,7 +135,7 @@ function SessionGroup({
                 )}
               </div>
               <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                {session.level} | {session.classCode}
+                {[session.level, session.classCode].filter(Boolean).join(" | ")}
               </p>
             </div>
             <div className="flex items-center gap-2 sm:block">

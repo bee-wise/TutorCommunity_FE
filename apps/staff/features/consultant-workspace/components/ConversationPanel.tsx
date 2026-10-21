@@ -45,6 +45,8 @@ interface ConversationPanelProps {
   onSend: (content: string) => Promise<void>;
   onClose: (reason: string, note?: string) => Promise<void>;
   onBack: () => void;
+  listCollapsed?: boolean;
+  onToggleList?: () => void;
 }
 
 export function ConversationPanel({
@@ -62,6 +64,8 @@ export function ConversationPanel({
   onSend,
   onClose,
   onBack,
+  listCollapsed,
+  onToggleList,
 }: ConversationPanelProps) {
   const [draft, setDraft] = useState("");
   const [showWidgets, setShowWidgets] = useState(false);
@@ -156,6 +160,8 @@ export function ConversationPanel({
         subtitle={subtitle}
         readOnly={readOnly}
         onBack={onBack}
+        listCollapsed={listCollapsed}
+        onToggleList={onToggleList}
         onInfo={() => setShowInfoModal(true)}
         onClose={() => {
           setActionError(null);

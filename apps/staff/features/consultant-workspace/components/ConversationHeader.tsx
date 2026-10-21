@@ -3,6 +3,8 @@ import {
   InformationCircleIcon as Info,
   UserGroupIcon as UsersThree,
   XCircleIcon as XCircle,
+  ChevronDoubleLeftIcon as CollapseList,
+  ChevronDoubleRightIcon as ExpandList,
 } from "@heroicons/react/24/outline";
 import { initials } from "../utils/format";
 import type { WorkspaceRoom } from "../types/workspace";
@@ -15,6 +17,8 @@ export function ConversationHeader({
   onBack,
   onInfo,
   onClose,
+  listCollapsed = false,
+  onToggleList,
 }: {
   room: WorkspaceRoom;
   title: string;
@@ -23,10 +27,23 @@ export function ConversationHeader({
   onBack: () => void;
   onInfo: () => void;
   onClose: () => void;
+  listCollapsed?: boolean;
+  onToggleList?: () => void;
 }) {
   return (
-    <header className="flex shrink-0 items-center justify-between gap-3 border-b border-border/80 bg-card px-3 py-2.5 sm:px-5">
-      <div className="flex min-w-0 items-center gap-3">
+    <header className="flex shrink-0 items-center justify-between gap-2 border-b border-border/80 bg-card px-2.5 py-2 sm:px-3">
+      <div className="flex min-w-0 items-center gap-2.5">
+        {onToggleList && (
+          <button
+            type="button"
+            onClick={onToggleList}
+            aria-label={listCollapsed ? "Mở rộng danh sách phòng" : "Thu gọn danh sách phòng"}
+            title={listCollapsed ? "Mở rộng danh sách phòng" : "Thu gọn danh sách phòng"}
+            className="hidden size-9 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-muted hover:text-primary active:scale-95 lg:flex"
+          >
+            {listCollapsed ? <ExpandList width={18} height={18} /> : <CollapseList width={18} height={18} />}
+          </button>
+        )}
         <button
           type="button"
           onClick={onBack}
@@ -55,7 +72,7 @@ export function ConversationHeader({
           className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-background px-2.5 py-1.5 text-xs font-semibold text-foreground transition-all hover:border-primary/40 hover:bg-muted hover:text-primary active:scale-95"
         >
           <Info width={16} height={16} className="text-primary" />
-          <span className="hidden sm:inline">Thông tin hỗ trợ</span>
+          <span className="hidden 2xl:inline">Thông tin hỗ trợ</span>
         </button>
         {!readOnly && (
           <button
@@ -65,7 +82,7 @@ export function ConversationHeader({
             className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-background px-2.5 py-1.5 text-xs font-semibold text-foreground transition-all hover:border-destructive/40 hover:bg-muted hover:text-destructive active:scale-95"
           >
             <XCircle width={16} height={16} />
-            <span className="hidden sm:inline">Đóng chat</span>
+            <span className="hidden 2xl:inline">Đóng chat</span>
           </button>
         )}
       </div>

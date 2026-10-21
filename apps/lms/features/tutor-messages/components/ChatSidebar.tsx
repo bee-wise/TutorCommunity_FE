@@ -6,17 +6,24 @@ import {
   MagnifyingGlassIcon as Search,
   ChatBubbleLeftRightIcon as MessageCircleIcon,
   ArrowLeftIcon as ArrowLeft,
+  ChevronDoubleLeftIcon as CollapseIcon,
+  ChevronDoubleRightIcon as ExpandIcon,
 } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMessages } from "../hooks/useMessages";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
-import type { ChatRoom, ChatParticipantRole, ChatRoomCategory } from "../types/messages.types";
+import type { ChatRoom, ChatParticipantRole } from "../types/messages.types";
 import {
-  STAGE_LABELS,
-  STAGE_COLORS,
   formatRelativeTime,
 } from "../constants/messages.utils";
+
+type RoomStatusFilter = "OPEN" | "CLOSED";
+
+// SVG logos are served as-is (no Cloudinary transform), per the asset catalog.
+const CLOUDINARY = "https://res.cloudinary.com/xcrm6ykz/image/upload";
+const LMS_LOGO_WIDE = `${CLOUDINARY}/v1791535277/BeeWiseLMS-Logo-500x150.svg`;
+const LMS_LOGO_SQUARE = `${CLOUDINARY}/v1791535366/BeeWiseLMS-Logo-500x500.svg`;
 
 const STATUS_ROOM_LABELS: Record<string, string> = {
   ACTIVE: "Đang hoạt động",
@@ -27,9 +34,11 @@ const STATUS_ROOM_LABELS: Record<string, string> = {
 function RoomRow({
   room,
   currentUserRole,
+  compact = false,
 }: {
   room: ChatRoom;
   currentUserRole: ChatParticipantRole;
+  compact?: boolean;
 }) {
   const isReadOnly = room.status !== "ACTIVE";
   const peer = room.category === "SUPPORT"
@@ -39,11 +48,34 @@ function RoomRow({
 
   const basePath = "/lms/tutor/messages";
 
+  const showBadge = isReadOnly || room.category === "SUPPORT";
+
+  if (compact) {
+    return (
+      <Link
+        href={`${basePath}/${room.id}`}
+        aria-current={pathname === `${basePath}/${room.id}` ? "page" : undefined}
+        title={peer.name}
+        aria-label={peer.name}
+        className={`relative mx-auto flex size-12 items-center justify-center rounded-xl border transition-all active:scale-[0.98] ${pathname === `${basePath}/${room.id}` ? "border-primary bg-muted" : "border-transparent hover:border-border hover:bg-muted"}`}
+      >
+        <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-xs font-black text-primary-foreground">
+          {peer.initials}
+        </span>
+        {room.unreadCount > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-black text-destructive-foreground">
+            {room.unreadCount > 99 ? "99+" : room.unreadCount}
+          </span>
+        )}
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={`${basePath}/${room.id}`}
       aria-current={pathname === `${basePath}/${room.id}` ? "page" : undefined}
-      className={`group flex items-start gap-3 rounded-xl border px-3 py-3.5 transition-all active:scale-[0.98] ${pathname === `${basePath}/${room.id}` ? "border-primary bg-muted" : "border-transparent hover:border-border hover:bg-muted"}`}
+      className={`group flex items-start gap-3 rounded-xl border px-3 py-2.5 transition-all active:scale-[0.98] ${pathname === `${basePath}/${room.id}` ? "border-primary bg-muted" : "border-transparent hover:border-border hover:bg-muted"}`}
     >
       {/* Avatar */}
       <div className="relative shrink-0">
@@ -70,7 +102,7 @@ function RoomRow({
 
         {/* Subject + Stage */}
         <p className="mb-0.5 text-[11px] text-muted-foreground">
-          {room.category === "CONNECTION" ? (room.subject || `Kết nối #${room.connectRequestId.slice(0, 8)}`) : room.subject}
+          {room.category === "CONNECTION" ? (room.subject || "Yêu cầu kết nối") : room.subject}
         </p>
 
         <div className="flex items-center justify-between gap-2">
@@ -84,61 +116,52 @@ function RoomRow({
           )}
         </div>
 
-        {/* Stage badge */}
-        <span
-          className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${
-            room.category === "SUPPORT" && !isReadOnly
-              ? "border-secondary/30 bg-secondary/15 text-foreground"
-              : isReadOnly
-              ? "border-border bg-muted text-muted-foreground"
-              : (STAGE_COLORS[room.connectionStage] ??
-                "border-border bg-muted text-muted-foreground")
-          }`}
-        >
-          {room.category === "SUPPORT" && !isReadOnly
-            ? "Đang hỗ trợ"
-            : isReadOnly
-            ? STATUS_ROOM_LABELS[room.status]
-            : STAGE_LABELS[room.connectionStage]}
-        </span>
+        {/* Status badge: only when it adds information (support or read-only rooms) */}
+        {showBadge && (
+          <span
+            className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${
+              room.category === "SUPPORT" && !isReadOnly
+                ? "border-secondary/30 bg-secondary/15 text-foreground"
+                : "border-border bg-muted text-muted-foreground"
+            }`}
+          >
+            {room.category === "SUPPORT" && !isReadOnly
+              ? "Đang hỗ trợ"
+              : STATUS_ROOM_LABELS[room.status]}
+          </span>
+        )}
       </div>
     </Link>
   );
 }
 
-export function ChatSidebar() {
-  const { rooms, loading, error, refetch, markRead } = useMessages({ live: true });
+export function ChatSidebar({
+  collapsed = false,
+  onToggleCollapsed,
+}: {
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
+}) {
+  const { rooms, loading, error, refetch } = useMessages({ live: true });
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const currentUserRole: ChatParticipantRole = "TUTOR";
   const activeRoom = rooms.find((room) => pathname?.endsWith(`/${room.id}`));
-  const activeRoomId = activeRoom?.id;
-  const activeLastMessageAt = activeRoom?.lastMessageAt;
+  const [selectedFilter, setSelectedFilter] = useState<RoomStatusFilter | null>(null);
+  const statusFilter: RoomStatusFilter =
+    selectedFilter ?? (activeRoom && activeRoom.status !== "ACTIVE" ? "CLOSED" : "OPEN");
 
-  useEffect(() => {
-    if (!activeRoomId || !activeLastMessageAt) return;
-    const markVisibleRoomRead = () => {
-      if (document.visibilityState === "visible") markRead(activeRoomId, activeLastMessageAt);
-    };
-    markVisibleRoomRead();
-    document.addEventListener("visibilitychange", markVisibleRoomRead);
-    return () => document.removeEventListener("visibilitychange", markVisibleRoomRead);
-  }, [activeRoomId, activeLastMessageAt, markRead]);
-  const [selectedCategory, setSelectedCategory] = useState<ChatRoomCategory | null>(null);
-  const category = selectedCategory ?? activeRoom?.category ?? "CONNECTION";
-
+  // Connection and support rooms share one list; open = still active, closed = everything else.
   const availableRooms = rooms.filter(
     (room) => room.category === "CONNECTION" || room.supportFor === currentUserRole,
   );
+  const openCount = availableRooms.filter((room) => room.status === "ACTIVE").length;
+  const closedCount = availableRooms.length - openCount;
   const normalizedQuery = query.trim().toLowerCase();
-  const selectCategory = (nextCategory: ChatRoomCategory) => {
-    setSelectedCategory(nextCategory);
-    setQuery("");
-  };
 
   const filtered = availableRooms.filter(
     (r) =>
-      r.category === category && (
+      (statusFilter === "OPEN" ? r.status === "ACTIVE" : r.status !== "ACTIVE") && (
       normalizedQuery === "" ||
       (r.category === "SUPPORT" ? r.consultant.name : r.learner.name)
         .toLowerCase()
@@ -147,40 +170,81 @@ export function ChatSidebar() {
   );
 
   return (
-    <aside className="flex h-full w-full shrink-0 flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft lg:w-80">
-      {/* Header */}
-      <div className="flex shrink-0 flex-col gap-4 border-b border-border px-4 py-4">
-        {/* Brand */}
-        <Link href="/lms/tutor/dashboard" className="inline-flex w-fit items-center rounded-full bg-card px-3 py-1 shadow-sm ring-1 ring-primary" aria-label="BeeWise - Trang chủ gia sư">
-          <span className="relative block h-6 w-28">
-            <Image
-              src="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/v1789964923/Logo_2.png"
-              alt="BeeWise"
-              fill
-              sizes="112px"
-              className="object-contain object-center"
-              priority
-            />
-          </span>
+    <aside
+      className={`flex h-full w-full shrink-0 flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-soft ${
+        collapsed ? "lg:w-[72px]" : "lg:w-72"
+      }`}
+    >
+      {/* Header: back, title and collapse in one row */}
+      <div
+        className={`flex shrink-0 items-center gap-2 border-b border-border px-2.5 py-2 ${
+          collapsed ? "lg:flex-col lg:py-3" : ""
+        }`}
+      >
+        <Link
+          href="/lms/tutor/dashboard"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition-all hover:brightness-95 active:scale-[0.98]"
+          aria-label="Quay lại Trang chủ"
+          title="Về trang chủ gia sư"
+        >
+          <ArrowLeft width={18} height={18} />
         </Link>
-
-        {/* Back & Title */}
-        <div className="flex items-center gap-3">
+        <h2 className={`min-w-0 flex-1 ${collapsed ? "lg:hidden" : ""}`}>
           <Link
             href="/lms/tutor/dashboard"
-            className="flex min-h-11 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition-all hover:brightness-95 active:scale-[0.98]"
-            aria-label="Quay lại Trang chủ"
+            aria-label="BeeWise LMS - Tin nhắn"
+            className="relative block h-9 w-36 max-w-full"
           >
-            <ArrowLeft width={18} height={18} />
+            <Image
+              src={LMS_LOGO_WIDE}
+              alt="BeeWise LMS"
+              fill
+              sizes="144px"
+              className="object-contain object-left"
+              priority
+              unoptimized
+            />
           </Link>
-          <div>
-            <h2 className="font-lms text-lg font-extrabold text-foreground">Tin nhắn</h2>
-          </div>
-        </div>
+        </h2>
+        {collapsed && (
+          <Link
+            href="/lms/tutor/dashboard"
+            aria-label="BeeWise LMS - Trang chủ"
+            className="relative hidden size-10 shrink-0 lg:block"
+          >
+            <Image
+              src={LMS_LOGO_SQUARE}
+              alt="BeeWise LMS"
+              fill
+              sizes="40px"
+              className="object-contain"
+              unoptimized
+            />
+          </Link>
+        )}
+        {onToggleCollapsed && (
+          <button
+            type="button"
+            onClick={onToggleCollapsed}
+            aria-label={collapsed ? "Mở rộng danh sách" : "Thu gọn danh sách"}
+            title={collapsed ? "Mở rộng danh sách" : "Thu gọn danh sách"}
+            className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-muted hover:text-primary active:scale-[0.98] lg:flex"
+          >
+            {collapsed ? (
+              <ExpandIcon width={18} height={18} />
+            ) : (
+              <CollapseIcon width={18} height={18} />
+            )}
+          </button>
+        )}
       </div>
 
-      {/* Search */}
-      <div className="shrink-0 border-b border-border px-3 py-2.5">
+      {/* Search + category tabs share one compact block (hidden in the collapsed rail) */}
+      <div
+        className={`shrink-0 space-y-2 border-b border-border px-2.5 py-2 ${
+          collapsed ? "lg:hidden" : ""
+        }`}
+      >
         <div className="relative">
           <Search width={14} height={14}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -193,23 +257,29 @@ export function ChatSidebar() {
             className="w-full rounded-lg border border-input bg-background py-2 pl-8 pr-3 text-xs outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
-      </div>
-
-      <div className="shrink-0 border-b border-border px-3 py-2.5">
-        <div role="group" aria-label="Loại cuộc trò chuyện" className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1">
-          {(["CONNECTION", "SUPPORT"] as const).map((item) => (
+        <div role="group" aria-label="Lọc theo trạng thái cuộc trò chuyện" className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1">
+          {(
+            [
+              ["OPEN", "Đang mở", openCount],
+              ["CLOSED", "Đã đóng", closedCount],
+            ] as const
+          ).map(([value, label, count]) => (
             <button
-              key={item}
+              key={value}
               type="button"
-              aria-pressed={category === item}
-              onClick={() => selectCategory(item)}
-              className={`flex items-center justify-center gap-2 rounded-lg px-2 py-2 text-xs font-bold transition-all active:scale-[0.98] ${category === item ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              aria-pressed={statusFilter === value}
+              onClick={() => setSelectedFilter(value)}
+              className={`flex items-center justify-center gap-2 rounded-lg px-2 py-1.5 text-xs font-bold transition-all active:scale-[0.98] ${statusFilter === value ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
             >
-              {item === "CONNECTION" ? "Kết nối" : "Hỗ trợ"}
-              <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${category === item ? "bg-muted text-primary" : "bg-card text-muted-foreground"}`}>
-                {availableRooms.filter((room) => room.category === item).length}
+              {label}
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${statusFilter === value ? "bg-muted text-primary" : "bg-card text-muted-foreground"}`}>
+                {count}
               </span>
-              {availableRooms.some((room) => room.category === item && room.unreadCount > 0) && (
+              {availableRooms.some(
+                (room) =>
+                  (value === "OPEN" ? room.status === "ACTIVE" : room.status !== "ACTIVE") &&
+                  room.unreadCount > 0,
+              ) && (
                 <span className="h-2 w-2 rounded-full bg-destructive" aria-label="Có tin nhắn chưa đọc" />
               )}
             </button>
@@ -229,15 +299,15 @@ export function ChatSidebar() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center px-4 py-12 text-center">
             <MessageCircleIcon width={32} height={32} className="mb-3 text-muted-foreground" />
-            <strong className="text-sm text-foreground">
+            <strong className={`text-sm text-foreground ${collapsed ? "lg:hidden" : ""}`}>
               {query ? "Không tìm thấy" : "Chưa có cuộc trò chuyện"}
             </strong>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className={`mt-1 text-xs text-muted-foreground ${collapsed ? "lg:hidden" : ""}`}>
               {query
                 ? "Thử tìm kiếm khác"
-                : category === "SUPPORT"
-                  ? "Chưa có cuộc trò chuyện hỗ trợ."
-                  : "Các cuộc trò chuyện kết nối sẽ hiện tại đây."}
+                : statusFilter === "CLOSED"
+                  ? "Chưa có cuộc trò chuyện nào đã đóng."
+                  : "Các cuộc trò chuyện đang mở sẽ hiện tại đây."}
             </p>
           </div>
         ) : (
@@ -247,6 +317,7 @@ export function ChatSidebar() {
                 key={room.id}
                 room={room}
                 currentUserRole={currentUserRole}
+                compact={collapsed}
               />
             ))}
           </div>

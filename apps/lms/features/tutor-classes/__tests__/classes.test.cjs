@@ -276,7 +276,7 @@ test("class card has one navigation target, correct labels and actionable missin
   );
   assert.equal((html.match(/<a /g) ?? []).length, 1);
   assert.ok(html.includes("/lms/tutor/classes/class-group-math"));
-  assert.ok(html.includes("BW-G201"));
+  assert.ok(!html.includes("BW-G201"));
   assert.ok(html.includes("2 buổi chưa xác nhận điểm danh"));
   const records = Object.fromEntries(
     TUTOR_CLASS_SESSIONS.filter(

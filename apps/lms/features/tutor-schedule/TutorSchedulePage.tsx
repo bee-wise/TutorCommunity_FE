@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useIsMobile } from "@workspace/core/hooks/use-mobile";
 import { ArrowPathIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
-import { parseVietnamDateTime } from "@workspace/core/lms-calendar";
+import { parseVietnamDateTime } from "@/features/lms-calendar";
 import { useScheduleFilters } from "./hooks/useScheduleFilters";
 import { OverviewCards } from "./components/OverviewCards";
 import { ControlBar } from "./components/ControlBar";
-import { CalendarView } from "./components/CalendarView";
+import { LmsCalendar } from "@/components/LmsCalendar";
+import { LmsPageHeader } from "@/components/LmsPageHeader";
 import { ListView } from "./components/ListView";
 import { SessionDetailSheet } from "./components/SessionDetailSheet";
 import type { Session, ViewMode } from "./types/schedule.types";
@@ -23,7 +25,10 @@ const WEEKDAY_NAMES = [
 ];
 
 export function TutorSchedulePage() {
-  const [viewMode, setViewMode] = useState<ViewMode>("calendar");
+  const isMobile = useIsMobile();
+  // Phones read a list more easily than a month grid; an explicit choice wins.
+  const [chosenView, setViewMode] = useState<ViewMode | null>(null);
+  const viewMode = chosenView ?? (isMobile ? "list" : "calendar");
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -62,27 +67,13 @@ export function TutorSchedulePage() {
   return (
     <div className="min-h-full bg-muted">
       <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2.5 mb-1">
-              <h1 className="text-2xl font-extrabold font-lms text-primary leading-tight">
-                Lịch Dạy
-              </h1>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Quản lý lịch giảng dạy, các buổi học chính thức và lộ trình kế hoạch.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-card border border-border/60 shadow-xs self-start sm:self-auto">
-            <span className="text-sm font-semibold text-foreground">
-              {todayLabel}
-            </span>
-          </div>
-        </div>
+        <LmsPageHeader
+          title="Lịch dạy"
+          actions={<div className="rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-bold text-primary">{todayLabel}</div>}
+        />
 
         {isError && (
-          <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive flex items-center justify-between">
+          <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-error bg-card p-4 text-destructive">
             <div className="flex items-center gap-3">
               <ExclamationCircleIcon className="size-5 shrink-0" />
               <p className="text-sm font-medium">
@@ -120,13 +111,13 @@ export function TutorSchedulePage() {
 
         <div>
           {viewMode === "calendar" ? (
-            <CalendarView
+            <LmsCalendar
+              getSecondaryLabel={(session) => session.studentFullName}
               sessions={filteredSessions}
               onSessionClick={handleSessionClick}
               viewYear={viewYear}
               viewMonth={viewMonth}
-              onPrev={handlePrevMonth}
-              onNext={handleNextMonth}
+              onMonthChange={(offset) => (offset < 0 ? handlePrevMonth() : handleNextMonth())}
               onToday={handleGoToday}
               isLoading={isLoading}
             />

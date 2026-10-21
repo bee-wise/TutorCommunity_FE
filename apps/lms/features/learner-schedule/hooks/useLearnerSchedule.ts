@@ -7,7 +7,7 @@ import {
   lmsCalendarKeys,
   getMonthRangeIso,
   parseVietnamDateTime,
-} from "@workspace/core/lms-calendar";
+} from "@/features/lms-calendar";
 import type {
   LearnerScheduleFilters,
   LearnerSession,

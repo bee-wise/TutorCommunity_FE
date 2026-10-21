@@ -16,6 +16,7 @@ Module._load = function (name, parent, isMain) {
   if (parent?.filename.endsWith("LmsDashboardShell.tsx")) {
     if (name === "@workspace/ui/components/ui/sidebar") return { SidebarProvider: ({ children }) => React.createElement("div", null, children) };
     if (name === "./LmsAppSidebar") return { LmsAppSidebar: () => React.createElement("nav", { "aria-label": "LMS navigation" }) };
+    if (name === "./LmsMobileNav") return { LmsMobileNav: () => React.createElement("nav", { "aria-label": "LMS mobile navigation" }) };
     if (name === "./LmsTopbar") return { LmsTopbar: ({ breadcrumb }) => React.createElement("header", null, breadcrumb || "TOPBAR") };
   }
   return originalLoad.call(this, name, parent, isMain);

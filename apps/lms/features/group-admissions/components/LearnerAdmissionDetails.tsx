@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@workspace/ui/components/ui/button";
+import { LmsStatusBadge } from "../../../components/LmsStatusBadge";
+import type { StatusTone } from "../../../components/lms-status";
 import { useLearnerAdmission } from "../hooks/useLearnerAdmission";
 import { LearnerClassQueryError } from "../../learner-classes/components/LearnerClassQueryError";
 import { learnerAction } from "../../learner-classes/components/LearnerApiClassCard";
@@ -22,6 +24,17 @@ const states: Record<string, string> = {
   CANCELLED: "Đã hủy",
   LEFT: "Đã rời lớp",
   REJECTED: "Đã từ chối",
+};
+const stateTones: Record<string, StatusTone> = {
+  REGISTERED: "pending",
+  PENDING: "pending",
+  TRIAL_PROPOSED: "pending",
+  TRIAL_CONFIRMED: "active",
+  TRIAL_COMPLETED: "active",
+  ENROLLED: "done",
+  CANCELLED: "cancelled",
+  LEFT: "cancelled",
+  REJECTED: "overdue",
 };
 export function LearnerAdmissionDetails({
   id,
@@ -61,9 +74,10 @@ export function LearnerAdmissionDetails({
         <h2 className="font-lms text-lg font-extrabold text-foreground">
           Theo dõi đăng ký
         </h2>
-        <span className="rounded-full border border-border px-3 py-1 text-xs font-bold text-primary">
-          {states[data.status ?? ""] ?? data.status ?? "Chưa xác định"}
-        </span>
+        <LmsStatusBadge
+          status={stateTones[data.status ?? ""] ?? "planned"}
+          label={states[data.status ?? ""] ?? data.status ?? "Chưa xác định"}
+        />
       </div>
       <p className="rounded-2xl border border-border p-4 text-sm">
         {late

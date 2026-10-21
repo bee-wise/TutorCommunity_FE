@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import {
   ChatBubbleLeftRightIcon as ChatsCircleIcon,
@@ -10,6 +11,9 @@ import { useMessages } from "../hooks/useMessages";
 import { getLastActiveChatRoomId } from "../constants/messages.utils";
 import type { ChatParticipantRole } from "../types/messages.types";
 import { ChatSidebar } from "./ChatSidebar";
+
+const DUO_FLOWER =
+  "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_480/v1790241784/Bee_Robot_1.png";
 
 export function MessagesScreen() {
   const router = useRouter();
@@ -76,9 +80,13 @@ export function MessagesScreen() {
           </div>
         ) : (
           <div className="max-w-sm px-8 text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-              <ChatsCircleIcon width={30} height={30} aria-hidden="true" />
-            </div>
+            <Image
+              src={DUO_FLOWER}
+              alt="Ong BeeWise và robot trao nhau một bông hoa"
+              width={240}
+              height={180}
+              className="mx-auto mb-4 h-auto w-60"
+            />
             <h2 className="font-nunito text-xl font-black text-foreground">
               Chọn cuộc trò chuyện
             </h2>
