@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Popover } from "radix-ui";
@@ -45,6 +45,18 @@ const MONTH_NAMES = [
 ];
 
 const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+
+const WEEKDAY_LONG = [
+  "Chủ nhật",
+  "Thứ hai",
+  "Thứ ba",
+  "Thứ tư",
+  "Thứ năm",
+  "Thứ sáu",
+  "Thứ bảy",
+];
+
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, index) => index);
 
 const QUICK_TIME_PRESETS = [
   "08:00",
@@ -304,6 +316,42 @@ export function DateTimePicker({
     onChange?.("");
   }
 
+  const minuteOptions = useMemo(() => {
+    const options = Array.from({ length: 12 }, (_, index) => index * 5);
+    return options.includes(minutes)
+      ? options
+      : [...options, minutes].sort((a, b) => a - b);
+  }, [minutes]);
+
+  // Past/out-of-range slots on the selected day are disabled instead of silently clamped.
+  function isSlotDisabled(h: number, m: number) {
+    if (!selectedDay) return false;
+    const slot = new Date(
+      selectedDay.getFullYear(),
+      selectedDay.getMonth(),
+      selectedDay.getDate(),
+      h,
+      m,
+    );
+    return Boolean((earliest && slot < earliest) || (latest && slot > latest));
+  }
+
+  function isHourDisabled(h: number) {
+    return minuteOptions.every((m) => isSlotDisabled(h, m));
+  }
+
+  const summaryString = selectedDay
+    ? `${WEEKDAY_LONG[selectedDay.getDay()]}, ${formatDateTimeVN(
+        new Date(
+          selectedDay.getFullYear(),
+          selectedDay.getMonth(),
+          selectedDay.getDate(),
+          hours,
+          minutes,
+        ),
+      ).replace(" ", " · ")}`
+    : "";
+
   const displayString = selectedDay
     ? formatDateTimeVN(
         new Date(
@@ -389,41 +437,46 @@ export function DateTimePicker({
             avoidCollisions={true}
             collisionPadding={16}
             style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
-            className="z-[99999] w-[min(320px,calc(100vw-24px))] overflow-y-auto overscroll-contain rounded-2xl border border-border bg-card p-3.5 shadow-2xl text-foreground outline-none animate-in fade-in-0 zoom-in-95 duration-150"
+            className="z-[99999] w-[min(344px,calc(100vw-24px))] overflow-y-auto overscroll-contain rounded-2xl border border-border bg-card p-4 shadow-pop text-foreground outline-none animate-in fade-in-0 zoom-in-95 duration-150"
           >
+            {/* Selected summary */}
+            <div className="mb-3 rounded-xl bg-muted px-3 py-2">
+              <p className="text-[11px] font-semibold text-muted-foreground">
+                Thời gian đã chọn
+              </p>
+              <p className="font-nunito text-sm font-extrabold tabular-nums text-foreground">
+                {summaryString || "Chưa chọn ngày"}
+              </p>
+            </div>
+
             {/* Calendar Header */}
-            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-border/80">
-              <div className="flex items-center gap-1">
-                <span className="font-nunito font-extrabold text-sm text-foreground">
-                  {MONTH_NAMES[viewDate.getMonth()]}
-                </span>
-                <span className="text-xs font-bold text-muted-foreground">
+            <div className="flex items-center justify-between gap-2 pb-2">
+              <button
+                type="button"
+                onClick={handlePrevMonth}
+                aria-label="Tháng trước"
+                className="flex size-9 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition-all hover:border-primary/40 hover:text-foreground active:scale-95 cursor-pointer"
+              >
+                <ChevronLeftIcon className="size-4" />
+              </button>
+              <span className="font-nunito text-sm font-extrabold text-foreground">
+                {MONTH_NAMES[viewDate.getMonth()]}{" "}
+                <span className="text-muted-foreground">
                   {viewDate.getFullYear()}
                 </span>
-              </div>
-
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={handlePrevMonth}
-                  aria-label="Tháng trước"
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/40 active:scale-95 transition-all cursor-pointer"
-                >
-                  <ChevronLeftIcon className="size-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNextMonth}
-                  aria-label="Tháng sau"
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/40 active:scale-95 transition-all cursor-pointer"
-                >
-                  <ChevronRightIcon className="size-3.5" />
-                </button>
-              </div>
+              </span>
+              <button
+                type="button"
+                onClick={handleNextMonth}
+                aria-label="Tháng sau"
+                className="flex size-9 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition-all hover:border-primary/40 hover:text-foreground active:scale-95 cursor-pointer"
+              >
+                <ChevronRightIcon className="size-4" />
+              </button>
             </div>
 
             {/* Weekday Labels */}
-            <div className="grid grid-cols-7 gap-1 pt-2 pb-1 text-center text-[10px] font-bold text-muted-foreground uppercase">
+            <div className="grid grid-cols-7 gap-1 pb-1 text-center text-[11px] font-bold text-muted-foreground">
               {WEEKDAYS.map((wd) => (
                 <div key={wd}>{wd}</div>
               ))}
@@ -431,91 +484,106 @@ export function DateTimePicker({
 
             {/* Day Grid */}
             <div className="grid grid-cols-7 gap-1">
-              {calendarDays.map((item, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  disabled={item.isDisabled || !item.isCurrentMonth}
-                  onClick={() => handleSelectDay(item.date)}
-                  className={`flex h-7 w-full items-center justify-center rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    !item.isCurrentMonth
-                      ? "opacity-25 pointer-events-none"
-                      : item.isSelected
+              {calendarDays.map((item, idx) =>
+                item.isCurrentMonth ? (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={item.isDisabled}
+                    aria-label={`${item.date.getDate()}/${item.date.getMonth() + 1}/${item.date.getFullYear()}`}
+                    aria-pressed={item.isSelected}
+                    onClick={() => handleSelectDay(item.date)}
+                    className={`flex size-10 w-full items-center justify-center rounded-xl text-sm font-semibold tabular-nums transition-all ${
+                      item.isSelected
                         ? "bg-primary text-primary-foreground font-extrabold shadow-xs"
-                        : item.isToday
-                          ? "border border-primary text-primary hover:bg-primary/10"
-                          : "hover:bg-muted text-foreground"
-                  } ${item.isDisabled ? "opacity-30 cursor-not-allowed hover:bg-transparent" : ""}`}
-                >
-                  {item.date.getDate()}
-                </button>
-              ))}
+                        : item.isDisabled
+                          ? "cursor-not-allowed text-muted-foreground/40"
+                          : item.isToday
+                            ? "cursor-pointer border-2 border-primary text-primary hover:bg-muted"
+                            : "cursor-pointer text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {item.date.getDate()}
+                  </button>
+                ) : (
+                  <span key={idx} aria-hidden="true" />
+                ),
+              )}
             </div>
 
             {/* Time Picker Section */}
-            <div className="mt-3 pt-2.5 border-t border-border/80 space-y-2">
-              <div className="flex items-center justify-between gap-2">
+            <div className="mt-3 space-y-2.5 border-t border-border pt-3">
+              <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-                  <ClockIcon className="size-3.5 text-primary" />
-                  <span>Giờ học (hh:mm)</span>
+                  <ClockIcon className="size-4 text-primary" />
+                  <span>Giờ học</span>
                 </div>
 
-                {/* Steppers */}
-                <div className="flex items-center gap-1 bg-background border border-input rounded-xl p-1">
-                  {/* Hours */}
-                  <input
-                    type="number"
-                    min={0}
-                    max={23}
-                    value={String(hours).padStart(2, "0")}
+                <div className="flex items-center gap-1.5">
+                  <select
+                    aria-label="Giờ"
+                    value={hours}
                     onChange={(e) => handleHourChange(Number(e.target.value))}
-                    className="w-8 text-center text-xs font-bold bg-transparent outline-none text-foreground font-mono focus:text-primary"
-                  />
-                  <span className="text-xs font-bold text-muted-foreground">
+                    className="h-9 rounded-xl border border-input bg-background px-2 text-sm font-bold tabular-nums text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 cursor-pointer"
+                  >
+                    {HOUR_OPTIONS.map((h) => (
+                      <option key={h} value={h} disabled={isHourDisabled(h)}>
+                        {String(h).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-sm font-bold text-muted-foreground">
                     :
                   </span>
-                  {/* Minutes */}
-                  <input
-                    type="number"
-                    min={0}
-                    max={59}
-                    step={5}
-                    value={String(minutes).padStart(2, "0")}
+                  <select
+                    aria-label="Phút"
+                    value={minutes}
                     onChange={(e) => handleMinuteChange(Number(e.target.value))}
-                    className="w-8 text-center text-xs font-bold bg-transparent outline-none text-foreground font-mono focus:text-primary"
-                  />
+                    className="h-9 rounded-xl border border-input bg-background px-2 text-sm font-bold tabular-nums text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 cursor-pointer"
+                  >
+                    {minuteOptions.map((m) => (
+                      <option key={m} value={m} disabled={isSlotDisabled(hours, m)}>
+                        {String(m).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
               {/* Quick Time Presets */}
-              <div className="flex flex-wrap gap-1 pt-1">
-                {QUICK_TIME_PRESETS.map((preset) => (
-                  <button
-                    key={preset}
-                    type="button"
-                    onClick={() => handleSelectPresetTime(preset)}
-                    className={`rounded-lg border px-2 py-0.5 text-[10px] font-semibold transition-all cursor-pointer ${
-                      String(hours).padStart(2, "0") +
-                        ":" +
-                        String(minutes).padStart(2, "0") ===
-                      preset
-                        ? "border-primary bg-primary/10 text-primary font-bold"
-                        : "border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/40"
-                    }`}
-                  >
-                    {preset}
-                  </button>
-                ))}
+              <div className="flex flex-wrap gap-1.5">
+                {QUICK_TIME_PRESETS.map((preset) => {
+                  const [ph, pm] = preset.split(":").map(Number) as [number, number];
+                  const active = ph === hours && pm === minutes;
+                  const unavailable = isSlotDisabled(ph, pm);
+                  return (
+                    <button
+                      key={preset}
+                      type="button"
+                      disabled={unavailable}
+                      onClick={() => handleSelectPresetTime(preset)}
+                      className={`h-8 rounded-lg border px-2.5 text-xs font-semibold tabular-nums transition-all ${
+                        active
+                          ? "border-primary bg-primary text-primary-foreground font-bold"
+                          : unavailable
+                            ? "cursor-not-allowed border-border bg-background text-muted-foreground/40"
+                            : "cursor-pointer border-border bg-background text-foreground hover:border-primary/50 hover:bg-muted"
+                      }`}
+                    >
+                      {preset}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Quick Footer Action Buttons */}
-            <div className="mt-3 pt-2.5 border-t border-border/80 flex items-center justify-between gap-2">
+            {/* Footer */}
+            <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
               <button
                 type="button"
                 onClick={handleSelectToday}
                 disabled={!canSelectToday}
-                className="rounded-lg px-2 py-1 text-[11px] font-bold text-primary transition-all hover:bg-primary/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+                className="h-9 rounded-xl border border-border bg-background px-3 text-xs font-bold text-primary transition-all hover:bg-muted active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               >
                 Hôm nay
               </button>
@@ -523,9 +591,9 @@ export function DateTimePicker({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-1 rounded-xl bg-primary px-3 py-1 text-xs font-nunito font-extrabold text-primary-foreground hover:bg-primary/95 active:scale-95 transition-all cursor-pointer"
+                className="flex h-9 items-center gap-1.5 rounded-xl bg-primary px-4 font-nunito text-xs font-extrabold text-primary-foreground transition-all hover:bg-primary/95 active:scale-95 cursor-pointer"
               >
-                <CheckIcon className="size-3.5" />
+                <CheckIcon className="size-4" />
                 <span>Xong</span>
               </button>
             </div>

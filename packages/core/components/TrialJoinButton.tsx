@@ -51,11 +51,9 @@ export function TrialJoinButton({ trial, href, disabled }: { trial: TrialSession
     ? `Có thể tham gia từ ${startTimeLabel(trial.scheduledStartAt)}.`
     : availability.state === "AFTER_END"
       ? "Buổi học đã kết thúc."
-      : availability.state === "AWAITING_CONFIRMATION"
-        ? "Chờ gia sư và học viên xác nhận lịch học."
-        : availability.state === "CLOSED"
-          ? "Lịch học này không còn mở để tham gia."
-          : "Chưa có thời gian học hợp lệ.";
+      : availability.state === "CLOSED"
+        ? "Lịch học này không còn mở để tham gia."
+        : "Chưa có thời gian học hợp lệ.";
   const className = "h-8 rounded-lg px-2.5 text-xs font-bold transition-all active:scale-[0.98]";
 
   if (availability.state === "READY" && !disabled) {

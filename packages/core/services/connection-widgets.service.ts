@@ -89,6 +89,7 @@ export const paymentRequestSchema = z
     status: nullableString,
     expiredAt: nullableString,
     paidAt: nullableString,
+    classInfo: z.record(z.string(), z.unknown()).nullish(),
     contextName: nullableString,
     teachingItemName: nullableString,
     subjectName: nullableString,
@@ -104,6 +105,8 @@ export const classSessionSchema = z
     learnerId: nullableString,
     startAt: nullableString,
     endAt: nullableString,
+    name: nullableString,
+    description: nullableString,
     teachingMode: nullableString,
     locationOrMeetingInfo: nullableString,
     status: nullableString,
@@ -146,6 +149,8 @@ export type ClassSchedule = z.infer<typeof classScheduleSchema>;
 export type ClassSessionSlot = {
   startAt: string;
   endAt: string;
+  name?: string;
+  description?: string;
   locationOrMeetingInfo?: string;
 };
 export type UpdateClassConfirmation = {
@@ -207,13 +212,6 @@ export const connectionWidgetsService = {
     const response: unknown = await apiClient.post(
       `/trial-sessions/${idPath(id)}/complete`,
       { expectedVersion, note: note || null },
-    );
-    return dataOf(trialSessionSchema, response);
-  },
-  async confirmTrial(id: string, expectedVersion: number) {
-    const response: unknown = await apiClient.post(
-      `/trial-sessions/${idPath(id)}/confirm`,
-      { expectedVersion },
     );
     return dataOf(trialSessionSchema, response);
   },

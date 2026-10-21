@@ -7,7 +7,11 @@ type RoomSubscription = {
   subscription: Subscription;
   listeners: Set<RoomListener>;
   isSubscribed: boolean;
+  teardownTimer?: ReturnType<typeof setTimeout>;
 };
+
+/** How long an unused room subscription (and the socket) stays alive, so remounts do not reconnect. */
+const TEARDOWN_GRACE_MS = 5_000;
 
 let client: Centrifuge | null = null;
 let clientUserId: string | null = null;
@@ -59,7 +63,8 @@ function notifyRoom(roomId: string) {
 
 function disconnectClient() {
   setConnectionStatus(false);
-  roomSubscriptions.forEach(({ subscription }) => {
+  roomSubscriptions.forEach(({ subscription, teardownTimer }) => {
+    if (teardownTimer) clearTimeout(teardownTimer);
     subscription.unsubscribe();
     subscription.removeAllListeners();
     client?.removeSubscription(subscription);
@@ -154,16 +159,27 @@ export function subscribeToChatRoom(userId: string, roomId: string, listener: Ro
   }
   room.listeners.add(listener);
 
+  // Re-subscribing within the grace period (e.g. switching rooms remounts the hooks) reuses the live subscription.
+  if (room.teardownTimer) {
+    clearTimeout(room.teardownTimer);
+    room.teardownTimer = undefined;
+  }
+
   return () => {
     const current = roomSubscriptions.get(roomId);
     if (!current) return;
     current.listeners.delete(listener);
     if (current.listeners.size > 0) return;
-    current.subscription.unsubscribe();
-    current.subscription.removeAllListeners();
-    instance.removeSubscription(current.subscription);
-    roomSubscriptions.delete(roomId);
-    notifyConnectionListeners();
-    if (roomSubscriptions.size === 0) disconnectClient();
+    if (current.teardownTimer) clearTimeout(current.teardownTimer);
+    current.teardownTimer = setTimeout(() => {
+      const latest = roomSubscriptions.get(roomId);
+      if (!latest || latest !== current || latest.listeners.size > 0) return;
+      latest.subscription.unsubscribe();
+      latest.subscription.removeAllListeners();
+      instance.removeSubscription(latest.subscription);
+      roomSubscriptions.delete(roomId);
+      notifyConnectionListeners();
+      if (roomSubscriptions.size === 0) disconnectClient();
+    }, TEARDOWN_GRACE_MS);
   };
 }
