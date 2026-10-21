@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { cn } from "@workspace/core/helpers/utils";
-import { parseVietnamDateTime } from "@workspace/core/lms-calendar";
+import { parseVietnamDateTime } from "@/features/lms-calendar";
 import { Button } from "@workspace/ui/components/ui/button";
 import { LmsResponsiveSheet } from "./LmsResponsiveSheet";
 import { LMS_SESSION_STATUS, type LmsSessionStatus } from "./lms-session-status";

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useIsMobile } from "@workspace/core/hooks/use-mobile";
 import { ArrowPathIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
-import { parseVietnamDateTime } from "@workspace/core/lms-calendar";
+import { parseVietnamDateTime } from "@/features/lms-calendar";
 import { useScheduleFilters } from "./hooks/useScheduleFilters";
 import { OverviewCards } from "./components/OverviewCards";
 import { ControlBar } from "./components/ControlBar";

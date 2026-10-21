@@ -4,7 +4,7 @@ import { useState, type ElementType, type ReactNode } from "react";
 import Link from "next/link";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AcademicCapIcon, ArrowRightIcon, CalendarIcon, ClockIcon, ComputerDesktopIcon, ExclamationTriangleIcon, MapPinIcon, UserIcon, VideoCameraIcon } from "@heroicons/react/24/outline";
-import { formatLmsSubject, lmsCalendarKeys, lmsCalendarService, type LmsScheduleView } from "@workspace/core/lms-calendar";
+import { formatLmsSubject, lmsCalendarKeys, lmsCalendarService, type LmsScheduleView } from "@/features/lms-calendar";
 import { Button } from "@workspace/ui/components/ui/button";
 import { LmsResponsiveSheet } from "./LmsResponsiveSheet";
 import { LmsStatusBadge } from "./LmsStatusBadge";

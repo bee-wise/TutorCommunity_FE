@@ -51,9 +51,9 @@ Module._load = function (name, parent, isMain) {
 
 const scheduleTypes = require("../types/schedule.types.ts");
 const learnerTypes = require("../../learner-schedule/types/learner-schedule.types.ts");
-const calendarSchemas = require("../../../../../packages/core/lms-calendar/schemas.ts");
-const calendarUtils = require("../../../../../packages/core/lms-calendar/utils.ts");
-const calendarKeys = require("../../../../../packages/core/lms-calendar/query-keys.ts");
+const calendarSchemas = require("../../lms-calendar/schemas.ts");
+const calendarUtils = require("../../lms-calendar/utils.ts");
+const calendarKeys = require("../../lms-calendar/query-keys.ts");
 
 test("mapLmsScheduleViewToTutorSession correctly maps status, planned flag and Vietnam time", () => {
   const mockOfficial = {

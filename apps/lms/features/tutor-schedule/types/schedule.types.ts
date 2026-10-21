@@ -1,8 +1,8 @@
-import type { LmsScheduleView } from "@workspace/core/lms-calendar";
+import type { LmsScheduleView } from "@/features/lms-calendar";
 import {
   parseVietnamDateTime,
   formatLmsSubject,
-} from "@workspace/core/lms-calendar";
+} from "@/features/lms-calendar";
 
 export type SessionStatus =
   | "UPCOMING"

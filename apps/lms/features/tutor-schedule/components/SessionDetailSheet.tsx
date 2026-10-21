@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@workspace/ui/components/ui/dialog";
-import { lmsCalendarKeys, lmsCalendarService } from "@workspace/core/lms-calendar";
+import { lmsCalendarKeys, lmsCalendarService } from "@/features/lms-calendar";
 import { classSessionsService } from "@workspace/core/lms-classes/sessions.service";
 import { lmsClassKeys } from "@workspace/core/lms-classes/query-keys";
 import { LmsSessionDetailSheet } from "@/components/LmsSessionDetailSheet";

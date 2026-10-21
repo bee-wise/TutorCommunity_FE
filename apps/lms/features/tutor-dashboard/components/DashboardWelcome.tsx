@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
-import { getVietnamToday } from "@workspace/core/lms-calendar";
+import { getVietnamToday } from "@/features/lms-calendar";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { DASHBOARD_ASSETS } from "../data/dashboard.assets";
 import { formatLongDate, getGreeting } from "../utils/dashboard-overview.utils";
