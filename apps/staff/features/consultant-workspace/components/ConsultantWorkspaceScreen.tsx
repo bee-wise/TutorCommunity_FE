@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  ChatBubbleOvalLeftEllipsisIcon as MessageCircleMore,
-} from "@heroicons/react/24/outline";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import {
   privatePreviewMessages,
@@ -13,14 +12,24 @@ import {
   useConsultantConversation,
   useConsultantRooms,
 } from "../hooks/useConsultantWorkspace";
-import { useConsultantUnread } from "../hooks/useConsultantUnread";
-import type { WorkspaceMessage, WorkspaceRoom } from "../types/workspace";
+import {
+  participantName,
+  type WorkspaceMessage,
+  type WorkspaceRoom,
+} from "../types/workspace";
+import { initials } from "../utils/format";
 import {
   ConversationList,
   type StatusFilter,
   type ChatKind,
 } from "./ConversationList";
 import { ConversationPanel } from "./ConversationPanel";
+
+const DUO_FLOWER =
+  "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_440/v1790241784/Bee_Robot_1.png";
+const BEEWISE_LOGO_MARK =
+  "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_80/v1789964842/Logo_1.png";
+const LIST_COLLAPSED_KEY ="beewise:staff-chat-list-collapsed";
 
 export function ConsultantWorkspaceScreen() {
   const [kind, setKind] = useState<ChatKind>("group");
@@ -29,6 +38,16 @@ export function ConsultantWorkspaceScreen() {
   const [selectedId, setSelectedId] = useState<string>();
   const [showConversationOnMobile, setShowConversationOnMobile] =
     useState(false);
+  // Remember the user's choice; default to the narrow rail on screens under 1280px.
+  const [listCollapsed, setListCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const stored = localStorage.getItem(LIST_COLLAPSED_KEY);
+      return stored === null ? window.innerWidth < 1280 : stored === "1";
+    } catch {
+      return window.innerWidth < 1280;
+    }
+  });
   const [previewMessages, setPreviewMessages] = useState(
     privatePreviewMessages,
   );
@@ -38,12 +57,7 @@ export function ConsultantWorkspaceScreen() {
   >({});
   const consultantId = useAuthStore((state) => state.user?.id) ?? "";
   const roomsQuery = useConsultantRooms();
-  const { unreadCounts, markRead } = useConsultantUnread(
-    consultantId,
-    roomsQuery.rooms,
-    privatePreviewRooms,
-    previewMessages,
-  );
+  const lastReadRequestedRef = useRef<string | null>(null);
 
   const previewRooms = privatePreviewRooms.map((room): WorkspaceRoom => {
     const list = previewMessages[room.id] ?? [];
@@ -55,14 +69,10 @@ export function ConsultantWorkspaceScreen() {
       status: closedPreviewIds.includes(room.id) ? "CLOSED" : room.status,
       closeReason: previewClosure[room.id]?.reason,
       closeNote: previewClosure[room.id]?.note,
-      unreadCount: unreadCounts[room.id] ?? 0,
     };
   });
 
-  const groupRooms = roomsQuery.rooms.map((room): WorkspaceRoom => ({
-    ...room,
-    unreadCount: unreadCounts[room.id] ?? 0,
-  }));
+  const groupRooms = roomsQuery.rooms;
 
   const allRooms = kind === "group" ? groupRooms : previewRooms;
   const normalizedQuery = query.trim().toLocaleLowerCase("vi");
@@ -92,17 +102,28 @@ export function ConsultantWorkspaceScreen() {
   const messages = selectedRoom?.isMock
     ? (previewMessages[selectedRoom.id] ?? [])
     : conversation.messages;
-  const latestMessageAt = messages.at(-1)?.createdAt;
+  const latestMessageId = messages.at(-1)?.id;
   const selectedRoomId = selectedRoom?.id;
   const selectedRoomIsMock = selectedRoom?.isMock ?? false;
+  const selectedLastReadId = selectedRoom?.lastReadMessageId;
+  const { markRead } = conversation;
 
   useEffect(() => {
-    if (!selectedRoomId || !latestMessageAt || (!selectedRoomIsMock && conversation.history.isLoading)) return;
+    if (!selectedRoomId || selectedRoomIsMock || !latestMessageId || conversation.history.isLoading) return;
     const desktop = window.matchMedia("(min-width: 1024px)");
     const markVisibleRoomRead = () => {
-      if (document.visibilityState === "visible" && (showConversationOnMobile || desktop.matches)) {
-        markRead(selectedRoomId, latestMessageAt);
-      }
+      if (
+        document.visibilityState !== "visible" ||
+        !(showConversationOnMobile || desktop.matches) ||
+        selectedLastReadId === latestMessageId ||
+        lastReadRequestedRef.current === latestMessageId
+      ) return;
+      lastReadRequestedRef.current = latestMessageId;
+      markRead(latestMessageId, {
+        onError: () => {
+          lastReadRequestedRef.current = null;
+        },
+      });
     };
     markVisibleRoomRead();
     desktop.addEventListener("change", markVisibleRoomRead);
@@ -111,7 +132,19 @@ export function ConsultantWorkspaceScreen() {
       desktop.removeEventListener("change", markVisibleRoomRead);
       document.removeEventListener("visibilitychange", markVisibleRoomRead);
     };
-  }, [selectedRoomId, selectedRoomIsMock, latestMessageAt, conversation.history.isLoading, showConversationOnMobile, markRead]);
+  }, [selectedRoomId, selectedRoomIsMock, latestMessageId, selectedLastReadId, conversation.history.isLoading, showConversationOnMobile, markRead]);
+
+  function toggleList() {
+    setListCollapsed((current) => {
+      const next = !current;
+      try {
+        localStorage.setItem(LIST_COLLAPSED_KEY, next ? "1" : "0");
+      } catch {
+        // Ignore storage errors; the toggle still works for this session.
+      }
+      return next;
+    });
+  }
 
   const activeCount = allRooms.filter(
     (room) => room.status === "ACTIVE",
@@ -140,11 +173,9 @@ export function ConsultantWorkspaceScreen() {
         ...current,
         [selectedRoom.id]: [...(current[selectedRoom.id] ?? []), next],
       }));
-      markRead(selectedRoom.id, next.createdAt);
       return;
     }
-    const sent = await conversation.sendMessage(content);
-    markRead(selectedRoom.id, sent.createdAt);
+    await conversation.sendMessage(content);
   }
 
   async function closeRoom(reason: string, note?: string) {
@@ -170,14 +201,72 @@ export function ConsultantWorkspaceScreen() {
   ).length;
 
   return (
-    <div className="flex h-dvh w-full flex-col overflow-hidden bg-muted p-2.5 sm:p-3 lg:p-4">
-      <div className="grid h-full min-h-0 flex-1 grid-cols-1 gap-3 overflow-hidden lg:grid-cols-[320px_minmax(0,1fr)] 2xl:grid-cols-[360px_minmax(0,1fr)]">
+    <div className="flex h-dvh w-full flex-col overflow-hidden bg-muted p-2">
+      <div
+        className={`grid h-full min-h-0 flex-1 grid-cols-1 gap-2 overflow-hidden ${
+          listCollapsed
+            ? "lg:grid-cols-[72px_minmax(0,1fr)]"
+            : "lg:grid-cols-[300px_minmax(0,1fr)] 2xl:grid-cols-[340px_minmax(0,1fr)]"
+        }`}
+      >
         {/* Left Column: Conversation List with top Chat Kind switcher */}
         <div
           className={`${
             showConversationOnMobile ? "hidden lg:flex" : "flex"
           } h-full min-h-0 flex-col overflow-hidden`}
         >
+          {listCollapsed && (
+            <nav
+              aria-label="Danh sách phòng chat thu gọn"
+              className="hidden h-full w-full flex-col items-center gap-1.5 overflow-y-auto rounded-3xl border border-border bg-card py-2 shadow-soft lg:flex"
+            >
+              <Link
+                href="/consultant/tutors"
+                aria-label="BeeWise - Danh sách gia sư"
+                className="relative mb-1 block size-10 shrink-0"
+              >
+                <Image
+                  src={BEEWISE_LOGO_MARK}
+                  alt="BeeWise"
+                  fill
+                  sizes="40px"
+                  className="object-contain"
+                />
+              </Link>
+              {visibleRooms.map((room) => {
+                const name =
+                  participantName(room, "LEARNER") ||
+                  room.participants[0]?.name ||
+                  "BW";
+                const unread = room.unreadCount ?? 0;
+                return (
+                  <button
+                    key={room.id}
+                    type="button"
+                    onClick={() => setSelectedId(room.id)}
+                    title={name}
+                    aria-label={name}
+                    aria-current={selectedRoom?.id === room.id ? "true" : undefined}
+                    className={`relative flex size-12 shrink-0 items-center justify-center rounded-xl border transition-all active:scale-95 ${
+                      selectedRoom?.id === room.id
+                        ? "border-primary bg-muted"
+                        : "border-transparent hover:border-border hover:bg-muted"
+                    }`}
+                  >
+                    <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-xs font-black text-primary-foreground">
+                      {initials(name)}
+                    </span>
+                    {unread > 0 && (
+                      <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-black text-destructive-foreground">
+                        {unread > 99 ? "99+" : unread}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          )}
+          <div className={listCollapsed ? "h-full min-h-0 lg:hidden" : "h-full min-h-0"}>
           <ConversationList
             rooms={visibleRooms}
             selectedId={selectedRoom?.id}
@@ -185,11 +274,6 @@ export function ConsultantWorkspaceScreen() {
             onQueryChange={setQuery}
             onSelect={(id) => {
               setSelectedId(id);
-              const room = allRooms.find((item) => item.id === id);
-              const throughAt = room?.isMock
-                ? previewMessages[id]?.at(-1)?.createdAt
-                : room?.lastMessageAt;
-              if (throughAt) markRead(id, throughAt);
               setShowConversationOnMobile(true);
             }}
             kind={kind}
@@ -209,6 +293,7 @@ export function ConsultantWorkspaceScreen() {
             onRetry={() => void roomsQuery.refetch()}
             isPreview={kind === "private"}
           />
+          </div>
         </div>
 
         {/* Right Column: Conversation Panel with Info Modal */}
@@ -240,10 +325,18 @@ export function ConsultantWorkspaceScreen() {
               onSend={sendMessage}
               onClose={closeRoom}
               onBack={() => setShowConversationOnMobile(false)}
+              listCollapsed={listCollapsed}
+              onToggleList={toggleList}
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card px-6 text-center shadow-xs">
-              <MessageCircleMore className="mb-3 size-10 text-primary/35" />
+              <Image
+                src={DUO_FLOWER}
+                alt="Ong BeeWise và robot trao nhau một bông hoa"
+                width={220}
+                height={165}
+                className="mb-3 h-auto w-52"
+              />
               <h2 className="font-nunito text-lg font-extrabold text-foreground">
                 Chọn một cuộc trò chuyện
               </h2>

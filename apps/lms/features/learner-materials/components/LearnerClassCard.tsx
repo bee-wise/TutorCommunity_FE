@@ -10,10 +10,10 @@ import styles from "./LearnerLibraryCard.module.css";
 export function LearnerClassCard({ classInfo, sessionCount, completedSessionCount, materialCount, newMaterialCount, latestMaterialAt }: LearnerClassSummary) {
   return (
     <article className="h-full min-w-0">
-      <Link href={`/lms/learner/materials/classes/${encodeURIComponent(classInfo.id)}`} aria-label={`Xem buổi học lớp ${classInfo.title}, mã ${classInfo.code}`} className={`${styles.card} group flex h-full min-w-0 flex-col gap-3 p-4 transition-all motion-reduce:transition-none`}>
+      <Link href={`/lms/learner/materials/classes/${encodeURIComponent(classInfo.id)}`} aria-label={`Xem buổi học lớp ${classInfo.title}`} className={`${styles.card} group flex h-full min-w-0 flex-col gap-3 p-4 transition-all motion-reduce:transition-none`}>
         <header className="space-y-3">
           <h3 className="font-lms text-lg font-extrabold leading-[1.3] text-foreground [overflow-wrap:anywhere]">{classInfo.title}</h3>
-          <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-bold tabular-nums text-muted-foreground">{classInfo.code}</span><LibraryClassBadge status={classInfo.status} /></div>
+          <div className="flex flex-wrap items-center justify-start gap-2"><LibraryClassBadge status={classInfo.status} /></div>
           <div className="flex flex-wrap gap-1.5" aria-label="Môn học và cấp độ">
             <span className="rounded-full border border-border bg-card px-2.5 py-0.5 text-xs font-semibold leading-5 text-primary">{classInfo.subject}</span>
             <span className="rounded-full border border-border bg-card px-2.5 py-0.5 text-xs font-medium leading-5 text-muted-foreground">{classInfo.level}</span>

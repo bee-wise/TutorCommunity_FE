@@ -5,10 +5,10 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CalendarDaysIcon,
+  AdjustmentsHorizontalIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
-import { ClassFilterSelect } from "../../tutor-classes/components/ClassFilterSelect";
 import {
   learnerSessionLabels,
   validateCustomRange,
@@ -26,6 +26,9 @@ interface LearnerSessionFilterBarProps {
   onChangeStatus: (status: LearnerSessionFilters["status"]) => void;
 }
 
+const dateTimeInput =
+  "h-11 rounded-xl border border-input bg-card px-3 text-sm font-semibold text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring";
+
 export function LearnerSessionFilterBar({
   month,
   isCustom,
@@ -38,6 +41,7 @@ export function LearnerSessionFilterBar({
   const [fromInput, setFromInput] = useState("");
   const [toInput, setToInput] = useState("");
   const [rangeError, setRangeError] = useState<string | null>(null);
+  const [showRange, setShowRange] = useState(false);
 
   const handleApply = () => {
     const result = validateCustomRange(fromInput, toInput);
@@ -64,148 +68,141 @@ export function LearnerSessionFilterBar({
   return (
     <section
       aria-label="Bộ lọc buổi học"
-      className="space-y-4 rounded-3xl border border-border bg-card p-4 sm:p-5 shadow-soft"
+      className="space-y-3 rounded-3xl border border-border bg-card p-3 shadow-soft sm:p-4"
     >
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        {/* Quick Month Preset Navigation */}
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-foreground">
-              Chọn nhanh theo tháng
-            </span>
-            {isCustom && (
-              <span className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-bold text-muted-foreground">
-                Đang dùng lọc tùy chỉnh
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              className={`${learnerAction} size-11 p-0`}
-              aria-label="Tháng trước"
-              onClick={() => handleMonthShift(-1)}
-            >
-              <ChevronLeftIcon className="size-4" aria-hidden="true" />
-            </Button>
-            <span className="min-w-28 text-center text-sm font-extrabold tabular-nums">
-              Tháng {month.split("-").reverse().join("/")}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              className={`${learnerAction} size-11 p-0`}
-              aria-label="Tháng sau"
-              onClick={() => handleMonthShift(1)}
-            >
-              <ChevronRightIcon className="size-4" aria-hidden="true" />
-            </Button>
-          </div>
+      <div className="flex flex-wrap items-center gap-3">
+        {/* Month stepper */}
+        <div className="flex items-center gap-1 rounded-full bg-muted p-1">
+          <Button
+            type="button"
+            variant="ghost"
+            className="size-10 rounded-full p-0 hover:bg-card"
+            aria-label="Tháng trước"
+            onClick={() => handleMonthShift(-1)}
+          >
+            <ChevronLeftIcon className="size-4" aria-hidden="true" />
+          </Button>
+          <span className="min-w-32 px-1 text-center text-sm font-extrabold tabular-nums text-foreground">
+            {isCustom ? "Tùy chỉnh" : `Tháng ${month.split("-").reverse().join("/")}`}
+          </span>
+          <Button
+            type="button"
+            variant="ghost"
+            className="size-10 rounded-full p-0 hover:bg-card"
+            aria-label="Tháng sau"
+            onClick={() => handleMonthShift(1)}
+          >
+            <ChevronRightIcon className="size-4" aria-hidden="true" />
+          </Button>
         </div>
 
-        {/* Status Select */}
-        <label className="grid w-full gap-1.5 text-xs font-bold text-foreground sm:w-56">
-          <span>Trạng thái buổi</span>
-          <ClassFilterSelect
-            value={status}
-            onValueChange={(value) =>
-              onChangeStatus(
-                Object.hasOwn(learnerSessionLabels, value)
-                  ? (value as typeof status)
-                  : "all",
-              )
-            }
-            options={[
-              { value: "all", label: "Tất cả trạng thái" },
-              ...Object.entries(learnerSessionLabels).map(([val, label]) => ({
-                value: val,
-                label,
-              })),
-            ]}
-          />
-        </label>
-      </div>
-
-      {/* Custom Date-Time Range */}
-      <div className="border-t border-border/70 pt-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-bold text-foreground">
-            Lọc theo khoảng ngày - giờ · Giờ Việt Nam (UTC+7)
-          </p>
-          {isCustom && (
-            <button
-              type="button"
-              onClick={handleResetPreset}
-              className="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/80"
-            >
-              <ArrowPathIcon className="size-3.5" aria-hidden="true" />
-              <span>Đặt lại theo tháng</span>
-            </button>
+        {/* Status chips */}
+        <div
+          role="group"
+          aria-label="Trạng thái buổi học"
+          className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto pb-0.5"
+        >
+          {[["all", "Tất cả"], ...Object.entries(learnerSessionLabels)].map(
+            ([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={status === value}
+                onClick={() =>
+                  onChangeStatus(
+                    value === "all" || Object.hasOwn(learnerSessionLabels, value)
+                      ? (value as typeof status)
+                      : "all",
+                  )
+                }
+                className={`min-h-10 shrink-0 whitespace-nowrap rounded-full px-4 text-xs font-bold transition-all active:scale-[0.98] motion-reduce:transition-none ${
+                  status === value
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "bg-muted text-muted-foreground hover:text-primary"
+                }`}
+              >
+                {label}
+              </button>
+            ),
           )}
         </div>
 
-        <div className="mt-2.5 flex flex-wrap items-end gap-3">
-          <label className="grid gap-1 text-xs font-medium text-foreground">
-            <span className="font-semibold text-muted-foreground">Từ ngày giờ</span>
-            <input
-              type="datetime-local"
-              aria-label="Thời gian bắt đầu (giờ Việt Nam)"
-              value={fromInput}
-              onChange={(e) => {
-                setFromInput(e.target.value);
-                if (rangeError) setRangeError(null);
-              }}
-              className="h-10 rounded-xl border border-border bg-card px-3 text-xs font-semibold text-foreground shadow-2xs outline-none transition-colors focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring"
-            />
-          </label>
+        <Button
+          type="button"
+          variant="outline"
+          aria-expanded={showRange || isCustom}
+          className={`${learnerAction} px-3.5 text-xs font-bold`}
+          onClick={() => setShowRange((value) => !value)}
+        >
+          <AdjustmentsHorizontalIcon className="size-4 text-primary" aria-hidden="true" />
+          Khoảng ngày giờ
+        </Button>
+      </div>
 
-          <label className="grid gap-1 text-xs font-medium text-foreground">
-            <span className="font-semibold text-muted-foreground">Đến ngày giờ</span>
-            <input
-              type="datetime-local"
-              aria-label="Thời gian kết thúc (giờ Việt Nam)"
-              value={toInput}
-              onChange={(e) => {
-                setToInput(e.target.value);
-                if (rangeError) setRangeError(null);
-              }}
-              className="h-10 rounded-xl border border-border bg-card px-3 text-xs font-semibold text-foreground shadow-2xs outline-none transition-colors focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring"
-            />
-          </label>
+      {(showRange || isCustom) && (
+        <div className="rounded-2xl bg-muted p-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-bold text-foreground">
+              Lọc theo khoảng ngày - giờ · Giờ Việt Nam (UTC+7)
+            </p>
+            {isCustom && (
+              <button
+                type="button"
+                onClick={handleResetPreset}
+                className="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/80"
+              >
+                <ArrowPathIcon className="size-3.5" aria-hidden="true" />
+                <span>Đặt lại theo tháng</span>
+              </button>
+            )}
+          </div>
 
-          <div className="flex items-center gap-2">
+          <div className="mt-2.5 flex flex-wrap items-end gap-3">
+            <label className="grid gap-1 text-xs">
+              <span className="font-semibold text-muted-foreground">Từ ngày giờ</span>
+              <input
+                type="datetime-local"
+                aria-label="Thời gian bắt đầu (giờ Việt Nam)"
+                value={fromInput}
+                onChange={(e) => {
+                  setFromInput(e.target.value);
+                  if (rangeError) setRangeError(null);
+                }}
+                className={dateTimeInput}
+              />
+            </label>
+
+            <label className="grid gap-1 text-xs">
+              <span className="font-semibold text-muted-foreground">Đến ngày giờ</span>
+              <input
+                type="datetime-local"
+                aria-label="Thời gian kết thúc (giờ Việt Nam)"
+                value={toInput}
+                onChange={(e) => {
+                  setToInput(e.target.value);
+                  if (rangeError) setRangeError(null);
+                }}
+                className={dateTimeInput}
+              />
+            </label>
+
             <Button
               type="button"
-              variant="default"
-              className={`${learnerAction} min-h-10 px-4 text-xs font-bold shadow-2xs`}
+              className={`${learnerAction} px-4 text-xs font-bold`}
               onClick={handleApply}
             >
               <CalendarDaysIcon className="size-4" aria-hidden="true" />
               <span>Áp dụng</span>
             </Button>
-            {isCustom && (
-              <Button
-                type="button"
-                variant="outline"
-                className={`${learnerAction} min-h-10 px-3 text-xs font-bold text-muted-foreground`}
-                onClick={handleResetPreset}
-              >
-                Hủy lọc tùy chỉnh
-              </Button>
-            )}
           </div>
-        </div>
 
-        {rangeError && (
-          <p
-            role="alert"
-            className="mt-2 text-xs font-bold text-destructive"
-          >
-            {rangeError}
-          </p>
-        )}
-      </div>
+          {rangeError && (
+            <p role="alert" className="mt-2 text-xs font-bold text-destructive">
+              {rangeError}
+            </p>
+          )}
+        </div>
+      )}
     </section>
   );
 }

@@ -37,3 +37,19 @@ Token và quy tắc chung: [foundations.md](foundations.md). Preview: `../lms-co
   <aside className="hidden min-h-0 overflow-y-auto border-l border-border bg-card px-5 py-7 xl:block">{/* rail */}</aside>
 </div>
 ```
+
+## Shared LMS components (`apps/lms/components/`)
+
+Dùng các component này thay vì tự viết lại; không dùng `actionClass` (đã bỏ), dùng `Button`.
+
+| Component | Dùng cho |
+| --- | --- |
+| `LmsPageHeader` | h1 + eyebrow + actions |
+| `LmsSection` | h2 + chip "Xem tất cả" |
+| `LmsTabs` / `LmsTabNav` | Tab theo state / tab theo route (link thật) |
+| `LmsFilterBar` | Chip lọc (`aria-pressed`) + search/sort ở cuối |
+| `LmsStatusBadge` | Badge trạng thái theo `statusTone` |
+| `LmsEntityCard` | Card thực thể: icon, tiêu đề, status, meta, tối đa một CTA hoặc cả card là link |
+| `LmsDataState` | loading / error + retry / empty / success |
+| `LmsResponsiveSheet` | Sheet phải trên desktop, bottom sheet trên mobile |
+| `LmsDetailLayout` | Nội dung + cột phụ dính bên phải |

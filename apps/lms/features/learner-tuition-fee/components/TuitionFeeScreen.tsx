@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { InformationCircleIcon as Info } from "@heroicons/react/24/outline";
+import { LmsPageHeader } from "../../../components/LmsPageHeader";
 import { LibrarySearch, LibrarySelect } from "../../learner-materials/components/LibraryFilterControls";
 import { useTuitionFee } from "../hooks/useTuitionFee";
 import type {
@@ -18,7 +19,7 @@ export function TuitionFeeScreen() {
   return (
     <div className="min-h-full bg-background">
       <div className="mx-auto max-w-[1300px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <header><h1 className="text-2xl font-extrabold text-primary sm:text-3xl">Theo dõi học phí</h1></header>
+        <LmsPageHeader title="Theo dõi học phí" />
         <div className="flex items-start gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm leading-6 text-muted-foreground"><Info className="mt-0.5 shrink-0 text-primary" width={18} height={18} /><p>Học phí đã được thanh toán khi đăng ký trên BeeWise SALE. LMS chỉ hiển thị dữ liệu theo dõi và không thực hiện thanh toán.</p></div>
         <section className="rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-5" aria-label="Bộ lọc học phí">
           <div className="grid gap-4 md:grid-cols-[minmax(240px,1fr)_210px]">

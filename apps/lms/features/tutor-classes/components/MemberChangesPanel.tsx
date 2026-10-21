@@ -17,7 +17,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ClassFilterSelect } from "./ClassFilterSelect";
 import { ClassListPager } from "./ClassListPager";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
-import { formatClassDate, formatClassIdentifier } from "../utils/classes.utils";
+import { formatClassDate } from "../utils/classes.utils";
 import {
   classButton,
   classInput,
@@ -104,7 +104,7 @@ export function MemberChangesPanel({
     <section aria-labelledby="member-changes-title" className={`${classPanel} space-y-5`}>
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-4">
         <div className="flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary"><ClipboardDocumentListIcon className="size-5" aria-hidden="true" /></span>
+          <span className="grid size-10 place-items-center rounded-xl bg-muted text-primary"><ClipboardDocumentListIcon className="size-5" aria-hidden="true" /></span>
           <h2 id="member-changes-title" className="font-lms text-lg font-extrabold text-foreground">Yêu cầu thay đổi thành viên</h2>
         </div>
         {!readOnly && (
@@ -147,7 +147,7 @@ export function MemberChangesPanel({
                   },
                   ...(members.data ?? []).map((m) => ({
                     value: m.learnerId,
-                    label: m.displayName ?? formatClassIdentifier(m.learnerId),
+                    label: m.displayName ?? "Học viên chưa có tên",
                   })),
                 ]}
               />
@@ -218,7 +218,7 @@ export function MemberChangesPanel({
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="grid size-9 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <span className="grid size-9 place-items-center rounded-xl bg-muted text-primary">
                       {request.operation === "REMOVE" ? (
                         <ArrowDownCircleIcon
                           className="size-5"
@@ -255,13 +255,7 @@ export function MemberChangesPanel({
                   </span>
                 </div>
                 <div className="mt-4 rounded-2xl border border-border/70 bg-muted/20 px-4 py-3.5">
-                  <p className="text-xs text-muted-foreground">
-                    Học viên:{" "}
-                    <span className="font-mono font-bold tabular-nums text-primary">
-                      {formatClassIdentifier(request.learnerId)}
-                    </span>
-                  </p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-foreground">
+                  <p className="text-sm leading-relaxed text-foreground">
                     {request.reason}
                   </p>
                 </div>

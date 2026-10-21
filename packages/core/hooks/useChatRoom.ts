@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../store/useAuthStore";
 import { chatRoomsService } from "../services/chat-rooms.service";
@@ -57,19 +57,55 @@ export function useChatRoom(roomId: string) {
     el.scrollIntoView({ behavior });
   }, []);
 
-  const messages = room
-    ? [...new Map(
-        (history.data?.pages.flatMap((page) => page?.items ?? []) ?? [])
-          .map((message) => [message.id, toChatMessage(message, room, currentUserRole)] as const),
-      ).values()]
-        .filter((message) => {
-          if (currentUserRole === "CONSULTANT") return true;
-          return !message.isDraft && !isDraftWidgetMessage(message);
-        })
-        .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
-    : [];
+  // Mapping and sorting every message is the expensive part of a render; redo it only when the data changes.
+  const historyPages = history.data?.pages;
+  const messages = useMemo(
+    () =>
+      room
+        ? [...new Map(
+            (historyPages?.flatMap((page) => page?.items ?? []) ?? [])
+              .map((message) => [message.id, toChatMessage(message, room, currentUserRole)] as const),
+          ).values()]
+            .filter((message) => {
+              if (currentUserRole === "CONSULTANT") return true;
+              return !message.isDraft && !isDraftWidgetMessage(message);
+            })
+            .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+        : [],
+    [historyPages, room, currentUserRole],
+  );
 
   const latestMessageId = messages.at(-1)?.id;
+  const lastReadMessageId = room?.lastReadMessageId;
+  const lastReadRequestedRef = useRef<string | null>(null);
+  const { mutate: markRead } = useMutation({
+    mutationFn: (messageId: string) => chatRoomsService.markRead(roomId, messageId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.chatRooms.list });
+      void queryClient.invalidateQueries({ queryKey: [queryKeys.authKey.getMe] });
+    },
+    onError: () => {
+      lastReadRequestedRef.current = null;
+    },
+  });
+
+  // Only mark read while the room is actually visible; BE keeps the marker monotonic.
+  useEffect(() => {
+    if (!latestMessageId || history.isPending || !room) return;
+    const markVisibleRoomRead = () => {
+      if (
+        document.visibilityState !== "visible" ||
+        lastReadMessageId === latestMessageId ||
+        lastReadRequestedRef.current === latestMessageId
+      ) return;
+      lastReadRequestedRef.current = latestMessageId;
+      markRead(latestMessageId);
+    };
+    markVisibleRoomRead();
+    document.addEventListener("visibilitychange", markVisibleRoomRead);
+    return () => document.removeEventListener("visibilitychange", markVisibleRoomRead);
+  }, [latestMessageId, lastReadMessageId, history.isPending, room, markRead]);
+
   useEffect(() => {
     if (!latestMessageId) return;
     const isInitialForRoom = initialScrollDoneRef.current !== roomId;

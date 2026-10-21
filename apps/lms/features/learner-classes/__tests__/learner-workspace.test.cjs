@@ -334,7 +334,8 @@ test("directory uses total and tab counts, not visible page length", () => {
   const html = render(LearnerClassesScreen, {}, cache);
   assert.match(html, /19 lớp phù hợp/);
   assert.match(html, /Lớp nhóm \(8\)|Lớp 1:1 \(11\)/);
-  assert.match(html, /TEST-L1/);
+  assert.match(html, /Lớp kiểm thử tích hợp/);
+  assert.doesNotMatch(html, /TEST-L1/);
   assert.doesNotMatch(html, /Dữ liệu minh họa/);
   cache.clear();
 });
@@ -347,8 +348,9 @@ test("overview/sidebar share authorized identity and deferred modules stay gated
       { workspace: { classId: id, section: "overview" } },
       cache,
     );
-  assert.match(overview, /Nội dung &amp; lịch học|4.*buổi/);
-  assert.match(overview, /<h1[^>]*>Lớp kiểm thử/);
+  assert.match(overview, /Thông tin lớp|4.*buổi/);
+  assert.match(overview, /<h1[^>]*>Toán/);
+  assert.match(overview, /Lớp kiểm thử tích hợp/);
   assert.match(sidebar, /Lớp kiểm thử tích hợp/);
   assert.match(sidebar, /BeeWiseLMS-Logo-500x150.svg/);
   assert.match(sidebar, /chưa tích hợp/);
@@ -472,7 +474,7 @@ test("pre-opening auto-enrollment vs late optional trial, with no Tutor controls
   assert.doesNotMatch(html, /Tôi muốn học thử|Tạo yêu cầu thanh toán/);
   cache.clear();
 });
-test("navigation keeps report/schedule and class chat outside workspace", () => {
+test("navigation keeps report/schedule, class library entries and class chat outside workspace", () => {
   const { navigationConfig } = require(
     path.join(core, "configs/navigation.ts"),
   );
@@ -483,7 +485,12 @@ test("navigation keeps report/schedule and class chat outside workspace", () => 
   );
   assert.deepEqual(
     groups.find((g) => g.groupName === "Học Tập").items.map((i) => i.url),
-    ["/lms/learner/classes", "/lms/learner/chat"],
+    [
+      "/lms/learner/classes",
+      "/lms/learner/materials",
+      "/lms/learner/exercises",
+      "/lms/learner/chat",
+    ],
   );
   const html = render(LearnerClassQueryError, {
     error: new ApiError("Denied", 403),

@@ -25,6 +25,7 @@ export interface WorkspaceRoom {
   closeReason?: string;
   closeNote?: string;
   unreadCount?: number;
+  lastReadMessageId?: string;
 }
 
 export interface WorkspaceMessage {
@@ -86,10 +87,8 @@ export function toWorkspaceRoom(
     closedAt: room.closedAt ?? undefined,
     closeReason: room.closeReason ?? undefined,
     closeNote: room.closeNote ?? undefined,
-    unreadCount:
-      (room as { unreadCount?: number }).unreadCount ??
-      (room as { unreadMessages?: number }).unreadMessages ??
-      0,
+    unreadCount: room.unreadCount ?? 0,
+    lastReadMessageId: room.lastReadMessageId ?? undefined,
   };
 }
 

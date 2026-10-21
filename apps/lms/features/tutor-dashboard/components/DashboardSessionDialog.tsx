@@ -10,7 +10,7 @@ export function DashboardSessionDialog({ session, returnFocusRef }: {
   const [year, month, day] = session.date.split("-");
   const info = [
     ["Học viên", session.studentFullName],
-    ["Mã lớp", session.classId],
+    ["Mã lớp", session.classCode ?? "Chưa có mã lớp"],
     ["Ngày học", `${day}/${month}/${year}`],
     ["Thời gian", `${session.startTime} - ${session.endTime}`],
     ["Tư vấn viên", session.consultantName],

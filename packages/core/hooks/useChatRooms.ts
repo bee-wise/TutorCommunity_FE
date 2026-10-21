@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "../sys-libs/queryKeys";
 import { useAuthStore } from "../store/useAuthStore";
@@ -32,27 +33,31 @@ export function useChatRooms(options?: { refetchIntervalMs?: number }) {
     staleTime: 30_000,
     retry: false,
   });
-  const requestsByRoomId = new Map(
-    (connections.data ?? [])
-      .filter((request) => request.chatRoomId)
-      .map((request) => [request.chatRoomId, request]),
-  );
-  const rooms = (query.data ?? []).map((room) => {
-    const request = requestsByRoomId.get(room.id) ??
-      (connections.data ?? []).find((item) => item.id === room.connectRequestId);
-    const fallback: ConnectRequest = {
-      id: room.connectRequestId ?? "",
-      learnerId: room.participants?.find((person) => person.role?.toUpperCase() === "LEARNER")?.userId,
-      tutorId: room.participants?.find((person) => person.role?.toUpperCase() === "TUTOR")?.userId,
-      chatRoomId: room.id,
-      status: room.status,
-      createdAt: room.createdAt,
-      updatedAt: room.updatedAt,
-    };
-    return toChatRoom(request ?? fallback, room, user?.role?.toUpperCase() === "TUTOR" ? "TUTOR" : "LEARNER");
-  }).sort((a, b) =>
-    new Date(b.lastMessageAt ?? b.updatedAt).getTime() -
-    new Date(a.lastMessageAt ?? a.updatedAt).getTime(),
-  );
+  const role = user?.role?.toUpperCase();
+  // Stable identity: consumers (message list, effects) must not see a "new" rooms array on every render.
+  const rooms = useMemo(() => {
+    const requestsByRoomId = new Map(
+      (connections.data ?? [])
+        .filter((request) => request.chatRoomId)
+        .map((request) => [request.chatRoomId, request]),
+    );
+    return (query.data ?? []).map((room) => {
+      const request = requestsByRoomId.get(room.id) ??
+        (connections.data ?? []).find((item) => item.id === room.connectRequestId);
+      const fallback: ConnectRequest = {
+        id: room.connectRequestId ?? "",
+        learnerId: room.participants?.find((person) => person.role?.toUpperCase() === "LEARNER")?.userId,
+        tutorId: room.participants?.find((person) => person.role?.toUpperCase() === "TUTOR")?.userId,
+        chatRoomId: room.id,
+        status: room.status,
+        createdAt: room.createdAt,
+        updatedAt: room.updatedAt,
+      };
+      return toChatRoom(request ?? fallback, room, role === "TUTOR" ? "TUTOR" : "LEARNER");
+    }).sort((a, b) =>
+      new Date(b.lastMessageAt ?? b.updatedAt).getTime() -
+      new Date(a.lastMessageAt ?? a.updatedAt).getTime(),
+    );
+  }, [query.data, connections.data, role]);
   return { ...query, isPending: authLoading || Boolean(user?.id && query.isPending), rooms, direction };
 }

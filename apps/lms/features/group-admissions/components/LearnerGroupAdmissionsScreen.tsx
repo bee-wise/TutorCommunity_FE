@@ -1,7 +1,9 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/ui/button";
+import { EmptyState } from "@workspace/ui/components/ui/empty-state";
 import { Input } from "@workspace/ui/components/ui/input";
+import { LmsPageHeader } from "../../../components/LmsPageHeader";
 import type { GroupDto } from "@workspace/core/lms-classes/group.schemas";
 import {
   useLearnerRecruitment,
@@ -20,14 +22,14 @@ export function LearnerAdmissionScreen({
 }) {
   return (
     <main className="mx-auto max-w-4xl space-y-5 p-4 sm:p-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-lms text-2xl font-extrabold text-primary">
-          Đăng ký lớp nhóm
-        </h1>
-        <Button asChild variant="outline" className={learnerAction}>
-          <Link href="/lms/learner/group-classes">Danh sách tuyển sinh</Link>
-        </Button>
-      </header>
+      <LmsPageHeader
+        title="Đăng ký lớp nhóm"
+        actions={
+          <Button asChild variant="outline" className={learnerAction}>
+            <Link href="/lms/learner/group-classes">Danh sách tuyển sinh</Link>
+          </Button>
+        }
+      />
       <LearnerAdmissionDetails
         key={admissionId}
         id={admissionId}
@@ -40,9 +42,6 @@ function RecruitingCard({ data }: { data: GroupDto }) {
   const { join, busy } = useJoinLearnerGroup(data.id);
   return (
     <article className="flex h-full flex-col gap-3 rounded-3xl border border-border bg-card p-5 shadow-soft">
-      <p className="text-xs font-bold text-muted-foreground">
-        {data.code ?? data.id.slice(0, 8)}
-      </p>
       <h2 className="font-lms text-lg font-extrabold leading-snug text-foreground">
         {data.title ?? "Chưa có tên lớp"}
       </h2>
@@ -76,9 +75,7 @@ export function LearnerGroupAdmissionsScreen() {
     { query, page, setPage, form } = controller;
   return (
     <main className="mx-auto max-w-[1400px] space-y-5 p-4 sm:p-6">
-      <h1 className="font-lms text-2xl font-extrabold text-primary">
-        Lớp nhóm tuyển sinh
-      </h1>
+      <LmsPageHeader title="Lớp nhóm tuyển sinh" />
       <form
         onSubmit={controller.open}
         className="flex flex-wrap items-end gap-3 rounded-3xl border border-border bg-card p-4 shadow-soft"
@@ -118,9 +115,7 @@ export function LearnerGroupAdmissionsScreen() {
             ))}
           </div>
           {!query.data?.length && (
-            <p className="rounded-3xl border border-border p-6">
-              Chưa có lớp đang tuyển sinh ở trang này.
-            </p>
+            <EmptyState imageAlt="" title="Chưa có lớp đang tuyển sinh" description="Hiện không có lớp nhóm nào mở đăng ký ở trang này." />
           )}
           <div className="flex items-center gap-3">
             <Button

@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback } from "@workspace/ui/components/ui/avatar";
 import type { ClassSessionDto } from "@workspace/core/lms-classes/schemas";
 import { useApiAttendance } from "../hooks/useApiAttendance";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
-import { formatClassDate, formatClassIdentifier } from "../utils/classes.utils";
+import { formatClassDate } from "../utils/classes.utils";
 import {
   classButton,
   classInput,
@@ -118,7 +118,7 @@ export function ApiAttendanceDialog({
                   const person = attendance.members.data?.find(
                     (m) => m.learnerId === mark.learnerId,
                   );
-                  const name = person?.name ?? `Học viên ${formatClassIdentifier(mark.learnerId)}`;
+                  const name = person?.name ?? `Học viên ${index + 1}`;
                   return (
                     <article
                       key={mark.learnerId}

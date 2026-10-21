@@ -48,6 +48,7 @@ export interface ChatRoomView {
   lastMessage?: string;
   lastMessageAt?: string;
   unreadCount: number;
+  lastReadMessageId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -191,7 +192,8 @@ export function toChatRoom(
     teachingMode: "BOTH" as const,
     hasLearningDetails: false,
     lastMessageAt: room.lastMessageAt ?? undefined,
-    unreadCount: 0,
+    unreadCount: room.unreadCount ?? 0,
+    lastReadMessageId: room.lastReadMessageId ?? undefined,
     createdAt: room.createdAt,
     updatedAt: room.updatedAt,
   };

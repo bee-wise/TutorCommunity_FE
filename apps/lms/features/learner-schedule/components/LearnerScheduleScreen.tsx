@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { ArrowPathIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { useIsMobile } from "@workspace/core/hooks/use-mobile";
 import { Button } from "@workspace/ui/components/ui/button";
-import { parseVietnamDateTime } from "@workspace/core/lms-calendar";
+import { parseVietnamDateTime } from "@/features/lms-calendar";
 import { useLearnerSchedule } from "../hooks/useLearnerSchedule";
 import type {
   LearnerScheduleView,
   LearnerSession,
 } from "../types/learner-schedule.types";
-import { LearnerCalendar } from "./LearnerCalendar";
+import { LmsCalendar } from "@/components/LmsCalendar";
+import { LmsPageHeader } from "@/components/LmsPageHeader";
 import { LearnerScheduleList } from "./LearnerScheduleList";
 import { LearnerSessionSheet } from "./LearnerSessionSheet";
 import { ScheduleFilters } from "./ScheduleFilters";
@@ -31,7 +33,10 @@ export function LearnerScheduleScreen() {
     null,
   );
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [view, setView] = useState<LearnerScheduleView>("calendar");
+  const isMobile = useIsMobile();
+  // Phones read a day-by-day list more easily than a month grid; an explicit choice wins.
+  const [chosenView, setView] = useState<LearnerScheduleView | null>(null);
+  const view = chosenView ?? (isMobile ? "list" : "calendar");
 
   const now = new Date();
   const parsedNow = parseVietnamDateTime(now.toISOString());
@@ -53,22 +58,13 @@ export function LearnerScheduleScreen() {
   return (
     <div className="min-h-full bg-muted">
       <div className="mx-auto max-w-[1400px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-extrabold leading-tight text-primary sm:text-3xl font-lms">
-              Lịch học của tôi
-            </h1>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Xem lịch học trực tuyến, các buổi học sắp tới và lịch sử học tập.
-            </p>
-          </div>
-          <div className="w-fit rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-bold text-primary shadow-xs">
-            {todayLabel}
-          </div>
-        </header>
+        <LmsPageHeader
+          title="Lịch học của tôi"
+          actions={<div className="w-fit rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-bold text-primary">{todayLabel}</div>}
+        />
 
         {schedule.isError && (
-          <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive flex items-center justify-between">
+          <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-error bg-card p-4 text-destructive">
             <div className="flex items-center gap-3">
               <ExclamationCircleIcon className="size-5 shrink-0" />
               <p className="text-sm font-medium">
@@ -105,7 +101,8 @@ export function LearnerScheduleScreen() {
         />
 
         {view === "calendar" ? (
-          <LearnerCalendar
+          <LmsCalendar
+            getSecondaryLabel={(session) => session.topic}
             sessions={schedule.filteredSessions}
             onSessionClick={openSession}
             viewYear={schedule.viewYear}

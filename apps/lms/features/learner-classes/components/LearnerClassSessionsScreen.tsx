@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import Image from "next/image";
 import {
   CalendarDaysIcon,
-  ChatBubbleLeftRightIcon,
-  InformationCircleIcon,
+  ClockIcon,
 } from "@heroicons/react/24/outline";
-import { Button } from "@workspace/ui/components/ui/button";
+import { LmsDateTile } from "../../../components/LmsDateTile";
+import { LmsHeroBanner, LmsHeroProgress } from "../../../components/LmsHeroBanner";
+import { useLearnerClassProgress } from "../hooks/useLearnerClassProgress";
 import { LearnerClassQueryError } from "./LearnerClassQueryError";
 import { useLearnerSessionsQuery } from "../hooks/useLearnerSessionsQuery";
 import {
@@ -16,9 +17,25 @@ import {
   displaySessionTime,
 } from "../utils/learner-api-calendar";
 import { LearnerWorkspaceSkeleton } from "./LearnerWorkspaceSkeleton";
-import { learnerAction, LearnerClassStatus } from "./LearnerApiClassCard";
 import { LearnerSessionFilterBar } from "./LearnerSessionFilterBar";
 import { LearnerActualSessionList } from "./LearnerActualSessionList";
+
+const BEE_MEDITATE = "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_360/v1789966153/8.png";
+
+function LearnerSessionsHero({ classId, planned, created, attendance }: { classId: string; planned: number; created: number; attendance: boolean }) {
+  const progress = useLearnerClassProgress(classId);
+  const completed = progress.data?.total ?? 0;
+  return (
+    <LmsHeroBanner title="Buổi học" description={attendance ? "Theo dõi lịch học, phòng học và điểm danh của từng buổi." : "Theo dõi lịch học và phòng học của từng buổi."} mascot="pencil">
+      <LmsHeroProgress
+        label="Buổi đã hoàn thành so với kế hoạch"
+        value={completed}
+        max={planned}
+        note={`${created} buổi đã được xếp lịch`}
+      />
+    </LmsHeroBanner>
+  );
+}
 
 const Details = dynamic(() =>
   import("./LearnerSessionDetailDialog").then(
@@ -46,74 +63,23 @@ export function LearnerClassSessionsScreen({ classId }: { classId: string }) {
 
   return (
     <div className="mx-auto max-w-[1300px] space-y-6 px-4 py-6 text-foreground sm:px-6 lg:px-8">
-      {/* Header Area */}
-      <header className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-border bg-card px-3 py-0.5 font-mono text-xs font-bold text-muted-foreground shadow-2xs">
-              {data.code ?? data.id}
-            </span>
-            <LearnerClassStatus status={data.status} />
-            <span className="inline-flex rounded-full border border-border bg-card px-2.5 py-0.5 text-xs font-bold text-foreground shadow-2xs">
-              {data.type === "GROUP"
-                ? "Lớp nhóm"
-                : data.type === "INDIVIDUAL"
-                  ? "Lớp 1:1"
-                  : "Chưa xác định loại lớp"}
-            </span>
-          </div>
+      <LearnerSessionsHero classId={classId} planned={data.numberOfSessions} created={data.sessionCount} attendance={data.features.attendance} />
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              asChild
-              variant="outline"
-              className="min-h-10 rounded-xl border-border bg-card px-3.5 text-xs font-bold text-foreground hover:bg-muted transition-all active:scale-[0.98]"
-            >
-              <Link href={"/lms/learner/classes/" + classId}>
-                <InformationCircleIcon className="size-4" aria-hidden="true" />
-                <span>Thông tin lớp</span>
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="min-h-10 rounded-xl border-border bg-card px-3.5 text-xs font-bold text-foreground hover:bg-muted transition-all active:scale-[0.98]"
-            >
-              <Link href={"/lms/learner/chat/classes/" + classId}>
-                <ChatBubbleLeftRightIcon className="size-4" aria-hidden="true" />
-                <span>Tin nhắn lớp</span>
-              </Link>
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border/70 pb-4">
-          <div>
-            <h1 className="font-lms text-2xl font-extrabold sm:text-3xl">
-              Buổi học
-            </h1>
-            <p className="mt-1 text-sm font-semibold text-muted-foreground">
-              {data.title ?? data.code}
-              {data.teachingItemName ? ` · ${data.teachingItemName}` : ""}
-            </p>
-          </div>
-
-          <div role="group" aria-label="Cách xem buổi học" className="flex gap-2">
-            {(["list", "planned"] as const).map((value) => (
-              <Button
-                key={value}
-                className={`${learnerAction} ${view === value ? "shadow-soft font-bold" : ""}`}
-                aria-pressed={view === value}
-                variant={view === value ? "default" : "outline"}
-                onClick={() => listing.changeView(value)}
-              >
-                {value === "list" ? "Buổi học thực tế" : "Lịch dự kiến"}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </header>
-
+      <div role="group" aria-label="Cách xem buổi học" className="inline-flex gap-1 rounded-full bg-card p-1 shadow-soft ring-1 ring-border">
+        {(["list", "planned"] as const).map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={view === value}
+            onClick={() => listing.changeView(value)}
+            className={`min-h-10 rounded-full px-5 text-sm font-bold transition-all active:scale-[0.98] motion-reduce:transition-none ${
+              view === value ? "bg-primary text-primary-foreground shadow-xs" : "text-muted-foreground hover:text-primary"
+            }`}
+          >
+            {value === "list" ? "Buổi học thực tế" : "Lịch dự kiến"}
+          </button>
+        ))}
+      </div>
       {/* Filter toolbar when viewing actual sessions */}
       {view === "list" && (
         <LearnerSessionFilterBar
@@ -136,59 +102,44 @@ export function LearnerClassSessionsScreen({ classId }: { classId: string }) {
         />
       ) : view === "planned" ? (
         <section aria-label="Lịch dự kiến" className="space-y-4">
-          <div className="flex items-center gap-3 rounded-2xl border border-accent/40 bg-accent/10 p-4 text-sm text-foreground">
-            <CalendarDaysIcon className="size-5 shrink-0 text-warning" aria-hidden="true" />
-            <p>
-              Lịch dự kiến chưa phải buổi học thực tế, không dùng để điểm danh hay truy cập bản ghi.
-            </p>
+          <div className="flex items-center gap-3 rounded-2xl border border-accent bg-card p-4 text-sm text-foreground">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent text-accent-foreground">
+              <CalendarDaysIcon className="size-5" aria-hidden="true" />
+            </span>
+            <p>Lịch dự kiến chưa phải buổi học thực tế, không dùng để điểm danh hay truy cập bản ghi.</p>
           </div>
 
           {(planned.data?.length ?? 0) > 0 && (
-            <div className="divide-y divide-border rounded-3xl border border-border bg-card px-5 shadow-soft">
+            <ul className="space-y-3">
               {[...(planned.data ?? [])]
                 .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt))
-                .map((session, index) => (
-                  <article
-                    key={session.id}
-                    className="flex flex-wrap items-center justify-between gap-3 py-5"
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted font-mono text-xs font-extrabold text-muted-foreground">
-                        #{index + 1}
-                      </span>
-                      <div>
-                        <h2 className="font-lms text-base font-extrabold text-foreground">
-                          {vietnamDate(session.startAt).split("-").reverse().join("/")}
-                        </h2>
-                        <p className="mt-0.5 text-sm font-medium text-muted-foreground">
-                          {displaySessionTime(session.startAt, session.endAt)}
-                        </p>
-                      </div>
+                .map((session) => (
+                  <li key={session.id} className="flex items-center gap-4 rounded-3xl border border-dashed border-border bg-card p-4 shadow-soft">
+                    <LmsDateTile value={session.startAt} tone="muted" />
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-lms text-base font-extrabold text-foreground">
+                        {vietnamDate(session.startAt).split("-").reverse().join("/")}
+                      </h3>
+                      <p className="mt-1 inline-flex items-center gap-1 text-sm font-semibold tabular-nums text-muted-foreground">
+                        <ClockIcon className="size-4 text-primary" aria-hidden="true" />
+                        {displaySessionTime(session.startAt, session.endAt)}
+                      </p>
                     </div>
-                    <span className="inline-flex rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-bold text-muted-foreground">
-                      {session.status ?? "Dự kiến"}
+                    <span className="shrink-0 rounded-full border border-dashed border-border bg-muted px-3 py-1 text-xs font-bold text-muted-foreground">
+                      {session.status === "CANCELLED" ? "Đã hủy" : "Dự kiến"}
                     </span>
-                  </article>
+                  </li>
                 ))}
-            </div>
+            </ul>
           )}
           {!planned.data?.length && (
-            <div className="space-y-3 rounded-3xl border border-dashed border-border bg-card p-8 text-center shadow-2xs">
-              <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
-                <CalendarDaysIcon className="size-6 text-muted-foreground" aria-hidden="true" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-lms text-base font-extrabold text-foreground">
-                  Chưa có lịch dự kiến
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Lớp học chưa được thiết lập lịch học dự kiến.
-                </p>
-              </div>
+            <div className="flex flex-col items-center rounded-3xl border border-dashed border-border bg-card px-6 py-10 text-center shadow-2xs">
+              <Image src={BEE_MEDITATE} alt="Ong BeeWise đang thư giãn" width={180} height={180} className="h-auto w-36" />
+              <h3 className="mt-3 font-lms text-base font-extrabold text-foreground">Chưa có lịch dự kiến</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Lớp học chưa được thiết lập lịch học dự kiến.</p>
             </div>
           )}
-        </section>
-      ) : (
+        </section>      ) : (
         <LearnerActualSessionList
           items={actual.data?.items ?? []}
           total={actual.data?.total ?? 0}

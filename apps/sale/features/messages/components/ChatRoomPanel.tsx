@@ -10,7 +10,9 @@ import {
   EllipsisVerticalIcon as MoreVertical,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@workspace/ui/components/ui/button";
+import { PaymentExpiredNotice } from "@workspace/core/components/BusinessChatWidget";
 import { MessageBubble, SessionTimeDivider } from "./MessageBubble";
 import { MessageDetailsDialog } from "./MessageDetailsDialog";
 import { MessageContextMenu } from "./MessageContextMenu";
@@ -25,6 +27,11 @@ import {
   shouldShowSessionDivider,
 } from "../constants/messages.utils";
 import type { ChatMessage } from "../types/messages.types";
+
+const BEE_MEDITATE =
+  "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_280/v1789966153/8.png";
+const BEE_DIVING =
+  "https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_280/v1789966155/10.png";
 
 interface ChatRoomPanelProps {
   chatRoomId: string;
@@ -72,6 +79,13 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
   if (!room)
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-5 text-center text-sm text-muted-foreground">
+        <Image
+          src={BEE_DIVING}
+          alt="Ong BeeWise đang lạc đường"
+          width={140}
+          height={140}
+          className="h-auto w-32"
+        />
         <p>
           {error
             ? "Không tải được cuộc trò chuyện. Vui lòng thử lại."
@@ -92,6 +106,35 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
     : currentUserRole === "LEARNER"
       ? room.tutor
       : room.learner;
+
+  // Show the "get a new payment link" notice under the latest expiry system message,
+  // unless a newer payment request has already been posted after it.
+  let expiredNoticeIndex = -1;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const candidate = messages[i]!;
+    if (candidate.business?.kind === "PAYMENT_REQUEST") break;
+    if (
+      candidate.type === "SYSTEM" &&
+      /thanh toán.*hết hạn/i.test(candidate.text ?? "")
+    ) {
+      expiredNoticeIndex = i;
+      break;
+    }
+  }
+  let expiredNoticeClassId: string | undefined;
+  for (let i = expiredNoticeIndex - 1; i >= 0; i--) {
+    const business = messages[i]!.business;
+    if (business?.kind !== "PAYMENT_REQUEST") continue;
+    expiredNoticeClassId =
+      (business.current?.kind === "PAYMENT_REQUEST"
+        ? business.current.data.classId
+        : undefined) ??
+      (typeof business.payload?.classId === "string"
+        ? business.payload.classId
+        : undefined) ??
+      undefined;
+    break;
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -115,11 +158,11 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
   };
 
   return (
-    <div className="flex h-full min-h-0 gap-4 overflow-hidden">
+    <div className="flex h-full min-h-0 gap-2 overflow-hidden">
       {/* ── Main chat area ─────────────────────────────────── */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         {/* Header */}
-        <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-5">
+        <header className="flex shrink-0 items-center gap-2.5 border-b border-border bg-card px-3 py-2 sm:px-4">
           <Link
             href={
               currentUserRole === "LEARNER"
@@ -132,7 +175,7 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
             <ArrowLeft width={18} height={18} />
           </Link>
 
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-xs font-black text-primary-foreground">
             {(room.recipientName || peer.name)
               .split(/\s+/)
               .filter(Boolean)
@@ -143,37 +186,31 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
           </div>
 
           <div className="min-w-0 flex-1">
-            <h1 className="font-nunito truncate text-base font-extrabold text-primary">
+            <h1 className="font-nunito truncate text-sm font-extrabold leading-tight text-primary sm:text-base">
               {room.recipientName || peer.name}
             </h1>
-            <p className="truncate text-xs text-muted-foreground">
-              {isSupport ? "Hỗ trợ BeeWise" : "Cuộc trò chuyện kết nối"}
+            <p className="flex items-center gap-1.5 truncate text-[11px] leading-tight text-muted-foreground">
+              <span
+                role="status"
+                title={
+                  realtimeError ??
+                  (isRealtimeSubscribed
+                    ? "Đã kết nối realtime"
+                    : "Tin nhắn đang được đồng bộ định kỳ")
+                }
+                className={`size-1.5 shrink-0 rounded-full ${isRealtimeSubscribed ? "bg-secondary" : "bg-accent"}`}
+              >
+                <span className="sr-only">
+                  {isRealtimeSubscribed
+                    ? "Đã kết nối realtime"
+                    : "Đang đồng bộ tin nhắn"}
+                </span>
+              </span>
+              <span className="truncate">
+                {isSupport ? "Hỗ trợ BeeWise" : "Cuộc trò chuyện kết nối"}
+              </span>
             </p>
           </div>
-
-          <span
-            role="status"
-            title={
-              realtimeError ??
-              (isRealtimeSubscribed
-                ? "Đã đăng ký kênh trò chuyện realtime"
-                : "Tin nhắn đang được đồng bộ định kỳ")
-            }
-            className="inline-flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-muted-foreground"
-          >
-            <span
-              className={`h-2 w-2 rounded-full ${isRealtimeSubscribed ? "bg-emerald-500" : "bg-amber-500"}`}
-              aria-hidden="true"
-            />
-            <span className="hidden sm:inline">
-              {isRealtimeSubscribed ? "Đã kết nối" : "Đang đồng bộ"}
-            </span>
-            <span className="sr-only sm:hidden">
-              {isRealtimeSubscribed
-                ? "Đã kết nối realtime"
-                : "Đang đồng bộ tin nhắn"}
-            </span>
-          </span>
 
           {/* Stage badge */}
           {room.hasConnectionDetails && (
@@ -228,8 +265,8 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
 
         {/* Messages area */}
         <div className="relative min-h-0 flex-1">
-          <div className="h-full overflow-y-auto [scroll-behavior:auto] bg-muted px-3 py-5 sm:px-6">
-          <div className="mx-auto max-w-4xl space-y-1">
+          <div className="h-full overflow-y-auto [scroll-behavior:auto] bg-muted px-2 py-3 sm:px-4">
+          <div className="mx-auto max-w-5xl space-y-1">
             {hasOlder && (
               <div className="flex justify-center pb-3">
                 <button
@@ -261,9 +298,21 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
               />
             )}
             {!loading && !error && messages.length === 0 && (
-              <p className="py-10 text-center text-sm text-muted-foreground">
-                Chưa có tin nhắn nào.
-              </p>
+              <div className="flex flex-col items-center py-8 text-center">
+                <Image
+                  src={BEE_MEDITATE}
+                  alt="Ong BeeWise đang thư giãn"
+                  width={140}
+                  height={140}
+                  className="h-auto w-32"
+                />
+                <p className="mt-2 text-sm font-semibold text-foreground">
+                  Chưa có tin nhắn nào
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Hãy gửi lời chào để bắt đầu cuộc trò chuyện.
+                </p>
+              </div>
             )}
             {messages.map((msg, idx) => {
               const prev = messages[idx - 1];
@@ -311,6 +360,14 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
                       });
                     }}
                   />
+                  {idx === expiredNoticeIndex && (
+                    <PaymentExpiredNotice
+                      classId={expiredNoticeClassId}
+                      roomId={room.id}
+                      currentRole={currentUserRole}
+                      roomClosed={room.status === "CLOSED"}
+                    />
+                  )}
                 </div>
               );
             })}
@@ -341,8 +398,8 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
 
         {/* Composer */}
         {!isReadOnly && (
-          <div className="shrink-0 border-t border-border bg-card px-3 py-3 sm:px-5">
-            <div className="relative mx-auto max-w-4xl">
+          <div className="shrink-0 border-t border-border bg-card px-2 py-2 sm:px-4">
+            <div className="relative mx-auto max-w-5xl">
               {/* Auto-message library popup (Consultant only) */}
               {showAutoLib && currentUserRole === "CONSULTANT" && (
                 <AutoMessageLibrary
@@ -356,45 +413,38 @@ export function ChatRoomPanel({ chatRoomId }: ChatRoomPanelProps) {
 
               <form
                 onSubmit={handleSubmit}
-                className="rounded-2xl border border-input bg-background p-2 shadow-sm transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                className="flex items-end gap-1.5 rounded-2xl border border-input bg-background p-1.5 shadow-sm transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
               >
+                {currentUserRole === "CONSULTANT" && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAutoLib((v) => !v)}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${showAutoLib ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
+                    aria-label="Kho tin nhắn tự động"
+                    aria-pressed={showAutoLib}
+                  >
+                    <Zap width={17} height={17}
+                      className={showAutoLib ? "fill-current" : ""}
+                    />
+                  </button>
+                )}
                 <textarea
                   id="chat-message-input"
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Nhập tin nhắn..."
+                  placeholder="Nhập tin nhắn (Enter để gửi, Shift + Enter xuống dòng)"
                   rows={1}
-                  className="block max-h-32 min-h-11 w-full resize-none overflow-y-auto border-0 bg-transparent px-2 py-2 text-sm leading-6 text-foreground outline-none placeholder:text-muted-foreground [field-sizing:content]"
+                  className="block max-h-32 min-h-10 min-w-0 flex-1 resize-none overflow-y-auto border-0 bg-transparent px-2 py-2 text-sm leading-6 text-foreground outline-none placeholder:text-muted-foreground [field-sizing:content]"
                 />
-                <div className="flex items-center justify-between gap-2 border-t border-border/70 pt-2">
-                  <div className="flex min-w-0 items-center gap-1">
-                    {currentUserRole === "CONSULTANT" && (
-                      <button
-                        type="button"
-                        onClick={() => setShowAutoLib((v) => !v)}
-                        className={`flex h-9 w-9 items-center justify-center rounded-lg transition ${showAutoLib ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
-                        aria-label="Kho tin nhắn tự động"
-                        aria-pressed={showAutoLib}
-                      >
-                        <Zap width={17} height={17}
-                          className={showAutoLib ? "fill-current" : ""}
-                        />
-                      </button>
-                    )}
-                    <span className="hidden text-[11px] text-muted-foreground sm:inline">
-                      Enter để gửi · Shift + Enter xuống dòng
-                    </span>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={!text.trim() || sending}
-                    aria-label="Gửi tin nhắn"
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]"
-                  >
-                    <Send width={16} height={16} aria-hidden="true" />
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={!text.trim() || sending}
+                  aria-label="Gửi tin nhắn"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]"
+                >
+                  <Send width={17} height={17} aria-hidden="true" />
+                </button>
               </form>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { Button } from "@workspace/ui/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@workspace/ui/components/ui/dialog";
-import { actionClass, primaryActionClass } from "@/components/lms-page-ui";
 import type { HistoryConnection } from "../types/history.types";
 import { formatHistoryDate } from "../utils/history.utils";
 import { HistoryStatusBadge } from "./HistoryStatusBadge";
@@ -21,7 +21,7 @@ export function HistoryDetailDialog({ connection, onClose }: { connection: Histo
         </dl>
         {connection.closeReason && <div className="rounded-2xl border border-border p-4 text-sm"><p className="font-bold">Lý do đóng</p><p className="mt-2 whitespace-pre-wrap break-words leading-relaxed">{connection.closeReason}</p></div>}
         {!connection.roomId && <p className="text-sm text-muted-foreground">Chưa có cuộc trò chuyện khả dụng cho kết nối này.</p>}
-        <DialogFooter className="gap-2 border-t border-border pt-4"><button type="button" onClick={onClose} className={actionClass}>Đóng</button>{connection.roomId && <Link href={`/lms/tutor/messages/${encodeURIComponent(connection.roomId)}`} className={primaryActionClass}>Xem cuộc trò chuyện</Link>}</DialogFooter>
+        <DialogFooter className="gap-2 border-t border-border pt-4"><Button variant="outline" type="button" onClick={onClose} className="min-h-11">Đóng</Button>{connection.roomId && <Button asChild className="min-h-11"><Link href={`/lms/tutor/messages/${encodeURIComponent(connection.roomId)}`}>Xem cuộc trò chuyện</Link></Button>}</DialogFooter>
       </DialogContent>}
     </Dialog>
   );

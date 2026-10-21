@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/ui/button";
 import { ArrowLeftIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
-import { formatClassIdentifier } from "../../tutor-classes/utils/classes.utils";
 import { ClassMissingState } from "../../tutor-classes/components/ClassMissingState";
 import { ClassQueryErrorState } from "../../tutor-classes/components/ClassQueryErrorState";
 import { useClassChat } from "../hooks/useClassChat";
@@ -48,7 +47,7 @@ export function ClassChatScreen({ classId }: { classId: string }) {
               Tin nhắn lớp học
             </h1>
             <p className="truncate text-xs text-muted-foreground">
-              Phòng chat chung của lớp · {formatClassIdentifier(chat.classInfo.id)}
+              Phòng chat chung của lớp
             </p>
           </div>
           <span

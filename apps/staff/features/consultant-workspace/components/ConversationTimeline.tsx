@@ -65,8 +65,8 @@ export function ConversationTimeline({
   }, [latestId, room.id, scrollToBottom]);
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto [scroll-behavior:auto] bg-muted/30 px-3 py-4 sm:px-6">
-      <div className="mx-auto max-w-4xl space-y-1">
+    <div className="min-h-0 flex-1 overflow-y-auto [scroll-behavior:auto] bg-muted/30 px-2 py-3 sm:px-4">
+      <div className="mx-auto max-w-5xl space-y-1">
         {hasOlder && (
           <div className="flex justify-center pb-2">
             <Button

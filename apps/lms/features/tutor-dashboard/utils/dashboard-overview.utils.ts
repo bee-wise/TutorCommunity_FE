@@ -1,4 +1,4 @@
-import { parseVietnamDateTime, type LmsScheduleView } from "@workspace/core/lms-calendar";
+import { parseVietnamDateTime, type LmsScheduleView } from "@/features/lms-calendar";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WEEKDAY_LABELS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"] as const;
