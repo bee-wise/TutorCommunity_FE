@@ -7,7 +7,9 @@ import {
   ChatBubbleLeftRightIcon,
   ClockIcon,
   CreditCardIcon,
+  DocumentTextIcon,
   HomeIcon,
+  PencilSquareIcon,
   VideoCameraIcon,
   UserCircleIcon,
   UserPlusIcon,
@@ -59,6 +61,16 @@ export const navigationConfig: RoleNavigation = {
           title: "Lớp học",
           url: "/lms/learner/classes",
           icon: AcademicCapIcon,
+        },
+        {
+          title: "Tài liệu",
+          url: "/lms/learner/materials",
+          icon: DocumentTextIcon,
+        },
+        {
+          title: "Bài tập",
+          url: "/lms/learner/exercises",
+          icon: PencilSquareIcon,
         },
         {
           title: "Tin nhắn lớp học",
