@@ -11,18 +11,33 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
-import { LmsClassHeader } from "../../../components/LmsClassHeader";
+import { LmsHeroBanner, LmsHeroProgress } from "../../../components/LmsHeroBanner";
 import { LmsDetailLayout } from "../../../components/LmsDetailLayout";
 import { LmsFactList } from "../../../components/LmsFactList";
 import { LmsLinkList } from "../../../components/LmsLinkList";
-import { getClassKindLabel, getClassNaming, getTeachingModeLabel } from "../../../components/lms-class-naming";
+import { getTeachingModeLabel } from "../../../components/lms-class-naming";
 import { LearnerClassQueryError } from "./LearnerClassQueryError";
 import { useLearnerClassQuery } from "../hooks/useLearnerClassesQuery";
 import { LearnerWorkspaceSkeleton } from "./LearnerWorkspaceSkeleton";
-import { LearnerClassProgress } from "./LearnerClassProgress";
+import { useLearnerClassProgress } from "../hooks/useLearnerClassProgress";
 import { LearnerClassTutorIdentity } from "./LearnerClassTutorIdentity";
-import { LearnerClassStatus } from "./LearnerApiClassCard";
 import { vietnamDate } from "../utils/learner-api-calendar";
+
+function OverviewHero({ classId, planned, created, completed, sessionsHref }: { classId: string; planned: number; created: number; completed: boolean; sessionsHref: string }) {
+  const progress = useLearnerClassProgress(classId);
+  const done = progress.data?.total ?? 0;
+  return (
+    <LmsHeroBanner title="Thông tin lớp" description="Tiến độ học tập và những điều cần biết về lớp của bạn." mascot={completed ? "cheer" : "flower"}>
+      <LmsHeroProgress label="Buổi đã hoàn thành so với kế hoạch" value={done} max={planned} note={`${created} buổi đã được xếp lịch`} />
+      <Button asChild className="min-h-11 bg-accent px-5 font-bold text-accent-foreground hover:bg-accent/90">
+        <Link href={sessionsHref}>
+          <CalendarDaysIcon className="size-4" aria-hidden="true" />
+          {completed ? "Xem lại buổi học" : "Xem buổi học"}
+        </Link>
+      </Button>
+    </LmsHeroBanner>
+  );
+}
 
 export function LearnerClassOverviewScreen({ classId }: { classId: string }) {
   const query = useLearnerClassQuery(classId);
@@ -32,48 +47,20 @@ export function LearnerClassOverviewScreen({ classId }: { classId: string }) {
     return <LearnerClassQueryError error={query.error} onRetry={() => void query.refetch()} detail />;
 
   const data = query.data;
-  const naming = getClassNaming(data);
   const completed = data.status === "COMPLETED";
   const opening = data.openingAt ? vietnamDate(data.openingAt).split("-").reverse().join("/") : undefined;
   const root = `/lms/learner/classes/${classId}`;
 
   return (
     <div className="mx-auto max-w-[1300px] space-y-6 px-4 py-6 text-foreground sm:px-6 lg:px-8">
-      <LmsClassHeader
-        field={naming.field}
-        subject={naming.subject}
-        name={naming.name}
-        level={naming.level}
-        badges={
-          <>
-            <LearnerClassStatus status={data.status} />
-            <span className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-bold">{getClassKindLabel(data.type)}</span>
-            <span className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-bold">{getTeachingModeLabel(data.teachingMode)}</span>
-          </>
-        }
-        actions={
-          <Button asChild className="min-h-11 px-5">
-            <Link href={`${root}/sessions`}>
-              <CalendarDaysIcon className="size-4" aria-hidden="true" />
-              {completed ? "Xem lại buổi học" : "Xem buổi học"}
-            </Link>
-          </Button>
-        }
-        notice={
-          completed ? (
-            <div role="status" className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary">
-              <CheckBadgeIcon className="size-5 shrink-0" aria-hidden="true" />
-              <p>Lớp đã kết thúc. Tin nhắn chỉ xem lại; bản ghi vẫn được kiểm tra quyền khi mở.</p>
-            </div>
-          ) : undefined
-        }
-      />
+      {completed && (
+        <div role="status" className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary">
+          <CheckBadgeIcon className="size-5 shrink-0" aria-hidden="true" />
+          <p>Lớp đã kết thúc. Tin nhắn chỉ xem lại; bản ghi vẫn được kiểm tra quyền khi mở.</p>
+        </div>
+      )}
 
-      <section aria-label="Tiến độ lớp học" className="space-y-3 rounded-3xl border border-border bg-card p-5 shadow-soft">
-        <LearnerClassProgress classId={classId} planned={data.numberOfSessions} />
-        <p className="text-xs text-muted-foreground">{data.sessionCount} buổi đã được tạo trong hệ thống.</p>
-      </section>
-
+      <OverviewHero classId={classId} planned={data.numberOfSessions} created={data.sessionCount} completed={completed} sessionsHref={`${root}/sessions`} />
       <LmsDetailLayout
         aside={
           <>

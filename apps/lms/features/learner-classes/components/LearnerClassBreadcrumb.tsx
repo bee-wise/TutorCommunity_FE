@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "@workspace/ui/components/ui/button";
+import { getClassNaming } from "../../../components/lms-class-naming";
 import { useLearnerClassQuery } from "../hooks/useLearnerClassesQuery";
 import {
   LEARNER_WORKSPACE_LABELS,
@@ -32,7 +33,7 @@ export function LearnerClassBreadcrumb({
         aria-hidden="true"
       />
       <span className="truncate font-bold text-primary">
-        {query.data?.code ?? "Lớp học"}
+        {query.data ? getClassNaming(query.data).subject : "Lớp học"}
       </span>
       <ChevronRightIcon
         className="size-4 shrink-0 text-muted-foreground"

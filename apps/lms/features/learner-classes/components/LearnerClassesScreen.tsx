@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/ui/button";
 import { EmptyState } from "@workspace/ui/components/ui/empty-state";
-import { LmsPageHeader } from "../../../components/LmsPageHeader";
+import { LmsHeroBanner } from "../../../components/LmsHeroBanner";
 import { ClassPagination } from "../../tutor-classes/components/ClassPagination";
 import { LearnerClassQueryError } from "./LearnerClassQueryError";
 import { useLearnerClassesQuery } from "../hooks/useLearnerClassesQuery";
@@ -17,14 +17,11 @@ export function LearnerClassesScreen({
     { query, filters } = directory;
   return (
     <main className="mx-auto w-full max-w-[1400px] space-y-5 px-4 py-6 text-foreground sm:px-6 lg:px-8">
-      <LmsPageHeader
-        title="Lớp học"
-        actions={
-          <Button asChild variant="outline" className={learnerAction}>
-            <Link href="/lms/learner/group-classes">Đăng ký lớp nhóm</Link>
-          </Button>
-        }
-      />
+      <LmsHeroBanner title="Lớp học của tôi" description="Vào lớp để xem buổi học, tài liệu, bài tập và nhắn tin với gia sư." mascot="wand">
+        <Button asChild className="min-h-11 bg-accent px-5 font-bold text-accent-foreground hover:bg-accent/90">
+          <Link href="/lms/learner/group-classes">Đăng ký lớp nhóm</Link>
+        </Button>
+      </LmsHeroBanner>
       <LearnerApiClassFilters
         filters={filters}
         counts={directory.counts}
@@ -51,7 +48,10 @@ export function LearnerClassesScreen({
             </div>
           ) : (
             <EmptyState
-              imageAlt=""
+              imageSrc="https://res.cloudinary.com/xcrm6ykz/image/upload/e_trim/f_auto,q_auto,w_400/v1790760176/bee-flower.png"
+              imageAlt="Ong BeeWise bay tới một bông hoa"
+              imageWidth={200}
+              imageHeight={200}
               title="Chưa có lớp phù hợp"
               description="Chỉ hiển thị lớp đã được cấp quyền và đã khai giảng."
               action={

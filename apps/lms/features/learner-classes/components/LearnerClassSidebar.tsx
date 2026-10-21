@@ -26,6 +26,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@workspace/ui/components/ui/sidebar";
+import { getClassNaming } from "../../../components/lms-class-naming";
 import { useLearnerClassQuery } from "../hooks/useLearnerClassesQuery";
 import { LearnerClassStatus } from "./LearnerApiClassCard";
 import {
@@ -50,6 +51,7 @@ export function LearnerClassSidebar({
   const { setOpenMobile, toggleSidebar } = useSidebar();
   const query = useLearnerClassQuery(workspace.classId);
   const data = query.data;
+  const naming = data ? getClassNaming(data) : undefined;
   const links = getLearnerWorkspaceLinks(workspace.classId);
   return (
     <Sidebar
@@ -107,14 +109,23 @@ export function LearnerClassSidebar({
       </SidebarHeader>
       <SidebarContent className="gap-1 overflow-x-hidden overflow-y-auto bg-card py-2">
         <div className="shrink-0 space-y-2 px-4 pb-2 group-data-[collapsible=icon]:hidden">
-          <p className="text-xs font-bold tabular-nums text-muted-foreground">
-            {data?.code ?? ""}
-          </p>
+          {naming?.field && (
+            <p className="text-xs font-bold text-muted-foreground">
+              {naming.field}
+            </p>
+          )}
           <p className="font-lms text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">
             {query.loading
               ? "Đang tải lớp..."
-              : (data?.title ?? "Không truy cập được lớp")}
+              : data
+                ? naming?.subject
+                : "Không truy cập được lớp"}
           </p>
+          {naming?.level && (
+            <p className="inline-flex rounded-lg bg-muted px-2 py-1 text-[11px] font-bold text-primary">
+              {naming.level}
+            </p>
+          )}
           {data && (
             <div className="flex flex-wrap gap-1.5">
               <LearnerClassStatus status={data.status} />
@@ -136,21 +147,6 @@ export function LearnerClassSidebar({
             <SidebarMenu className="gap-1">
               {data &&
                 SECTIONS.map(({ id, icon: Icon }) => {
-                  if (id !== "overview" && id !== "sessions")
-                    return (
-                      <SidebarMenuItem key={id}>
-                        <SidebarMenuButton
-                          disabled
-                          tooltip="Chưa tích hợp API"
-                          className="min-h-11 rounded-xl px-3 text-muted-foreground group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
-                        >
-                          <Icon className="size-4 shrink-0" />
-                          <span className="group-data-[collapsible=icon]:hidden">
-                            {LEARNER_WORKSPACE_LABELS[id]} (chưa tích hợp)
-                          </span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
                   const href = links[id];
                   if (!href) return null;
                   return (

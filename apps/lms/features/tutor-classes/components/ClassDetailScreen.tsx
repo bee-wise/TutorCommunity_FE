@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   BanknotesIcon,
   CalendarDaysIcon,
@@ -11,14 +10,12 @@ import {
   FolderIcon,
   UsersIcon,
 } from "@heroicons/react/24/outline";
-import { Button } from "@workspace/ui/components/ui/button";
-import { LmsClassHeader } from "../../../components/LmsClassHeader";
 import { LmsDetailLayout } from "../../../components/LmsDetailLayout";
 import { LmsFactList } from "../../../components/LmsFactList";
 import { LmsLinkList } from "../../../components/LmsLinkList";
 import { LmsMeterCard } from "../../../components/LmsMeterCard";
 import { LmsStatCard } from "../../../components/LmsStatCard";
-import { getClassKindLabel, getClassNaming, getTeachingModeLabel } from "../../../components/lms-class-naming";
+import { getTeachingModeLabel } from "../../../components/lms-class-naming";
 import { useTutorClassDetail } from "../hooks/useTutorClassDetail";
 import { formatClassDay } from "../utils/classes.utils";
 import { getClassWorkspaceLinks } from "../utils/class-workspace.utils";
@@ -26,7 +23,6 @@ import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import { ClassWorkspaceSkeleton } from "./ClassWorkspaceSkeleton";
 import { ClassMissingState } from "./ClassMissingState";
 import { GroupClassManagement } from "./GroupClassManagement";
-import { ClassStatusBadge } from "./ClassBadges";
 import { classPage, classPanel } from "./classes-ui";
 
 const BILLING_LABELS: Record<string, string> = { MONTHLY: "Thanh toán theo tháng", FULL_COURSE: "Thanh toán trọn khóa" };
@@ -45,42 +41,17 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
   const details = classInfo?.serverDetails;
   if (!classInfo || !details) return <ClassMissingState />;
 
-  const naming = getClassNaming({ ...details, title: classInfo.title });
   const spots = details.capacity - details.learnerCount;
   const money = new Intl.NumberFormat("vi-VN").format(details.pricePerHour);
 
   return (
     <div className={classPage}>
-      <LmsClassHeader
-        field={naming.field}
-        subject={naming.subject}
-        name={naming.name}
-        level={naming.level}
-        badges={
-          <>
-            <ClassStatusBadge status={classInfo.status} />
-            <span className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-bold">{getClassKindLabel(details.type)}</span>
-            <span className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-bold">{getTeachingModeLabel(details.teachingMode)}</span>
-          </>
-        }
-        actions={
-          <Button asChild className="min-h-11 px-5">
-            <Link href={links.sessions}>
-              <CalendarDaysIcon className="size-4" aria-hidden="true" />
-              Lịch buổi học
-            </Link>
-          </Button>
-        }
-        notice={
-          classInfo.status === "completed" ? (
-            <div role="status" className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary">
-              <CheckBadgeIcon className="size-5 shrink-0" aria-hidden="true" />
-              <p>Lớp đã kết thúc. Tin nhắn, tài liệu và điểm danh ở chế độ chỉ xem.</p>
-            </div>
-          ) : undefined
-        }
-      />
-
+      {classInfo.status === "completed" && (
+        <div role="status" className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary">
+          <CheckBadgeIcon className="size-5 shrink-0" aria-hidden="true" />
+          <p>Lớp đã kết thúc. Tin nhắn, tài liệu và điểm danh ở chế độ chỉ xem.</p>
+        </div>
+      )}
       <section aria-label="Tổng quan số liệu lớp học" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <LmsMeterCard label="Tiến độ buổi học" value={details.sessionCount} max={details.numberOfSessions} caption={`${details.sessionCount} trên ${details.numberOfSessions} buổi đã lên lịch`} />
         <LmsMeterCard label="Sĩ số học viên" value={details.learnerCount} max={details.capacity} tone="secondary" caption={spots > 0 ? `Còn ${spots} chỗ trống` : "Lớp đã đủ học viên"} />
