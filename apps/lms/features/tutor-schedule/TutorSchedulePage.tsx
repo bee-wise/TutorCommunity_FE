@@ -7,7 +7,7 @@ import { parseVietnamDateTime } from "@workspace/core/lms-calendar";
 import { useScheduleFilters } from "./hooks/useScheduleFilters";
 import { OverviewCards } from "./components/OverviewCards";
 import { ControlBar } from "./components/ControlBar";
-import { CalendarView } from "./components/CalendarView";
+import { LmsCalendar } from "@/components/LmsCalendar";
 import { ListView } from "./components/ListView";
 import { SessionDetailSheet } from "./components/SessionDetailSheet";
 import type { Session, ViewMode } from "./types/schedule.types";
@@ -120,13 +120,13 @@ export function TutorSchedulePage() {
 
         <div>
           {viewMode === "calendar" ? (
-            <CalendarView
+            <LmsCalendar
+              getSecondaryLabel={(session) => session.studentFullName}
               sessions={filteredSessions}
               onSessionClick={handleSessionClick}
               viewYear={viewYear}
               viewMonth={viewMonth}
-              onPrev={handlePrevMonth}
-              onNext={handleNextMonth}
+              onMonthChange={(offset) => (offset < 0 ? handlePrevMonth() : handleNextMonth())}
               onToday={handleGoToday}
               isLoading={isLoading}
             />
