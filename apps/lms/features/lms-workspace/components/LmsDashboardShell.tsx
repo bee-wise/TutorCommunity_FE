@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { SidebarProvider } from "@workspace/ui/components/ui/sidebar";
 import { LmsAppSidebar } from "./LmsAppSidebar";
+import { LmsMobileNav } from "./LmsMobileNav";
 import { LmsTopbar } from "./LmsTopbar";
 
 interface LmsDashboardShellProps {
@@ -25,9 +26,10 @@ export function LmsDashboardShell({ children, pathname, role, sidebar, breadcrum
       {sidebar ?? <LmsAppSidebar pathname={pathname} role={role} />}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <LmsTopbar pathname={pathname} role={role} breadcrumb={breadcrumb} />
-        <main id="lms-main-content" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-y-auto outline-none">
+        <main id="lms-main-content" tabIndex={-1} className={`min-h-0 min-w-0 flex-1 overflow-y-auto outline-none${sidebar ? "" : " pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0"}`}>
           {children}
         </main>
+        {!sidebar && <LmsMobileNav pathname={pathname} role={role} />}
       </div>
     </SidebarProvider>
   );
