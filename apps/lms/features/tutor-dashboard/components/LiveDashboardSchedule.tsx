@@ -25,11 +25,6 @@ export function LiveDashboardSchedule() {
       ),
   });
 
-  const { data: upcomingData } = useQuery({
-    queryKey: lmsCalendarKeys.upcoming("tutor"),
-    queryFn: ({ signal }) => lmsCalendarService.getUpcoming(signal),
-  });
-
   const sessions: readonly Session[] = useMemo(() => {
     if (sessionsData?.items && sessionsData.items.length > 0) {
       return sessionsData.items.map(mapLmsScheduleViewToTutorSession);
@@ -37,20 +32,9 @@ export function LiveDashboardSchedule() {
     return [];
   }, [sessionsData]);
 
-  const upcomingSession: Session | null = useMemo(() => {
-    if (upcomingData && upcomingData.length > 0) {
-      return mapLmsScheduleViewToTutorSession(upcomingData[0]);
-    }
-    if (sessions.length > 0) {
-      return sessions[0];
-    }
-    return null;
-  }, [upcomingData, sessions]);
-
   return (
     <DashboardSchedule
       sessions={sessions}
-      upcomingSession={upcomingSession}
       isLive={true}
     />
   );

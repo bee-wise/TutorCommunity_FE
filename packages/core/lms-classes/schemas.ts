@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeSessionStatus } from "./lifecycle";
 
 // api-test Swagger, 13/10/2026. .NET Guid does not require RFC UUID bits.
 export const guid = z.guid();
@@ -28,6 +29,7 @@ export const slotSchema = z.object({
   locationOrMeetingInfo: text,
   plannedScheduleId: guid.nullish(),
 });
+const sessionStatus = z.string().nullish().transform(normalizeSessionStatus);
 export const sessionSchema = z.object({
   id: guid,
   classId: guid,
@@ -42,7 +44,7 @@ export const sessionSchema = z.object({
   actualEndAt: optionalDate,
   teachingMode: text,
   locationOrMeetingInfo: text,
-  status: text,
+  status: sessionStatus,
   replacesSessionId: guid.nullish(),
   plannedScheduleId: guid.nullish(),
   actualStartAt: optionalDate,
@@ -155,6 +157,7 @@ export const recordingCommandSchema = versionCommand.extend({
 });
 export const memberSchema = z.object({
   enrollmentId: guid,
+  accountCode: text,
   learnerId: guid,
   name: text,
   joinedAt: dateTime,
@@ -162,6 +165,7 @@ export const memberSchema = z.object({
 });
 export const currentMemberSchema = z.object({
   enrollmentId: guid,
+  accountCode: text,
   learnerId: guid,
   displayName: text,
   joinedAt: dateTime,

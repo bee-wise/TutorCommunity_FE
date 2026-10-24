@@ -41,6 +41,8 @@ export type RegisterResponse = {
 
 export type MeType = {
   id: string;
+  /** Mã hiển thị do server cấp (BW/BT/BS), đổi khi nâng cấp vai trò; có thể null. */
+  accountCode?: string | null;
   email: string | null;
   firstName: string | null;
   lastName: string | null;

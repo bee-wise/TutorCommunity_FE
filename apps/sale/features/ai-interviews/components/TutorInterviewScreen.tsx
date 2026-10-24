@@ -66,7 +66,8 @@ export function TutorInterviewScreen() {
         </div>
       </div>
     );
-  const loadError = eligibility.error || (needsPolicy && policy.error) || stateQuery.error;
+  const loadError =
+    eligibility.error || (needsPolicy && policy.error) || stateQuery.error;
   const setup = ["policy", "precheck"].includes(interview.phase);
 
   const title = (
@@ -170,8 +171,8 @@ export function TutorInterviewScreen() {
       <div className="space-y-5">
         {title}
         <InterviewResult
-          title="Đã sử dụng lượt phỏng vấn"
-          message="Liên hệ Consultant để xem kết quả hoặc được cấp lại lượt nếu cần."
+          title="Cảm ơn bạn đã tham gia phỏng vấn cùng Bee"
+          message="Bee đã ghi nhận kết quả. Vui lòng chờ phản hồi chính thức từ BeeWise."
           tone="warning"
         />
       </div>

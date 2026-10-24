@@ -13,7 +13,7 @@ import { classPage } from "./classes-ui";
 export function ClassSessionsScreen({ classId }: { classId: string }) {
   const { classInfo, loading, error, retry } = useTutorClassDetail(classId);
 
-  if (loading) return <ClassWorkspaceSkeleton />;
+  if (loading) return <ClassWorkspaceSkeleton screen="sessions" />;
   if (error) return <ClassQueryErrorState error={error} onRetry={retry} detail />;
   if (!classInfo) return <ClassMissingState />;
 

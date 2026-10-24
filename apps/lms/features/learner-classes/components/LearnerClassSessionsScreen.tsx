@@ -16,7 +16,7 @@ import {
   vietnamDate,
   displaySessionTime,
 } from "../utils/learner-api-calendar";
-import { LearnerWorkspaceSkeleton } from "./LearnerWorkspaceSkeleton";
+import { LearnerSessionListSkeleton, LearnerWorkspaceSkeleton } from "./LearnerWorkspaceSkeleton";
 import { LearnerSessionFilterBar } from "./LearnerSessionFilterBar";
 import { LearnerActualSessionList } from "./LearnerActualSessionList";
 
@@ -94,7 +94,7 @@ export function LearnerClassSessionsScreen({ classId }: { classId: string }) {
       )}
 
       {query.loading ? (
-        <LearnerWorkspaceSkeleton view="sessions" />
+        <LearnerSessionListSkeleton />
       ) : query.error ? (
         <LearnerClassQueryError
           error={query.error}

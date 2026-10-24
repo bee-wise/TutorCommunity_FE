@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@workspace/ui/components/ui/dialog";
-import { lmsCalendarKeys, lmsCalendarService } from "@/features/lms-calendar";
+import { hasSessionEnded, lmsCalendarKeys, lmsCalendarService } from "@/features/lms-calendar";
 import { classSessionsService } from "@workspace/core/lms-classes/sessions.service";
 import { lmsClassKeys } from "@workspace/core/lms-classes/query-keys";
 import { LmsSessionDetailSheet } from "@/components/LmsSessionDetailSheet";
@@ -34,7 +34,10 @@ export function SessionDetailSheet({ session, open, onClose }: SessionDetailShee
   const currentVersion = detail?.version ?? session?.version ?? 0;
 
   const cancelMutation = useMutation({
-    mutationFn: () => classSessionsService.cancel(session!.id, currentVersion),
+    mutationFn: () => {
+      if (hasSessionEnded(session!.date, session!.endTime)) throw new Error("Buổi học đã kết thúc, không thể hủy.");
+      return classSessionsService.cancel(session!.id, currentVersion);
+    },
     onSuccess: () => {
       setCancelDialogOpen(false);
       queryClient.invalidateQueries({ queryKey: lmsCalendarKeys.all });
@@ -49,7 +52,8 @@ export function SessionDetailSheet({ session, open, onClose }: SessionDetailShee
 
   if (!session) return null;
 
-  const canCancel = isOfficial && (session.status === "UPCOMING" || session.status === "IN_PROGRESS");
+  // A session that already ended can no longer be cancelled.
+  const canCancel = isOfficial && (session.status === "UPCOMING" || session.status === "IN_PROGRESS") && !hasSessionEnded(session.date, session.endTime);
   const [year, month, day] = session.date.split("-");
 
   return (

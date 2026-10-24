@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ImagePreview } from "@workspace/ui/components/ui/image-preview";
 import {
   GraduationCap,
   BookOpen,
@@ -43,6 +44,7 @@ function AchievementCard({ item }: { item: TutorAchievementItem }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-[#e8edf5] bg-white transition duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md hover:shadow-primary/6">
       {item.imageUrl ? (
+        <ImagePreview src={item.imageUrl} alt={item.title} caption={item.title} className="block w-full">
         <div className="relative h-40 w-full overflow-hidden bg-[#f5f8ff]">
           <Image
             src={item.imageUrl}
@@ -65,6 +67,7 @@ function AchievementCard({ item }: { item: TutorAchievementItem }) {
             </span>
           ) : null}
         </div>
+        </ImagePreview>
       ) : null}
 
       <div className="flex flex-1 flex-col p-4 sm:p-5">

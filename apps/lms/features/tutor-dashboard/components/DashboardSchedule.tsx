@@ -9,30 +9,20 @@ import { DASHBOARD_ASSETS } from "../data/dashboard.assets";
 import { useDashboardSchedule } from "../hooks/useDashboardSchedule";
 import { dashboardDateLabel, dashboardWeekday } from "../utils/dashboard-schedule.utils";
 import { DashboardLink } from "./DashboardLink";
-import { DashboardNextSession } from "./DashboardNextSession";
 import { DashboardSessionDialog } from "./DashboardSessionDialog";
 
 export function DashboardSchedule({
   sessions,
-  upcomingSession,
   isLive = false,
 }: {
   sessions: readonly Session[];
-  upcomingSession?: Session | null;
   isLive?: boolean;
 }) {
   const schedule = useDashboardSchedule(sessions);
-  const nextSession = upcomingSession ?? schedule.upcoming[0] ?? null;
 
   return (
     <Dialog open={schedule.open} onOpenChange={schedule.setOpen}>
       <div className="min-w-0 space-y-4">
-        {nextSession && (
-          <DashboardNextSession
-            session={nextSession}
-            onSelect={schedule.selectSession}
-          />
-        )}
         <section className="rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-5" aria-labelledby="dashboard-schedule">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="dashboard-schedule" className="font-lms text-lg font-extrabold leading-[1.3] text-foreground">Lịch dạy sắp tới</h2>

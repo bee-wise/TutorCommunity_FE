@@ -104,7 +104,7 @@ export function resolveNavbarState({
 
 const guestMenu: NavbarItem[] = [
   { label: "Gia sư 1:1", href: "/tutors" },
-  { label: "Tìm lớp", href: "/classes" },
+  { label: "Tìm lớp nhóm", href: "/classes" },
   // { label: "Cộng đồng", href: "/community" },
   { label: "Trở thành gia sư", href: "/tutor-guide" },
   { label: "Về chúng tôi", href: "/about-us" },
@@ -120,7 +120,6 @@ const learnerMenu: NavbarItem[] = [
 const tutorOnboardingMenu: NavbarItem[] = [];
 
 const tutorApprovedMenu: NavbarItem[] = [
-  { label: "Trang chủ", href: "/tutor/home" },
   // { label: "Cộng đồng", href: "/community" },
   { label: "Hồ sơ của tôi", href: "/tutor/profile" },
   { label: "Tin nhắn", href: "/tutor/messages", badgeKey: "unreadChatCount" },
@@ -190,7 +189,10 @@ export function getNavbarConfig({
 
     return {
       homeHref: isCompleted ? "/" : "/tutor/post-approval",
-      centerItems: (isCompleted ? tutorApprovedMenu : tutorPostApprovalMenu).filter(
+      centerItems: (isCompleted
+        ? tutorApprovedMenu
+        : tutorPostApprovalMenu
+      ).filter(
         (item) =>
           isPublic === true ||
           !["Lịch rảnh", "Thông tin thanh toán"].includes(item.label),

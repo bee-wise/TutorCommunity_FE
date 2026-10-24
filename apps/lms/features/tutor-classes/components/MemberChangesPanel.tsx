@@ -4,7 +4,7 @@ import { useRef, useState, type BaseSyntheticEvent } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowDownCircleIcon, ArrowUpCircleIcon, ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ArrowDownCircleIcon, ArrowUpCircleIcon, ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 import { classMembersService as service } from "@workspace/core/lms-classes/members.service";
 import { createMemberChangeSchema } from "@workspace/core/lms-classes/schemas";
 import {
@@ -35,12 +35,16 @@ const statusPresentation: Record<string, { label: string; className: string }> =
 export function MemberChangesPanel({
   classId,
   readOnly,
+  creating,
+  onCreatingChange: setCreating,
 }: {
   classId: string;
   readOnly: boolean;
+  /** Create dialog state lives in the screen so its trigger can sit in the page header. */
+  creating: boolean;
+  onCreatingChange: (open: boolean) => void;
 }) {
   const [page, setPage] = useState(1);
-  const [creating, setCreating] = useState(false);
   const query = useLmsClassResource(
     classId,
     "member-requests",
@@ -107,16 +111,6 @@ export function MemberChangesPanel({
           <span className="grid size-10 place-items-center rounded-xl bg-muted text-primary"><ClipboardDocumentListIcon className="size-5" aria-hidden="true" /></span>
           <h2 id="member-changes-title" className="font-lms text-lg font-extrabold text-foreground">Yêu cầu thay đổi thành viên</h2>
         </div>
-        {!readOnly && (
-          <Button
-            type="button"
-            className="min-h-10 gap-1.5 rounded-xl bg-primary px-4 text-xs font-bold text-primary-foreground shadow-soft transition-all hover:bg-primary/90 active:scale-[0.98]"
-            onClick={() => setCreating(true)}
-          >
-            <PlusIcon className="size-4" aria-hidden="true" />
-            Tạo yêu cầu
-          </Button>
-        )}
       </div>
       <Dialog open={creating} onOpenChange={(open) => { if (!create.isPending) setCreating(open); }}>
         <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto rounded-3xl">
@@ -147,7 +141,7 @@ export function MemberChangesPanel({
                   },
                   ...(members.data ?? []).map((m) => ({
                     value: m.learnerId,
-                    label: m.displayName ?? "Học viên chưa có tên",
+                    label: `${m.displayName ?? "Học viên chưa có tên"}${m.accountCode ? ` · ${m.accountCode}` : ""}`,
                   })),
                 ]}
               />

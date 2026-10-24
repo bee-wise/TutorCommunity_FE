@@ -17,7 +17,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/ui/dialog";
-import { formatProfileReviewStatus, formatReviewDate, type ProfileFieldName } from "../data/profile-fields";
+import {
+  formatProfileReviewStatus,
+  formatReviewDate,
+  type ProfileFieldName,
+} from "../data/profile-fields";
 import type { ProfileReview } from "../schemas/consultant-review.schema";
 import { ProfileReviewComparisonOverview } from "./ProfileReviewComparisonOverview";
 

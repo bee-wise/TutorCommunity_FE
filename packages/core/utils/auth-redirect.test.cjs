@@ -52,7 +52,7 @@ test("tutor without LMS access goes to onboarding route", () => {
 test("tutor with LMS access goes to tutor LMS", () => {
   assert.equal(
     getRoleRedirectPath({ role: "TUTOR", canAccessTutorLms: true }),
-    "/tutor/home",
+    "/tutor/profile",
   );
 });
 
@@ -77,7 +77,7 @@ test("interviewed tutor missing post-approval information completes onboarding",
 test("approved tutor with completed post-approval information goes to Tutor Home", () => {
   assert.equal(
     getRoleRedirectPath({ role: "TUTOR", tutorProfileStatus: "APPROVED", isInterviewed: true, bankInformationCompleted: true, availabilityCompleted: true }),
-    "/tutor/home",
+    "/tutor/profile",
   );
 });
 

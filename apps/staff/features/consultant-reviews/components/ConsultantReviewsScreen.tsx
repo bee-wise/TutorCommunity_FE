@@ -82,34 +82,24 @@ export function ConsultantReviewsScreen() {
   return (
     <main className="min-w-0 bg-background px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
       <div className="mx-auto max-w-6xl space-y-5">
-        <header className="flex flex-wrap items-center justify-between gap-5 rounded-3xl bg-primary px-5 py-6 text-primary-foreground shadow-[var(--shadow-soft)] sm:px-7">
-          <div>
-            <p className="text-xs font-bold text-primary-foreground/80">Khu vực xét duyệt</p>
-            <h1 className="mt-1 font-nunito text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
-              Hồ sơ gia sư
-            </h1>
-            {!reviews.isPending && !reviews.isError && (
-              <span className="mt-3 inline-flex rounded-full bg-accent px-3 py-1 text-xs font-extrabold text-accent-foreground">
-                {totalCount} yêu cầu chờ xử lý
-              </span>
-            )}
-          </div>
+        <header className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="font-nunito text-3xl font-extrabold leading-[1.2] sm:text-4xl">
+            Hồ sơ gia sư
+          </h1>
           <Button
             type="button"
             variant="outline"
             onClick={refreshQueues}
             disabled={profileReviews.isFetching || fieldReviews.isFetching}
-            className="h-10 rounded-xl border-primary-foreground/40 bg-card px-4 font-bold text-primary transition-all hover:bg-card/90 active:scale-[0.98]"
+            className="min-h-11 rounded-full px-5 font-bold transition-all active:scale-[0.98]"
           >
             <ArrowPathIcon className={`size-4 ${profileReviews.isFetching || fieldReviews.isFetching ? "animate-spin" : ""}`} aria-hidden="true" /> Làm mới
           </Button>
         </header>
 
-        <section className="overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)]">
-          <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-4 sm:px-6">
-            <ReviewQueueTabs value={activeTab} counts={tabCounts} onChange={switchTab} />
-          </div>
+        <ReviewQueueTabs value={activeTab} counts={tabCounts} onChange={switchTab} />
 
+        <section className="overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)]">
           <div className="flex flex-col gap-3 border-b border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <form onSubmit={applySearch} className="flex min-w-0 flex-1 gap-2">
               <label htmlFor="review-search" className="sr-only">
@@ -125,7 +115,7 @@ export function ConsultantReviewsScreen() {
                   value={searchDraft}
                   onChange={(event) => setSearchDraft(event.target.value)}
                   placeholder="Tên hoặc email gia sư"
-                  className="min-h-10 w-full rounded-xl border border-input bg-background py-2.5 pl-9 pr-10 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/30"
+                  className="min-h-11 w-full rounded-full border border-input bg-background py-2.5 pl-9 pr-10 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/30"
                 />
                 {reviews.isFetching && searchDraft.trim() ? (
                   <ArrowPathIcon
@@ -162,7 +152,7 @@ export function ConsultantReviewsScreen() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger id="review-sort" className="min-w-44 font-semibold">
+                <SelectTrigger id="review-sort" className="min-h-11 min-w-44 rounded-full font-semibold">
                   <SelectValue placeholder="Chọn thứ tự" />
                 </SelectTrigger>
                 <SelectContent>

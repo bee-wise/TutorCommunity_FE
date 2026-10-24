@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { Button } from "@workspace/ui/components/ui/button";
 import { Skeleton } from "@workspace/ui/components/ui/skeleton";
 import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
@@ -66,4 +67,74 @@ export function FieldError({ message }: { message?: string }) {
       {message}
     </p>
   ) : null;
+}
+
+export function Chip({
+  tone = "neutral",
+  children,
+}: {
+  tone?: "neutral" | "flag" | "ok" | "danger";
+  children: React.ReactNode;
+}) {
+  const classes = {
+    neutral: "border-border bg-muted text-muted-foreground",
+    flag: "border-transparent bg-highlight text-foreground",
+    ok: "border-transparent bg-secondary text-secondary-foreground",
+    danger: "border-destructive/30 bg-card text-destructive",
+  }[tone];
+  return (
+    <span
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-bold ${classes}`}
+    >
+      {children}
+    </span>
+  );
+}
+export function ScoreBar({
+  value,
+  max,
+  flagged,
+}: {
+  value: number | null;
+  max: number;
+  flagged?: boolean;
+}) {
+  const percent = value == null ? 0 : Math.min(100, (value / max) * 100);
+  return (
+    <div
+      role="meter"
+      aria-valuemin={0}
+      aria-valuemax={max}
+      aria-valuenow={value ?? undefined}
+      className="h-2 w-full overflow-hidden rounded-full bg-muted"
+    >
+      <div
+        className={`h-full rounded-full ${flagged ? "bg-accent" : "bg-primary"}`}
+        style={{ width: `${percent}%` }}
+      />
+    </div>
+  );
+}
+export function SectionTitle({
+  icon,
+  children,
+  aside,
+}: {
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+  aside?: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <h2 className="flex items-center gap-2.5 font-nunito text-lg font-extrabold">
+        {icon && (
+          <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-primary [&>svg]:size-5">
+            {icon}
+          </span>
+        )}
+        {children}
+      </h2>
+      {aside}
+    </div>
+  );
 }

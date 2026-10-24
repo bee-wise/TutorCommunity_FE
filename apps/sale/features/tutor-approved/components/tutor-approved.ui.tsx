@@ -68,7 +68,13 @@ export function TutorApprovedShell({
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f9fd] text-[#17142f]">
+    <div
+      className={`min-h-screen text-[#17142f] ${
+        screen === "profile"
+          ? "bg-[radial-gradient(circle_at_top_left,rgba(250,220,120,0.55),transparent_34%),linear-gradient(180deg,#fff3cb_0%,#fffaf0_38%,#ffffff_100%)]"
+          : "bg-[#f7f9fd]"
+      }`}
+    >
       <Header
         {...(previewUser
           ? {

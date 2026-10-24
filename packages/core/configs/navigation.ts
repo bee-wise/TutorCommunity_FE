@@ -51,7 +51,11 @@ export const navigationConfig: RoleNavigation = {
       groupName: "Tổng Quan",
       items: [
         { title: "Báo cáo học tập", url: "/lms/learner", icon: ChartBarIcon },
-        { title: "Lịch học của tôi", url: "/lms/learner/schedule", icon: CalendarDaysIcon },
+        {
+          title: "Lịch học của tôi",
+          url: "/lms/learner/schedule",
+          icon: CalendarDaysIcon,
+        },
       ],
     },
     {
@@ -168,14 +172,9 @@ export const navigationConfig: RoleNavigation = {
           icon: PieChart,
         },
         {
-          title: "Hỗ Trợ Kết Nối (Chat)",
+          title: "Hỗ Trợ Kết Nối",
           url: "/consultant/workspace",
           icon: MessageCircle,
-        },
-        {
-          title: "Yêu Cầu Kết Nối",
-          url: "/consultant/connection-requests",
-          icon: UsersRound,
         },
       ],
     },
@@ -187,7 +186,11 @@ export const navigationConfig: RoleNavigation = {
           url: "/consultant/tutors",
           icon: UserCheck,
         },
-        { title: "Phỏng vấn AI", url: "/consultant/ai-interviews", icon: VideoCameraIcon },
+        {
+          title: "Phỏng vấn AI",
+          url: "/consultant/ai-interviews",
+          icon: VideoCameraIcon,
+        },
         {
           title: "Theo Dõi Lớp Học",
           url: "/consultant/classes",
@@ -240,7 +243,11 @@ export const navigationConfig: RoleNavigation = {
           url: "/admin/learning-programs",
           icon: BookOpenCheck,
         },
-        { title: "Phỏng vấn AI", url: "/admin/ai-interviews", icon: VideoCameraIcon },
+        {
+          title: "Phỏng vấn AI",
+          url: "/admin/ai-interviews",
+          icon: VideoCameraIcon,
+        },
         {
           title: "Quản Lý Rủi Ro",
           url: "/admin/risks",

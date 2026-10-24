@@ -6,8 +6,8 @@ import { ArrowLeftIcon, CalendarDaysIcon, ChatBubbleLeftRightIcon, FolderIcon, I
 import { Button } from "@workspace/ui/components/ui/button";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarTrigger, useSidebar } from "@workspace/ui/components/ui/sidebar";
 import { useTutorClassDetail } from "../hooks/useTutorClassDetail";
-import { formatClassIdentifier } from "../utils/classes.utils";
 import { CLASS_WORKSPACE_LABELS, getClassWorkspaceLinks, type ClassWorkspaceRoute } from "../utils/class-workspace.utils";
+import { getClassNaming } from "../../../components/lms-class-naming";
 import { ClassKindBadge, ClassStatusBadge } from "./ClassBadges";
 
 const SECTIONS = [
@@ -18,6 +18,8 @@ const SECTIONS = [
 
 export function ClassWorkspaceSidebar({ workspace }: { workspace: ClassWorkspaceRoute }) {
   const { classInfo, loading, error } = useTutorClassDetail(workspace.classId);
+  const details = classInfo?.serverDetails;
+  const naming = classInfo ? getClassNaming({ title: classInfo.title, programName: details?.programName, contextName: details?.contextName, teachingItemName: details?.teachingItemName }) : undefined;
   const { setOpenMobile, toggleSidebar } = useSidebar();
   const links = getClassWorkspaceLinks(workspace.classId);
   return (
@@ -38,8 +40,9 @@ export function ClassWorkspaceSidebar({ workspace }: { workspace: ClassWorkspace
       </SidebarHeader>
       <SidebarContent className="gap-2 bg-card py-4">
         <div className="space-y-3 px-4 pb-4 group-data-[collapsible=icon]:hidden">
-          {classInfo?.code && <p className="text-xs font-bold text-muted-foreground">{formatClassIdentifier(classInfo.code)}</p>}
-          <p className="font-lms text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{classInfo?.title ?? (loading ? "Đang tải lớp học…" : error ? "Không thể xem lớp học" : "Không tìm thấy lớp")}</p>
+          {naming?.field && <p className="text-xs font-bold text-muted-foreground">{naming.field}</p>}
+          <p className="font-lms text-lg font-extrabold leading-[1.3] text-primary [overflow-wrap:anywhere]">{naming?.subject ?? (loading ? "Đang tải lớp học…" : error ? "Không thể xem lớp học" : "Không tìm thấy lớp")}</p>
+          {naming?.level && <p className="text-xs font-bold text-muted-foreground">{naming.level}</p>}
           {classInfo && <div className="flex flex-wrap gap-1.5"><ClassStatusBadge status={classInfo.status} /><ClassKindBadge kind={classInfo.kind} /></div>}
         </div>
         <SidebarGroup className="group-data-[collapsible=icon]:p-0.5">

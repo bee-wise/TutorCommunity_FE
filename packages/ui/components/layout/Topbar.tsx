@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
-import { Bell, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { NotificationBell } from "../notifications/NotificationBell";
 
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 
@@ -31,7 +32,6 @@ import {
 } from "@workspace/ui/components/ui/avatar";
 import { useLogout } from "@workspace/core/hooks/useLogout";
 import { useNotificationDrawerStore } from "@workspace/core/store/useNotificationDrawerStore";
-import { cn } from "@workspace/core/helpers/utils";
 
 export function Topbar({ breadcrumb }: { breadcrumb?: React.ReactNode } = {}) {
   const pathname = usePathname();
@@ -86,15 +86,12 @@ export function Topbar({ breadcrumb }: { breadcrumb?: React.ReactNode } = {}) {
 
       <div className="ml-auto flex items-center gap-4">
         {/* Notifications */}
-        <button 
+        <NotificationBell
+          count={unreadNotificationCount}
           onClick={openDrawer}
-          className="relative size-8 flex items-center justify-center rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <Bell className={cn("size-4.5", unreadNotificationCount > 0 && "animate-pulse text-accent")} />
-          {unreadNotificationCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-destructive border-2 border-background" />
-          )}
-        </button>
+          ringClassName="ring-background"
+          className="size-10 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+        />
 
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 focus-visible:outline-none rounded-full pr-2 hover:bg-accent transition-colors">
