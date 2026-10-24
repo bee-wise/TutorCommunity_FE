@@ -19,7 +19,7 @@ export function ClassListSkeleton() {
   );
 }
 
-function MessageCard({
+export function MessageCard({
   icon,
   title,
   description,

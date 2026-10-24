@@ -9,6 +9,7 @@ import {
   ClipboardDocumentCheckIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
+import { displayClassCode } from "@workspace/core/lms-classes/lifecycle";
 import { groupClassesService } from "@workspace/core/lms-classes/group.service";
 import { guid } from "@workspace/core/lms-classes/schemas";
 import { useLmsClassResource } from "@workspace/core/lms-classes/useLmsClassResource";
@@ -270,7 +271,7 @@ export function ConsultantClassesScreen() {
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <Chip tone="flag">Chờ duyệt</Chip>
-                      {g.code && <Chip>{g.code}</Chip>}
+                      {displayClassCode(g.code) && <Chip>{displayClassCode(g.code)}</Chip>}
                     </div>
                     <h3 className="mt-3 font-nunito text-lg font-extrabold leading-snug">
                       {g.title}

@@ -64,25 +64,17 @@ function HeroMascot() {
   );
 }
 
-export type SubjectTab = { value: string; label: string; count: number };
-
 type ClassesHeroProps = {
-  /** Search box and subject tabs only make sense once classes exist. */
+  /** The search box only makes sense once classes exist. */
   showControls: boolean;
   query: string;
   onQueryChange: (value: string) => void;
-  tabs: SubjectTab[];
-  activeTab: string;
-  onTabChange: (value: string) => void;
 };
 
 export function ClassesHero({
   showControls,
   query,
   onQueryChange,
-  tabs,
-  activeTab,
-  onTabChange,
 }: ClassesHeroProps) {
   return (
     <section className="overflow-hidden bg-primary text-primary-foreground">
@@ -132,28 +124,6 @@ export function ClassesHero({
             <HeroMascot />
           </div>
         </div>
-
-        {showControls && (
-          <nav
-            className="flex gap-2 overflow-x-auto border-t border-primary-foreground/20 py-3"
-            aria-label="Lọc theo môn học"
-          >
-            {tabs.map((item) => (
-              <button
-                key={item.value}
-                type="button"
-                onClick={() => onTabChange(item.value)}
-                aria-pressed={activeTab === item.value}
-                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${activeTab === item.value ? "bg-accent text-accent-foreground" : "text-primary-foreground hover:bg-primary-foreground/10"}`}
-              >
-                {item.label}
-                <span className="text-[11px] tabular-nums opacity-70">
-                  {item.count}
-                </span>
-              </button>
-            ))}
-          </nav>
-        )}
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-import { CheckCircleIcon, ClockIcon, NoSymbolIcon, PlayCircleIcon } from "@heroicons/react/16/solid";
+import { CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, NoSymbolIcon, PencilSquareIcon, PlayCircleIcon, XCircleIcon } from "@heroicons/react/16/solid";
 import { CLASS_LABELS, SESSION_LABELS, type ClassKind, type ClassStatus, type SessionAttendance, type SessionStatus } from "../types/classes.types";
 import { attendanceStateLabel } from "../utils/classes.utils";
 import { statusTone } from "../../../components/lms-status";
@@ -23,4 +23,22 @@ export function SessionStatusBadge({ status }: { status: SessionStatus }) {
 export function AttendanceStateBadge({ record }: { record?: SessionAttendance }) {
   const Icon = record?.state === "confirmed" ? CheckCircleIcon : ClockIcon;
   return <span className={`${base} ${!record ? statusTone.planned : record.state === "confirmed" ? success : pending}`}><Icon className="size-3.5" aria-hidden="true" />{attendanceStateLabel(record)}</span>;
+}
+
+const approvalViews: Record<string, { label: string; tone: string; Icon: typeof ClockIcon }> = {
+  DRAFT: { label: "Bản nháp", tone: statusTone.planned, Icon: PencilSquareIcon },
+  SUBMITTED: { label: "Chờ duyệt", tone: pending, Icon: ClockIcon },
+  PENDING: { label: "Chờ duyệt", tone: pending, Icon: ClockIcon },
+  APPROVED: { label: "Đã duyệt", tone: success, Icon: CheckCircleIcon },
+  CHANGES_REQUESTED: { label: "Cần chỉnh sửa", tone: pending, Icon: ExclamationTriangleIcon },
+  REQUEST_CHANGES: { label: "Cần chỉnh sửa", tone: pending, Icon: ExclamationTriangleIcon },
+  REJECTED: { label: "Không được duyệt", tone: statusTone.overdue, Icon: XCircleIcon },
+};
+export function approvalStatusView(status?: string | null) {
+  return approvalViews[status ?? ""] ?? null;
+}
+export function ApprovalStatusBadge({ status }: { status?: string | null }) {
+  const view = approvalViews[status ?? ""];
+  if (!view) return null;
+  return <span className={`${base} ${view.tone}`}><view.Icon className="size-3.5" aria-hidden="true" />{view.label}</span>;
 }
