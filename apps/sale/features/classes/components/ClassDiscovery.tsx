@@ -1,15 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { GroupDto } from "@workspace/core/lms-classes/group.schemas";
 import { useRecruitingClasses } from "../hooks/useRecruitingClasses";
-import {
-  getClassSubject,
-  normalizeSearch,
-  type TeachingMode,
-} from "../utils/classes.utils";
+import { useClassOfferingFilters } from "../hooks/useClassOfferingFilters";
+import { normalizeSearch, type TeachingMode } from "../utils/classes.utils";
 import { ClassCard } from "./ClassCard";
-import { ClassDetailDialog } from "./ClassDetailDialog";
+import { ClassSelect } from "./ClassSelect";
 import {
   ClassFiltersCollapsible,
   ClassFiltersSidebar,
@@ -21,9 +17,16 @@ import {
   NoMatchingClasses,
   NoRecruitingClasses,
 } from "./ClassListStates";
-import { ClassesHero, type SubjectTab } from "./ClassesHero";
+import { ClassesHero } from "./ClassesHero";
 
 type SortOrder = "recommended" | "price-low" | "price-high" | "soonest";
+
+const SORT_OPTIONS = [
+  { value: "recommended", label: "Mặc định" },
+  { value: "soonest", label: "Khai giảng sớm" },
+  { value: "price-low", label: "Học phí thấp nhất" },
+  { value: "price-high", label: "Học phí cao nhất" },
+];
 
 export function ClassDiscovery() {
   const {
@@ -36,25 +39,12 @@ export function ClassDiscovery() {
     fetchNextPage,
   } = useRecruitingClasses();
   const [query, setQuery] = useState("");
-  const [subject, setSubject] = useState("all");
   const [mode, setMode] = useState<AllOr<TeachingMode>>("all");
   const [maxPrice, setMaxPrice] = useState("all");
   const [sortOrder, setSortOrder] = useState<SortOrder>("recommended");
-  const [selectedClass, setSelectedClass] = useState<GroupDto | null>(null);
 
+  const offering = useClassOfferingFilters(classes);
   const hasClasses = !isLoading && !isError && classes.length > 0;
-
-  const tabs = useMemo<SubjectTab[]>(() => {
-    const counts = new Map<string, number>();
-    for (const classItem of classes) {
-      const name = getClassSubject(classItem);
-      counts.set(name, (counts.get(name) ?? 0) + 1);
-    }
-    const subjects = [...counts.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "vi"))
-      .map(([name, count]) => ({ value: name, label: name, count }));
-    return [{ value: "all", label: "Tất cả", count: classes.length }, ...subjects];
-  }, [classes]);
 
   const visibleClasses = useMemo(() => {
     const search = normalizeSearch(query);
@@ -67,7 +57,7 @@ export function ClassDiscovery() {
 
       return (
         matchesSearch &&
-        (subject === "all" || getClassSubject(classItem) === subject) &&
+        offering.matches(classItem) &&
         (mode === "all" || classItem.teachingMode === mode) &&
         (maxPrice === "all" || classItem.pricePerSession <= Number(maxPrice))
       );
@@ -85,25 +75,42 @@ export function ClassDiscovery() {
       return filtered.sort((a, b) => time(a.openingAt) - time(b.openingAt));
     }
     return filtered;
-  }, [classes, query, subject, mode, maxPrice, sortOrder]);
+  }, [classes, query, offering, mode, maxPrice, sortOrder]);
 
   const resetFilters = () => {
     setQuery("");
-    setSubject("all");
+    offering.reset();
     setMode("all");
     setMaxPrice("all");
     setSortOrder("recommended");
   };
 
   const filterState = {
+    offering: {
+      program: offering.programId,
+      onProgramChange: offering.selectProgram,
+      programOptions: offering.programOptions,
+      programLoading: offering.programLoading,
+      programSelected: offering.programSelected,
+      context: offering.context,
+      onContextChange: offering.selectContext,
+      contextOptions: offering.contextOptions,
+      contextLoading: offering.contextLoading,
+      item: offering.item,
+      onItemChange: offering.selectItem,
+      itemOptions: offering.itemOptions,
+      itemLoading: offering.itemLoading,
+      failed: offering.failed,
+      onRetry: offering.retry,
+    },
     mode,
     onModeChange: setMode,
     maxPrice,
     onMaxPriceChange: setMaxPrice,
   };
-  const activeFilterCount = [mode !== "all", maxPrice !== "all"].filter(
-    Boolean,
-  ).length;
+  const activeFilterCount =
+    offering.activeCount +
+    [mode !== "all", maxPrice !== "all"].filter(Boolean).length;
 
   return (
     <>
@@ -111,9 +118,6 @@ export function ClassDiscovery() {
         showControls={hasClasses}
         query={query}
         onQueryChange={setQuery}
-        tabs={tabs}
-        activeTab={subject}
-        onTabChange={setSubject}
       />
 
       <section className="min-h-[60dvh] bg-muted pb-20 pt-7 sm:pt-9">
@@ -142,19 +146,13 @@ export function ClassDiscovery() {
                   >
                     Sắp xếp
                   </label>
-                  <select
+                  <ClassSelect
                     id="class-sort"
                     value={sortOrder}
-                    onChange={(event) =>
-                      setSortOrder(event.target.value as SortOrder)
-                    }
-                    className="min-h-11 rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
-                  >
-                    <option value="recommended">Mặc định</option>
-                    <option value="soonest">Khai giảng sớm</option>
-                    <option value="price-low">Học phí thấp nhất</option>
-                    <option value="price-high">Học phí cao nhất</option>
-                  </select>
+                    onValueChange={(value) => setSortOrder(value as SortOrder)}
+                    options={SORT_OPTIONS}
+                    className="w-48"
+                  />
                 </div>
               </div>
 
@@ -172,11 +170,7 @@ export function ClassDiscovery() {
                     <>
                       <div className="grid gap-4">
                         {visibleClasses.map((classItem) => (
-                          <ClassCard
-                            key={classItem.id}
-                            classItem={classItem}
-                            onView={() => setSelectedClass(classItem)}
-                          />
+                          <ClassCard key={classItem.id} classItem={classItem} />
                         ))}
                       </div>
                       {hasNextPage && (
@@ -201,11 +195,6 @@ export function ClassDiscovery() {
           )}
         </div>
       </section>
-
-      <ClassDetailDialog
-        classItem={selectedClass}
-        onClose={() => setSelectedClass(null)}
-      />
     </>
   );
 }

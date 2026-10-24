@@ -192,7 +192,7 @@ export const navigationConfig: RoleNavigation = {
           icon: VideoCameraIcon,
         },
         {
-          title: "Theo Dõi Lớp Học",
+          title: "Duyệt yêu cầu lớp học",
           url: "/consultant/classes",
           icon: MonitorPlay,
         },

@@ -7,7 +7,9 @@ import {
   useLmsClassResource,
   useLmsClassCommand,
 } from "@workspace/core/lms-classes/useLmsClassResource";
+import { ClockIcon } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
+import { DisclosureCard } from "@workspace/ui/components/ui/collapsible";
 import {
   Dialog,
   DialogContent,
@@ -18,19 +20,20 @@ import {
 import { toast } from "@workspace/ui/components/ui/bee-toast";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import { GroupAdmissionsPanel } from "./GroupAdmissionsPanel";
+import { GroupApprovalHistory } from "./GroupApprovalHistory";
+import { GroupRoadmapView } from "./GroupRoadmapView";
 import { classButton, classOutlineButton, classPanel } from "./classes-ui";
+import {
+  GROUP_WIZARD_ROADMAP_STEP,
+  isGroupClassEditable,
+} from "../utils/group-class-draft";
 
-const Draft = dynamic(() =>
-  import("./GroupDraftDialog").then((m) => m.GroupDraftDialog),
+const Wizard = dynamic(() =>
+  import("./GroupClassWizard").then((m) => m.GroupClassWizard),
 );
-const Roadmap = dynamic(() =>
-  import("./GroupRoadmapDialog").then((m) => m.GroupRoadmapDialog),
-);
-type Action = "submit" | "publish" | "activate" | "complete";
+type Action = "submit" | "complete";
 const labels = {
-  submit: "Gửi tư vấn viên duyệt",
-  publish: "Công khai tuyển sinh",
-  activate: "Khai giảng lớp",
+  submit: "Gửi BeeWise duyệt",
   complete: "Kết thúc lớp",
 };
 const approvalLabels: Record<string, string> = {
@@ -43,8 +46,7 @@ const approvalLabels: Record<string, string> = {
   REQUEST_CHANGES: "Cần chỉnh sửa",
 };
 export function GroupClassManagement({ classId }: { classId: string }) {
-  const [editing, setEditing] = useState(false),
-    [roadmap, setRoadmap] = useState(false),
+  const [editStep, setEditStep] = useState<number | null>(null),
     [action, setAction] = useState<Action | null>(null);
   const query = useLmsClassResource(classId, "group", (s) =>
     service.get(classId, s),
@@ -80,13 +82,7 @@ export function GroupClassManagement({ classId }: { classId: string }) {
       />
     );
   const data = query.data,
-    editable =
-      data.status === "UPCOMING" &&
-      ["ONLINE", "OFFLINE"].includes(data.teachingMode ?? "") &&
-      ["MONTHLY", "FULL_COURSE"].includes(data.billingMode ?? "") &&
-      ["DRAFT", "REJECTED", "CHANGES_REQUESTED", "REQUEST_CHANGES"].includes(
-        data.approvalStatus ?? "",
-      );
+    editable = isGroupClassEditable(data);
   return (
     <section className="space-y-5">
       <div className={`${classPanel} space-y-4`}>
@@ -105,7 +101,8 @@ export function GroupClassManagement({ classId }: { classId: string }) {
                     : "border-accent/40 bg-accent/20 text-warning"
             }`}
           >
-            {approvalLabels[data.approvalStatus ?? ""] ?? "Chưa có trạng thái duyệt"}
+            {approvalLabels[data.approvalStatus ?? ""] ??
+              "Chưa có trạng thái duyệt"}
           </span>
           <span
             className={`rounded-full border px-3 py-0.5 text-xs font-bold ${
@@ -128,14 +125,14 @@ export function GroupClassManagement({ classId }: { classId: string }) {
               <Button
                 variant="outline"
                 className={classOutlineButton}
-                onClick={() => setEditing(true)}
+                onClick={() => setEditStep(1)}
               >
                 Sửa thông tin
               </Button>
               <Button
                 variant="outline"
                 className={classOutlineButton}
-                onClick={() => setRoadmap(true)}
+                onClick={() => setEditStep(GROUP_WIZARD_ROADMAP_STEP)}
               >
                 Sửa lộ trình
               </Button>
@@ -144,25 +141,6 @@ export function GroupClassManagement({ classId }: { classId: string }) {
                 onClick={() => setAction("submit")}
               >
                 {labels.submit}
-              </Button>
-            </>
-          )}
-          {data.status === "UPCOMING" && data.approvalStatus === "APPROVED" && (
-            <>
-              {!data.isPublished && (
-                <Button
-                  className={classButton}
-                  onClick={() => setAction("publish")}
-                >
-                  {labels.publish}
-                </Button>
-              )}
-              <Button
-                variant="outline"
-                className={classOutlineButton}
-                onClick={() => setAction("activate")}
-              >
-                {labels.activate}
               </Button>
             </>
           )}
@@ -177,54 +155,52 @@ export function GroupClassManagement({ classId }: { classId: string }) {
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          Công khai tuyển sinh không tự khai giảng hoặc thêm học viên. Học viên đã thanh toán vẫn cần tư vấn viên duyệt yêu cầu tham gia.
+          Công khai tuyển sinh không tự khai giảng hoặc thêm học viên. Học viên
+          đã thanh toán vẫn cần tư vấn viên duyệt yêu cầu tham gia.
         </p>
         <section className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
-            <h3 className="font-lms text-sm font-extrabold text-foreground">Lộ trình học tập</h3>
-            <span className="text-xs text-muted-foreground">{data.roadmap.length} chặng đào tạo</span>
+            <h3 className="font-lms text-sm font-extrabold text-foreground">
+              Lộ trình học tập
+            </h3>
+            <span className="text-xs text-muted-foreground">
+              {data.roadmap.length} chặng đào tạo
+            </span>
           </div>
-          {!data.roadmap.length && (
+          {data.roadmap.length ? (
+            <GroupRoadmapView stages={data.roadmap} />
+          ) : (
             <p className="rounded-2xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
               Chưa có lộ trình cho lớp này.
             </p>
           )}
-          <div className="grid gap-3 sm:grid-cols-2">
-            {data.roadmap.map((stage, idx) => (
-              <div
-                key={stage.id}
-                className="space-y-2 rounded-2xl border border-border/70 bg-muted/20 p-4 transition-colors hover:bg-muted/40"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="rounded-lg bg-card px-2 py-0.5 font-mono text-[10px] font-extrabold text-primary shadow-2xs">
-                    Chặng {idx + 1}
-                  </span>
-                  <h4 className="font-lms text-sm font-extrabold text-foreground">{stage.title}</h4>
-                </div>
-                {stage.objective && <p className="text-xs text-muted-foreground">{stage.objective}</p>}
-                <div className="mt-2 space-y-1.5 border-t border-border/60 pt-2">
-                  {stage.lessons.map((l) => (
-                    <div key={l.id} className="flex items-center gap-2 text-xs font-medium text-foreground">
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-border/80 bg-card text-[10px] font-bold text-muted-foreground">
-                        {l.order}
-                      </span>
-                      <span className="truncate">{l.title}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
         </section>
-        <section className="space-y-2">
-          <h3 className="text-sm font-bold">Lịch sử duyệt</h3>
-          {!history.loading && !history.error && !history.data?.length && <p className="text-sm text-muted-foreground">Chưa có lần xét duyệt nào.</p>}
-          {history.data?.map((h, i) => (
-            <p key={i} className="text-xs">
-              {h.action}: {h.changes}
-            </p>
-          ))}
-        </section>
+        {history.data && history.data.length > 0 ? (
+          <DisclosureCard
+            variant="outline"
+            title="Lịch sử duyệt"
+            icon={<ClockIcon className="size-5" aria-hidden="true" />}
+            badge={
+              <span className="rounded-full border border-border bg-card px-2.5 py-0.5 text-[11px] font-bold tabular-nums text-muted-foreground">
+                {history.data.length} lần
+              </span>
+            }
+          >
+            <GroupApprovalHistory items={history.data} />
+          </DisclosureCard>
+        ) : (
+          !history.loading &&
+          !history.error && (
+            <section className="space-y-2">
+              <h3 className="font-lms text-sm font-extrabold text-foreground">
+                Lịch sử duyệt
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Chưa có lần xét duyệt nào.
+              </p>
+            </section>
+          )
+        )}
       </div>
       {data.status !== "COMPLETED" && (
         <GroupAdmissionsPanel
@@ -232,8 +208,14 @@ export function GroupClassManagement({ classId }: { classId: string }) {
           active={data.status === "ACTIVE"}
         />
       )}
-      {editing && <Draft data={data} onClose={() => setEditing(false)} />}{" "}
-      {roadmap && <Roadmap data={data} onClose={() => setRoadmap(false)} />}
+      {editStep !== null && (
+        <Wizard
+          mode="edit"
+          initial={data}
+          initialStep={editStep}
+          onClose={() => setEditStep(null)}
+        />
+      )}
       <Dialog
         open={Boolean(action)}
         onOpenChange={(v) => {
@@ -244,7 +226,7 @@ export function GroupClassManagement({ classId }: { classId: string }) {
           <DialogHeader>
             <DialogTitle>{action ? labels[action] : "Xác nhận"}?</DialogTitle>
             <DialogDescription>
-              Hệ thống sẽ kiểm tra điều kiện của lớp trước khi cập nhật. Thao tác này không tự tạo buổi học hoặc thay đổi học phí.
+              Hệ thống sẽ kiểm tra điều kiện của lớp trước khi cập nhật.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2">

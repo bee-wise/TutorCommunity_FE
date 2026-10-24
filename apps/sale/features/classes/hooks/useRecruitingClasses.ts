@@ -23,6 +23,7 @@ export function useRecruitingClasses() {
     refetch: query.refetch,
     hasNextPage: query.hasNextPage,
     isFetchingNextPage: query.isFetchingNextPage,
+    isFetchNextPageError: query.isFetchNextPageError,
     fetchNextPage: query.fetchNextPage,
   };
 }

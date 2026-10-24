@@ -5,7 +5,7 @@ import { LmsClassCard } from "../../../components/LmsClassCard";
 import { getClassKindLabel, getClassNaming } from "../../../components/lms-class-naming";
 import type { TutorClassCardModel } from "../types/classes.types";
 import { formatClassDay } from "../utils/classes.utils";
-import { ClassStatusBadge } from "./ClassBadges";
+import { ApprovalStatusBadge, ClassStatusBadge } from "./ClassBadges";
 
 export function TutorClassCard({ classInfo, learners, learnerPreviews, learnerCount, sessionCount, attendancePendingCount }: TutorClassCardModel) {
   const details = classInfo.serverDetails;
@@ -28,7 +28,12 @@ export function TutorClassCard({ classInfo, learners, learnerPreviews, learnerCo
         ariaLabel={`Quản lý lớp ${naming.subject}`}
         field={naming.field}
         kindLabel={kindLabel}
-        status={<ClassStatusBadge status={classInfo.status} />}
+        status={
+          <span className="flex flex-wrap justify-end gap-1.5">
+            <ClassStatusBadge status={classInfo.status} />
+            {classInfo.kind === "group" && <ApprovalStatusBadge status={details?.approvalStatus} />}
+          </span>
+        }
         subject={naming.subject}
         name={naming.name}
         level={naming.level}

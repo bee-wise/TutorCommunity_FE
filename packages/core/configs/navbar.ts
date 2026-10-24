@@ -112,7 +112,7 @@ const guestMenu: NavbarItem[] = [
 
 const learnerMenu: NavbarItem[] = [
   { label: "Gia sư 1:1", href: "/tutors" },
-  { label: "Tìm lớp", href: "/classes" },
+  { label: "Tìm lớp nhóm", href: "/classes" },
   // { label: "Cộng đồng", href: "/community" },
   { label: "Gia sư yêu thích", href: "/favorite-tutors" },
 ];

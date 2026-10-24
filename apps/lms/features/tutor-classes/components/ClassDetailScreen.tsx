@@ -25,6 +25,7 @@ import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import { ClassWorkspaceSkeleton } from "./ClassWorkspaceSkeleton";
 import { ClassMissingState } from "./ClassMissingState";
 import { GroupClassManagement } from "./GroupClassManagement";
+import { GroupLaunchActions } from "./GroupLaunchActions";
 import { classPage } from "./classes-ui";
 
 const BILLING_LABELS: Record<string, string> = { MONTHLY: "Thanh toán theo tháng", FULL_COURSE: "Thanh toán trọn khóa" };
@@ -50,6 +51,7 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
 
   return (
     <div className={classPage}>
+      {isGroup && <GroupLaunchActions classId={classId} />}
       {classInfo.status === "completed" && (
         <div role="status" className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary">
           <CheckBadgeIcon className="size-5 shrink-0" aria-hidden="true" />
