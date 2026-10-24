@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Bell, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { NotificationBell } from "../notifications/NotificationBell";
 import {
   getNavbarConfig,
   getTutorOnboardingStatus,
@@ -324,25 +325,13 @@ export function Header({
             ) : (
               <>
                 {navbarConfig.showNotifications && navbarState !== "GUEST" && (
-                  <button
-                    type="button"
+                  <NotificationBell
+                    count={unreadNotificationCount}
                     onClick={openDrawer}
-                    aria-label="Thông báo"
-                    className="relative hidden h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:inline-flex"
-                  >
-                    <Bell
-                      className={cn(
-                        "h-4.5 w-4.5 transition-transform duration-200 hover:scale-105",
-                        unreadNotificationCount > 0 && "text-accent",
-                      )}
-                      aria-hidden="true"
-                    />
-                    {unreadNotificationCount > 0 && (
-                      <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground shadow-xs animate-pulse">
-                        {unreadNotificationCount}
-                      </span>
-                    )}
-                  </button>
+                    ringClassName="ring-primary"
+                    className="hidden h-9 w-9 rounded-full text-white/80 hover:bg-white/10 hover:text-accent lg:inline-flex"
+                    iconClassName="size-[18px]"
+                  />
                 )}
 
                 {navbarConfig.rightItems.map((action) => (
@@ -407,6 +396,11 @@ export function Header({
                           >
                             {displayName}
                           </p>
+                          {user?.accountCode && (
+                            <p className="mt-0.5 font-mono text-xs font-bold text-muted-foreground">
+                              {user.accountCode}
+                            </p>
+                          )}
                           {user?.email && (
                             <p
                               className="mt-0.5 truncate font-sans text-xs text-muted-foreground"

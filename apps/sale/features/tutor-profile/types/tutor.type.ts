@@ -69,6 +69,7 @@ export interface TutorTeachingOfferingItem {
 export interface TutorProfileData {
   id: string;
   userId?: string | null;
+  accountCode?: string | null; // mã BT do server cấp, có thể null
   displayName: string; // tên hiển thị
   dateOfBirth: string;
   gender: string; // male, female, others

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "@workspace/ui/components/ui/button";
 import { useTutorClassDetail } from "../hooks/useTutorClassDetail";
-import { formatClassIdentifier } from "../utils/classes.utils";
+import { getClassNaming } from "../../../components/lms-class-naming";
 import { CLASS_WORKSPACE_LABELS, type ClassWorkspaceRoute } from "../utils/class-workspace.utils";
 
 export function ClassWorkspaceBreadcrumb({ workspace }: { workspace: ClassWorkspaceRoute }) {
@@ -14,7 +14,7 @@ export function ClassWorkspaceBreadcrumb({ workspace }: { workspace: ClassWorksp
       <Link href="/lms/tutor/classes">Quản lý lớp học</Link>
     </Button>
     <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-    <span className="truncate font-bold text-primary">{classInfo ? formatClassIdentifier(classInfo.code) : "Lớp học"}</span>
+    <span className="truncate font-bold text-primary">{classInfo ? getClassNaming({ title: classInfo.title, programName: classInfo.serverDetails?.programName, contextName: classInfo.serverDetails?.contextName, teachingItemName: classInfo.serverDetails?.teachingItemName }).subject : "Lớp học"}</span>
     <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
     <span aria-current="page" className="truncate text-muted-foreground">{CLASS_WORKSPACE_LABELS[workspace.section]}</span>
   </nav>;

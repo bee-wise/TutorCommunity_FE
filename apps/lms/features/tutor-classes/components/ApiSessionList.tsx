@@ -27,7 +27,8 @@ import {
 } from "./ApiSessionCard";
 import { ClassPagination } from "./ClassPagination";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
-import { ClassWorkspaceSkeleton } from "./ClassWorkspaceSkeleton";
+import { SESSION_START_LEAD_MINUTES, canStartSession } from "../utils/classes.utils";
+import { ClassSessionListSkeleton } from "./ClassWorkspaceSkeleton";
 import { classButton, classOutlineButton } from "./classes-ui";
 
 const Attendance = dynamic(() =>
@@ -85,6 +86,21 @@ export function ApiSessionList({ classInfo }: { classInfo: TutorClass }) {
 
   async function confirm() {
     if (!action || command.isPending) return;
+    if (action.name === "cancel" && new Date(action.session.endAt).getTime() <= Date.now()) {
+      toast.error("Buổi học đã kết thúc, không thể hủy");
+      setAction(null);
+      return;
+    }
+    if (action.name === "complete" && new Date(action.session.endAt).getTime() > Date.now()) {
+      toast.error("Chỉ kết thúc được buổi học sau giờ kết thúc dự kiến");
+      setAction(null);
+      return;
+    }
+    if (action.name === "start" && !canStartSession(action.session.startAt)) {
+      toast.error(`Chỉ được bắt đầu buổi học trước giờ học tối đa ${SESSION_START_LEAD_MINUTES} phút`);
+      setAction(null);
+      return;
+    }
     try {
       await command.mutateAsync(action);
       setAction(null);
@@ -141,7 +157,7 @@ export function ApiSessionList({ classInfo }: { classInfo: TutorClass }) {
       </div>
 
       {query.loading ? (
-        <ClassWorkspaceSkeleton />
+        <ClassSessionListSkeleton />
       ) : query.error ? (
         <ClassQueryErrorState
           error={query.error}

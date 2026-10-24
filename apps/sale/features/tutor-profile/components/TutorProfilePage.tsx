@@ -3,10 +3,12 @@
 import { useParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
-import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { TutorAchievements } from "./TutorAchievements";
 import { TutorBioSection } from "./TutorBioSection";
 import { TutorConnectCard } from "./TutorConnectCard";
+import { TutorOfferings } from "./TutorOfferings";
+import { TutorAnchoredSection, TutorSectionNav } from "./TutorSectionNav";
 import { TutorConnectDialog } from "./TutorConnectDialog";
 import { TutorFeedback } from "./TutorFeedback";
 import { TutorHero } from "./TutorHero";
@@ -21,6 +23,9 @@ import { resolveTutorUserIdFromCache } from "../utils/resolveTutorUserId";
 import { EmptyState } from "@workspace/ui/components/ui/empty-state";
 import LoadingGradient from "@workspace/ui/components/LoadingGradient";
 import { useFavoriteTutors } from "../../favorite-tutors/hooks/useFavoriteTutors";
+
+const PAGE_BACKGROUND =
+  "bg-[radial-gradient(circle_at_top_left,rgba(250,220,120,0.55),transparent_34%),linear-gradient(180deg,#fff3cb_0%,#fffaf0_38%,#ffffff_100%)]";
 
 export function TutorProfilePage({
   tutorUserIdFromLink,
@@ -126,20 +131,35 @@ export function TutorProfilePage({
   }
 
   const tutorProfile = data.data;
+  const hasOfferings =
+    (tutorProfile.teachingOfferings?.length ?? 0) > 0 ||
+    (tutorProfile.specializations?.length ?? 0) > 0;
+  const hasVideo = Boolean(tutorProfile.videoUrl);
+  const hasMethods = (tutorProfile.teachingMethods?.length ?? 0) > 0;
+  const hasHistory = (tutorProfile.teachingHistory?.length ?? 0) > 0;
+  const hasAchievements = (tutorProfile.achievements?.length ?? 0) > 0;
+
+  const sectionNavItems = [
+    { id: "gioi-thieu", label: "Giới thiệu" },
+    ...(hasOfferings ? [{ id: "mon-day", label: "Môn dạy và học phí" }] : []),
+    ...(hasVideo ? [{ id: "video", label: "Video" }] : []),
+    ...(hasMethods ? [{ id: "phuong-phap", label: "Phương pháp" }] : []),
+    ...(hasHistory ? [{ id: "kinh-nghiem", label: "Kinh nghiệm" }] : []),
+    ...(hasAchievements ? [{ id: "thanh-tich", label: "Học vấn & thành tích" }] : []),
+    { id: "danh-gia", label: "Đánh giá" },
+  ];
 
   return (
-    <div className="bg-[radial-gradient(circle_at_top_left,rgba(250,220,120,0.55),transparent_34%),linear-gradient(180deg,#fff3cb_0%,#fffaf0_38%,#ffffff_100%)] py-6 sm:py-8 lg:py-10">
+    <div className={`${PAGE_BACKGROUND} py-6 sm:py-8 lg:py-10`}>
       <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 sm:gap-6 sm:px-6 lg:px-8">
         <button
           type="button"
           onClick={handleBack}
-          className="group inline-flex h-10 w-fit items-center gap-2 rounded-full border border-[#d9dfea] bg-white/85 px-4 text-sm font-bold text-[#475467] shadow-sm backdrop-blur transition hover:-translate-x-0.5 hover:border-primary/25 hover:bg-white hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+          className="group inline-flex h-10 w-fit items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-bold text-muted-foreground shadow-soft transition hover:border-primary/30 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Quay lại trang trước"
         >
           <ArrowLeftIcon
-            size={17}
-            weight="bold"
-            className="transition-transform group-hover:-translate-x-0.5"
+            className="size-4 transition-transform group-hover:-translate-x-0.5"
             aria-hidden="true"
           />
           Quay lại
@@ -158,13 +178,36 @@ export function TutorProfilePage({
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:items-start">
-          <div className="space-y-5">
-            <TutorBioSection tutor={tutorProfile} />
-            <TutorAchievements tutor={tutorProfile} />
-            <TutorTeachingMethods tutor={tutorProfile} />
-            <TutorTeachingHistory tutor={tutorProfile} />
-            <TutorIntroVideo videoUrl={tutorProfile.videoUrl} />
-            <TutorFeedback tutor={tutorProfile} />
+          <div className="min-w-0 space-y-5">
+            <TutorSectionNav items={sectionNavItems} />
+
+            <TutorAnchoredSection id="gioi-thieu">
+              <TutorBioSection tutor={tutorProfile} />
+            </TutorAnchoredSection>
+            <TutorOfferings tutor={tutorProfile} />
+            {hasVideo ? (
+              <TutorAnchoredSection id="video">
+                <TutorIntroVideo videoUrl={tutorProfile.videoUrl} />
+              </TutorAnchoredSection>
+            ) : null}
+            {hasMethods ? (
+              <TutorAnchoredSection id="phuong-phap">
+                <TutorTeachingMethods tutor={tutorProfile} />
+              </TutorAnchoredSection>
+            ) : null}
+            {hasHistory ? (
+              <TutorAnchoredSection id="kinh-nghiem">
+                <TutorTeachingHistory tutor={tutorProfile} />
+              </TutorAnchoredSection>
+            ) : null}
+            {hasAchievements ? (
+              <TutorAnchoredSection id="thanh-tich">
+                <TutorAchievements tutor={tutorProfile} />
+              </TutorAnchoredSection>
+            ) : null}
+            <TutorAnchoredSection id="danh-gia">
+              <TutorFeedback tutor={tutorProfile} />
+            </TutorAnchoredSection>
           </div>
 
           <div className="hidden lg:block lg:sticky lg:top-6">

@@ -3,6 +3,7 @@ import { ApiResponse } from "./api-response.type";
 export interface FavoriteTutorProfile {
   profileId: string;
   userId: string;
+  accountCode?: string | null;
   displayName: string;
   avatarUrl: string | null;
   profileHeadline: string;

@@ -13,7 +13,7 @@ import {
 import { Button } from "@workspace/ui/components/ui/button";
 import { LmsHeroBanner, LmsHeroProgress } from "../../../components/LmsHeroBanner";
 import { LmsDetailLayout } from "../../../components/LmsDetailLayout";
-import { LmsFactList } from "../../../components/LmsFactList";
+import { LmsInfoGrid } from "../../../components/LmsInfoGrid";
 import { LmsLinkList } from "../../../components/LmsLinkList";
 import { getTeachingModeLabel } from "../../../components/lms-class-naming";
 import { LearnerClassQueryError } from "./LearnerClassQueryError";
@@ -27,7 +27,7 @@ function OverviewHero({ classId, planned, created, completed, sessionsHref }: { 
   const progress = useLearnerClassProgress(classId);
   const done = progress.data?.total ?? 0;
   return (
-    <LmsHeroBanner title="Thông tin lớp" description="Tiến độ học tập và những điều cần biết về lớp của bạn." mascot={completed ? "cheer" : "flower"}>
+    <LmsHeroBanner title="Thông tin lớp" mascot="handshake">
       <LmsHeroProgress label="Buổi đã hoàn thành so với kế hoạch" value={done} max={planned} note={`${created} buổi đã được xếp lịch`} />
       <Button asChild className="min-h-11 bg-accent px-5 font-bold text-accent-foreground hover:bg-accent/90">
         <Link href={sessionsHref}>
@@ -42,7 +42,7 @@ function OverviewHero({ classId, planned, created, completed, sessionsHref }: { 
 export function LearnerClassOverviewScreen({ classId }: { classId: string }) {
   const query = useLearnerClassQuery(classId);
 
-  if (query.loading) return <LearnerWorkspaceSkeleton view="detail" />;
+  if (query.loading) return <LearnerWorkspaceSkeleton view="overview" />;
   if (query.error || !query.data)
     return <LearnerClassQueryError error={query.error} onRetry={() => void query.refetch()} detail />;
 
@@ -79,17 +79,16 @@ export function LearnerClassOverviewScreen({ classId }: { classId: string }) {
           </>
         }
       >
-        <section aria-labelledby="class-learning-title" className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6">
-          <h2 id="class-learning-title" className="mb-1 font-lms text-lg font-extrabold">Thông tin lớp</h2>
-          <LmsFactList
-            facts={[
-              { icon: ComputerDesktopIcon, label: "Hình thức học", value: getTeachingModeLabel(data.teachingMode) },
-              { icon: ClockIcon, label: "Thời lượng mỗi buổi", value: `${data.sessionDurationMinutes} phút` },
-              { icon: CalendarDaysIcon, label: "Khai giảng", value: opening ?? "Chưa có ngày khai giảng" },
-              { icon: UsersIcon, label: "Học viên trong lớp", value: `${data.learnerCount} học viên` },
-            ]}
-          />
-        </section>
+        <LmsInfoGrid
+          title="Thông tin lớp"
+          titleId="class-learning-title"
+          items={[
+            { icon: ComputerDesktopIcon, label: "Hình thức học", value: getTeachingModeLabel(data.teachingMode) },
+            { icon: ClockIcon, label: "Thời lượng mỗi buổi", value: `${data.sessionDurationMinutes} phút` },
+            { icon: CalendarDaysIcon, label: "Khai giảng", value: opening ?? "Chưa có ngày khai giảng" },
+            ...(data.type?.toUpperCase() === "GROUP" ? [{ icon: UsersIcon, label: "Học viên trong lớp", value: `${data.learnerCount} học viên` }] : []),
+          ]}
+        />
       </LmsDetailLayout>
     </div>
   );

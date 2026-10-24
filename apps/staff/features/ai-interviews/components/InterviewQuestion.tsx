@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import type { InterviewQuestion as Question } from "@workspace/core/ai-interviews/schemas/review.schema";
-import { Button } from "@workspace/ui/components/ui/button";
 import { DisclosureCard } from "@workspace/ui/components/ui/collapsible";
-import { reviewReason } from "../utils/interview-presentation";
+import {
+  criterionFlagged,
+  formatScore,
+  reviewReason,
+} from "../utils/interview-presentation";
 import { InterviewCriterion } from "./InterviewCriterion";
-import { actionClass, panelClass } from "./InterviewUi";
+import { Chip, panelClass } from "./InterviewUi";
 
 export function InterviewQuestion({
   question,
@@ -17,120 +19,104 @@ export function InterviewQuestion({
   interviewId: string;
   canOverride: boolean;
 }) {
-  const [tab, setTab] = useState<"answer" | "scoring">("answer");
   const turn = question.turn;
+  const flagged = question.criteria.filter(criterionFlagged).length;
   return (
-    <section className={panelClass}>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold text-primary">{question.q_code}</p>
-          <h2 className="mt-1 font-nunito text-xl font-extrabold">
-            {question.title}
-          </h2>
-        </div>
-        <span className="shrink-0 rounded-2xl bg-primary/5 px-4 py-3 text-lg font-bold text-primary tabular-nums">
-          {question.points ?? "—"}
-          <span className="text-xs text-muted-foreground">
-            {" "}
-            / {question.max_points}
+    <div className="min-w-0 space-y-5">
+      <section className={panelClass}>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-primary">{question.q_code}</p>
+            <h2 className="mt-1 font-nunito text-xl font-extrabold leading-snug">
+              {question.title}
+            </h2>
+          </div>
+          <span className="shrink-0 rounded-2xl bg-muted px-4 py-2.5 text-center">
+            <span className="block font-nunito text-2xl font-black leading-none text-primary tabular-nums">
+              {formatScore(question.points)}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              / {question.max_points} điểm
+            </span>
           </span>
-        </span>
-      </div>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        {question.objective}
-      </p>
-      <div
-        className="mt-5 flex flex-wrap gap-2 border-b border-border pb-4"
-        aria-label="Nội dung câu hỏi"
-      >
-        <Button
-          variant="ghost"
-          className={`${actionClass} ${tab === "answer" ? "bg-primary/5 text-primary ring-1 ring-primary/15 hover:bg-primary/10" : ""}`}
-          aria-pressed={tab === "answer"}
-          onClick={() => setTab("answer")}
-        >
-          Câu trả lời & bản ghi
-        </Button>
-        <Button
-          variant="ghost"
-          className={`${actionClass} ${tab === "scoring" ? "bg-primary/5 text-primary ring-1 ring-primary/15 hover:bg-primary/10" : ""}`}
-          aria-pressed={tab === "scoring"}
-          onClick={() => setTab("scoring")}
-        >
-          Tiêu chí & chấm điểm ({question.criteria.length})
-        </Button>
-      </div>
-      {tab === "answer" && (
-        <div className="mt-5 space-y-4">
-          {!turn ? (
-            <p className="rounded-2xl bg-muted/30 p-6 text-sm text-muted-foreground">
-              Chưa có nội dung câu trả lời.
-            </p>
-          ) : (
-            <>
-              <p className="whitespace-pre-wrap text-sm font-medium leading-6">
+        </div>
+        {!turn ? (
+          <p className="mt-5 rounded-2xl bg-muted p-6 text-sm text-muted-foreground">
+            Chưa có nội dung câu trả lời.
+          </p>
+        ) : (
+          <div className="mt-5 space-y-4">
+            <DisclosureCard title="Câu hỏi đã đặt cho gia sư" variant="subtle" size="sm">
+              <p className="whitespace-pre-wrap text-sm leading-6">
                 {turn.question}
               </p>
-              {turn.needs_review && (
-                <p className="rounded-xl bg-accent/15 p-3 text-sm">
-                  {turn.review_reasons.length
-                    ? turn.review_reasons.map(reviewReason).join("; ")
-                    : "Câu trả lời cần xem lại."}
+            </DisclosureCard>
+            {turn.needs_review && (
+              <p className="rounded-xl bg-highlight p-3 text-sm font-medium">
+                {turn.review_reasons.length
+                  ? turn.review_reasons.map(reviewReason).join("; ")
+                  : "Câu trả lời cần xem lại."}
+              </p>
+            )}
+            <div className="grid items-start gap-4 md:grid-cols-2">
+              <InterviewMedia
+                video={turn.video_url}
+                audio={turn.audio_url}
+                label={`câu ${question.q_code}`}
+              />
+              <div>
+                <h3 className="mb-2 text-sm font-bold">Bản chép lời</h3>
+                <p className="max-h-80 overflow-y-auto whitespace-pre-wrap rounded-2xl bg-muted p-4 text-sm leading-7">
+                  {turn.transcript ?? "Chưa có bản chép lời."}
                 </p>
-              )}
-              <div className="grid items-start gap-5 md:grid-cols-2">
-                <div>
-                  <h3 className="mb-3 text-sm font-bold">Bản ghi</h3>
-                  <InterviewMedia
-                    video={turn.video_url}
-                    audio={turn.audio_url}
-                    label={`câu ${question.q_code}`}
-                  />
-                </div>
-                <div>
-                  <h3 className="mb-3 text-sm font-bold">Bản chép lời</h3>
-                  <p className="max-h-96 overflow-y-auto whitespace-pre-wrap rounded-2xl bg-muted/40 p-4 text-sm leading-7">
-                    {turn.transcript ?? "Chưa có bản chép lời."}
-                  </p>
-                </div>
               </div>
-              {turn.followup && (
-                <DisclosureCard title="Câu hỏi bổ sung" variant="subtle">
-                  <p className="mb-4 whitespace-pre-wrap text-sm leading-6">
-                    {turn.followup}
+            </div>
+            {turn.followup && (
+              <DisclosureCard title="Câu hỏi bổ sung" variant="subtle" size="sm">
+                <p className="mb-4 whitespace-pre-wrap text-sm leading-6">
+                  {turn.followup}
+                </p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <InterviewMedia
+                    video={turn.followup_video_url}
+                    audio={turn.followup_audio_url}
+                    label={`bổ sung ${question.q_code}`}
+                  />
+                  <p className="max-h-80 overflow-y-auto whitespace-pre-wrap text-sm leading-7">
+                    {turn.followup_transcript ?? "Chưa có bản chép lời bổ sung."}
                   </p>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <InterviewMedia
-                      video={turn.followup_video_url}
-                      audio={turn.followup_audio_url}
-                      label={`bổ sung ${question.q_code}`}
-                    />
-                    <p className="max-h-80 overflow-y-auto whitespace-pre-wrap text-sm leading-7">
-                      {turn.followup_transcript ??
-                        "Chưa có bản chép lời bổ sung."}
-                    </p>
-                  </div>
-                </DisclosureCard>
-              )}
-            </>
-          )}
-          <p className="text-xs leading-5 text-muted-foreground">
-            Link bản ghi có hiệu lực 15 phút. Dùng nút cập nhật hồ sơ nếu link
-            hết hạn.
-          </p>
+                </div>
+              </DisclosureCard>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Link bản ghi hết hạn sau 15 phút; bấm “Cập nhật” ở đầu trang để
+              lấy link mới.
+            </p>
+          </div>
+        )}
+      </section>
+      <section className={panelClass}>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="font-nunito text-lg font-extrabold">
+            Chấm điểm theo tiêu chí
+          </h3>
+          {flagged > 0 && <Chip tone="flag">{flagged} tiêu chí cần xem lại</Chip>}
         </div>
-      )}
-      <div hidden={tab !== "scoring"} className="mt-5 space-y-3">
-        {question.criteria.map((criterion) => (
-          <InterviewCriterion
-            key={criterion.criterion_code}
-            criterion={criterion}
-            interviewId={interviewId}
-            canOverride={canOverride}
-          />
-        ))}
-      </div>
-    </section>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          {question.objective}
+        </p>
+        <div className="mt-4 space-y-3">
+          {question.criteria.map((criterion) => (
+            <InterviewCriterion
+              key={criterion.criterion_code}
+              criterion={criterion}
+              interviewId={interviewId}
+              canOverride={canOverride}
+            />
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }
 function InterviewMedia({
@@ -142,25 +128,30 @@ function InterviewMedia({
   audio: string | null;
   label: string;
 }) {
-  return video ? (
-    <video
-      controls
-      preload="none"
-      src={video}
-      className="aspect-video w-full rounded-2xl border border-border bg-muted"
-      aria-label={`Video ${label}`}
-    />
-  ) : audio ? (
-    <audio
-      controls
-      preload="none"
-      src={audio}
-      className="w-full"
-      aria-label={`Audio ${label}`}
-    />
-  ) : (
-    <p className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-      Chưa có bản ghi.
-    </p>
+  return (
+    <div>
+      <h3 className="mb-2 text-sm font-bold">Bản ghi</h3>
+      {video ? (
+        <video
+          controls
+          preload="none"
+          src={video}
+          className="aspect-video w-full rounded-2xl border border-border bg-foreground"
+          aria-label={`Video ${label}`}
+        />
+      ) : audio ? (
+        <audio
+          controls
+          preload="none"
+          src={audio}
+          className="w-full"
+          aria-label={`Audio ${label}`}
+        />
+      ) : (
+        <p className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">
+          Chưa có bản ghi.
+        </p>
+      )}
+    </div>
   );
 }

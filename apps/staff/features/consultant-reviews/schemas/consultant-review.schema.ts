@@ -22,6 +22,7 @@ const previouslyApprovedFieldSchema = z.object({
 export const pendingProfileSchema = z.object({
   profileId: z.uuid(),
   tutorUserId: z.uuid(),
+  accountCode: nullableText,
   tutorEmail: nullableText,
   tutorFullName: nullableText,
   displayName: nullableText,
@@ -46,6 +47,7 @@ export const pendingFieldChangeSchema = z.object({
   targetId: z.uuid(),
   profileId: nullableUuid,
   requestedBy: z.uuid(),
+  accountCode: nullableText,
   requestedByEmail: nullableText,
   requestedByFullName: nullableText,
   fieldName: nullableText,

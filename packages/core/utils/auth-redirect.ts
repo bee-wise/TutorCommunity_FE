@@ -69,7 +69,7 @@ export function getRoleRedirectPath(
 
 export function resolveTutorLoginDestination(user: MeType) {
   if (user.canAccessTutorLms) {
-    return "/tutor/home";
+    return "/tutor/profile";
   }
 
   if (user.tutorProfileStatus?.trim().toUpperCase() === "APPROVED") {
@@ -77,7 +77,7 @@ export function resolveTutorLoginDestination(user: MeType) {
       return "/tutor/onboarding";
     }
     if (user.bankInformationCompleted && user.availabilityCompleted) {
-      return "/tutor/home";
+      return "/tutor/profile";
     }
     return "/tutor/post-approval";
   }

@@ -1,3 +1,5 @@
+import type { TutorProfileFormValues } from "../../tutor-profile-registration/schemas/profile-registration.schema";
+
 export type ProfileBlockId =
   | "basic"
   | "introduction"
@@ -5,8 +7,9 @@ export type ProfileBlockId =
   | "academic"
   | "video"
   | "experience"
-  | "evidence";
+  | "evidence"
+  | "teaching";
 
-export interface ProfileMediaState {
-  videoUrl: string;
-}
+export type ProfileFieldName = keyof TutorProfileFormValues;
+
+export type ProfileSectionPatch = Partial<TutorProfileFormValues>;

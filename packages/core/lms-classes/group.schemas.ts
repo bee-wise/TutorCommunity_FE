@@ -34,6 +34,40 @@ export const groupDraftSchema = z.object({
   pricePerSession: z.number().int().positive(),
   highlight: text,
 });
+// The API returns an empty placeholder stage (nil id, null title/lessons) for
+// classes without a roadmap; read it leniently and drop the placeholders.
+const readRoadmapSchema = z
+  .array(
+    z.object({
+      id: guid,
+      title: text,
+      objective: text,
+      order: integer,
+      lessons: z
+        .array(
+          z.object({
+            id: guid,
+            title: text,
+            content: text,
+            order: integer,
+          }),
+        )
+        .nullish(),
+    }),
+  )
+  .nullish()
+  .transform((stages) =>
+    (stages ?? [])
+      .filter((stage) => stage.title?.trim() || stage.lessons?.length)
+      .map((stage) => ({
+        ...stage,
+        title: stage.title?.trim() || "Giai đoạn chưa đặt tên",
+        lessons: (stage.lessons ?? []).map((lesson) => ({
+          ...lesson,
+          title: lesson.title?.trim() || "Bài học chưa đặt tên",
+        })),
+      })),
+  );
 export const groupSchema = groupDraftSchema.extend({
   title: text,
   teachingMode: text,
@@ -55,10 +89,7 @@ export const groupSchema = groupDraftSchema.extend({
   assignedConsultantId: guid.nullish(),
   approvalNote: text,
   version: integer,
-  roadmap: z
-    .array(roadmapStageSchema)
-    .nullable()
-    .transform((v) => v ?? []),
+  roadmap: readRoadmapSchema,
 });
 export const createGroupSchema = z.object({
   id: guid,

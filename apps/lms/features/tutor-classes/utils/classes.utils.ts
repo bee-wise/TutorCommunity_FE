@@ -38,3 +38,17 @@ export function getTutorClassCardModel(classInfo: TutorClass, learners: readonly
     attendancePendingCount: classSessions.filter((session) => canMarkAttendance(classInfo, session) && records[session.id]?.state !== "confirmed").length,
   };
 }
+
+/** A session can be started from this many minutes before its scheduled start. */
+export const SESSION_START_LEAD_MINUTES = 15;
+
+/** Moment the start action opens, or null when the start time is invalid. */
+export function getSessionStartOpensAt(startAt: string) {
+  const start = new Date(startAt).getTime();
+  return Number.isNaN(start) ? null : new Date(start - SESSION_START_LEAD_MINUTES * 60_000);
+}
+
+export function canStartSession(startAt: string, now: number = Date.now()) {
+  const opensAt = getSessionStartOpensAt(startAt);
+  return opensAt !== null && now >= opensAt.getTime();
+}

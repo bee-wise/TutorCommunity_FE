@@ -81,6 +81,7 @@ export interface TutorTeachingOfferingItem {
 export interface ApiTutorProfile {
   profileId: string;
   userId: string;
+  accountCode?: string | null;
   displayName: string;
   avatarUrl: string | null;
   profileHeadline: string;

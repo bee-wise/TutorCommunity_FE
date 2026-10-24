@@ -8,6 +8,7 @@ interface SectionShellProps {
   children: ReactNode;
   className?: string;
   headerAction?: ReactNode;
+  id?: string;
 }
 
 interface InfoPillProps {
@@ -38,10 +39,12 @@ export function SectionShell({
   children,
   className = "",
   headerAction,
+  id,
 }: SectionShellProps) {
   return (
     <section
-      className={`rounded-2xl border border-[#e8edf5] bg-white p-5 sm:p-6 shadow-[0_2px_12px_-4px_rgba(40,15,145,0.04)] ${className}`}
+      id={id}
+      className={`scroll-mt-28 rounded-2xl border border-[#e8edf5] bg-white p-5 sm:p-6 shadow-[0_2px_12px_-4px_rgba(40,15,145,0.04)] ${className}`}
     >
       <div className="mb-5 flex flex-col gap-2 border-b border-[#f0f4fa] pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">

@@ -1,8 +1,27 @@
 import { DisclosureCard } from "@workspace/ui/components/ui/collapsible";
 import type { InterviewCriterion as Criterion } from "@workspace/core/ai-interviews/schemas/review.schema";
-
-import { reviewReason } from "../utils/interview-presentation";
+import {
+  criterionFlagged,
+  evidenceLabel,
+  formatScore,
+  reviewReason,
+  scoreStatusLabel,
+} from "../utils/interview-presentation";
 import { InterviewCriterionOverride } from "./InterviewCriterionOverride";
+import { Chip } from "./InterviewUi";
+
+function LevelMeter({ value }: { value: number | null | undefined }) {
+  return (
+    <div className="flex gap-1" aria-hidden="true">
+      {[1, 2, 3, 4].map((step) => (
+        <span
+          key={step}
+          className={`h-2 w-6 rounded-full ${value != null && value >= step - 0.5 ? "bg-primary" : "bg-border"}`}
+        />
+      ))}
+    </div>
+  );
+}
 
 export function InterviewCriterion({
   criterion,
@@ -13,97 +32,108 @@ export function InterviewCriterion({
   interviewId: string;
   canOverride: boolean;
 }) {
-  const flagged =
-    criterion.needs_review ||
-    criterion.review_reasons.length > 0 ||
-    criterion.effective_score == null;
+  const flagged = criterionFlagged(criterion);
+  const overridden = criterion.override_level != null;
+  const shown = overridden ? criterion.override_level : criterion.effective_score;
   return (
     <DisclosureCard
       variant="outline"
+      defaultOpen={flagged}
       title={criterion.description}
-      description={`${criterion.criterion_code} · Trọng số ${Math.round(criterion.weight * 100)}%`}
+      description={
+        <span className="flex flex-wrap items-center gap-2">
+          <span>{criterion.criterion_code}</span>
+          <span>· Trọng số {Math.round(criterion.weight * 100)}%</span>
+          {flagged && <Chip tone="flag">{scoreStatusLabel(criterion.score_status)}</Chip>}
+          {overridden && <Chip tone="ok">Consultant đã chấm</Chip>}
+        </span>
+      }
       badge={
-        <span
-          className={`rounded-lg px-2 py-1 text-xs font-bold tabular-nums ${flagged ? "bg-accent/20" : "bg-primary/5 text-primary"}`}
-        >
-          {criterion.effective_score ?? "—"} / 4{flagged && " · Cần xem lại"}
+        <span className="flex items-center gap-3">
+          <LevelMeter value={shown} />
+          <span className="w-12 text-right text-sm font-bold tabular-nums">
+            {formatScore(shown)}
+            <span className="font-normal text-muted-foreground">/4</span>
+          </span>
         </span>
       }
     >
       <div className="space-y-4">
-        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-          <span>
-            Điểm AI:{" "}
-            <strong className="text-foreground">
-              {criterion.score ?? "Chưa chấm"}
-            </strong>
-          </span>
-          <span>Trạng thái: {criterion.score_status ?? "Chưa có"}</span>
-          {criterion.confidence != null && (
-            <span>Độ tin cậy: {Math.round(criterion.confidence * 100)}%</span>
-          )}
-          {criterion.coverage != null && (
-            <span>Độ bao phủ: {Math.round(criterion.coverage * 100)}%</span>
-          )}
-        </div>
-        {criterion.override_level != null && (
-          <p className="rounded-xl bg-primary/5 p-3 text-sm text-primary">
-            <strong>Consultant chấm: {criterion.override_level}/4</strong>
+        {overridden && (
+          <p className="rounded-xl bg-muted p-3 text-sm">
+            <strong>Consultant chấm {criterion.override_level}/4</strong>
             <span className="mt-1 block whitespace-pre-wrap">
               {criterion.override_reason}
             </span>
           </p>
         )}
         {!!criterion.review_reasons.length && (
-          <p className="rounded-xl bg-accent/15 p-3 text-sm">
-            {criterion.review_reasons.map(reviewReason).join("; ")}
-          </p>
-        )}
-        {criterion.comment && (
-          <p className="whitespace-pre-wrap text-sm leading-6">
-            {criterion.comment}
+          <p className="rounded-xl bg-highlight p-3 text-sm font-medium">
+            {Array.from(new Set(criterion.review_reasons))
+              .map(reviewReason)
+              .join("; ")}
           </p>
         )}
         {criterion.rationale && (
-          <p className="whitespace-pre-wrap text-sm leading-6 text-muted-foreground">
-            {criterion.rationale}
-          </p>
-        )}
-        {criterion.evidence.length ? (
           <div>
-            <h4 className="text-sm font-bold">Minh chứng trong câu trả lời</h4>
-            {criterion.evidence.map((item, index) => (
+            <h4 className="text-xs font-bold text-muted-foreground">
+              AI nhận định
+            </h4>
+            <p className="mt-1 whitespace-pre-wrap text-sm leading-6">
+              {criterion.rationale}
+            </p>
+          </div>
+        )}
+        {criterion.comment && (
+          <div>
+            <h4 className="text-xs font-bold text-muted-foreground">
+              Gợi ý cho Consultant
+            </h4>
+            <p className="mt-1 whitespace-pre-wrap text-sm leading-6">
+              {criterion.comment}
+            </p>
+          </div>
+        )}
+        <div>
+          <h4 className="text-xs font-bold text-muted-foreground">
+            Trích dẫn trong câu trả lời
+          </h4>
+          {criterion.evidence.length ? (
+            criterion.evidence.map((item, index) => (
               <blockquote
                 key={`${item.q_code}-${index}`}
-                className="mt-3 border-l-2 border-primary/25 bg-muted/30 p-3 text-sm leading-6"
+                className="mt-2 rounded-xl bg-muted p-3 text-sm leading-6"
               >
                 “{item.quote}”
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {item.q_code} · {item.type}
+                  {evidenceLabel(item.type)}
                 </p>
               </blockquote>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Chưa có trích dẫn minh chứng.
-          </p>
-        )}
+            ))
+          ) : (
+            <p className="mt-1 text-sm text-muted-foreground">
+              AI không tìm thấy trích dẫn phù hợp.
+            </p>
+          )}
+        </div>
         <DisclosureCard
           variant="subtle"
           size="sm"
-          title="Barem và điểm Consultant"
+          title={canOverride ? "Barem và chấm lại" : "Barem"}
         >
           <ol className="space-y-2 text-sm">
-            {criterion.levels.map((level, index) => (
-              <li
-                key={index}
-                className={`rounded-xl p-3 ${criterion.effective_score === index ? "bg-primary/5 ring-1 ring-primary/20" : "bg-background"}`}
-              >
-                <strong className="text-primary">Mức {index}: </strong>
-                {level}
-              </li>
-            ))}
+            {criterion.levels.map((level, index) => {
+              const [label, ...rest] = level.split(":");
+              return (
+                <li
+                  key={index}
+                  className={`rounded-xl p-3 ${Math.round(shown ?? -1) === index ? "border border-primary bg-card" : "bg-card"}`}
+                >
+                  <strong className="text-primary">{label}</strong>
+                  {rest.length > 0 && <span>: {rest.join(":").trim()}</span>}
+                </li>
+              );
+            })}
           </ol>
           {canOverride && (
             <InterviewCriterionOverride
@@ -112,23 +142,45 @@ export function InterviewCriterion({
             />
           )}
         </DisclosureCard>
-        {criterion.probabilities && (
-          <DisclosureCard title="Phân bố điểm AI" variant="subtle" size="sm">
-            <dl className="space-y-2 text-xs">
-              {Object.entries(criterion.probabilities).map(
-                ([level, probability]) => (
-                  <div key={level} className="flex justify-between gap-3">
-                    <dt>Mức {level}</dt>
-                    <dd className="tabular-nums">
-                      {Math.round(probability * 100)}%
-                    </dd>
-                  </div>
-                ),
-              )}
-            </dl>
-          </DisclosureCard>
-        )}
+        <DisclosureCard title="Chỉ số kỹ thuật của AI" variant="subtle" size="sm">
+          <dl className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
+            <Metric label="Điểm AI" value={formatScore(criterion.score, 2)} />
+            <Metric
+              label="Độ tin cậy"
+              value={
+                criterion.confidence != null
+                  ? `${Math.round(criterion.confidence * 100)}%`
+                  : "—"
+              }
+            />
+            <Metric
+              label="Độ bao phủ"
+              value={
+                criterion.coverage != null
+                  ? `${Math.round(criterion.coverage * 100)}%`
+                  : "—"
+              }
+            />
+            <Metric label="Trạng thái" value={scoreStatusLabel(criterion.score_status)} />
+          </dl>
+          {criterion.probabilities && (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Xác suất theo mức:{" "}
+              {Object.entries(criterion.probabilities)
+                .map(([level, p]) => `${level}: ${Math.round(p * 100)}%`)
+                .join(" · ")}
+            </p>
+          )}
+        </DisclosureCard>
       </div>
     </DisclosureCard>
+  );
+}
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="mt-0.5 font-bold tabular-nums">{value}</dd>
+    </div>
   );
 }

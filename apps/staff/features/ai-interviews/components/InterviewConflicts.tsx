@@ -1,5 +1,7 @@
+import { ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
 import type { InterviewReport } from "@workspace/core/ai-interviews/schemas/review.schema";
-import { DisclosureCard } from "@workspace/ui/components/ui/collapsible";
+import { conflictStatusLabel } from "../utils/interview-presentation";
+import { Chip, panelClass, SectionTitle } from "./InterviewUi";
 
 export function InterviewConflicts({
   conflicts,
@@ -8,47 +10,49 @@ export function InterviewConflicts({
 }) {
   if (!conflicts.length) return null;
   return (
-    <div className="mt-5 border-t border-border pt-5">
-      <h3 className="font-nunito font-extrabold">
-        Mâu thuẫn cần xác minh{" "}
-        <span className="ml-2 rounded-full bg-accent/20 px-2 py-1 text-xs">
-          {conflicts.length}
-        </span>
-      </h3>
-      <div className="mt-4 space-y-3">
+    <section className={panelClass}>
+      <SectionTitle
+        icon={<ArrowsRightLeftIcon />}
+        aside={<Chip tone="flag">{conflicts.length} điểm khác biệt</Chip>}
+      >
+        Đối chiếu với hồ sơ
+      </SectionTitle>
+      <ul className="mt-4 space-y-3">
         {conflicts.map((item, index) => (
-          <DisclosureCard
-            key={index}
-            defaultOpen={index === 0}
-            title={`${item.q_code} · ${item.profile.label}`}
-            variant="outline"
-          >
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl bg-muted/40 p-4">
+          <li key={index} className="rounded-2xl border border-border p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-bold">
+                {item.profile.label}
+                <span className="ml-2 font-normal text-muted-foreground">
+                  {item.q_code}
+                </span>
+              </p>
+              <Chip tone="flag">{conflictStatusLabel(item.status)}</Chip>
+            </div>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              <div className="rounded-xl bg-muted p-3">
                 <p className="text-xs font-bold text-muted-foreground">
-                  TRONG PHỎNG VẤN
+                  Gia sư nói khi phỏng vấn
                 </p>
-                <blockquote className="mt-2 whitespace-pre-wrap text-sm leading-6">
+                <blockquote className="mt-1.5 text-sm leading-6">
                   “{item.interview_quote}”
                 </blockquote>
               </div>
-              <div className="rounded-xl border border-border p-4">
+              <div className="rounded-xl border border-border p-3">
                 <p className="text-xs font-bold text-muted-foreground">
-                  TRONG HỒ SƠ
+                  Hồ sơ đã đăng ký
                 </p>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6">
+                <p className="mt-1.5 text-sm font-semibold leading-6">
                   {item.profile.text}
                 </p>
               </div>
             </div>
-            <p className="mt-3 text-sm font-medium">{item.note}</p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {item.criterion_codes.join(", ")} ·{" "}
-              {item.status === "OPEN" ? "Chưa xác minh" : item.status}
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              {item.note}
             </p>
-          </DisclosureCard>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   CalendarDaysIcon,
@@ -9,13 +10,12 @@ import {
   InformationCircleIcon,
   MagnifyingGlassIcon,
   MapPinIcon,
+  PlusIcon,
   UserGroupIcon,
   UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@workspace/ui/components/ui/button";
-import { LmsClassHeader } from "../../../components/LmsClassHeader";
-import { getClassNaming } from "../../../components/lms-class-naming";
 import { useClassMembers } from "../hooks/useClassMembers";
 import { getClassWorkspaceLinks } from "../utils/class-workspace.utils";
 import { formatClassDate } from "../utils/classes.utils";
@@ -25,7 +25,6 @@ import { ClassPagination } from "./ClassPagination";
 import { ClassWorkspaceSkeleton } from "./ClassWorkspaceSkeleton";
 import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import { MemberChangesPanel } from "./MemberChangesPanel";
-import { ClassStatusBadge } from "./ClassBadges";
 import { classInput, classPage } from "./classes-ui";
 
 type Member = ReturnType<typeof useClassMembers>["members"][number];
@@ -51,6 +50,14 @@ function MemberCard({ learner }: { learner: Member }) {
 
         {/* Details in sleek container */}
         <div className="mt-4 space-y-2.5 rounded-2xl border border-border/60 bg-muted/20 p-3.5 text-xs">
+          {learner.accountCode && (
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-muted-foreground">Mã học viên:</span>
+              <span className="font-mono font-bold text-foreground">
+                {learner.accountCode}
+              </span>
+            </div>
+          )}
           {learner.gradeLevel && (
             <div className="flex items-baseline justify-between gap-2">
               <span className="text-muted-foreground">Cấp/lớp:</span>
@@ -93,9 +100,10 @@ function MemberCard({ learner }: { learner: Member }) {
 
 export function ClassMembersScreen({ classId }: { classId: string }) {
   const list = useClassMembers(classId);
+  const [creating, setCreating] = useState(false);
   const links = getClassWorkspaceLinks(classId);
 
-  if (list.loading) return <ClassWorkspaceSkeleton />;
+  if (list.loading) return <ClassWorkspaceSkeleton screen="members" />;
   if (list.error)
     return (
       <div className={classPage}>
@@ -104,10 +112,11 @@ export function ClassMembersScreen({ classId }: { classId: string }) {
     );
   if (!list.classInfo) return <ClassMissingState />;
 
+  const canRequestChanges =
+    list.classInfo.status === "active" || list.classInfo.status === "upcoming";
   const details = list.classInfo.serverDetails;
   const isHistory = list.mode === "history";
   const capacity = details?.capacity;
-  const naming = getClassNaming({ ...details, title: list.classInfo.title });
   const learnerCount = details?.learnerCount ?? list.total;
   const fillRate =
     capacity && capacity > 0
@@ -120,29 +129,24 @@ export function ClassMembersScreen({ classId }: { classId: string }) {
 
   return (
     <div className={classPage}>
-      <LmsClassHeader
-        field={naming.field}
-        subject={naming.subject}
-        name={naming.name}
-        level={naming.level}
-        badges={
-          <>
-            <ClassStatusBadge status={list.classInfo.status} />
-            <span className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-bold tabular-nums">
-              {learnerCount}
-              {capacity !== undefined ? ` / ${capacity}` : ""} học viên
-            </span>
-          </>
-        }
-        notice={
-          list.classInfo.status === "completed" ? (
-            <p role="status" className="rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary">
-              Lớp đã kết thúc. Tin nhắn, tài liệu và điểm danh ở chế độ chỉ xem.
-            </p>
-          ) : undefined
-        }
-      />
-      <h2 className="font-lms text-xl font-extrabold">Thành viên lớp</h2>
+      {list.classInfo.status === "completed" && (
+        <p role="status" className="rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-primary">
+          Lớp đã kết thúc. Tin nhắn, tài liệu và điểm danh ở chế độ chỉ xem.
+        </p>
+      )}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-lms text-xl font-extrabold">Thành viên lớp</h2>
+        {canRequestChanges && (
+          <Button
+            type="button"
+            className="min-h-11 gap-1.5 rounded-xl px-4 text-sm font-bold shadow-soft transition-all active:scale-[0.98]"
+            onClick={() => setCreating(true)}
+          >
+            <PlusIcon className="size-4" aria-hidden="true" />
+            Tạo yêu cầu thay đổi thành viên
+          </Button>
+        )}
+      </div>
 
       {/* Roster Section with Toolbar & Grid */}
       <section aria-labelledby="class-member-list-title" className="space-y-4">
@@ -292,10 +296,9 @@ export function ClassMembersScreen({ classId }: { classId: string }) {
       {/* Member Changes Panel */}
       <MemberChangesPanel
         classId={classId}
-        readOnly={
-          list.classInfo.status !== "active" &&
-          list.classInfo.status !== "upcoming"
-        }
+        readOnly={!canRequestChanges}
+        creating={creating}
+        onCreatingChange={setCreating}
       />
     </div>
   );
