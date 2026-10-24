@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { Button } from "@workspace/ui/components/ui/button";
 import {
   BanknotesIcon,
   CalendarDaysIcon,
@@ -7,14 +9,14 @@ import {
   CheckBadgeIcon,
   ClockIcon,
   ComputerDesktopIcon,
+  CreditCardIcon,
   FolderIcon,
   UsersIcon,
 } from "@heroicons/react/24/outline";
 import { LmsDetailLayout } from "../../../components/LmsDetailLayout";
-import { LmsFactList } from "../../../components/LmsFactList";
+import { LmsInfoGrid } from "../../../components/LmsInfoGrid";
 import { LmsLinkList } from "../../../components/LmsLinkList";
-import { LmsMeterCard } from "../../../components/LmsMeterCard";
-import { LmsStatCard } from "../../../components/LmsStatCard";
+import { LmsHeroBanner, LmsHeroProgress } from "../../../components/LmsHeroBanner";
 import { getTeachingModeLabel } from "../../../components/lms-class-naming";
 import { useTutorClassDetail } from "../hooks/useTutorClassDetail";
 import { formatClassDay } from "../utils/classes.utils";
@@ -23,7 +25,7 @@ import { ClassQueryErrorState } from "./ClassQueryErrorState";
 import { ClassWorkspaceSkeleton } from "./ClassWorkspaceSkeleton";
 import { ClassMissingState } from "./ClassMissingState";
 import { GroupClassManagement } from "./GroupClassManagement";
-import { classPage, classPanel } from "./classes-ui";
+import { classPage } from "./classes-ui";
 
 const BILLING_LABELS: Record<string, string> = { MONTHLY: "Thanh toán theo tháng", FULL_COURSE: "Thanh toán trọn khóa" };
 
@@ -41,7 +43,9 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
   const details = classInfo?.serverDetails;
   if (!classInfo || !details) return <ClassMissingState />;
 
+  const isGroup = classInfo.kind === "group";
   const spots = details.capacity - details.learnerCount;
+  const remaining = Math.max(0, details.numberOfSessions - details.sessionCount);
   const money = new Intl.NumberFormat("vi-VN").format(details.pricePerHour);
 
   return (
@@ -52,12 +56,20 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
           <p>Lớp đã kết thúc. Tin nhắn, tài liệu và điểm danh ở chế độ chỉ xem.</p>
         </div>
       )}
-      <section aria-label="Tổng quan số liệu lớp học" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <LmsMeterCard label="Tiến độ buổi học" value={details.sessionCount} max={details.numberOfSessions} caption={`${details.sessionCount} trên ${details.numberOfSessions} buổi đã lên lịch`} />
-        <LmsMeterCard label="Sĩ số học viên" value={details.learnerCount} max={details.capacity} tone="secondary" caption={spots > 0 ? `Còn ${spots} chỗ trống` : "Lớp đã đủ học viên"} />
-        <LmsStatCard label="Thời lượng mỗi buổi" value={`${details.sessionDurationMinutes} phút`} icon={<ClockIcon aria-hidden="true" />} />
-        <LmsStatCard label="Học phí mỗi giờ" value={`${money}đ`} icon={<BanknotesIcon aria-hidden="true" />} tone="accent" />
-      </section>
+      <LmsHeroBanner title="Thông tin lớp" mascot="handshake">
+        <LmsHeroProgress
+          label="Số buổi đã lên lịch so với kế hoạch"
+          value={details.sessionCount}
+          max={details.numberOfSessions}
+          note={remaining > 0 ? `Còn ${remaining} buổi chưa xếp` : "Đã xếp đủ lịch"}
+        />
+        <Button asChild className="min-h-11 bg-accent px-5 font-bold text-accent-foreground hover:bg-accent/90">
+          <Link href={links.sessions}>
+            <CalendarDaysIcon className="size-4" aria-hidden="true" />
+            {classInfo.status === "completed" ? "Xem lại buổi học" : "Vào buổi học"}
+          </Link>
+        </Button>
+      </LmsHeroBanner>
 
       <LmsDetailLayout
         aside={
@@ -72,20 +84,25 @@ export function ClassDetailScreen({ classId }: { classId: string }) {
           />
         }
       >
-        <section aria-labelledby="class-info-title" className={classPanel}>
-          <h2 id="class-info-title" className="mb-1 font-lms text-lg font-extrabold">Thông tin lớp</h2>
-          <LmsFactList
-            facts={[
-              { icon: ComputerDesktopIcon, label: "Hình thức học", value: getTeachingModeLabel(details.teachingMode) },
-              { icon: CalendarDaysIcon, label: "Khai giảng", value: details.openingAt ? formatClassDay(details.openingAt) : "Chưa lên lịch" },
-              { icon: BanknotesIcon, label: "Cách thanh toán", value: BILLING_LABELS[details.billingMode ?? ""] ?? "Mức phí tiêu chuẩn" },
-              { icon: ClockIcon, label: "Ngày tạo lớp", value: formatClassDay(classInfo.createdAt) },
-            ]}
-          />
-        </section>
+        <LmsInfoGrid
+          title="Thông tin lớp"
+          titleId="class-info-title"
+          items={[
+            { icon: ComputerDesktopIcon, label: "Hình thức học", value: getTeachingModeLabel(details.teachingMode) },
+            { icon: ClockIcon, label: "Thời lượng mỗi buổi", value: `${details.sessionDurationMinutes} phút` },
+            { icon: CalendarDaysIcon, label: "Khai giảng", value: details.openingAt ? formatClassDay(details.openingAt) : "Chưa lên lịch" },
+            { icon: BanknotesIcon, label: "Học phí mỗi giờ", value: `${money}đ` },
+            ...(isGroup
+              ? [
+                  { icon: UsersIcon, label: "Sĩ số học viên", value: `${details.learnerCount} / ${details.capacity} · ${spots > 0 ? `còn ${spots} chỗ` : "đã đủ"}` },
+                  { icon: CreditCardIcon, label: "Cách thanh toán", value: BILLING_LABELS[details.billingMode ?? ""] ?? "Mức phí tiêu chuẩn" },
+                ]
+              : []),
+          ]}
+        />
       </LmsDetailLayout>
 
-      {classInfo.kind === "group" && <GroupClassManagement classId={classId} />}
+      {isGroup && <GroupClassManagement classId={classId} />}
     </div>
   );
 }

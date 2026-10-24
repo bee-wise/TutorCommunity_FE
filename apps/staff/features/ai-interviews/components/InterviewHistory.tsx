@@ -1,10 +1,9 @@
 "use client";
 
 import type { InterviewPackage } from "@workspace/core/ai-interviews/schemas/review.schema";
-import { DisclosureCard } from "@workspace/ui/components/ui/collapsible";
 import { interviewDate } from "../utils/interview-presentation";
 import { InterviewAudit } from "./InterviewAudit";
-import { InterviewStatus, panelClass } from "./InterviewUi";
+import { Chip, InterviewStatus, panelClass } from "./InterviewUi";
 
 export function InterviewHistory({ data }: { data: InterviewPackage }) {
   return (
@@ -14,13 +13,16 @@ export function InterviewHistory({ data }: { data: InterviewPackage }) {
           Lịch sử quyết định
         </h2>
         {!data.decisions.length && (
-          <p className="py-8 text-sm text-muted-foreground">
+          <p className="py-8 text-center text-sm text-muted-foreground">
             Chưa có quyết định xét duyệt.
           </p>
         )}
-        <ol className="mt-4 divide-y divide-border">
+        <ol className="mt-4 space-y-4">
           {data.decisions.map((decision) => (
-            <li key={decision.id} className="space-y-3 py-5 first:pt-0">
+            <li
+              key={decision.id}
+              className="rounded-2xl border border-border p-4"
+            >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <InterviewStatus status={decision.decision} />
                 <time className="text-xs text-muted-foreground">
@@ -28,38 +30,22 @@ export function InterviewHistory({ data }: { data: InterviewPackage }) {
                 </time>
               </div>
               {decision.reason && (
-                <p className="whitespace-pre-wrap text-sm leading-6">
+                <p className="mt-3 whitespace-pre-wrap text-sm leading-6">
                   <strong>Lý do: </strong>
                   {decision.reason}
                 </p>
               )}
               {decision.feedback && (
-                <p className="whitespace-pre-wrap rounded-xl bg-muted/40 p-3 text-sm leading-6">
-                  <strong>Phản hồi: </strong>
+                <p className="mt-3 whitespace-pre-wrap rounded-xl bg-muted p-3 text-sm leading-6">
+                  <strong>Phản hồi gửi gia sư: </strong>
                   {decision.feedback}
                 </p>
               )}
-              <p
-                className={`text-xs font-medium ${decision.synced_at ? "text-secondary" : "text-muted-foreground"}`}
-              >
-                {decision.synced_at
-                  ? "Đã đồng bộ BeeWise Core"
-                  : "Đang chờ đồng bộ BeeWise Core"}
-              </p>
-              <DisclosureCard
-                title="Thông tin quyết định"
-                variant="subtle"
-                size="sm"
-              >
-                <p className="break-all text-xs text-muted-foreground">
-                  Consultant: {decision.consultant_id}
-                </p>
-                {decision.details && (
-                  <pre className="mt-3 overflow-auto whitespace-pre-wrap break-all text-xs">
-                    {JSON.stringify(decision.details, null, 2)}
-                  </pre>
-                )}
-              </DisclosureCard>
+              <div className="mt-3">
+                <Chip tone={decision.synced_at ? "ok" : "neutral"}>
+                  {decision.synced_at ? "Đã đồng bộ" : "Đang chờ đồng bộ"}
+                </Chip>
+              </div>
             </li>
           ))}
         </ol>
@@ -67,7 +53,7 @@ export function InterviewHistory({ data }: { data: InterviewPackage }) {
       <InterviewAudit
         entity="interview"
         id={data.interview.interview_id}
-        defaultOpen
+        defaultOpen={false}
       />
     </div>
   );

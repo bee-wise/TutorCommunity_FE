@@ -4,22 +4,27 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@workspace/ui/components/ui/bee-toast/index";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
+import { getApiErrorMessage } from "@workspace/core/sys-libs/error-handler";
 import { mockTutorProfile } from "../../tutor-profile/types/mockTutorProfile";
 import { tutorProfileQueryKeys } from "../../tutor-profile/queryKeys";
-import { tutorProfileEditorDefaultValues } from "../constants/profile-editor.fixture";
 import {
-  tutorProfileEditorSchema,
-  type TutorProfileEditorValues,
-} from "../schemas/profile-editor.schema";
+  tutorProfileDefaultValues,
+  tutorProfileFormSchema,
+  type TutorProfileFormValues,
+} from "../../tutor-profile-registration/schemas/profile-registration.schema";
+import { tutorProfileRegistrationService } from "../../tutor-profile-registration/services/profile-registration.service";
 import { tutorProfileEditorService } from "../services/profile-editor.service";
 import type {
   ProfileBlockId,
-  ProfileMediaState,
+  ProfileSectionPatch,
 } from "../types/profile-editor.types";
 import {
-  mapEditorValuesToTutorProfile,
-  mapTutorProfileToEditorValues,
-} from "../utils/profile-editor.mapper";
+  mapDraftToPreview,
+  seedDraftFromTutor,
+  type CatalogNames,
+} from "../utils/profile-preview.mapper";
+
+const devPreviewDraft = seedDraftFromTutor(mockTutorProfile);
 
 export function useTutorProfileInlineEditor() {
   const queryClient = useQueryClient();
@@ -29,179 +34,161 @@ export function useTutorProfileInlineEditor() {
   const isDevPreview = !user || user.id.startsWith("preview-");
   const tutorProfileId = user?.tutorProfileId || user?.id;
 
-  const {
-    data: fetchedTutor,
-    isLoading: isQueryLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ["tutor-profile", "editor", tutorProfileId],
-    queryFn: () => tutorProfileEditorService.getProfile(tutorProfileId),
-    enabled: !isDevPreview && !!tutorProfileId,
+  const draftQuery = useQuery({
+    queryKey: ["tutor-profile", "editor", "draft"],
+    queryFn: tutorProfileEditorService.getDraft,
+    enabled: !isDevPreview,
+    retry: false,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+  });
+  const publicQuery = useQuery({
+    queryKey: ["tutor-profile", "editor", "public", tutorProfileId],
+    queryFn: () => tutorProfileEditorService.getPublicProfile(tutorProfileId!),
+    enabled: !isDevPreview && Boolean(tutorProfileId),
+    retry: false,
     staleTime: 60_000,
   });
 
-  const baseTutor = isDevPreview ? mockTutorProfile : fetchedTutor;
-
-  const initialProfile = useMemo(() => {
-    if (isDevPreview) return tutorProfileEditorDefaultValues;
-    if (fetchedTutor) return mapTutorProfileToEditorValues(fetchedTutor);
-    return null;
-  }, [isDevPreview, fetchedTutor]);
-
-  const [userProfileOverrides, setUserProfileOverrides] =
-    useState<TutorProfileEditorValues | null>(null);
-  const profile =
-    userProfileOverrides ?? initialProfile ?? tutorProfileEditorDefaultValues;
-
-  const initialMedia: ProfileMediaState = fetchedTutor?.videoUrl
-    ? { videoUrl: fetchedTutor.videoUrl }
-    : { videoUrl: "https://res.cloudinary.com/xcrm6ykz/video/upload/v1792508519/Beewise/Assets/Videos/tutor-intro-sample.mp4#t=0.1" };
-
-  const [userMediaOverrides, setUserMediaOverrides] =
-    useState<ProfileMediaState | null>(null);
-  const media = userMediaOverrides ?? initialMedia;
-
+  const [draftOverride, setDraftOverride] =
+    useState<TutorProfileFormValues | null>(null);
+  const [catalogNames, setCatalogNames] = useState<CatalogNames>({});
   const [activeBlock, setActiveBlock] = useState<ProfileBlockId | null>(null);
   const [submittedAt, setSubmittedAt] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
 
+  const serverDraft = isDevPreview ? devPreviewDraft : draftQuery.data;
+  const draftExists = draftOverride !== null || Boolean(serverDraft);
+  const profile =
+    draftOverride ?? serverDraft ?? tutorProfileDefaultValues;
+
+  const baseTutor = isDevPreview ? mockTutorProfile : publicQuery.data;
   const tutor = useMemo(
-    () =>
-      mapEditorValuesToTutorProfile(profile, {
-        ...baseTutor,
-        videoUrl: media.videoUrl,
-      }),
-    [profile, baseTutor, media.videoUrl],
+    () => mapDraftToPreview(profile, baseTutor, catalogNames),
+    [profile, baseTutor, catalogNames],
   );
 
-  const submitReviewMutation = useMutation({
+  const resolveCatalogNames = async (
+    previous: TutorProfileFormValues,
+    next: TutorProfileFormValues,
+  ) => {
+    const lookups: Array<[keyof CatalogNames, "universities" | "majors", string]> = [];
+    if (next.universityId && next.universityId !== previous.universityId) {
+      lookups.push(["university", "universities", next.universityId]);
+    }
+    if (next.majorId && next.majorId !== previous.majorId) {
+      lookups.push(["major", "majors", next.majorId]);
+    }
+    if (!lookups.length) return;
+    const entries = await Promise.all(
+      lookups.map(async ([key, resource, id]) => {
+        const item = await queryClient.fetchQuery({
+          queryKey: ["catalog", resource, "item", id],
+          queryFn: () => tutorProfileRegistrationService.getCatalogItem(resource, id),
+          staleTime: 5 * 60 * 1000,
+        });
+        return [key, item.name] as const;
+      }),
+    );
+    setCatalogNames((current) => ({ ...current, ...Object.fromEntries(entries) }));
+  };
+
+  const saveMutation = useMutation({
+    mutationFn: async (patch: ProfileSectionPatch) => {
+      const next: TutorProfileFormValues = { ...profile, ...patch };
+      if (isDevPreview) {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      } else {
+        await tutorProfileEditorService.saveDraft(next, draftExists);
+      }
+      return next;
+    },
+    onSuccess: async (next) => {
+      const previous = profile;
+      setDraftOverride(next);
+      setActiveBlock(null);
+      toast.success("Đã lưu thay đổi", {
+        description: "Nhớ bấm “Gửi xét duyệt lại” để cập nhật hồ sơ công khai.",
+        position: "top-right",
+      });
+      if (!isDevPreview) {
+        queryClient.setQueryData(["tutor-profile", "editor", "draft"], next);
+        await resolveCatalogNames(previous, next).catch(() => undefined);
+      }
+    },
+    onError: (error) =>
+      toast.error("Không thể lưu thay đổi", {
+        description: getApiErrorMessage(error),
+        position: "top-right",
+      }),
+  });
+
+  const submitMutation = useMutation({
     mutationFn: async () => {
       if (isDevPreview) {
-        await new Promise((r) => setTimeout(r, 650));
-        return {
-          status: "PENDING_REVIEW" as const,
-          updatedAt: new Date().toISOString(),
-        };
+        await new Promise((resolve) => setTimeout(resolve, 650));
+        return;
       }
-      return await tutorProfileEditorService.submitForReview(
-        profile,
-        media,
-        baseTutor,
-      );
+      await tutorProfileEditorService.submitForReview(profile);
     },
-    onSuccess: (result) => {
-      setSubmittedAt(result.updatedAt);
+    onSuccess: () => {
+      setSubmittedAt(new Date().toISOString());
       if (tutorProfileId) {
-        queryClient.invalidateQueries({
+        void queryClient.invalidateQueries({
           queryKey: tutorProfileQueryKeys.detail(tutorProfileId),
         });
       }
-      queryClient.invalidateQueries({ queryKey: ["tutor-profile"] });
+      void queryClient.invalidateQueries({ queryKey: ["tutor-profile"] });
       toast.success("Đã gửi hồ sơ xét duyệt", {
         description:
           "Hồ sơ công khai hiện tại vẫn được giữ cho đến khi nội dung mới được duyệt.",
         position: "top-right",
       });
     },
-    onError: () => {
+    onError: (error) =>
       toast.error("Chưa thể gửi hồ sơ", {
-        description: "Vui lòng kiểm tra kết nối và thử lại.",
+        description: getApiErrorMessage(error),
         position: "top-right",
-      });
-    },
+      }),
   });
 
-  const saveBlock = async (values: TutorProfileEditorValues): Promise<boolean> => {
-    setUserProfileOverrides(values);
-    setActiveBlock(null);
-    if (!isDevPreview && tutorProfileId) {
-      setIsSaving(true);
-      try {
-        await tutorProfileEditorService.saveDraft(values, media, baseTutor);
-        toast.success("Đã cập nhật nội dung", {
-          description: "Thay đổi đã được lưu vào bản chỉnh sửa hiện tại.",
-          position: "top-right",
-        });
-        return true;
-      } catch {
-        toast.error("Không thể lưu thay đổi", {
-          description: "Vui lòng kiểm tra kết nối và thử lại.",
-          position: "top-right",
-        });
-        return false;
-      } finally {
-        setIsSaving(false);
-      }
-    } else {
-      toast.success("Đã cập nhật nội dung", {
-        description: "Thay đổi đã được lưu vào bản chỉnh sửa hiện tại.",
-        position: "top-right",
-      });
+  const saveSection = async (patch: ProfileSectionPatch): Promise<boolean> => {
+    try {
+      await saveMutation.mutateAsync(patch);
       return true;
-    }
-  };
-
-  const setVideoUrl = async (videoUrl: string): Promise<void> => {
-    const nextMedia = { videoUrl };
-    setUserMediaOverrides(nextMedia);
-    if (!isDevPreview && tutorProfileId) {
-      setIsSaving(true);
-      try {
-        await tutorProfileEditorService.saveDraft(profile, nextMedia, baseTutor);
-        toast.success("Đã cập nhật video", {
-          description: "Video giới thiệu đã được cập nhật.",
-          position: "top-right",
-        });
-      } catch {
-        toast.error("Không thể lưu video", {
-          description: "Vui lòng thử lại sau.",
-          position: "top-right",
-        });
-      } finally {
-        setIsSaving(false);
-      }
+    } catch {
+      return false;
     }
   };
 
   const submitForReview = () => {
-    if (isSaving || submitReviewMutation.isPending) return;
-
-    // Whole-form validation before submission
-    const validation = tutorProfileEditorSchema.safeParse(profile);
+    if (saveMutation.isPending || submitMutation.isPending) return;
+    const validation = tutorProfileFormSchema.safeParse(profile);
     if (!validation.success) {
-      const firstIssue = validation.error.issues[0];
-      const message =
-        firstIssue?.message || "Vui lòng kiểm tra lại thông tin hồ sơ.";
       toast.error("Hồ sơ chưa hợp lệ", {
-        description: message,
+        description:
+          validation.error.issues[0]?.message ||
+          "Vui lòng kiểm tra lại thông tin hồ sơ.",
         position: "top-right",
       });
       return;
     }
-
-    submitReviewMutation.mutate();
+    submitMutation.mutate();
   };
-
-  const isLoading =
-    !isDevPreview && (isAuthLoading || (isQueryLoading && !initialProfile));
 
   return {
     profile,
     tutor,
-    media,
     activeBlock,
     submittedAt,
-    isLoading,
-    isError,
+    isLoading: !isDevPreview && (isAuthLoading || draftQuery.isLoading),
+    isError: !isDevPreview && draftQuery.isError,
     isDevPreview,
-    isSaving,
-    refetch,
-    isSubmitting: submitReviewMutation.isPending || isSaving,
+    isSaving: saveMutation.isPending,
+    isSubmitting: submitMutation.isPending,
+    refetch: draftQuery.refetch,
     openBlock: setActiveBlock,
     closeBlock: () => setActiveBlock(null),
-    saveBlock,
-    setVideoUrl,
+    saveSection,
     submitForReview,
   };
 }

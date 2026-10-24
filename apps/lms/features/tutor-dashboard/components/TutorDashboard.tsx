@@ -1,5 +1,4 @@
 import { DashboardWelcome } from "./DashboardWelcome";
-import { DashboardStats } from "./DashboardStats";
 import { DashboardWeekChart } from "./DashboardWeekChart";
 import { LiveDashboardSchedule } from "./LiveDashboardSchedule";
 import { DashboardTools } from "./DashboardTools";
@@ -12,7 +11,6 @@ export function TutorDashboard() {
     <div className="grid min-h-full xl:grid-cols-[minmax(0,1fr)_300px]">
       <div className="min-w-0 space-y-4 p-4 sm:p-5 lg:p-6">
         <DashboardWelcome />
-        <DashboardStats />
         <LiveDashboardSchedule />
         <DashboardWeekChart />
       </div>

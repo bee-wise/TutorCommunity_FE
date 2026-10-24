@@ -66,18 +66,18 @@ export function TutorOnboardingHeader({
       role="banner"
       aria-label="Tutor Onboarding Header"
       className={cn(
-        "flex min-h-16 items-center justify-between gap-4 rounded-2xl border border-border bg-card px-4 py-2.5 shadow-sm sm:px-6",
+        "flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-2xl border border-border bg-card px-4 py-2.5 shadow-sm sm:px-6",
         className,
       )}
     >
       {/* Left: BeeWise Logo + Bee Logo */}
-      <div className="flex items-center gap-2.5 sm:gap-3.5">
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3.5">
         <Link
           href="/"
           aria-label="Trang chủ BeeWise"
           className="flex items-center rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <div className="relative h-8 w-28 shrink-0 overflow-hidden sm:h-10 sm:w-38">
+          <div className="relative h-8 w-34 shrink-0 overflow-hidden sm:h-10 sm:w-38">
             <Image
               src="https://res.cloudinary.com/xcrm6ykz/image/upload/f_auto,q_auto,w_400/v1790065308/Logo_2.png"
               alt="BeeWise"
@@ -99,12 +99,17 @@ export function TutorOnboardingHeader({
         />
       </div>
 
+      {/* Mobile: title on its own row so users know what this page is */}
+      <p className="order-last basis-full border-t border-border pt-2 text-xs font-bold uppercase text-primary md:hidden">
+        Đăng ký hồ sơ gia sư
+      </p>
+
       {/* Right: "Đăng ký hồ sơ gia sư" + Current Account */}
       <div className="flex items-center gap-3 sm:gap-4">
-        <span className="text-xs uppercase font-bold text-primary/85 sm:text-sm">
+        <span className="hidden text-xs font-bold uppercase text-primary/85 md:inline lg:text-sm">
           Đăng ký hồ sơ gia sư
         </span>
-        <div className="h-4 w-px bg-border/80" aria-hidden="true" />
+        <div className="hidden h-4 w-px bg-border/80 md:block" aria-hidden="true" />
 
         {/* Account Menu */}
         <div ref={dropdownRef} className="relative">

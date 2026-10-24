@@ -8,7 +8,7 @@ import { TutorTeachingHistory } from "../../tutor-profile/components/TutorTeachi
 import { TutorTeachingMethods } from "../../tutor-profile/components/TutorTeachingMethods";
 import { useTutorProfileInlineEditor } from "../hooks/useTutorProfileInlineEditor";
 import { EditableProfileBlock } from "./EditableProfileBlock";
-import { ProfileEditModalRouter } from "./ProfileEditModalRouter";
+import { ProfileEditDialogs } from "./dialogs/ProfileEditDialogs";
 import { ProfileEditorSkeleton } from "./ProfileEditorSkeleton";
 import { ProfileEditorToolbar } from "./ProfileEditorToolbar";
 import { TutorEvidenceEditorPreview } from "./TutorEvidenceEditorPreview";
@@ -68,11 +68,11 @@ export function TutorProfileEditorScreen() {
             <EditableProfileBlock label="Phương pháp" onEdit={() => editor.openBlock("methods")}>
               <TutorTeachingMethods tutor={editor.tutor} />
             </EditableProfileBlock>
-            <EditableProfileBlock label="Học vấn & Thành tích" onEdit={() => editor.openBlock("academic")}>
+            <EditableProfileBlock label="Học vấn" onEdit={() => editor.openBlock("academic")}>
               <TutorAchievements tutor={editor.tutor} />
             </EditableProfileBlock>
             <EditableProfileBlock label="Video" onEdit={() => editor.openBlock("video")}>
-              <TutorVideoEditorPreview src={editor.media.videoUrl} />
+              <TutorVideoEditorPreview src={editor.profile.videoUrl} />
             </EditableProfileBlock>
             <EditableProfileBlock label="Kinh nghiệm" onEdit={() => editor.openBlock("experience")}>
               <TutorTeachingHistory tutor={editor.tutor} />
@@ -82,20 +82,19 @@ export function TutorProfileEditorScreen() {
             </EditableProfileBlock>
           </div>
 
-          <TutorProfileSidebarPreview tutor={editor.tutor} />
+          <TutorProfileSidebarPreview
+            tutor={editor.tutor}
+            onEdit={() => editor.openBlock("teaching")}
+          />
         </div>
       </main>
 
-      <ProfileEditModalRouter
+      <ProfileEditDialogs
         activeBlock={editor.activeBlock}
         profile={editor.profile}
-        videoUrl={editor.media.videoUrl}
+        isSaving={editor.isSaving}
         onClose={editor.closeBlock}
-        onSaveProfile={editor.saveBlock}
-        onSaveVideo={(videoUrl) => {
-          editor.setVideoUrl(videoUrl);
-          editor.closeBlock();
-        }}
+        onSave={editor.saveSection}
       />
     </div>
   );

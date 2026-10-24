@@ -31,3 +31,13 @@ export function safeExternalUrl(value: string | null | undefined) {
   }
   return null;
 }
+
+/**
+ * One spelling per session status. BE names the running state IN_PROGRESS (ONGOING is its alias)
+ * and may write CANCELED or CANCELLED; casing and spaces are ignored.
+ */
+export function normalizeSessionStatus(value: string | null | undefined) {
+  const status = value?.trim().toUpperCase().replace(/[\s-]+/g, "_");
+  if (!status) return value;
+  return status === "IN_PROGRESS" ? "ONGOING" : status === "CANCELED" ? "CANCELLED" : status;
+}

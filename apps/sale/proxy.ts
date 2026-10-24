@@ -46,14 +46,14 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // Chặn gia sư vào trang root (trang chủ chỉ dành cho học viên và khách) -> chuyển hướng về /tutor/home
+  // Chặn gia sư vào trang root (trang chủ chỉ dành cho học viên và khách) -> chuyển hướng về /tutor/profile
   if (pathname === "/" && role === "TUTOR") {
-    return NextResponse.redirect(new URL("/tutor/home", request.url));
+    return NextResponse.redirect(new URL("/tutor/profile", request.url));
   }
 
-  // Nếu gia sư đã đăng nhập và truy cập các trang auth (/login, /register) -> chuyển hướng về /tutor/home
+  // Nếu gia sư đã đăng nhập và truy cập các trang auth (/login, /register) -> chuyển hướng về /tutor/profile
   if ((pathname === "/login" || pathname === "/register") && role === "TUTOR") {
-    return NextResponse.redirect(new URL("/tutor/home", request.url));
+    return NextResponse.redirect(new URL("/tutor/profile", request.url));
   }
 
   const response = NextResponse.next();

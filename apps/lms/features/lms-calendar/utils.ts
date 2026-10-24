@@ -130,3 +130,9 @@ export function formatLmsSubject(params?: {
   }
   return params.classTitle?.trim() || params.fallback || "Môn học";
 }
+
+/** True once the session's Vietnam-local end (date "YYYY-MM-DD" + time "HH:mm") has passed. */
+export function hasSessionEnded(date: string, endTime: string, now: number = Date.now()) {
+  const end = new Date(`${date}T${endTime}:00+07:00`).getTime();
+  return !Number.isNaN(end) && now >= end;
+}

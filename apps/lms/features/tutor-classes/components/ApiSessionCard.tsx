@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@workspace/ui/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@workspace/ui/components/ui/dropdown-menu";
 import {
@@ -18,9 +18,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import type { ClassSessionDto } from "@workspace/core/lms-classes/schemas";
+import { normalizeSessionStatus } from "@workspace/core/lms-classes/lifecycle";
 import { LmsStatusBadge } from "../../../components/LmsStatusBadge";
 import type { StatusTone } from "../../../components/lms-status";
-import { formatClassDate } from "../utils/classes.utils";
+import { formatClassDate, getSessionStartOpensAt, SESSION_START_LEAD_MINUTES } from "../utils/classes.utils";
 
 export const SESSION_STATUS_LABELS: Record<string, string> = {
   SCHEDULED: "Chưa bắt đầu",
@@ -62,6 +63,23 @@ function dateParts(value: string) {
 function formatTime(value: string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? "--:--" : new Intl.DateTimeFormat("vi-VN", { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
+}
+
+/** True once `at` (epoch ms) has passed; flips without polling the moment it does. */
+function useTimeReached(at: number | null, enabled: boolean) {
+  const reached = () => at !== null && Date.now() >= at;
+  const [open, setOpen] = useState(reached);
+  useEffect(() => {
+    if (!enabled) return;
+    setOpen(reached());
+    const wait = at === null ? 0 : at - Date.now();
+    // setTimeout overflows past ~24.8 days; the next render re-checks anyway.
+    if (wait <= 0 || wait > 2 ** 31 - 1) return;
+    const timer = window.setTimeout(() => setOpen(true), wait);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [at, enabled]);
+  return open;
 }
 
 /** Calendar-style tile: coloured weekday band, big day number, month. */
@@ -107,12 +125,16 @@ interface ApiSessionCardProps {
 }
 
 export function ApiSessionCard({ session, active, group, attendanceEnabled, pending, onAction, onAttendance, onRecording, onReschedule }: ApiSessionCardProps) {
-  const isOngoing = session.status === "ONGOING";
-  const isScheduled = session.status === "SCHEDULED";
-  const isCompleted = session.status === "COMPLETED";
-  const isCancelled = session.status === "CANCELLED";
-  const statusKey = session.status ?? "";
+  const statusKey = normalizeSessionStatus(session.status) ?? "";
+  const isOngoing = statusKey === "ONGOING";
+  const isScheduled = statusKey === "SCHEDULED";
+  const isCompleted = statusKey === "COMPLETED";
+  const isCancelled = statusKey === "CANCELLED";
   const isOnline = Boolean(session.locationOrMeetingInfo?.startsWith("http")) || session.teachingMode === "ONLINE";
+  const endAtMs = new Date(session.endAt).getTime();
+  const startOpen = useTimeReached(getSessionStartOpensAt(session.startAt)?.getTime() ?? null, isScheduled);
+  // Complete is only offered after the scheduled end; the session's own end time gates cancel too.
+  const ended = useTimeReached(Number.isNaN(endAtMs) ? null : endAtMs, isScheduled || isOngoing);
 
   return (
     <article className={`flex flex-col gap-4 rounded-3xl border bg-card p-4 shadow-soft sm:flex-row sm:p-5 ${isOngoing ? "border-primary" : "border-border"} ${isCancelled ? "opacity-80" : ""}`}>
@@ -171,16 +193,27 @@ export function ApiSessionCard({ session, active, group, attendanceEnabled, pend
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
           <div className="flex flex-wrap items-center gap-2">
             {active && isScheduled && (
-              <Button className="min-h-11 px-4 text-xs" disabled={pending} onClick={() => onAction("start")}>
-                <PlayIcon className="size-4" aria-hidden="true" />
-                Bắt đầu buổi học
-              </Button>
+              <>
+                <Button className="min-h-11 px-4 text-xs" disabled={pending || !startOpen} aria-describedby={startOpen ? undefined : `start-hint-${session.id}`} onClick={() => onAction("start")}>
+                  <PlayIcon className="size-4" aria-hidden="true" />
+                  Bắt đầu buổi học
+                </Button>
+                {!startOpen && (
+                  <span id={`start-hint-${session.id}`} className="text-xs font-semibold text-muted-foreground">
+                    Mở lúc {formatTime(getSessionStartOpensAt(session.startAt)?.toISOString() ?? session.startAt)}, trước giờ học {SESSION_START_LEAD_MINUTES} phút
+                  </span>
+                )}
+              </>
             )}
             {active && isOngoing && (
-              <Button className="min-h-11 px-4 text-xs" disabled={pending} onClick={() => onAction("complete")}>
-                <StopIcon className="size-4" aria-hidden="true" />
-                Kết thúc buổi học
-              </Button>
+              ended ? (
+                <Button className="min-h-11 px-4 text-xs" disabled={pending} onClick={() => onAction("complete")}>
+                  <StopIcon className="size-4" aria-hidden="true" />
+                  Kết thúc buổi học
+                </Button>
+              ) : (
+                <span className="text-xs font-semibold text-muted-foreground">Có thể kết thúc buổi học sau {formatTime(session.endAt)}</span>
+              )
             )}
             {group && attendanceEnabled && (isOngoing || isCompleted) && (
               <Button variant="outline" className="min-h-11 px-4 text-xs" onClick={onAttendance}>
@@ -208,10 +241,12 @@ export function ApiSessionCard({ session, active, group, attendanceEnabled, pend
                   <CalendarDaysIcon className="mr-2 size-4 text-primary" aria-hidden="true" />
                   Đổi lịch buổi học
                 </DropdownMenuItem>
-                <DropdownMenuItem className="min-h-11 cursor-pointer rounded-xl text-xs font-bold text-destructive focus:text-destructive" onSelect={() => onAction("cancel")}>
-                  <XMarkIcon className="mr-2 size-4 text-destructive" aria-hidden="true" />
-                  Hủy buổi học
-                </DropdownMenuItem>
+                {!ended && (
+                  <DropdownMenuItem className="min-h-11 cursor-pointer rounded-xl text-xs font-bold text-destructive focus:text-destructive" onSelect={() => onAction("cancel")}>
+                    <XMarkIcon className="mr-2 size-4 text-destructive" aria-hidden="true" />
+                    Hủy buổi học
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           )}

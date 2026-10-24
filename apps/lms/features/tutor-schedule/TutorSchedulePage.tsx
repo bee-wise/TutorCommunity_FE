@@ -6,7 +6,7 @@ import { ArrowPathIcon, ExclamationCircleIcon } from "@heroicons/react/24/outlin
 import { Button } from "@workspace/ui/components/ui/button";
 import { parseVietnamDateTime } from "@/features/lms-calendar";
 import { useScheduleFilters } from "./hooks/useScheduleFilters";
-import { OverviewCards } from "./components/OverviewCards";
+import { ScheduleStatusLegend } from "./components/ScheduleStatusLegend";
 import { ControlBar } from "./components/ControlBar";
 import { LmsCalendar } from "@/components/LmsCalendar";
 import { LmsPageHeader } from "@/components/LmsPageHeader";
@@ -40,7 +40,6 @@ export function TutorSchedulePage() {
     handleNextMonth,
     handleGoToday,
     filteredSessions,
-    kpis,
     isLoading,
     isError,
     error,
@@ -69,6 +68,7 @@ export function TutorSchedulePage() {
       <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto space-y-6">
         <LmsPageHeader
           title="Lịch dạy"
+          titleAddon={<ScheduleStatusLegend />}
           actions={<div className="rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-bold text-primary">{todayLabel}</div>}
         />
 
@@ -94,12 +94,6 @@ export function TutorSchedulePage() {
             </Button>
           </div>
         )}
-
-        <OverviewCards
-          todayCount={kpis?.sessionsToday ?? 0}
-          totalActiveCount={kpis?.activeClasses ?? 0}
-          pendingCount={kpis?.upcomingSessions ?? 0}
-        />
 
         <ControlBar
           viewMode={viewMode}

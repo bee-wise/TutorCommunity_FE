@@ -170,3 +170,17 @@ body:has(.lms-workspace)
     scale: 1;
   }
 }
+
+/* Gentle idle motion for the BeeWise mascot in hero banners. */
+@keyframes lms-mascot-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+@keyframes lms-mascot-halo {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.06); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lms-mascot-float { animation: lms-mascot-float 4.5s var(--ease-soft, ease-in-out) infinite; }
+  .lms-mascot-halo { animation: lms-mascot-halo 4.5s var(--ease-soft, ease-in-out) infinite; }
+}

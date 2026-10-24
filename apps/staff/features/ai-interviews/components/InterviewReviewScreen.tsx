@@ -11,6 +11,7 @@ import {
 } from "@workspace/core/ai-interviews/interview-status";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { Button } from "@workspace/ui/components/ui/button";
+import { reviewDigest } from "../utils/interview-presentation";
 import { InterviewReviewHeader } from "./InterviewReviewHeader";
 import {
   actionClass,
@@ -30,7 +31,7 @@ import { InterviewAdminActions } from "./InterviewAdminActions";
 
 const sections = [
   { value: "overview", label: "Tổng quan" },
-  { value: "answers", label: "Câu trả lời & điểm" },
+  { value: "answers", label: "Câu trả lời & chấm điểm" },
   { value: "profile", label: "Hồ sơ gia sư" },
   { value: "history", label: "Lịch sử" },
 ] as const;
@@ -49,6 +50,14 @@ export function InterviewReviewScreen({
   if (userRole !== role)
     return <p className="p-6 text-sm">Đang xác minh quyền truy cập…</p>;
   const data = query.data;
+  const digest = data ? reviewDigest(data) : null;
+  const pendingItems = digest
+    ? Number(digest.conflicts > 0) +
+      Number(digest.verifications > 0) +
+      Number(digest.unscoredQuestions > 0) +
+      Number(digest.flaggedCriteria > 0) +
+      Number(digest.integrity)
+    : 0;
   return (
     <main className="mx-auto w-full max-w-[1400px] space-y-6 p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -67,7 +76,7 @@ export function InterviewReviewScreen({
           <ArrowPathIcon
             className={`size-4 ${query.isFetching ? "animate-spin" : ""}`}
           />
-          Cập nhật hồ sơ và bản ghi
+          Cập nhật
         </Button>
         {data && (
           <Button
@@ -89,26 +98,31 @@ export function InterviewReviewScreen({
       {data && (
         <>
           <InterviewReviewHeader data={data} />
-          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
             <div className="min-w-0 space-y-5">
               <nav
                 aria-label="Nội dung hồ sơ phỏng vấn"
-                className="flex gap-1 overflow-x-auto rounded-2xl border border-border bg-card p-1.5"
+                className="flex gap-1 overflow-x-auto overflow-y-hidden border-b border-border"
               >
                 {sections.map((item) => (
-                  <Button
+                  <button
                     key={item.value}
-                    variant={section === item.value ? "default" : "ghost"}
-                    aria-pressed={section === item.value}
-                    className={`shrink-0 ${actionClass}`}
+                    type="button"
+                    aria-current={section === item.value ? "page" : undefined}
+                    className={`relative min-h-11 shrink-0 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 px-4 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring ${section === item.value ? "text-primary after:bg-primary" : "text-muted-foreground hover:text-foreground"}`}
                     onClick={() => setSection(item.value)}
                   >
                     {item.label}
-                  </Button>
+                    {item.value === "overview" && pendingItems > 0 && (
+                      <span className="ml-2 rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground">
+                        {pendingItems}
+                      </span>
+                    )}
+                  </button>
                 ))}
               </nav>
               <div hidden={section !== "overview"}>
-                <InterviewReport data={data} />
+                <InterviewReport data={data} onOpenAnswers={() => setSection("answers")} />
               </div>
               {section === "answers" && (
                 <InterviewAnswers
@@ -130,6 +144,7 @@ export function InterviewReviewScreen({
                 <InterviewDecisionForm
                   id={id}
                   enabled={data.interview.status === "PENDING_REVIEW"}
+                  pendingItems={pendingItems}
                 />
               ) : (
                 <section className={panelClass}>

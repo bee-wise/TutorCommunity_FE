@@ -243,7 +243,7 @@ export function ChatSidebar({
         }`}
       >
         <Link
-          href={currentUserRole === "LEARNER" ? "/" : "/tutor/home"}
+          href={currentUserRole === "LEARNER" ? "/" : "/tutor/profile"}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary transition hover:brightness-95"
           aria-label="Quay lại Trang chủ"
           title="Về trang chủ BeeWise"

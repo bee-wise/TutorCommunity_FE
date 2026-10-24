@@ -137,11 +137,16 @@ export function MobileNav({
               }}
               className="flex items-center gap-2 border-t border-border pt-3 text-sm font-medium text-foreground/80 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary w-full text-left"
             >
-              <Bell size={16} weight="bold" />
+              <Bell
+                key={actualUnreadCount}
+                size={16}
+                weight={actualUnreadCount > 0 ? "fill" : "bold"}
+                className={actualUnreadCount > 0 ? "bell-ring text-accent" : undefined}
+              />
               <span>Thông báo</span>
               {actualUnreadCount > 0 && (
-                <span className="ml-auto min-w-5 rounded-full bg-primary px-1.5 py-0.5 text-center text-[11px] font-bold text-white animate-pulse">
-                  {actualUnreadCount}
+                <span className="ml-auto min-w-5 rounded-full bg-destructive px-1.5 py-0.5 text-center text-[11px] font-bold text-destructive-foreground">
+                  {actualUnreadCount > 99 ? "99+" : actualUnreadCount}
                 </span>
               )}
             </button>

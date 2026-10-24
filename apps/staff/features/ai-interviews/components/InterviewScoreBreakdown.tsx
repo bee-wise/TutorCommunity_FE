@@ -1,5 +1,6 @@
 import type { InterviewPackage } from "@workspace/core/ai-interviews/schemas/review.schema";
-import { DisclosureCard } from "@workspace/ui/components/ui/collapsible";
+import { formatScore } from "../utils/interview-presentation";
+import { Chip, panelClass, ScoreBar } from "./InterviewUi";
 
 export function InterviewScoreBreakdown({
   summary,
@@ -7,24 +8,38 @@ export function InterviewScoreBreakdown({
   summary: NonNullable<InterviewPackage["summary"]>;
 }) {
   return (
-    <DisclosureCard title="Điểm theo câu hỏi" variant="outline" size="lg">
-      <dl className="divide-y divide-border text-sm">
+    <section className={panelClass}>
+      <h2 className="font-nunito text-lg font-extrabold">Điểm theo câu hỏi</h2>
+      <ul className="mt-4 grid gap-x-8 gap-y-5 md:grid-cols-2">
         {summary.questions.map((item) => (
-          <div key={item.q_code} className="flex justify-between gap-4 py-3">
-            <dt className="min-w-0 break-words">
-              <span className="mr-2 font-bold text-primary">{item.q_code}</span>
-              {item.title}
-            </dt>
-            <dd className="shrink-0 font-bold tabular-nums">
-              {item.points ?? "—"}
-              <span className="font-normal text-muted-foreground">
-                {" "}
-                / {item.max_points}
-              </span>
-            </dd>
-          </div>
+          <li key={item.q_code}>
+            <div className="mb-2 flex items-start justify-between gap-3">
+              <p className="min-w-0 text-sm leading-5">
+                <span className="mr-2 font-bold text-primary">
+                  {item.q_code}
+                </span>
+                {item.title}
+              </p>
+              {item.points == null ? (
+                <Chip tone="flag">Chưa chấm</Chip>
+              ) : (
+                <span className="shrink-0 text-sm font-bold tabular-nums">
+                  {formatScore(item.points)}
+                  <span className="font-normal text-muted-foreground">
+                    {" "}
+                    / {item.max_points}
+                  </span>
+                </span>
+              )}
+            </div>
+            <ScoreBar
+              value={item.points}
+              max={item.max_points}
+              flagged={item.points == null}
+            />
+          </li>
         ))}
-      </dl>
-    </DisclosureCard>
+      </ul>
+    </section>
   );
 }

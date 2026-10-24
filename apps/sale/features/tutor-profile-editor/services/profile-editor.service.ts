@@ -1,75 +1,38 @@
 import { apiClient } from "@workspace/core/configs/client";
 import type { ApiResponse } from "@workspace/core/types/api-response.type";
 import type { TutorProfileData } from "../../tutor-profile/types/tutor.type";
-import type {
-  TutorProfileEditorValues,
-  TutorProfileMutationResult,
-} from "../schemas/profile-editor.schema";
-import type { ProfileMediaState } from "../types/profile-editor.types";
+import type { TutorProfileFormValues } from "../../tutor-profile-registration/schemas/profile-registration.schema";
+import { tutorProfileRegistrationService } from "../../tutor-profile-registration/services/profile-registration.service";
+import type { TutorProfileMutationResult } from "../../tutor-profile-registration/types/profile-registration.types";
 
-import { buildTutorProfileEditorPayload } from "../utils/build-editor-payload";
-export { buildTutorProfileEditorPayload };
-
+/**
+ * The editor reads and writes the same `/tutors/profile` resource as the
+ * registration flow, so both share one payload contract (ids for university,
+ * major and teaching offerings — never display names).
+ */
 export const tutorProfileEditorService = {
-  async getProfile(tutorProfileId?: string): Promise<TutorProfileData> {
-    if (!tutorProfileId) {
-      throw new Error("Không tìm thấy mã hồ sơ gia sư.");
-    }
-    try {
-      const response = await apiClient.get<
-        never,
-        ApiResponse<TutorProfileData>
-      >(`/tutors/${tutorProfileId}`);
-      if (response?.data) return response.data;
-    } catch {
-      // Fallback: try /tutors/profile draft endpoint
-      try {
-        const draftRes = await apiClient.get<
-          never,
-          ApiResponse<TutorProfileData>
-        >("/tutors/profile");
-        if (draftRes?.data) return draftRes.data;
-      } catch {
-        throw new Error("Không thể tải thông tin hồ sơ gia sư. Vui lòng thử lại.");
-      }
-    }
-    throw new Error("Dữ liệu hồ sơ gia sư không hợp lệ.");
+  getDraft(): Promise<TutorProfileFormValues | null> {
+    return tutorProfileRegistrationService.getProfile();
   },
 
-  async saveDraft(
-    profile: TutorProfileEditorValues,
-    media: ProfileMediaState,
-    baseProfile?: Partial<TutorProfileData> | null,
-  ): Promise<TutorProfileMutationResult> {
-    const payload = buildTutorProfileEditorPayload(profile, media, baseProfile);
-    const response = await apiClient.put<
-      never,
-      ApiResponse<TutorProfileMutationResult>
-    >("/tutors/profile", payload);
-    return (
-      response?.data ?? {
-        status: "PENDING_REVIEW",
-        updatedAt: new Date().toISOString(),
-      }
+  async getPublicProfile(tutorProfileId: string): Promise<TutorProfileData> {
+    const response = await apiClient.get<never, ApiResponse<TutorProfileData>>(
+      `/tutors/${tutorProfileId}`,
     );
+    if (!response?.data) throw new Error("Dữ liệu hồ sơ gia sư không hợp lệ.");
+    return response.data;
   },
 
-  async submitForReview(
-    profile: TutorProfileEditorValues,
-    media: ProfileMediaState,
-    baseProfile?: Partial<TutorProfileData> | null,
+  saveDraft(
+    values: TutorProfileFormValues,
+    exists: boolean,
   ): Promise<TutorProfileMutationResult> {
-    const payload = buildTutorProfileEditorPayload(profile, media, baseProfile);
-    const response = await apiClient.post<
-      never,
-      ApiResponse<TutorProfileMutationResult>
-    >("/tutors/profile/submit", payload);
-    return (
-      response?.data ?? {
-        status: "PENDING_REVIEW",
-        updatedAt: new Date().toISOString(),
-      }
-    );
+    return tutorProfileRegistrationService.saveDraft(values, exists);
+  },
+
+  submitForReview(
+    values: TutorProfileFormValues,
+  ): Promise<TutorProfileMutationResult> {
+    return tutorProfileRegistrationService.submit(values);
   },
 };
-

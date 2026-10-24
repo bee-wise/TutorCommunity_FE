@@ -1,11 +1,17 @@
-import { Button } from "@workspace/ui/components/ui/button";
-
 export type ReviewTab = "newProfiles" | "resubmittedProfiles" | "fieldChanges";
 
-const tabs: { value: ReviewTab; label: string }[] = [
-  { value: "newProfiles", label: "Hồ sơ mới" },
-  { value: "resubmittedProfiles", label: "Duyệt lại hồ sơ" },
-  { value: "fieldChanges", label: "Thay đổi thông tin" },
+const tabs: { value: ReviewTab; label: string; hint: string }[] = [
+  { value: "newProfiles", label: "Hồ sơ mới", hint: "Chưa được duyệt lần nào" },
+  {
+    value: "resubmittedProfiles",
+    label: "Duyệt lại hồ sơ",
+    hint: "Gia sư đã chỉnh sửa và gửi lại",
+  },
+  {
+    value: "fieldChanges",
+    label: "Thay đổi thông tin",
+    hint: "Xin sửa thông tin đã được duyệt",
+  },
 ];
 
 export function ReviewQueueTabs({
@@ -18,27 +24,42 @@ export function ReviewQueueTabs({
   onChange: (tab: ReviewTab) => void;
 }) {
   return (
-    <div className="flex gap-1 overflow-x-auto rounded-xl border border-border bg-background p-1" role="tablist" aria-label="Loại yêu cầu xét duyệt">
-      {tabs.map((tab) => (
-        <Button
-          key={tab.value}
-          type="button"
-          role="tab"
-          variant="ghost"
-          size="sm"
-          aria-selected={value === tab.value}
-          onClick={() => onChange(tab.value)}
-          className={`min-h-10 shrink-0 gap-2 rounded-lg px-3.5 font-bold transition-all active:scale-[0.98] ${value === tab.value ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:text-primary-foreground" : "text-muted-foreground hover:bg-muted/40 hover:text-primary"}`}
-        >
-          {tab.label}
-          <span
-            className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-extrabold leading-none text-accent-foreground"
-            aria-label={counts[tab.value] === null ? "Chưa có dữ liệu" : `${counts[tab.value]} yêu cầu`}
+    <div
+      className="grid gap-3 sm:grid-cols-3"
+      role="tablist"
+      aria-label="Loại yêu cầu xét duyệt"
+    >
+      {tabs.map((tab) => {
+        const active = value === tab.value;
+        const count = counts[tab.value];
+        return (
+          <button
+            key={tab.value}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(tab.value)}
+            className={`flex min-h-11 items-center justify-between gap-4 rounded-2xl border p-4 text-left transition-all focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] ${active ? "border-primary bg-primary text-primary-foreground shadow-soft" : "border-border bg-card hover:-translate-y-0.5 hover:shadow-soft-hover"}`}
           >
-            {counts[tab.value] ?? "—"}
-          </span>
-        </Button>
-      ))}
+            <span className="min-w-0">
+              <span className="block text-sm font-extrabold">{tab.label}</span>
+              <span
+                className={`mt-0.5 block text-xs ${active ? "text-primary-foreground/80" : "text-muted-foreground"}`}
+              >
+                {tab.hint}
+              </span>
+            </span>
+            <span
+              className={`font-nunito text-3xl font-black leading-none tabular-nums ${active ? "text-accent" : "text-primary"}`}
+              aria-label={
+                count === null ? "Chưa có dữ liệu" : `${count} yêu cầu`
+              }
+            >
+              {count ?? "—"}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

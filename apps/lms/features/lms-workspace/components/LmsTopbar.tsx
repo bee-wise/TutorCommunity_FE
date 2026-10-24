@@ -2,7 +2,8 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { BellIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { NotificationBell } from "@workspace/ui/components/notifications/NotificationBell";
 import { navigationConfig } from "@workspace/core/configs/navigation";
 import { useAuthStore } from "@workspace/core/store/useAuthStore";
 import { useNotificationDrawerStore } from "@workspace/core/store/useNotificationDrawerStore";
@@ -28,10 +29,7 @@ export function LmsTopbar({ pathname, role, breadcrumb }: { pathname: string; ro
         {breadcrumb ?? <nav aria-label="Vị trí hiện tại"><span aria-current="page">{current?.title ?? "Không gian học tập"}</span></nav>}
       </div>
       <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-        <Button type="button" variant="ghost" size="icon" onClick={openDrawer} aria-label={count ? `Thông báo, ${count} chưa đọc` : "Thông báo"} className="relative size-11 rounded-xl text-muted-foreground hover:bg-muted hover:text-primary">
-          <BellIcon className="size-[18px]" aria-hidden="true" />
-          {count > 0 && <span className="absolute right-2 top-2 size-2 rounded-full border-2 border-card bg-destructive" />}
-        </Button>
+        <NotificationBell count={count} onClick={openDrawer} ringClassName="ring-card" className="size-11 rounded-xl text-muted-foreground hover:bg-muted hover:text-primary" iconClassName="size-[22px]" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild><Button variant="ghost" className="h-11 gap-2 rounded-xl px-1.5 hover:bg-muted" aria-label="Menu tài khoản">
             <Avatar className="size-8"><AvatarFallback className="bg-accent/20 text-[11px] font-extrabold text-foreground">{user?.fullName?.trim().split(/\s+/).slice(-2).map((word) => word[0]).join("").toUpperCase() || "BW"}</AvatarFallback></Avatar>
