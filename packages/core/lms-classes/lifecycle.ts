@@ -23,6 +23,11 @@ export function utcToVietnamInput(value: string) {
   const date = new Date(Date.parse(value) + 7 * 60 * 60 * 1000);
   return date.toISOString().slice(0, 16);
 }
+// Class codes derived from the class GUID (e.g. BW-a0ed6d67...) are internal ids, not readable codes.
+export function displayClassCode(code: string | null | undefined) {
+  const value = code?.trim();
+  return value && !/^[a-z]*-?[0-9a-f]{32}$/i.test(value) ? value : null;
+}
 export function safeExternalUrl(value: string | null | undefined) {
   try {
     if (value && new URL(value).protocol === "https:") return value;

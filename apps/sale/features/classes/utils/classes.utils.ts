@@ -2,12 +2,6 @@ import type { GroupDto } from "@workspace/core/lms-classes/group.schemas";
 
 export type TeachingMode = "ONLINE" | "OFFLINE";
 
-export const SUBJECT_STYLES = [
-  "bg-primary text-primary-foreground",
-  "bg-accent text-accent-foreground",
-  "bg-muted text-primary",
-];
-
 export function normalizeSearch(value: string) {
   return value
     .toLocaleLowerCase("vi-VN")
@@ -27,23 +21,14 @@ export function getClassSubject(item: GroupDto) {
   );
 }
 
+// Catalog names and class names are compared ignoring case, accents and spacing.
+export function nameKey(value?: string | null) {
+  return normalizeSearch(value ?? "");
+}
+
 export function getClassLevel(item: GroupDto) {
   const level = item.teachingItemName?.trim();
   return level && level !== getClassSubject(item) ? level : undefined;
-}
-
-export function getLevelMark(item: GroupDto) {
-  const source = `${getClassLevel(item) ?? ""} ${item.title ?? ""}`;
-  if (/ielts/i.test(source)) return "IELTS";
-  const grade = source.match(/\b(\d{1,2})\b/)?.[1];
-  if (grade) return grade;
-  return getClassSubject(item).slice(0, 2).toLocaleUpperCase("vi-VN");
-}
-
-export function getSubjectStyle(subject: string) {
-  let hash = 0;
-  for (const char of subject) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
-  return SUBJECT_STYLES[hash % SUBJECT_STYLES.length]!;
 }
 
 export function getTeachingModeLabel(mode?: string | null) {
@@ -54,6 +39,9 @@ export function getTeachingModeLabel(mode?: string | null) {
       : "Chưa xác định";
 }
 
+// Opening time is stored in UTC; learners always see Vietnam time.
+const VIETNAM_TIME_ZONE = "Asia/Ho_Chi_Minh";
+
 export function formatOpeningDate(value?: string | null) {
   if (!value) return null;
   const date = new Date(value);
@@ -63,7 +51,36 @@ export function formatOpeningDate(value?: string | null) {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
+        timeZone: VIETNAM_TIME_ZONE,
       });
+}
+
+export function formatOpeningTime(value?: string | null) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? null
+    : date.toLocaleTimeString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: VIETNAM_TIME_ZONE,
+      });
+}
+
+export function getTotalHours(item: GroupDto) {
+  const hours = (item.numberOfSessions * item.sessionDurationMinutes) / 60;
+  return Number.isInteger(hours) ? String(hours) : hours.toFixed(1).replace(".", ",");
+}
+
+// Full-course classes are sold as one price; others are priced per session.
+export function getPriceSummary(item: GroupDto) {
+  const perSession = item.pricePerSession;
+  if (item.billingMode === "FULL_COURSE") {
+    const total = item.totalAmount || perSession * item.numberOfSessions;
+    return { amount: total, unit: "/ cả khóa", note: null };
+  }
+  return { amount: perSession, unit: "/ buổi", note: getBillingLabel(item.billingMode) };
 }
 
 export function getBillingLabel(mode?: string | null) {

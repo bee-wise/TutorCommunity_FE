@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { LmsDashboardShell } from "./LmsDashboardShell";
 import { ClassWorkspaceSidebar } from "@/features/tutor-classes/components/ClassWorkspaceSidebar";
+import { ClassApprovalGate } from "@/features/tutor-classes/components/ClassApprovalGate";
 import { ClassWorkspaceBreadcrumb } from "@/features/tutor-classes/components/ClassWorkspaceBreadcrumb";
 import { getClassWorkspaceRoute } from "@/features/tutor-classes/utils/class-workspace.utils";
 import { LearnerClassSidebar } from "@/features/learner-classes/components/LearnerClassSidebar";
@@ -58,7 +59,7 @@ export function LmsWorkspaceLayout({ children }: { children: ReactNode }) {
       }
     >
       <AIJobNavigationGuard />
-      {children}
+      {tutorWorkspace ? <ClassApprovalGate workspace={tutorWorkspace}>{children}</ClassApprovalGate> : children}
     </LmsDashboardShell>
   );
 }

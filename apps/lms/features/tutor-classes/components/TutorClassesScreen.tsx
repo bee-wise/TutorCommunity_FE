@@ -15,11 +15,14 @@ import {
   classPage,
   classPanel,
 } from "./classes-ui";
-const GroupDraftDialog = dynamic(() => import("./GroupDraftDialog").then(m => m.GroupDraftDialog));
+import { ClassCardGroups } from "./ClassCardGroups";
+import { GroupDraftResumeBanner } from "./GroupDraftResumeBanner";
+import type { GroupDto } from "@workspace/core/lms-classes/group.schemas";
+const GroupClassWizard = dynamic(() => import("./GroupClassWizard").then(m => m.GroupClassWizard));
 
 export function TutorClassesScreen() {
   const library = useTutorClasses();
-  const [creating,setCreating] = useState(false);
+  const [wizard,setWizard] = useState<{ initial?: GroupDto; step?: number } | null>(null);
   const hasFilters = Boolean(
     library.filters.search ||
     library.filters.status !== "all" ||
@@ -29,8 +32,9 @@ export function TutorClassesScreen() {
     <div className={classPage}>
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className={classHeading}>Quản lý lớp học</h1>
-        {!library.loading && !library.error && library.filters.kind === "group" && <Button className="min-h-11 rounded-full transition-all active:scale-[0.98]" onClick={()=>setCreating(true)}>Tạo lớp nhóm</Button>}
+        {!library.loading && !library.error && library.filters.kind === "group" && <Button className="min-h-11 rounded-full transition-all active:scale-[0.98]" onClick={()=>setWizard({})}>Tạo lớp nhóm</Button>}
       </header>
+      <GroupDraftResumeBanner onResume={(initial, step) => setWizard({ initial, step })} />
 
       <ClassFilters
         filters={library.filters}
@@ -69,11 +73,7 @@ export function TutorClassesScreen() {
             </Button>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {library.cards.map((card) => (
-              <TutorClassCard key={card.classInfo.id} {...card} />
-            ))}
-          </div>
+          <ClassCardGroups cards={library.cards} grouped={library.filters.kind === "group"} />
         )}
         {!library.loading && !library.error && !library.outOfRange && <ClassPagination
           page={library.page - 1}
@@ -82,7 +82,7 @@ export function TutorClassesScreen() {
           onPageChange={(page) => library.setPage(page + 1)}
         />}
       </section>
-      {creating && <GroupDraftDialog onClose={()=>setCreating(false)} />}
+      {wizard && <GroupClassWizard mode="create" initial={wizard.initial} initialStep={wizard.step} onClose={()=>setWizard(null)} />}
     </div>
   );
 }

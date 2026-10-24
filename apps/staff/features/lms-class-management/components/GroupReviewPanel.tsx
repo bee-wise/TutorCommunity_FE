@@ -9,6 +9,7 @@ import {
   PencilSquareIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
+import { displayClassCode } from "@workspace/core/lms-classes/lifecycle";
 import { reviewGroupSchema } from "@workspace/core/lms-classes/group.schemas";
 import { groupClassesService as service } from "@workspace/core/lms-classes/group.service";
 import {
@@ -18,6 +19,7 @@ import {
 import { Button } from "@workspace/ui/components/ui/button";
 import { DisclosureCard } from "@workspace/ui/components/ui/collapsible";
 import { toast } from "@workspace/ui/components/ui/bee-toast";
+import { GroupRoadmapVisualDialog } from "./GroupRoadmapVisualDialog";
 import {
   billingLabels,
   buttonClass,
@@ -128,7 +130,7 @@ export function GroupReviewPanel({ classId }: { classId: string }) {
           <div className="flex flex-wrap items-center gap-2">
             <StatusChip value={data.approvalStatus} />
             <Chip>{billingLabels[data.billingMode ?? ""] ?? data.billingMode}</Chip>
-            {data.code && <Chip>{data.code}</Chip>}
+            {displayClassCode(data.code) && <Chip>{displayClassCode(data.code)}</Chip>}
           </div>
           <h2 className="mt-3 font-nunito text-2xl font-extrabold leading-[1.2]">
             {data.title}
@@ -168,7 +170,12 @@ export function GroupReviewPanel({ classId }: { classId: string }) {
         </section>
         <section className={panelClass}>
           <SectionTitle
-            aside={<Chip>{data.roadmap.length} giai đoạn</Chip>}
+            aside={
+              <div className="flex flex-wrap items-center gap-2">
+                <Chip>{data.roadmap.length} giai đoạn</Chip>
+                {data.roadmap.length > 0 && <GroupRoadmapVisualDialog stages={data.roadmap} />}
+              </div>
+            }
           >
             Lộ trình học
           </SectionTitle>
